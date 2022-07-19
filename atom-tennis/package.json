@@ -8,5 +8,8 @@
     "dev": "npx live-server"
   },
   "author": "Ludwig Lindgren",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
 }
