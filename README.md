@@ -1,2 +1,3 @@
 # training
-öving
+
+Ludwig's JavaScript training repository
