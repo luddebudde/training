@@ -478,7 +478,7 @@ document.addEventListener("keydown", (event) => {
   if (event.code === "KeyQ") {
     player1.boost();
   }
-  if (event.code === "KeyW") {
+  if (event.code === "KeyW") { 
     player1.acc.y = -player1.speed;
     // player1.vel.y += -player1.speed;
     // player1.vel.x = 0;
@@ -534,7 +534,7 @@ function getRandomColor() {
   return color;
 }
 
-const restartbutton = document.getElementById("restart");
-restartbutton.addEventListener("click", () => {
-  restart();
-});
+  const restartbutton = document.getElementById("restart");
+  restartbutton.addEventListener("click", () => {
+    restart();
+  });
