@@ -12,6 +12,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-loong64/-/linux-loong64-0.15.12.tgz#475b33a2631a3d8ca8aa95ee127f9a61d95bf9c1"
   integrity sha512-tZEowDjvU7O7I04GYvWQOS4yyP9E/7YlsB0jjw1Ycukgr2ycEzKyIk5tms5WnLBymaewc6VmRKnn5IJWgK4eFw==
 
+"@types/matter-js@0.18.2":
+  version "0.18.2"
+  resolved "https://registry.yarnpkg.com/@types/matter-js/-/matter-js-0.18.2.tgz#68a971386368882d3445de95dcf31289346dc22f"
+  integrity sha512-W9UC9DOPNBRTUocqqPZmzX3cbHmlZBI9jLn6SuxZz0n5QrPk382Ig3hbBWHqYU8TRUmTCJJhuanXeyMTavF7Mg==
+
 esbuild-android-64@0.15.12:
   version "0.15.12"
   resolved "https://registry.yarnpkg.com/esbuild-android-64/-/esbuild-android-64-0.15.12.tgz#5e8151d5f0a748c71a7fbea8cee844ccf008e6fc"

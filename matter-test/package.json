@@ -8,8 +8,11 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "matter-js": "0.18.0"
+  },
   "devDependencies": {
-    "matter-js": "0.18.0",
+    "@types/matter-js": "0.18.2",
     "vite": "^3.1.0"
   }
 }
