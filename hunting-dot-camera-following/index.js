@@ -279,4 +279,7 @@ document.addEventListener("keydown", (event) => {
   if (event.code === "KeyR") {
     reset()
   }
+  if (event.code === "KeyP") {
+    startTime = startTime - 10 * 1000
+  }
 });
