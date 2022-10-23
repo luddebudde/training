@@ -1,27 +1,75 @@
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext("2d");
-
-const startTime = Date.now()
-
 const world = {
   width: canvas.width,
   height: canvas.height,
 };
 
-const player = {
-  radius: 10,
-  speed: 2,
-  mass: 5,
-  color: "blue",
-  pos: {
-    x: world.width / 2,
-    y: world.height / 2,
-  },
-  vel: {
-    x: 0,
-    y: 0,
-  },
-};
+const reset = () => {
+  startTime = Date.now()
+  player = {
+    radius: 10,
+    speed: 2,
+    mass: 5,
+    color: "blue",
+    pos: {
+      x: world.width / 2,
+      y: world.height / 2,
+    },
+    vel: {
+      x: 0,
+      y: 0,
+    },
+    hasLost: false
+  }
+  enemies = [
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(),
+    makeEnemy(), 
+  ]
+}
 
 const currentScore = () => {
   return Math.floor((Date.now() - startTime) / 1000)
@@ -80,53 +128,7 @@ const makeEnemy = () => {
     },
   };
 };
-let enemies = [
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-  makeEnemy(),
-];
+
 
 const worldToCanvasCoord = (pos, canvas, player) => {
   return {
@@ -135,7 +137,16 @@ const worldToCanvasCoord = (pos, canvas, player) => {
   }
 }
 
+let startTime
+let player 
+let enemies 
+reset()
+
+
 setInterval(() => {
+  if (player.hasLost) {
+    return 
+  }
   // Uppdatera pos
   player.pos.x = player.pos.x + player.vel.x;
   player.pos.y = player.pos.y + player.vel.y;
@@ -184,6 +195,7 @@ setInterval(() => {
     const dist = Math.sqrt(dx * dx + dy * dy);
     if (dist < enemy.radius + player.radius) {
       player.color = "red";
+      player.hasLost = true
     }
   });
 
@@ -263,5 +275,8 @@ document.addEventListener("keydown", (event) => {
   if (event.code === "ArrowRight") {
     player.vel.x = speed;
     player.vel.y = 0;
+  }
+  if (event.code === "KeyR") {
+    reset()
   }
 });
