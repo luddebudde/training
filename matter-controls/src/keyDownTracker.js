@@ -1,12 +1,12 @@
 export const keyDownTracker = () => {
-  const keysDown = new Set();
+  const keysDown = new Set()
 
   document.addEventListener("keydown", event => {
-    keysDown.add(event.code);
+    keysDown.add(event.code)
   })
 
   document.addEventListener("keyup", event => {
-    keysDown.delete(event.code);
+    keysDown.delete(event.code)
   })
 
   document.addEventListener('visibilitychange', (event) => {

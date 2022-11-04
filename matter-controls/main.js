@@ -8,15 +8,14 @@ import {keyDownTracker} from "./src/keyDownTracker.js";
 
 // create an engine
 const engine = Engine.create();
-const world = engine.world
 engine.gravity.scale = 0
 const canvas = document.getElementById('app');
 
-const roomDim = {
+const room = {
   height: 1000,
   width: 1500,
-  wallThickness: 50,
 }
+
 // create a renderer
 const render = Render.create({
   canvas: canvas,
@@ -25,74 +24,31 @@ const render = Render.create({
   options: {
     // showCollisions: true,  
     wireframes: false,
-    height: roomDim.height,
-    width: roomDim.width,
+    height: room.height,
+    width: room.width,
     background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
-    // showAngleIndicator: true,
+    showAngleIndicator: true,
     // showPerformance: true,
   },
 });
 
-const playerStartDist = 100 // Distance from wall
-
-const createPlayer = (color, xPos) => {
-  const playerHeight = 200
-  const playerWidth = 20
-  return Bodies.rectangle(xPos, roomDim.height / 2, playerWidth, playerHeight, {
-    mass: 10,
-    frictionAir: 0.2,
-    render: {
-      fillStyle: color,
-    },
-  });
-}
-
-// create two boxes and a ground
-const playerABody = createPlayer(green, playerStartDist + roomDim.wallThickness/2)
-const playerBBody = createPlayer(red, roomDim.width - playerStartDist - roomDim.wallThickness/2)
-
-const ballRadius = 20
-const rubberBall = Bodies.circle(roomDim.width / 2, roomDim.height / 2, ballRadius, {
-  mass: 2,
-  frictionAir: 0.0,
-  restitution: 0.9,
-  frictionStatic: 0,
-  inertia: Infinity,
-  render: {
-    sprite: {
-      texture: sprites.pingPongBall.texture,
-      xScale: 2 * ballRadius / sprites.pingPongBall.width,
-      yScale: 2 * ballRadius / sprites.pingPongBall.height,
-    },
-    fillStyle: white,
-  }
-})
-
 // add mouse control and make the mouse revolute
-const mouse = Mouse.create(render.canvas),
-  mouseConstraint = MouseConstraint.create(engine, {
-    mouse: mouse,
-    constraint: {
-      stiffness: 0.6,
-      length: 0,
-      angularStiffness: 0,
-      render: {
-        visible: false
-      }
+const mouse = Mouse.create(render.canvas)
+const mouseConstraint = MouseConstraint.create(engine, {
+  mouse: mouse,
+  constraint: {
+    stiffness: 0.6,
+    length: 0,
+    angularStiffness: 0,
+    render: {
+      visible: false
     }
-  });
+  }
+});
 
-const room = createRoom(roomDim.width, roomDim.height, roomDim.wallThickness, {
-  isStatic: true,
-  render: {
-    fillStyle: darkGrey,
-  },
-})
-
-// Add all bodies and composites to the world
-Composite.add(engine.world, [room, playerABody, playerBBody, rubberBall, mouseConstraint]);
+Composite.add(engine.world, [mouseConstraint])
 
 // keep the mouse in sync with rendering
 render.mouse = mouse;
@@ -100,75 +56,70 @@ render.mouse = mouse;
 // fit the render viewport to the scene
 Render.lookAt(render, {
   min: {x: 0, y: 0},
-  max: {x: roomDim.width, y: roomDim.height}
+  max: {x: room.width, y: room.height}
 });
 
 // run the renderer
 Render.run(render);
 // create runner
 const runner = Runner.create();
+// run the engine
+Runner.run(runner, engine);
 
-const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
+// ============= DO NOT EDIT ABOVE ==============
 
-// const keyHandlers = {
-//   KeyA: applyForceTo(playerABody, left),
-//   KeyD: applyForceTo(playerABody, right),
-//   KeyW: applyForceTo(playerABody, up),
-//   KeyS: applyForceTo(playerABody, down),
-//   ArrowLeft: applyForceTo(playerBBody, left),
-//   ArrowRight: applyForceTo(playerBBody, right),
-//   ArrowUp: applyForceTo(playerBBody, up),
-//   ArrowDown: applyForceTo(playerBBody, down),
-// };
+// Init game here
+const player = {
+  body: Bodies.circle(room.width / 2, room.height / 2, 30, {
+    mass: 500,
+    frictionAir: 0.1,
+  })
+}
 
-const keysDown = new Set();
+const objects = [player.body]
+
+// Add all bodies and composites to the world
+Composite.add(engine.world, objects);
 
 const isKeyDown = keyDownTracker()
 
-document.addEventListener("keydown", event => {
-  keysDown.add(event.code);
-});
-
-document.addEventListener("keyup", event => {
-  keysDown.delete(event.code);
-});
-
-const applySpringTorque = (body) => {
-  const torque = 0.5 * body.angle
-  applyTorque(body, torque)
+const createBullet = (force) => {
+  const bullet = Bodies.circle(player.body.position.x, player.body.position.y, 10, {
+    mass: 20,
+    frictionAir: 0,
+  })
+  Body.applyForce(bullet, bullet.position, force)
+  return bullet
 }
 
-Events.on(engine, "beforeUpdate", event => {
-  if(isKeyDown('KeyA')){
-    applyForceTo(playerABody, left)
+addEventListener(`keydown`, (event) => {
+  if (event.code === `ArrowUp`) {
+    Composite.add(engine.world, createBullet(up));
   }
-  if(isKeyDown('KeyD')){
-    applyForceTo(playerABody, right)
+  if (event.code === `ArrowDown`) {
+    Composite.add(engine.world, createBullet(down));
   }
-  if(isKeyDown('KeyW')){
-    applyForceTo(playerABody, up)
+  if (event.code === `ArrowLeft`) {
+    Composite.add(engine.world, createBullet(left));
   }
-  if(isKeyDown('KeyS')){
-    applyForceTo(playerABody, down)
+  if (event.code === `ArrowRight`) {
+    Composite.add(engine.world, createBullet(right));
   }
+})
 
-  if(isKeyDown('ArrowLeft')){
-    applyForceTo(playerBBody, left)
+Events.on(engine, "beforeUpdate", (event) => {
+  //  Called very update
+  if (isKeyDown(`KeyW`)) {
+    Body.applyForce(player.body, player.body.position, up)
   }
-  if(isKeyDown('ArrowRight')){
-    applyForceTo(playerBBody, right)
+  if (isKeyDown(`KeyS`)) {
+    Body.applyForce(player.body, player.body.position, down)
   }
-  if(isKeyDown('ArrowUp')){
-    applyForceTo(playerBBody, up)
+  if (isKeyDown(`KeyA`)) {
+    Body.applyForce(player.body, player.body.position, left)
   }
-  if(isKeyDown('ArrowDown')){
-    applyForceTo(playerBBody, down)
+  if (isKeyDown(`KeyD`)) {
+    Body.applyForce(player.body, player.body.position, right)
   }
+})
 
-  applySpringTorque(playerABody)
-  applySpringTorque(playerBBody)
-
-});
-
-// run the engine
-Runner.run(runner, engine);
