@@ -9,5 +9,11 @@ export const keyDownTracker = () => {
     keysDown.delete(event.code);
   })
 
+  document.addEventListener('visibilitychange', (event) => {
+    if(document.visibilityState === 'hidden'){
+      keysDown.clear()
+    }
+  })
+
   return (keyCode) => keysDown.has(keyCode)
 }

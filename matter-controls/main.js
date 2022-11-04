@@ -4,6 +4,7 @@ import {down, left, right, up} from "./src/vectors.js";
 import {applyTorque} from "./src/applyTorque.js";
 import {createRoom} from "./src/createRoom.js";
 import {sprites} from "./src/sprites.js";
+import {keyDownTracker} from "./src/keyDownTracker.js";
 
 // create an engine
 const engine = Engine.create();
@@ -107,20 +108,22 @@ Render.run(render);
 // create runner
 const runner = Runner.create();
 
-const applyForceTo = (body, direction) => () => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
+const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
 
-const keyHandlers = {
-  KeyA: applyForceTo(playerABody, left),
-  KeyD: applyForceTo(playerABody, right),
-  KeyW: applyForceTo(playerABody, up),
-  KeyS: applyForceTo(playerABody, down),
-  ArrowLeft: applyForceTo(playerBBody, left),
-  ArrowRight: applyForceTo(playerBBody, right),
-  ArrowUp: applyForceTo(playerBBody, up),
-  ArrowDown: applyForceTo(playerBBody, down),
-};
+// const keyHandlers = {
+//   KeyA: applyForceTo(playerABody, left),
+//   KeyD: applyForceTo(playerABody, right),
+//   KeyW: applyForceTo(playerABody, up),
+//   KeyS: applyForceTo(playerABody, down),
+//   ArrowLeft: applyForceTo(playerBBody, left),
+//   ArrowRight: applyForceTo(playerBBody, right),
+//   ArrowUp: applyForceTo(playerBBody, up),
+//   ArrowDown: applyForceTo(playerBBody, down),
+// };
 
 const keysDown = new Set();
+
+const isKeyDown = keyDownTracker()
 
 document.addEventListener("keydown", event => {
   keysDown.add(event.code);
@@ -136,10 +139,31 @@ const applySpringTorque = (body) => {
 }
 
 Events.on(engine, "beforeUpdate", event => {
-  // Handle key down
-  [...keysDown].forEach(k => {
-    keyHandlers[k]?.();
-  })
+  if(isKeyDown('KeyA')){
+    applyForceTo(playerABody, left)
+  }
+  if(isKeyDown('KeyD')){
+    applyForceTo(playerABody, right)
+  }
+  if(isKeyDown('KeyW')){
+    applyForceTo(playerABody, up)
+  }
+  if(isKeyDown('KeyS')){
+    applyForceTo(playerABody, down)
+  }
+
+  if(isKeyDown('ArrowLeft')){
+    applyForceTo(playerBBody, left)
+  }
+  if(isKeyDown('ArrowRight')){
+    applyForceTo(playerBBody, right)
+  }
+  if(isKeyDown('ArrowUp')){
+    applyForceTo(playerBBody, up)
+  }
+  if(isKeyDown('ArrowDown')){
+    applyForceTo(playerBBody, down)
+  }
 
   applySpringTorque(playerABody)
   applySpringTorque(playerBBody)
