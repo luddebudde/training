@@ -5,6 +5,9 @@ import {applyTorque} from "./src/applyTorque.js";
 import {createRoom} from "./src/createRoom.js";
 import {sprites} from "./src/sprites.js";
 import {keyDownTracker} from "./src/keyDownTracker.js";
+import { direction } from "./src/direction.js";
+import { applySpringTorque } from "./src/applySpringTorque";
+import { applyAngularFriction } from "./src/applyAngularFriction.js";
 
 // create an engine
 const engine = Engine.create();
@@ -26,7 +29,10 @@ const render = Render.create({
     wireframes: false,
     height: room.height,
     width: room.width,
-    background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
+    // wireframeBackground: true,
+    background: undefined,
+    showDebug: true,
+    // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
     showAngleIndicator: true,
@@ -54,10 +60,7 @@ Composite.add(engine.world, [mouseConstraint])
 render.mouse = mouse;
 
 // fit the render viewport to the scene
-Render.lookAt(render, {
-  min: {x: 0, y: 0},
-  max: {x: room.width, y: room.height}
-});
+
 
 // run the renderer
 Render.run(render);
@@ -68,15 +71,45 @@ Runner.run(runner, engine);
 
 // ============= DO NOT EDIT ABOVE ==============
 
+const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
+
 // Init game here
+const playerRadius = 60
 const player = {
-  body: Bodies.circle(room.width / 2, room.height / 2, 30, {
+  body: Bodies.circle(room.width / 2, room.height / 2, playerRadius, {
     mass: 500,
-    frictionAir: 0.1,
+    frictionAir: 0.02,  
+    render: {
+      sprite: {
+        texture: sprites.player.texture,
+        xScale: 2 * playerRadius / sprites.player.width,
+        yScale: 2 * playerRadius / sprites.player.height,
+      },
+    },
   })
 }
 
-const objects = [player.body]
+const asteroidRadius = 60
+
+const asteroid = Bodies.circle(room.width / 3, room.height / 2, asteroidRadius, {
+  mass: 1000,
+  frictionAir: 0,
+  render: {
+    sprite: {
+      texture: sprites.asteroid.texture,
+      xScale: 2 * asteroidRadius / sprites.asteroid.width * 1.23,
+      yScale: 2 * asteroidRadius / sprites.asteroid.height * 1.23,
+    },
+  },
+})
+
+applyTorque(asteroid, 1)
+applyForceTo(asteroid, {
+  x: 10,
+  y: 20,
+})
+
+const objects = [player.body, asteroid]
 
 // Add all bodies and composites to the world
 Composite.add(engine.world, objects);
@@ -84,7 +117,9 @@ Composite.add(engine.world, objects);
 const isKeyDown = keyDownTracker()
 
 const createBullet = (force) => {
-  const bullet = Bodies.circle(player.body.position.x, player.body.position.y, 10, {
+  const bulletRadius = 10
+  const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
+  const bullet = Bodies.circle(pos.x, pos.y, bulletRadius, {
     mass: 20,
     frictionAir: 0,
   })
@@ -93,33 +128,31 @@ const createBullet = (force) => {
 }
 
 addEventListener(`keydown`, (event) => {
-  if (event.code === `ArrowUp`) {
-    Composite.add(engine.world, createBullet(up));
-  }
-  if (event.code === `ArrowDown`) {
-    Composite.add(engine.world, createBullet(down));
-  }
-  if (event.code === `ArrowLeft`) {
-    Composite.add(engine.world, createBullet(left));
-  }
-  if (event.code === `ArrowRight`) {
-    Composite.add(engine.world, createBullet(right));
+  if (event.code === `Space`) {
+    Composite.add(engine.world, createBullet(direction(player.body)));
   }
 })
 
 Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
   if (isKeyDown(`KeyW`)) {
-    Body.applyForce(player.body, player.body.position, up)
-  }
+    Body.applyForce(player.body, player.body.position, direction(player.body))
+  } 
   if (isKeyDown(`KeyS`)) {
-    Body.applyForce(player.body, player.body.position, down)
+    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), -1))
   }
   if (isKeyDown(`KeyA`)) {
-    Body.applyForce(player.body, player.body.position, left)
+    applyTorque(player.body, 0.5)
   }
   if (isKeyDown(`KeyD`)) {
-    Body.applyForce(player.body, player.body.position, right)
+    applyTorque(player.body, -0.5)
   }
+
+  applyAngularFriction(player.body, 5)
+
+  Render.lookAt(render, {
+    min: {x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2,},
+    max: {x: player.body.position.x + room.width / 2, y: player.body.position.y + room.height / 2},
+  });
 })
 

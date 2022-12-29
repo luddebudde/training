@@ -3,5 +3,16 @@ export const sprites = {
     texture: '/ping-pong-ball.png',
     height: 800,
     width: 800,
+  },
+  asteroid: {
+    texture: "/space-objects/12.png",
+    height: 512,
+    width: 512,
+  },
+  player: {
+    texture: "/player.png",
+    height: 422,
+    width: 372,
   }
 }
+

@@ -35,6 +35,8 @@ const render = Render.create({
   },
 });
 
+const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
+
 const playerStartDist = 100 // Distance from wall
 
 const createPlayer = (color, xPos) => {
@@ -48,6 +50,7 @@ const createPlayer = (color, xPos) => {
     },
   });
 }
+
 
 // create two boxes and a ground
 const playerABody = createPlayer(green, playerStartDist + roomDim.wallThickness/2)
@@ -108,7 +111,6 @@ Render.run(render);
 // create runner
 const runner = Runner.create();
 
-const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
 
 // const keyHandlers = {
 //   KeyA: applyForceTo(playerABody, left),
