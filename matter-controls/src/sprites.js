@@ -13,6 +13,11 @@ export const sprites = {
     texture: "/player.png",
     height: 422,
     width: 372,
-  }
+  },
+  bullet: {
+    texture: "/laser-sprites/16.png",
+    height: 254,
+    width: 141,
+  },
 }
 

@@ -10,6 +10,7 @@ import { applySpringTorque } from "./src/applySpringTorque";
 import { applyAngularFriction } from "./src/applyAngularFriction.js";
 import { asteroid} from "./src/asteroid.js";
 import { zeros } from "./src/nTimes";
+import { bullet, setBulletDirection } from "./src/bullet.js";
 
 // create an engine
 const engine = Engine.create();
@@ -37,7 +38,8 @@ const render = Render.create({
     // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
-    showAngleIndicator: true,
+    // showAngleIndicator: true,
+    // showVelocity: true,
     // showPerformance: true,
   },
 });
@@ -67,7 +69,7 @@ render.mouse = mouse;
 // run the renderer
 Render.run(render);
 // create runner
-const runner = Runner.create();
+const runner = Runner.create()
 // run the engine
 Runner.run(runner, engine);
 
@@ -93,7 +95,7 @@ const player = {
 
 const objects = [
   player.body, 
-  ...zeros(50).map(() => {
+  ...zeros(500).map(() => {
     return asteroid(player)
   })
 ]
@@ -103,20 +105,18 @@ Composite.add(engine.world, objects);
 
 const isKeyDown = keyDownTracker()
 
-const createBullet = (force) => {
-  const bulletRadius = 10
-  const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position) 
-  const bullet = Bodies.circle(pos.x, pos.y, bulletRadius, {
-    mass: 20,
-    frictionAir: 0,
-  })
-  Body.applyForce(bullet, bullet.position, force)
-  return bullet
-}
+let bullets = [
+]
 
 addEventListener(`keydown`, (event) => {
-  if (event.code === `Space`) {
-    Composite.add(engine.world, createBullet(direction(player.body)));
+  if (event.code === `Space`) { 
+    const spawnPos = Vector.add(player.body.position, Vector.mult (direction(player.body), playerRadius))
+    const newBullet = bullet(spawnPos,direction(player.body))
+    Composite.add(engine.world, newBullet);
+    bullets = [
+      newBullet,
+      ...bullets,
+    ]
   }
 })
 
@@ -136,6 +136,19 @@ Events.on(engine, "beforeUpdate", (event) => {
   }
 
   applyAngularFriction(player.body, 5)
+
+  bullets.forEach(bullet => {
+    // Set angle in velocity direction 
+    Body.setAngle(
+      bullet,
+      Vector.angle(
+        right,
+        bullet.velocity,
+      )
+    )    
+    // Reset speed
+    setBulletDirection(bullet, bullet.velocity)
+  });
 
   Render.lookAt(render, {
     min: {x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2,},
