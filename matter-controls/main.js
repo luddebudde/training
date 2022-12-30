@@ -8,13 +8,15 @@ import {keyDownTracker} from "./src/keyDownTracker.js";
 import { direction } from "./src/direction.js";
 import { applySpringTorque } from "./src/applySpringTorque";
 import { applyAngularFriction } from "./src/applyAngularFriction.js";
+import { asteroid} from "./src/asteroid.js";
+import { zeros } from "./src/nTimes";
 
 // create an engine
 const engine = Engine.create();
 engine.gravity.scale = 0
 const canvas = document.getElementById('app');
 
-const room = {
+export const room = {
   height: 1000,
   width: 1500,
 }
@@ -71,14 +73,13 @@ Runner.run(runner, engine);
 
 // ============= DO NOT EDIT ABOVE ==============
 
-const applyForceTo = (body, direction) => Body.applyForce(body, body.position, Vector.mult(direction, 0.1))
 
 // Init game here
 const playerRadius = 60
 const player = {
   body: Bodies.circle(room.width / 2, room.height / 2, playerRadius, {
     mass: 500,
-    frictionAir: 0.02,  
+    frictionAir: 0.05,  
     render: {
       sprite: {
         texture: sprites.player.texture,
@@ -89,27 +90,13 @@ const player = {
   })
 }
 
-const asteroidRadius = 60
 
-const asteroid = Bodies.circle(room.width / 3, room.height / 2, asteroidRadius, {
-  mass: 1000,
-  frictionAir: 0,
-  render: {
-    sprite: {
-      texture: sprites.asteroid.texture,
-      xScale: 2 * asteroidRadius / sprites.asteroid.width * 1.23,
-      yScale: 2 * asteroidRadius / sprites.asteroid.height * 1.23,
-    },
-  },
-})
-
-applyTorque(asteroid, 1)
-applyForceTo(asteroid, {
-  x: 10,
-  y: 20,
-})
-
-const objects = [player.body, asteroid]
+const objects = [
+  player.body, 
+  ...zeros(50).map(() => {
+    return asteroid(player)
+  })
+]
 
 // Add all bodies and composites to the world
 Composite.add(engine.world, objects);
@@ -118,7 +105,7 @@ const isKeyDown = keyDownTracker()
 
 const createBullet = (force) => {
   const bulletRadius = 10
-  const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
+  const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position) 
   const bullet = Bodies.circle(pos.x, pos.y, bulletRadius, {
     mass: 20,
     frictionAir: 0,
@@ -136,10 +123,10 @@ addEventListener(`keydown`, (event) => {
 Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
   if (isKeyDown(`KeyW`)) {
-    Body.applyForce(player.body, player.body.position, direction(player.body))
+    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), 1))
   } 
   if (isKeyDown(`KeyS`)) {
-    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), -1))
+    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), -0.5))
   }
   if (isKeyDown(`KeyA`)) {
     applyTorque(player.body, 0.5)
