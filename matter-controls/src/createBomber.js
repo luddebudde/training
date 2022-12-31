@@ -4,8 +4,8 @@ import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { up } from "./vectors"
 
-const engineStrength = 0.1
-const turboStrengh = engineStrength * 3
+const engineStrength = 0.18
+const turboStrengh = engineStrength * 5
 export const BomberRadius = 30
 export const createBomber = (player) => {
     const body = Bodies.circle(0, 30, BomberRadius, {
@@ -29,7 +29,7 @@ export const createBomber = (player) => {
             const torque = Vector.cross(dirToPlayer, lookDir)
             applyTorque(body, torque)
 
-            if (Vector.magnitude(Vector.sub(player.body.position, body.position)) < 500) {
+            if (Vector.magnitude(Vector.sub(player.body.position, body.position)) < 300) {
                 Body.applyForce(body, body.position, Vector.mult(direction(body), turboStrengh))
             } else {
                 // Move

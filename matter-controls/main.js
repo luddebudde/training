@@ -14,6 +14,8 @@ import { bullet, setBulletDirection } from "./src/bullet.js";
 import { createPlayer, playerRadius } from "./src/createPlayer.js";
 import { createEnemy, engineStrength,  } from "./src/createEnemy.js";
 import { createBomber } from "./src/createBomber.js";
+import { ebullet } from "./src/eBullet.js";
+import { throttle } from "throttle-debounce";
 
 // create an engine
 const engine = Engine.create();
@@ -81,8 +83,8 @@ Runner.run(runner, engine);
 
 // Init game here
 const player = createPlayer()
-const enemies = zeros(3).map(() => createEnemy(player))
-const bombers = zeros(3).map(() => createBomber(player))
+const enemies = zeros(5).map(() => createEnemy(player, engine.world))
+const bombers = zeros(0).map(() => createBomber(player))
 const asteroidAmounts = 50
 
 const objects = [
@@ -94,7 +96,7 @@ const objects = [
     ...bombers.map(bomber => bomber.body),
   ...zeros(asteroidAmounts / 2).map(() => {
     return asteroid(player)
-  })
+  }),
 ]
 
 // Add all bodies and composites to the world
@@ -104,16 +106,22 @@ const isKeyDown = keyDownTracker()
 
 let bullets = [
 ]
+let eBullets = [
+]
 
+
+const fireP = throttle (300, () => {
+  const spawnPos = Vector.add(player.body.position, Vector.mult (direction(player.body), playerRadius))
+  const newBullet = bullet(spawnPos,direction(player.body))
+  Composite.add(engine.world, newBullet);
+  bullets = [
+    newBullet,
+    ...bullets,
+  ]
+})
 addEventListener(`keydown`, (event) => {
   if (event.code === `Space`) { 
-    const spawnPos = Vector.add(player.body.position, Vector.mult (direction(player.body), playerRadius))
-    const newBullet = bullet(spawnPos,direction(player.body))
-    Composite.add(engine.world, newBullet);
-    bullets = [
-      newBullet,
-      ...bullets,
-    ]
+   fireP()
   }
 })
 
@@ -135,6 +143,19 @@ Events.on(engine, "beforeUpdate", (event) => {
   applyAngularFriction(player.body, 5)
 
   bullets.forEach(bullet => {
+    // Set angle in velocity direction 
+    Body.setAngle(
+      bullet,
+      Vector.angle(
+        right,
+        bullet.velocity,
+      )
+    )    
+    // Reset speed
+    setBulletDirection(bullet, bullet.velocity)
+  });
+
+  eBullets.forEach(bullet => {
     // Set angle in velocity direction 
     Body.setAngle(
       bullet,

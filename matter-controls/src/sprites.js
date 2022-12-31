@@ -28,6 +28,11 @@ export const sprites = {
     texture: "/laser-sprites/16.png",
     height: 254,
     width: 141,
+  },  
+  eBullet: {
+    texture: "/laser-sprites/02.png",
+    height: 127,
+    width: 123,
   },
 }
 
