@@ -11,6 +11,9 @@ import { applyAngularFriction } from "./src/applyAngularFriction.js";
 import { asteroid} from "./src/asteroid.js";
 import { zeros } from "./src/nTimes";
 import { bullet, setBulletDirection } from "./src/bullet.js";
+import { createPlayer, playerRadius } from "./src/createPlayer.js";
+import { createEnemy, engineStrength,  } from "./src/createEnemy.js";
+import { createBomber } from "./src/createBomber.js";
 
 // create an engine
 const engine = Engine.create();
@@ -77,25 +80,19 @@ Runner.run(runner, engine);
 
 
 // Init game here
-const playerRadius = 60
-const player = {
-  body: Bodies.circle(room.width / 2, room.height / 2, playerRadius, {
-    mass: 500,
-    frictionAir: 0.05,  
-    render: {
-      sprite: {
-        texture: sprites.player.texture,
-        xScale: 2 * playerRadius / sprites.player.width,
-        yScale: 2 * playerRadius / sprites.player.height,
-      },
-    },
-  })
-}
-
+const player = createPlayer()
+const enemies = zeros(3).map(() => createEnemy(player))
+const bombers = zeros(3).map(() => createBomber(player))
+const asteroidAmounts = 50
 
 const objects = [
   player.body, 
-  ...zeros(500).map(() => {
+  ...enemies.map(enemy => enemy.body),
+  ...zeros(asteroidAmounts / 2).map(() => {
+    return asteroid(player)
+  }),
+    ...bombers.map(bomber => bomber.body),
+  ...zeros(asteroidAmounts / 2).map(() => {
     return asteroid(player)
   })
 ]
@@ -150,6 +147,10 @@ Events.on(engine, "beforeUpdate", (event) => {
     setBulletDirection(bullet, bullet.velocity)
   });
 
+  enemies.forEach((enemy) => enemy.update())
+  bombers.forEach((bomber) => bomber.update())
+
+  // enemyShoot()
   Render.lookAt(render, {
     min: {x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2,},
     max: {x: player.body.position.x + room.width / 2, y: player.body.position.y + room.height / 2},

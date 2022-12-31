@@ -14,6 +14,16 @@ export const sprites = {
     height: 422,
     width: 372,
   },
+  enemy: {
+    texture: "/enemy.png",
+    height: 338,
+    width: 392,
+  },
+  bomber: {
+    texture: "/bomber.png",
+    height: 282,
+    width: 275,
+  },
   bullet: {
     texture: "/laser-sprites/16.png",
     height: 254,

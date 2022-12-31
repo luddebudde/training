@@ -14,7 +14,7 @@ const radiansToCartesian = (angle, r) => {
 
 export const asteroid = (player) => {
 
-    const asteroidRadius = random(10, 90)
+    const asteroidRadius = random(30, 90)
     const pos = Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(500, 1000)), player.body.position)
     
     const body = Bodies.circle(pos.x, pos.y , asteroidRadius, {
