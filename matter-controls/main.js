@@ -23,7 +23,7 @@ engine.gravity.scale = 0
 const canvas = document.getElementById('app');
 
 export const room = {
-  height: 1000,
+  height: 1300,
   width: 1500,
 }
 
@@ -80,23 +80,41 @@ Runner.run(runner, engine);
 
 // ============= DO NOT EDIT ABOVE ==============
 
+const addObject = (obj) => {
+  Composite.add(engine.world, obj.body)
+  gameObjects = [
+    ...gameObjects,
+    obj,
+  ]
+}
+const removeObject = (obj) => {
+  Composite.remove(engine.world, obj.body)
+  gameObjects = gameObjects.filter(updateable => updateable !== obj)
+}
+
+const getGameObjects = () => gameObjects
 
 // Init game here
 const player = createPlayer()
-const enemies = zeros(5).map(() => createEnemy(player, engine.world))
-const bombers = zeros(0).map(() => createBomber(player))
-const asteroidAmounts = 50
+const enemies = zeros(0).map(() => createEnemy(player, addObject))
+const bombers = zeros(50).map(() => createBomber(player, getGameObjects))
+const asteroidAmounts = 0
+
+let bullets = [
+]
+let gameObjects = [
+  ... enemies,
+  ...bombers,
+]
+
+zeros(asteroidAmounts).map(() => {
+  return asteroid(player)
+}).forEach(addObject)
 
 const objects = [
   player.body, 
   ...enemies.map(enemy => enemy.body),
-  ...zeros(asteroidAmounts / 2).map(() => {
-    return asteroid(player)
-  }),
-    ...bombers.map(bomber => bomber.body),
-  ...zeros(asteroidAmounts / 2).map(() => {
-    return asteroid(player)
-  }),
+  ...bombers.map(bomber => bomber.body),
 ]
 
 // Add all bodies and composites to the world
@@ -104,20 +122,11 @@ Composite.add(engine.world, objects);
 
 const isKeyDown = keyDownTracker()
 
-let bullets = [
-]
-let eBullets = [
-]
-
 
 const fireP = throttle (300, () => {
   const spawnPos = Vector.add(player.body.position, Vector.mult (direction(player.body), playerRadius))
   const newBullet = bullet(spawnPos,direction(player.body))
-  Composite.add(engine.world, newBullet);
-  bullets = [
-    newBullet,
-    ...bullets,
-  ]
+  addObject(newBullet)
 })
 addEventListener(`keydown`, (event) => {
   if (event.code === `Space`) { 
@@ -143,33 +152,11 @@ Events.on(engine, "beforeUpdate", (event) => {
   applyAngularFriction(player.body, 5)
 
   bullets.forEach(bullet => {
-    // Set angle in velocity direction 
-    Body.setAngle(
-      bullet,
-      Vector.angle(
-        right,
-        bullet.velocity,
-      )
-    )    
     // Reset speed
-    setBulletDirection(bullet, bullet.velocity)
+    bullet.update()
   });
 
-  eBullets.forEach(bullet => {
-    // Set angle in velocity direction 
-    Body.setAngle(
-      bullet,
-      Vector.angle(
-        right,
-        bullet.velocity,
-      )
-    )    
-    // Reset speed
-    setBulletDirection(bullet, bullet.velocity)
-  });
-
-  enemies.forEach((enemy) => enemy.update())
-  bombers.forEach((bomber) => bomber.update())
+  gameObjects.forEach((updateable) => updateable.update?.())
 
   // enemyShoot()
   Render.lookAt(render, {
@@ -178,3 +165,17 @@ Events.on(engine, "beforeUpdate", (event) => {
   });
 })
 
+
+Events.on(engine, "collisionStart", (event) => {
+  const bodyA = event.pairs[0].bodyA
+  const bodyB = event.pairs[0].bodyB
+  const objA = gameObjects.find(updateable => updateable.body == bodyA)
+  const objB = gameObjects.find(updateable => updateable.body == bodyB)
+
+  if(objA !== undefined && objA.isBullet){
+    removeObject(objA)
+  }
+  if(objB !== undefined && objB.isBullet){
+    removeObject(objB)
+  }
+}) 

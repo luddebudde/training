@@ -1,9 +1,10 @@
 import { Bodies, Body, Vector } from "matter-js"
+import { angle } from "./angle"
 import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
 
-const bulletSpeed = 20
+const bulletSpeed = 15
 
 export const setBulletDirection = (body, direction) => {
     Body.setVelocity(
@@ -13,13 +14,14 @@ export const setBulletDirection = (body, direction) => {
             bulletSpeed
         )
     )
+    Body.setAngle(body, angle(direction))
 }
 
 export const bullet = (pos, direction) => {
     const bulletRadius = 20
     // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position) 
     const p = Vector.add(pos, Vector.mult(direction, bulletRadius))
-    const bullet = Bodies.circle(p.x, p.y, bulletRadius, {
+    const body = Bodies.circle(p.x, p.y, bulletRadius, {
         mass: 1,
         friction: 0,
         frictionAir: 0,
@@ -31,6 +33,12 @@ export const bullet = (pos, direction) => {
             },
         },
     })
-    setBulletDirection(bullet, direction)
-    return bullet
+    setBulletDirection(body, direction)
+    return {
+        body: body,
+        update: () => {
+            setBulletDirection(body, body.velocity)
+        },
+        isBullet: true,
+    }
 }

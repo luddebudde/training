@@ -32,5 +32,7 @@ export const asteroid = (player) => {
     applyTorque(body, 1)
     applyForceTo(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20))) 
     
-    return body
+    return {
+        body: body,
+    }
 }

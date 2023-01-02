@@ -9,8 +9,8 @@ import { up } from "./vectors"
 
 export const engineStrength = 0.3
 export const enemyRadius = 55
-export const createEnemy = (player, world) => {
-    const body = Bodies.circle(0, 10, enemyRadius, {
+export const createEnemy = (player, addObject) => {
+    const body = Bodies.circle(500, 500, enemyRadius, {
         mass: 500,
         frictionAir: 0.05,
         render: {
@@ -27,11 +27,7 @@ export const createEnemy = (player, world) => {
     }
     const fire = throttle(1000,() => {
         const newEBullet = ebullet(gunPosition(), direction(body))
-        Composite.add(world, newEBullet)
-        // eBullets = [
-        //     newEBullet,
-        //     ...eBullets,
-        // ]
+        addObject(newEBullet)
     })
     return {
         body: body,
