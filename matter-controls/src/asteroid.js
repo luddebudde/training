@@ -2,15 +2,10 @@ import { Bodies, Vector } from "matter-js"
 import { room } from "../main.js"
 import { applyForceTo } from "./applyForceTo.js"
 import { applyTorque } from "./applyTorque"
+import { radiansToCartesian } from "./radianstToCartesian.js"
 import { random } from "./random.js"
 import { sprites } from "./sprites.js"
 
-const radiansToCartesian = (angle, r) => {
-    return {
-        x: r * Math.cos(angle),
-        y: r * Math.sin(angle),
-    }
-}
 
 export const asteroid = (player) => {
 

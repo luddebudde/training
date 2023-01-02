@@ -96,9 +96,9 @@ const getGameObjects = () => gameObjects
 
 // Init game here
 const player = createPlayer()
-const enemies = zeros(0).map(() => createEnemy(player, addObject))
-const bombers = zeros(50).map(() => createBomber(player, getGameObjects))
-const asteroidAmounts = 0
+const enemies = zeros(3).map(() => createEnemy(player, addObject))
+const bombers = zeros(0).map(() => createBomber(player, getGameObjects))
+const asteroidAmounts = 10
 
 let bullets = [
 ]
