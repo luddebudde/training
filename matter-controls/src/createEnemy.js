@@ -45,8 +45,7 @@ export const createEnemy = (player, addObject) => {
                 // Move
                 Body.applyForce(body, body.position, Vector.mult(direction(body), engineStrength))
             }
-
-        }
-
+        },
+        health: 100,
     }
 }

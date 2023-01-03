@@ -107,6 +107,7 @@ export const createBomber = (player, getGameObjects) => {
             // }
         },
         isBullet: true,
+        health: 20,
     }
 
 }

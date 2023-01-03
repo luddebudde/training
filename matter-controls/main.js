@@ -1,18 +1,18 @@
-import {Bodies, Body, Composite, Engine, Events, Mouse, MouseConstraint, Render, Runner, Vector} from "matter-js";
-import {black, darkGrey, green, red, white} from './src/palette.js'
-import {down, left, right, up} from "./src/vectors.js";
-import {applyTorque} from "./src/applyTorque.js";
-import {createRoom} from "./src/createRoom.js";
-import {sprites} from "./src/sprites.js";
-import {keyDownTracker} from "./src/keyDownTracker.js";
+import { Bodies, Body, Composite, Engine, Events, Mouse, MouseConstraint, Render, Runner, Vector } from "matter-js";
+import { black, darkGrey, green, red, white } from './src/palette.js'
+import { down, left, right, up } from "./src/vectors.js";
+import { applyTorque } from "./src/applyTorque.js";
+import { createRoom } from "./src/createRoom.js";
+import { sprites } from "./src/sprites.js";
+import { keyDownTracker } from "./src/keyDownTracker.js";
 import { direction } from "./src/direction.js";
 import { applySpringTorque } from "./src/applySpringTorque";
 import { applyAngularFriction } from "./src/applyAngularFriction.js";
-import { asteroid} from "./src/asteroid.js";
+import { asteroid } from "./src/asteroid.js";
 import { zeros } from "./src/nTimes";
 import { bullet, setBulletDirection } from "./src/bullet.js";
 import { createPlayer, playerRadius } from "./src/createPlayer.js";
-import { createEnemy, engineStrength,  } from "./src/createEnemy.js";
+import { createEnemy, engineStrength, } from "./src/createEnemy.js";
 import { createBomber } from "./src/createBomber.js";
 import { ebullet } from "./src/eBullet.js";
 import { throttle } from "throttle-debounce";
@@ -97,13 +97,13 @@ const getGameObjects = () => gameObjects
 // Init game here
 const player = createPlayer()
 const enemies = zeros(3).map(() => createEnemy(player, addObject))
-const bombers = zeros(0).map(() => createBomber(player, getGameObjects))
-const asteroidAmounts = 10
+const bombers = zeros(50).map(() => createBomber(player, getGameObjects))
+const asteroidAmounts = 60
 
 let bullets = [
 ]
 let gameObjects = [
-  ... enemies,
+  ...enemies,
   ...bombers,
 ]
 
@@ -112,25 +112,29 @@ zeros(asteroidAmounts).map(() => {
 }).forEach(addObject)
 
 const objects = [
-  player.body, 
   ...enemies.map(enemy => enemy.body),
   ...bombers.map(bomber => bomber.body),
 ]
 
-// Add all bodies and composites to the world
-Composite.add(engine.world, objects);
+enemies.forEach(enemy => {
+  addObject(enemy)
+});
+bombers.forEach(bomber => {
+  addObject(bomber)
+});
+addObject(player)
 
 const isKeyDown = keyDownTracker()
 
 
-const fireP = throttle (300, () => {
-  const spawnPos = Vector.add(player.body.position, Vector.mult (direction(player.body), playerRadius))
-  const newBullet = bullet(spawnPos,direction(player.body))
+const fireP = throttle(300, () => {
+  const spawnPos = Vector.add(player.body.position, Vector.mult(direction(player.body), playerRadius))
+  const newBullet = bullet(spawnPos, direction(player.body))
   addObject(newBullet)
 })
 addEventListener(`keydown`, (event) => {
-  if (event.code === `Space`) { 
-   fireP()
+  if (event.code === `Space` && player.health > 0) {
+    fireP()
   }
 })
 
@@ -138,7 +142,7 @@ Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
   if (isKeyDown(`KeyW`)) {
     Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), 1))
-  } 
+  }
   if (isKeyDown(`KeyS`)) {
     Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), -0.5))
   }
@@ -160,22 +164,51 @@ Events.on(engine, "beforeUpdate", (event) => {
 
   // enemyShoot()
   Render.lookAt(render, {
-    min: {x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2,},
-    max: {x: player.body.position.x + room.width / 2, y: player.body.position.y + room.height / 2},
+    min: { x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2, },
+    max: { x: player.body.position.x + room.width / 2, y: player.body.position.y + room.height / 2 },
   });
+ drawHealthBar()
 })
+
+const drawHealthBar = () => {
+  const maxHealth = 200
+  const health = player.health
+  const percentageHealth = health / maxHealth
+  const ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.rect(0, room.height - 30, room.width, room.height);
+  ctx.fillStyle = "green"
+  ctx.fill()
+  ctx.beginPath();
+  ctx.rect(percentageHealth * room.width, room.height - 30, room.width, room.height)
+  ctx.fillStyle = "red"
+  ctx.fill()
+}
 
 
 Events.on(engine, "collisionStart", (event) => {
-  const bodyA = event.pairs[0].bodyA
-  const bodyB = event.pairs[0].bodyB
-  const objA = gameObjects.find(updateable => updateable.body == bodyA)
-  const objB = gameObjects.find(updateable => updateable.body == bodyB)
+  const objA = gameObjects.find(updateable => updateable.body == event.pairs[0].bodyA)
+  const objB = gameObjects.find(updateable => updateable.body == event.pairs[0].bodyB)
 
-  if(objA !== undefined && objA.isBullet){
-    removeObject(objA)
+  testCollision(objA, objB)
+  testCollision(objB, objA)
+}
+)
+
+const testCollision = (objA, objB) => {
+  if (objB !== undefined && objB.isBullet) {
+    damage(objA)
+    damage(objB)
   }
-  if(objB !== undefined && objB.isBullet){
-    removeObject(objB)
+}
+
+const damage = (obj) => {
+  if (obj !== undefined && obj.health !== undefined) {
+    obj.health = obj.health - 20
+    console.log(obj.body.label)
+    if (obj.health <= 0) {
+      removeObject(obj)
+    }
   }
-}) 
+
+}

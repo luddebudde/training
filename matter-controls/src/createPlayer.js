@@ -7,7 +7,8 @@ export const createPlayer = () => {
     return {
         body: Bodies.circle(0, 0, playerRadius, {
             mass: 500,
-            frictionAir: 0.05,
+            frictionAir: 0.05,  
+            label: "Player",
             render: {
                 sprite: {
                     texture: sprites.player.texture,
@@ -15,6 +16,7 @@ export const createPlayer = () => {
                     yScale: 2 * playerRadius / sprites.player.height,
                 },
             },
-        })
+        }),
+        health:200,
     }
 }

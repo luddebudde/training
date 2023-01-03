@@ -40,5 +40,6 @@ export const bullet = (pos, direction) => {
             setBulletDirection(body, body.velocity)
         },
         isBullet: true,
+        health: 100,
     }
 }

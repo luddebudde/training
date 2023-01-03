@@ -39,5 +39,6 @@ export const ebullet = (pos, direction) => {
             setBulletDirection(body, body.velocity)
         },
         isBullet: true,
+        health: 0,
     }
 }
