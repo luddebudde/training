@@ -43,7 +43,7 @@ const render = Render.create({
     // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
-    // showAngleIndicator: true,
+    showAngleIndicator: true,
     // showVelocity: true,
     // showPerformance: true,
   },
@@ -81,7 +81,7 @@ Runner.run(runner, engine);
 // ============= DO NOT EDIT ABOVE ==============
 
 const addObject = (obj) => {
-  Composite.add(engine.world, obj.body)
+  Composite.add(engine.world, obj.worldObjects ?? obj.body)
   gameObjects = [
     ...gameObjects,
     obj,
@@ -97,8 +97,8 @@ const getGameObjects = () => gameObjects
 // Init game here
 const player = createPlayer()
 const enemies = zeros(3).map(() => createEnemy(player, addObject))
-const bombers = zeros(50).map(() => createBomber(player, getGameObjects))
-const asteroidAmounts = 60
+const bombers = zeros(20).map(() => createBomber(player, getGameObjects))
+const asteroidAmounts = 20
 
 let bullets = [
 ]
@@ -161,14 +161,18 @@ Events.on(engine, "beforeUpdate", (event) => {
   });
 
   gameObjects.forEach((updateable) => updateable.update?.())
+  
 
-  // enemyShoot()
-  Render.lookAt(render, {
-    min: { x: player.body.position.x - room.width / 2, y: player.body.position.y - room.height / 2, },
-    max: { x: player.body.position.x + room.width / 2, y: player.body.position.y + room.height / 2 },
-  });
- drawHealthBar()
+  lookAt(player.camera.position)
+  drawHealthBar()
 })
+
+const lookAt = (pos) => {
+  Render.lookAt(render, {
+    min: { x: pos.x - room.width / 2, y: pos.y - room.height / 2, },
+    max: { x: pos.x + room.width / 2, y: pos.y + room.height / 2 },
+  });
+}
 
 const drawHealthBar = () => {
   const maxHealth = 200
@@ -197,14 +201,15 @@ Events.on(engine, "collisionStart", (event) => {
 
 const testCollision = (objA, objB) => {
   if (objB !== undefined && objB.isBullet) {
-    damage(objA)
-    damage(objB)
+    damage(objA, objB.damage ?? 20)
+    damage(objB, objA.damage ?? 20)
+    
   }
 }
 
-const damage = (obj) => {
+const damage = (obj, damage) => {
   if (obj !== undefined && obj.health !== undefined) {
-    obj.health = obj.health - 20
+    obj.health = obj.health - damage
     console.log(obj.body.label)
     if (obj.health <= 0) {
       removeObject(obj)

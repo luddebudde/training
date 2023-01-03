@@ -108,6 +108,7 @@ export const createBomber = (player, getGameObjects) => {
         },
         isBullet: true,
         health: 20,
+        damage: 50
     }
 
 }

@@ -40,5 +40,6 @@ export const ebullet = (pos, direction) => {
         },
         isBullet: true,
         health: 0,
+        damage: 10
     }
 }
