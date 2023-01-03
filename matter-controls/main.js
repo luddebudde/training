@@ -131,10 +131,10 @@ const spawnEnemies = throttle(3000, () => {
   const position = spawnPosition()
   if (r < 10) {
     zeros(3).forEach(() => {
-      addObject(createEnemy(player, getGameObjects, position))
+      // addObject(createEnemy(player, getGameObjects, position))
     })
   } else if (r < 15) {
-    zeros(30).forEach(() => {
+    zeros(10).forEach(() => {
       addObject(createBomber(player, getGameObjects, position))
     })
 
@@ -143,7 +143,7 @@ const spawnEnemies = throttle(3000, () => {
       addObject(createBomber(player, getGameObjects, position))
     })
   } else {
-    addObject(createEnemy(player, addObject, position))
+    // addObject(createEnemy(player, addObject, position))
   }
 }
 )
@@ -164,8 +164,8 @@ addEventListener(`keydown`, (event) => {
 
 const testCollision = (objA, objB) => {
   if (objB !== undefined && objB.isBullet) {
-    damage(objA, objB.damage ?? 20)
-    damage(objB, objA.damage ?? 20)
+    damage(objA, objB.damage ?? 0)
+    damage(objB, objA.damage ?? 0)
 
   }
 }
@@ -173,7 +173,6 @@ const testCollision = (objA, objB) => {
 const damage = (obj, damage) => {
   if (obj !== undefined && obj.health !== undefined) {
     obj.health = obj.health - damage
-    console.log(obj.body.label)
     if (obj.health <= 0) {
       removeObject(obj)
     }

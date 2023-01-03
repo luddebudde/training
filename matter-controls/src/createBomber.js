@@ -33,7 +33,7 @@ export const createBomber = (player, getGameObjects, position) => {
         update: () => {
             const dirToPlayer = Vector.normalise(Vector.sub(player.body.position, body.position))
 
-            const neighborThreshold = 50
+            const neighborThreshold = 100
 
             // const neighbors = getGameObjects().filter(gameObjects => gameObjects)
             //     .filter(gameObject => gameObject.body !== body)
@@ -45,11 +45,15 @@ export const createBomber = (player, getGameObjects, position) => {
 
             const neighborRepulsion = neighbors
                 // .filter(neighbor => Vector.magnitudeSquared(Vector.sub(neighbor.body.position, body.position)) < neighborThreshold * neighborThreshold)
-                .map(closeNeighbors => closeNeighbors.body.position)
-                .map(pos => Vector.sub(pos, body.position))
-                .map(r => Vector.div(Vector.normalise(r), -Vector.magnitudeSquared(r) + 0.0001))
-                .reduce((accumulation, current) => {
-                    return Vector.add(accumulation, current)
+                .map(closeNeighbors => closeNeighbors.body)
+                .map(neighbor => {
+                    const r = Vector.sub(neighbor.position, body.position)
+                    console.log(neighbor.mass);
+                    const force = Vector.mult(Vector.normalise(r), -neighbor.mass/(Vector.magnitudeSquared(r) + 0.0001))
+                    return force
+                })
+                .reduce((accumulation, force) => {
+                    return Vector.add(accumulation, force)
                 }, Vector.create(0, 0))
 
 
@@ -62,33 +66,13 @@ export const createBomber = (player, getGameObjects, position) => {
                     }, Vector.create(0, 0))
             )
 
-            const neighborCenter = neighbors
-                .filter(neighbor => Vector.magnitudeSquared(Vector.sub(neighbor.body.position, body.position)) < neighborThreshold * neighborThreshold)
-                .map(closeNeighbors => closeNeighbors.body.position)
-                .reduce((accumulation, current) => {
-                    return Vector.add(accumulation, current)
-                }, Vector.create(0, 0))
-            const neighborCenterDist = Vector.sub(neighborCenter, body.position)
-            const neighborAttraction = Vector.normalise(Vector.mult(Vector.normalise(neighborCenterDist), Vector.magnitudeSquared(neighborCenterDist)))
-
-            const neighborTarget = Vector.normalise((Vector.add(
-                Vector.mult(neighborRepulsion, 1),
-                Vector.mult(neighborAttraction, 2),
-            )))
-            const targetDir = Vector.normalise(
-                Vector.add(
-                    Vector.mult(Vector.normalise(dirToPlayer), 1),
-                    neighborTarget
-                )
-            )
-            const lookDir = direction(body)
             // const torque = 0.1 * Vector.cross(targetDir, lookDir)
             const isTurboOn = Vector.magnitude(Vector.sub(player.body.position, body.position)) < 300
             const forceMagnitude = isTurboOn ? turboStrengh : engineStrength
             
             const forceDir = Vector.normalise(
                 add(
-                    Vector.mult(neighborRepulsion, 500),
+                    Vector.mult(neighborRepulsion, 1),
                     Vector.mult(neighborDirection, 1),
                     Vector.mult(dirToPlayer, 0.5),
                 )
@@ -108,7 +92,7 @@ export const createBomber = (player, getGameObjects, position) => {
         },
         isBullet: true,
         health: 20,
-        damage: 50
+        // damage: 50
     }
 
 }
