@@ -12,8 +12,8 @@ import { left, right, up } from "./vectors"
 const engineStrength = 5
 const turboStrengh = engineStrength * 3
 export const BomberRadius = 15
-export const createBomber = (player, getGameObjects) => {
-    const body = Bodies.circle(random(300, 1000), random(300, 1000), BomberRadius, {
+export const createBomber = (player, getGameObjects, position) => {
+    const body = Bodies.circle(position.x, position.y, BomberRadius, {
         mass: 500,
         frictionAir: 0.1,
         angle: random(0, 2 * Math.PI),

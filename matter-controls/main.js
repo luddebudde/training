@@ -9,13 +9,16 @@ import { direction } from "./src/direction.js";
 import { applySpringTorque } from "./src/applySpringTorque";
 import { applyAngularFriction } from "./src/applyAngularFriction.js";
 import { asteroid } from "./src/asteroid.js";
-import { zeros } from "./src/nTimes";
+import { zeros } from "./src/zeros.js";
 import { bullet, setBulletDirection } from "./src/bullet.js";
 import { createPlayer, playerRadius } from "./src/createPlayer.js";
 import { createEnemy, engineStrength, } from "./src/createEnemy.js";
 import { createBomber } from "./src/createBomber.js";
 import { ebullet } from "./src/eBullet.js";
 import { throttle } from "throttle-debounce";
+import { random } from "./src/random.js";
+import { add } from "./src/math.js";
+import { radiansToCartesian } from "./src/radianstToCartesian.js";
 
 // create an engine
 const engine = Engine.create();
@@ -96,32 +99,22 @@ const getGameObjects = () => gameObjects
 
 // Init game here
 const player = createPlayer()
-const enemies = zeros(3).map(() => createEnemy(player, addObject))
-const bombers = zeros(20).map(() => createBomber(player, getGameObjects))
+// const enemies = zeros(3).map(() => createEnemy(player, addObject))
+// const bombers = zeros(20).map(() => createBomber(player, getGameObjects))
 const asteroidAmounts = 20
 
 let bullets = [
 ]
 let gameObjects = [
-  ...enemies,
-  ...bombers,
 ]
 
+const spawnPosition = () => {
+  return Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(room.width * 1.1, room.width * 1.3)), player.body.position)
+}
 zeros(asteroidAmounts).map(() => {
-  return asteroid(player)
+  return asteroid(spawnPosition())
 }).forEach(addObject)
 
-const objects = [
-  ...enemies.map(enemy => enemy.body),
-  ...bombers.map(bomber => bomber.body),
-]
-
-enemies.forEach(enemy => {
-  addObject(enemy)
-});
-bombers.forEach(bomber => {
-  addObject(bomber)
-});
 addObject(player)
 
 const isKeyDown = keyDownTracker()
@@ -132,11 +125,61 @@ const fireP = throttle(300, () => {
   const newBullet = bullet(spawnPos, direction(player.body))
   addObject(newBullet)
 })
+
+const spawnEnemies = throttle(3000, () => {
+  const r = random(0, 100)
+  const position = spawnPosition()
+  if (r < 10) {
+    zeros(3).forEach(() => {
+      addObject(createEnemy(player, getGameObjects, position))
+    })
+  } else if (r < 15) {
+    zeros(30).forEach(() => {
+      addObject(createBomber(player, getGameObjects, position))
+    })
+
+  } else if (r < 25) {
+    zeros(10).forEach(() => {
+      addObject(createBomber(player, getGameObjects, position))
+    })
+  } else {
+    addObject(createEnemy(player, addObject, position))
+  }
+}
+)
+
+const spawnAsteroids = throttle(500, () => {
+  const position = spawnPosition()
+  addObject(asteroid(position))
+}
+)
+
+
 addEventListener(`keydown`, (event) => {
   if (event.code === `Space` && player.health > 0) {
     fireP()
   }
 })
+
+
+const testCollision = (objA, objB) => {
+  if (objB !== undefined && objB.isBullet) {
+    damage(objA, objB.damage ?? 20)
+    damage(objB, objA.damage ?? 20)
+
+  }
+}
+
+const damage = (obj, damage) => {
+  if (obj !== undefined && obj.health !== undefined) {
+    obj.health = obj.health - damage
+    console.log(obj.body.label)
+    if (obj.health <= 0) {
+      removeObject(obj)
+    }
+  }
+
+}
 
 Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
@@ -161,7 +204,8 @@ Events.on(engine, "beforeUpdate", (event) => {
   });
 
   gameObjects.forEach((updateable) => updateable.update?.())
-  
+  spawnEnemies()
+  spawnAsteroids()
 
   lookAt(player.camera.position)
   drawHealthBar()
@@ -198,22 +242,3 @@ Events.on(engine, "collisionStart", (event) => {
   testCollision(objB, objA)
 }
 )
-
-const testCollision = (objA, objB) => {
-  if (objB !== undefined && objB.isBullet) {
-    damage(objA, objB.damage ?? 20)
-    damage(objB, objA.damage ?? 20)
-    
-  }
-}
-
-const damage = (obj, damage) => {
-  if (obj !== undefined && obj.health !== undefined) {
-    obj.health = obj.health - damage
-    console.log(obj.body.label)
-    if (obj.health <= 0) {
-      removeObject(obj)
-    }
-  }
-
-}

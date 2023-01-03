@@ -9,8 +9,8 @@ import { up } from "./vectors"
 
 export const engineStrength = 0.3
 export const enemyRadius = 55
-export const createEnemy = (player, addObject) => {
-    const body = Bodies.circle(500, 500, enemyRadius, {
+export const createEnemy = (player, addObject, position) => {
+    const body = Bodies.circle(position.x, position.y, enemyRadius, {
         mass: 500,
         frictionAir: 0.05,
         render: {
@@ -46,6 +46,6 @@ export const createEnemy = (player, addObject) => {
                 Body.applyForce(body, body.position, Vector.mult(direction(body), engineStrength))
             }
         },
-        health: 100,
+        health: 40,
     }
 }

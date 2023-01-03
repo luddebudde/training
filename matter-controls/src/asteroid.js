@@ -7,12 +7,12 @@ import { random } from "./random.js"
 import { sprites } from "./sprites.js"
 
 
-export const asteroid = (player) => {
+export const asteroid = (position) => {
 
     const asteroidRadius = random(30, 90)
-    const pos = Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(500, 1000)), player.body.position)
     
-    const body = Bodies.circle(pos.x, pos.y , asteroidRadius, {
+    
+    const body = Bodies.circle(position.x, position.y , asteroidRadius, {
         density: 0.1,
         frictionAir: 0,
         render: {
@@ -29,5 +29,7 @@ export const asteroid = (player) => {
     
     return {
         body: body,
+        // damage: 100,
+        // isBullet: true,
     }
 }
