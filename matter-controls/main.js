@@ -24,6 +24,7 @@ import { playBum, playExplosion } from "./src/audio.js";
 const shouldPlayMusic = true
 
 const audio = new Audio('audio/synthwave-outrun.mp3');
+audio.loop = true
 const playMusic = () => {
   if (!shouldPlayMusic) {
     return
