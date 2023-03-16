@@ -24,11 +24,14 @@ import { radiansToCartesian } from "./src/radianstToCartesian.js";
 const engine = Engine.create();
 engine.gravity.scale = 0
 const canvas = document.getElementById('app');
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
 
 export const room = {
-  height: 1300,
-  width: 1500,
+  height: canvas.height,
+  width: canvas.width,
 }
+console.log(room)
 
 // create a renderer
 const render = Render.create({
@@ -130,19 +133,19 @@ const fireP = throttle(300, () => {
   addObject(newBullet)
 })
 
-const spawnEnemies = throttle(3000, () => {
+const spawnEnemies = throttle(5000, () => {
   const r = random(0, 100)
   const position = spawnPosition()
-  if (r < 10) {
-    zeros(3).forEach(() => {
+  if (r < 15) {
+    zeros(2).forEach(() => {
       addObject(createEnemy(player, getGameObjects, position))
     })
-  } else if (r < 15) {
-    zeros(10).forEach(() => {
+  } else if (r < 25) {
+    zeros(15).forEach(() => {
       addObject(createBomber(player, getGameObjects, position))
     })
 
-  } else if (r < 25) {
+  } else if (r < 40) {
     zeros(10).forEach(() => {
       addObject(createBomber(player, getGameObjects, position))
     })
