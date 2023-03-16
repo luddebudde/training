@@ -42,11 +42,11 @@ const render = Render.create({
     width: room.width,
     // wireframeBackground: true,
     background: undefined,
-    showDebug: true,
+    showDebug: import.meta.env.DEV,
     // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
-    showAngleIndicator: true,
+    // showAngleIndicator: true,
     // showVelocity: true,
     // showPerformance: true,
   },
@@ -131,7 +131,7 @@ const spawnEnemies = throttle(3000, () => {
   const position = spawnPosition()
   if (r < 10) {
     zeros(3).forEach(() => {
-      // addObject(createEnemy(player, getGameObjects, position))
+      addObject(createEnemy(player, getGameObjects, position))
     })
   } else if (r < 15) {
     zeros(10).forEach(() => {
@@ -143,7 +143,7 @@ const spawnEnemies = throttle(3000, () => {
       addObject(createBomber(player, getGameObjects, position))
     })
   } else {
-    // addObject(createEnemy(player, addObject, position))
+    addObject(createEnemy(player, addObject, position))
   }
 }
 )

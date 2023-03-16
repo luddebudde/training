@@ -9,7 +9,7 @@ import { sprites } from "./sprites.js"
 
 export const asteroid = (position) => {
 
-    const asteroidRadius = random(30, 30)
+    const asteroidRadius = random(30, 100)
     
     
     const body = Bodies.circle(position.x, position.y , asteroidRadius, {

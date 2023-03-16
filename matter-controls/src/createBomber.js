@@ -48,7 +48,7 @@ export const createBomber = (player, getGameObjects, position) => {
                 .map(closeNeighbors => closeNeighbors.body)
                 .map(neighbor => {
                     const r = Vector.sub(neighbor.position, body.position)
-                    console.log(neighbor.mass);
+                    // console.log(neighbor.mass);
                     const force = Vector.mult(Vector.normalise(r), -neighbor.mass/(Vector.magnitudeSquared(r) + 0.0001))
                     return force
                 })
@@ -91,8 +91,8 @@ export const createBomber = (player, getGameObjects, position) => {
             // }
         },
         isBullet: true,
-        health: 20,
-        // damage: 50
+        health: 0,
+        damage: 20,
     }
 
 }
