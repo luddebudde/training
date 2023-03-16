@@ -51,25 +51,27 @@ const render = Render.create({
     // showPerformance: true,
   },
 });
-
-// add mouse control and make the mouse revolute
-const mouse = Mouse.create(render.canvas)
-const mouseConstraint = MouseConstraint.create(engine, {
-  mouse: mouse,
-  constraint: {
-    stiffness: 0.6,
-    length: 0,
-    angularStiffness: 0,
-    render: {
-      visible: false
+if (import.meta.env.DEV) {
+  // add mouse control and make the mouse revolute
+  const mouse = Mouse.create(render.canvas)
+  const mouseConstraint = MouseConstraint.create(engine, {
+    mouse: mouse,
+    constraint: {
+      stiffness: 0.6,
+      length: 0,
+      angularStiffness: 0,
+      render: {
+        visible: false
+      }
     }
-  }
-});
+  });
 
-Composite.add(engine.world, [mouseConstraint])
+  Composite.add(engine.world, [mouseConstraint])
 
-// keep the mouse in sync with rendering
-render.mouse = mouse;
+
+  // keep the mouse in sync with rendering
+  render.mouse = mouse;
+}
 
 // fit the render viewport to the scene
 
