@@ -77,7 +77,9 @@ render.mouse = mouse;
 // run the renderer
 Render.run(render);
 // create runner
-const runner = Runner.create()
+const runner = Runner.create({
+  isFixed: true,
+})
 // run the engine
 Runner.run(runner, engine);
 
