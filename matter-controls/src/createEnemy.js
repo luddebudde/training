@@ -28,11 +28,13 @@ export const createEnemy = (player, addObject, position) => {
     const fire = throttle(1000,() => {
         const newEBullet = ebullet(gunPosition(), direction(body))
         addObject(newEBullet)
+        const audio = new Audio('audio/enemy-rifle.mp3');
+        audio.play();
     })
     return {
         body: body,
         update: () => {
-
+            
             // Turn
             const dirToPlayer = Vector.normalise(Vector.sub(player.body.position, body.position))
             const lookDir = direction(body)

@@ -4,7 +4,7 @@ import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
 
-const bulletSpeed = 15
+const bulletSpeed = 30
 
 export const setBulletDirection = (body, direction) => {
     Body.setVelocity(

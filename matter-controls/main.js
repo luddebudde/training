@@ -19,6 +19,24 @@ import { throttle } from "throttle-debounce";
 import { random } from "./src/random.js";
 import { add } from "./src/math.js";
 import { radiansToCartesian } from "./src/radianstToCartesian.js";
+import { playBum, playExplosion } from "./src/audio.js";
+
+const shouldPlayMusic = true
+
+const audio = new Audio('audio/synthwave-outrun.mp3');
+const playMusic = () => {
+  if (!shouldPlayMusic) {
+    return
+  }
+  const response = audio.play()
+  response.then(e => {
+    document.body.removeEventListener("mousemove", playMusic)
+  }).catch(e => { })
+}
+
+document.body.addEventListener("mousemove", playMusic)
+
+
 
 // create an engine
 const engine = Engine.create();
@@ -31,7 +49,6 @@ export const room = {
   height: canvas.height,
   width: canvas.width,
 }
-console.log(room)
 
 // create a renderer
 const render = Render.create({
@@ -131,6 +148,9 @@ const fireP = throttle(300, () => {
   const spawnPos = Vector.add(player.body.position, Vector.mult(direction(player.body), playerRadius))
   const newBullet = bullet(spawnPos, direction(player.body))
   addObject(newBullet)
+  const audio = new Audio('audio/player-rifle.mp3');
+  audio.play();
+
 })
 
 const spawnEnemies = throttle(5000, () => {
@@ -182,6 +202,9 @@ const damage = (obj, damage) => {
     obj.health = obj.health - damage
     if (obj.health <= 0) {
       removeObject(obj)
+      playExplosion()
+    } else{
+      playBum()
     }
   }
 
