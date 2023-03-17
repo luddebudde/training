@@ -16,6 +16,9 @@ export const createPlayer = () => {
                 yScale: 2 * playerRadius / sprites.player.height,
             },
         },
+        collisionFilter: {
+            // mask: 0
+        }
     })
     const cameraBody = Bodies.circle(playerRadius + 100, 0, 10, {
         mass: 1,

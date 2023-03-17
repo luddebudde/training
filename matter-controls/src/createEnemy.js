@@ -1,11 +1,9 @@
-
-import { Bodies, Body, Composite, Vector } from "matter-js"
-import { throttle } from "throttle-debounce"
-import { applyTorque } from "./applyTorque"
-import { direction } from "./direction"
-import { ebullet } from "./eBullet"
-import { sprites } from "./sprites"
-import { up } from "./vectors"
+import {Bodies, Body, Vector} from "matter-js"
+import {throttle} from "throttle-debounce"
+import {direction} from "./direction"
+import {ebullet} from "./eBullet"
+import {sprites} from "./sprites"
+import {turnTowards} from "./turnTowards.js";
 
 export const engineStrength = 0.3
 export const enemyRadius = 55
@@ -34,12 +32,8 @@ export const createEnemy = (player, addObject, position) => {
     return {
         body: body,
         update: () => {
-            
             // Turn
-            const dirToPlayer = Vector.normalise(Vector.sub(player.body.position, body.position))
-            const lookDir = direction(body)
-            const torque = Vector.cross(dirToPlayer, lookDir)
-            applyTorque(body, torque)
+            turnTowards(body, player.body)
 
             if (Vector.magnitude(Vector.sub(player.body.position, body.position)) < 500) {
                 fire()
@@ -51,3 +45,4 @@ export const createEnemy = (player, addObject, position) => {
         health: 40,
     }
 }
+

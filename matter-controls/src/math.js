@@ -1,9 +1,11 @@
 import { Vector } from "matter-js"
 
-export const add = (...terms) => {
-    let sum = Vector.create(0, 0)
-    terms.forEach(term => {
-    sum = Vector.add(sum, term)        
-    });
-    return sum
-}
+export const sum = (...terms) => terms.reduce((accumulation, term) => {
+    accumulation.x += term.x
+    accumulation.y += term.y
+    return accumulation
+}, Vector.create(0, 0))
+
+export const average = (...terms) => terms.length > 0 ? sum(...terms) / terms.length : undefined
+
+export const angleBetween = (a1, a2) => 180 - Math.abs(Math.abs(a1 - a2) - 180)

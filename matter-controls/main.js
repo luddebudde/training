@@ -2,7 +2,7 @@ import { Bodies, Body, Composite, Engine, Events, Mouse, MouseConstraint, Render
 import { black, darkGrey, green, red, white } from './src/palette.js'
 import { down, left, right, up } from "./src/vectors.js";
 import { applyTorque } from "./src/applyTorque.js";
-import { createRoom } from "./src/createRoom.js";
+import { createRoom  } from "./src/createRoom.js";
 import { sprites } from "./src/sprites.js";
 import { keyDownTracker } from "./src/keyDownTracker.js";
 import { direction } from "./src/direction.js";
@@ -17,9 +17,10 @@ import { createBomber } from "./src/createBomber.js";
 import { ebullet } from "./src/eBullet.js";
 import { throttle } from "throttle-debounce";
 import { random } from "./src/random.js";
-import { add } from "./src/math.js";
+import { sum } from "./src/math.js";
 import { radiansToCartesian } from "./src/radianstToCartesian.js";
 import { playBum, playExplosion } from "./src/audio.js";
+import {hollowCircle} from "./src/hollowCircle.js";
 
 const shouldPlayMusic = true
 
@@ -37,11 +38,16 @@ const playMusic = () => {
 
 document.body.addEventListener("mousemove", playMusic)
 
-
-
 // create an engine
-const engine = Engine.create();
-engine.gravity.scale = 0
+const engine = Engine.create({
+  gravity: {
+    scale: 0,
+  },
+  timing: {
+    timeScale: 0.5
+  }
+});
+
 const canvas = document.getElementById('app');
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
@@ -97,12 +103,12 @@ if (import.meta.env.DEV) {
 // fit the render viewport to the scene
 
 
-// run the renderer
-Render.run(render);
 // create runner
 const runner = Runner.create({
-  isFixed: true,
+  isFixed: false,
 })
+// run the renderer
+Render.run(render);
 // run the engine
 Runner.run(runner, engine);
 
@@ -136,9 +142,12 @@ let gameObjects = [
 const spawnPosition = () => {
   return Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(room.width * 1.1, room.width * 1.3)), player.body.position)
 }
+
+// Spawn in the beginning
 zeros(asteroidAmounts).map(() => {
   return asteroid(spawnPosition())
 }).forEach(addObject)
+Composite.add(engine.world, hollowCircle(0, 0, 30, 300))
 
 addObject(player)
 
