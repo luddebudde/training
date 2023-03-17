@@ -155,7 +155,7 @@ Composite.add(
     width: 100,
     isStatic: true,
     collisionFilter: {
-      category: collisionCategories.player,
+      category: collisionCategories.roomBoundary,
       mask: collisionCategories.player,
     }
   })

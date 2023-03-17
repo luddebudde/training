@@ -19,7 +19,7 @@ export const createPlayer = () => {
         },
         collisionFilter: {
             category: collisionCategories.player,
-            mask: collisionCategories.player,
+            // mask: collisionCategories.player,
         }
     })
     const cameraBody = Bodies.circle(playerRadius + 100, 0, 10, {
