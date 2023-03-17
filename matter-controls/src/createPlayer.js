@@ -1,6 +1,7 @@
 import { Bodies, Body, Constraint } from "matter-js"
 import { createEnemy } from "./createEnemy"
 import { sprites } from "./sprites"
+import {collisionCategories} from "./collision.js";
 
 export const playerRadius = 45
 export const createPlayer = () => {
@@ -17,7 +18,8 @@ export const createPlayer = () => {
             },
         },
         collisionFilter: {
-            // mask: 0
+            category: collisionCategories.player,
+            mask: collisionCategories.player,
         }
     })
     const cameraBody = Bodies.circle(playerRadius + 100, 0, 10, {

@@ -21,6 +21,7 @@ import { sum } from "./src/math.js";
 import { radiansToCartesian } from "./src/radianstToCartesian.js";
 import { playBum, playExplosion } from "./src/audio.js";
 import {hollowCircle} from "./src/hollowCircle.js";
+import {collisionCategories} from "./src/collision.js";
 
 const shouldPlayMusic = true
 
@@ -56,6 +57,7 @@ export const room = {
   height: canvas.height,
   width: canvas.width,
 }
+const roomRadius = 2000
 
 // create a renderer
 const render = Render.create({
@@ -132,7 +134,7 @@ const getGameObjects = () => gameObjects
 const player = createPlayer()
 // const enemies = zeros(3).map(() => createEnemy(player, addObject))
 // const bombers = zeros(20).map(() => createBomber(player, getGameObjects))
-const asteroidAmounts = 20
+const asteroidAmounts = 100
 
 let bullets = [
 ]
@@ -140,14 +142,24 @@ let gameObjects = [
 ]
 
 const spawnPosition = () => {
-  return Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(room.width * 1.1, room.width * 1.3)), player.body.position)
+  return Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius * 1.2)), player.body.position)
 }
 
 // Spawn in the beginning
 zeros(asteroidAmounts).map(() => {
   return asteroid(spawnPosition())
 }).forEach(addObject)
-Composite.add(engine.world, hollowCircle(0, 0, 30, 300))
+Composite.add(
+  engine.world,
+  hollowCircle(0, 0, 100, roomRadius, {
+    width: 100,
+    isStatic: true,
+    collisionFilter: {
+      category: collisionCategories.player,
+      mask: collisionCategories.player,
+    }
+  })
+)
 
 addObject(player)
 
@@ -184,13 +196,6 @@ const spawnEnemies = throttle(5000, () => {
   }
 }
 )
-
-const spawnAsteroids = throttle(500, () => {
-  const position = spawnPosition()
-  addObject(asteroid(position))
-}
-)
-
 
 addEventListener(`keydown`, (event) => {
   if (event.code === `Space` && player.health > 0) {
@@ -244,7 +249,6 @@ Events.on(engine, "beforeUpdate", (event) => {
 
   gameObjects.forEach((updateable) => updateable.update?.())
   spawnEnemies()
-  spawnAsteroids()
 
   lookAt(player.camera.position)
   drawHealthBar()
