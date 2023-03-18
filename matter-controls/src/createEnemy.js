@@ -4,6 +4,7 @@ import {direction} from "./direction"
 import {ebullet} from "./eBullet"
 import {sprites} from "./sprites"
 import {turnTowards} from "./turnTowards.js";
+import {thrust} from "./thrust.js";
 
 export const engineStrength = 0.3
 export const enemyRadius = 55
@@ -39,7 +40,7 @@ export const createEnemy = (player, addObject, position) => {
                 fire()
             } else {
                 // Move
-                Body.applyForce(body, body.position, Vector.mult(direction(body), engineStrength))
+                thrust(body, engineStrength)
             }
         },
         health: 40,

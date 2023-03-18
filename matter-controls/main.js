@@ -22,6 +22,7 @@ import { radiansToCartesian } from "./src/radianstToCartesian.js";
 import { playBum, playExplosion } from "./src/audio.js";
 import {hollowCircle} from "./src/hollowCircle.js";
 import {collisionCategories} from "./src/collision.js";
+import {thrust} from "./src/thrust.js";
 
 const shouldPlayMusic = true
 
@@ -233,10 +234,10 @@ const damage = (obj, damage) => {
 Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
   if (isKeyDown(`KeyW`)) {
-    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), 1))
+    thrust(player.body, 1)
   }
   if (isKeyDown(`KeyS`)) {
-    Body.applyForce(player.body, player.body.position, Vector.mult(direction(player.body), -0.5))
+    thrust(player.body, -1)
   }
   if (isKeyDown(`KeyA`)) {
     applyTorque(player.body, 0.5)
