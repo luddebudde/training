@@ -20,6 +20,7 @@ import {thrust} from "./src/thrust.js";
 import {drawHealthBar} from "./drawHealthBar.js";
 import {drawScore} from "./drawScore.js";
 import {moveCameraTo} from "./moveCameraTo.js";
+import {average, sum} from "./src/math.js";
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -100,6 +101,7 @@ const removeObject = (game, obj) => {
 
 const getGameObjects = () => game.gameObjects
 const createGame = () => {
+  const addGameObject = obj => addObject(game, obj)
   const engine = Engine.create({
     gravity: {
       scale: 0,
@@ -109,10 +111,10 @@ const createGame = () => {
     }
   })
   const game = {
-    id: Math.random().toString(10).slice(2),
     bullets: [],
     gameObjects: [],
-    player: createPlayer(),
+    player: createPlayer(addGameObject),
+    player2: createPlayer(addGameObject),
     engine,
     render: Render.create({
       canvas: canvas,
@@ -138,11 +140,12 @@ const createGame = () => {
 
   // Spawn Player
   addObject(game, game.player)
+  addObject(game, game.player2)
 
   // Spawn asteroid
   zeros(asteroidAmounts).map(() => {
     return asteroid(spawnPostionInsideRoom())
-  }).forEach(ast => addObject(game, ast))
+  }).forEach(addGameObject)
 
   // Spawn room boundary
   Composite.add(
@@ -189,7 +192,10 @@ const createGame = () => {
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
     if (event.code === `Space` && game.player.health > 0) {
-      fireP()
+      game.player.fire()
+    }
+    if (event.code === `Period` && game.player2.health > 0) {
+      game.player2.fire()
     }
     if (event.code === 'KeyR') {
       restartGame()
@@ -198,28 +204,41 @@ const registerEventListeners = () => {
   addEventListener(`keydown`, handleClickKeydown)
 
   const handleBeforeUpdate = () => {
-    const playerTorque = 0.2
-    const playerThrust = 1
+
 
     if (isKeyDown(`KeyW`)) {
-      thrust(game.player.body, playerThrust)
-      game.player.body.render.sprite.texture = sprites.playerWithJet.texture
+      game.player.thrust()
       engineAudio.volume = 1
     } else {
       game.player.body.render.sprite.texture = sprites.playerWithoutJet.texture
       engineAudio.volume = 0
     }
     if (isKeyDown(`KeyS`)) {
-      thrust(game.player.body, -playerThrust * 0.3)
+      game.player.back()
     }
     if (isKeyDown(`KeyA`)) {
-      applyTorque(game.player.body, playerTorque)
+      game.player.turnLeft()
     }
     if (isKeyDown(`KeyD`)) {
-      applyTorque(game.player.body, -playerTorque)
+      game.player.turnRight()
     }
 
-    applyAngularFriction(game.player.body, 5)
+    if (isKeyDown(`ArrowUp`)) {
+      game.player2.thrust()
+      engineAudio.volume = 1
+    } else {
+      game.player2.body.render.sprite.texture = sprites.playerWithoutJet.texture
+      engineAudio.volume = 0
+    }
+    if (isKeyDown(`ArrowDown`)) {
+      game.player2.back()
+    }
+    if (isKeyDown(`ArrowLeft`)) {
+      game.player2.turnLeft()
+    }
+    if (isKeyDown(`ArrowRight`)) {
+      game.player2.turnRight()
+    }
 
     game.bullets.forEach(bullet => {
       // Reset speed
@@ -229,8 +248,9 @@ const registerEventListeners = () => {
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
 
-    moveCameraTo(game.player.camera.position, game.render, room.width, room.height)
+    moveCameraTo(average(game.player.camera.position, game.player2.camera.position), game.render, room.width, room.height)
     drawHealthBar(canvas, 0, room.height - 20, room.width, 20, game.player.health)
+    drawHealthBar(canvas, 0, room.height - 50, room.width, 20, game.player2.health)
     drawScore(canvas, room.width - 40, 50, game.player.score)
   }
   Events.on(game.engine, "beforeUpdate", handleBeforeUpdate)
@@ -271,14 +291,6 @@ const restartGame = () => {
 
 const isKeyDown = keyDownTracker()
 
-const fireP = throttle(300, () => {
-  const spawnPos = Vector.add(game.player.body.position, Vector.mult(direction(game.player.body), playerRadius))
-  const newBullet = bullet(spawnPos, direction(game.player.body))
-  addObject(game, newBullet)
-  const audio = new Audio('audio/player-rifle.mp3');
-  audio.play();
-})
-
 const spawnEnemies = throttle(3000, () => {
     const r = random(0, 100)
     const position = spawnPositionOutsideRoom()
@@ -287,7 +299,7 @@ const spawnEnemies = throttle(3000, () => {
         addObject(game, createEnemy(game.player, getGameObjects, position))
       })
     } else if (r < 25) {
-      zeros(10).forEach(() => {
+      zeros(100).forEach(() => {
         addObject(game, createBomber(game.player, getGameObjects, position))
       })
 
