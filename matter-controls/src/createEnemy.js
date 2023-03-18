@@ -43,6 +43,7 @@ export const createEnemy = (player, addObject, position) => {
             }
         },
         health: 40,
+        points: 50,
     }
 }
 

@@ -142,14 +142,19 @@ let bullets = [
 let gameObjects = [
 ]
 
-const spawnPosition = () => {
+const spawnPositionOutsideRoom = () => {
   return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
+}
+
+
+const spawnPostionInsideRoom = () => {
+  return radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius + 500))
 }
 
 // Spawn in the beginning
 
 zeros(asteroidAmounts).map(() => {
-  return asteroid(spawnPosition())
+  return asteroid(spawnPostionInsideRoom())
 }).forEach(addObject)
 Composite.add(
   engine.world,
@@ -182,11 +187,11 @@ const fireP = throttle(300, () => {
 
 })
 
-const spawnEnemies = throttle(5000, () => {
+const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
-  const position = spawnPosition()
+  const position = spawnPositionOutsideRoom()
   if (r < 15) {
-    zeros(2).forEach(() => {
+    zeros(3).forEach(() => {
       addObject(createEnemy(player, getGameObjects, position))
     })
   } else if (r < 25) {
@@ -225,6 +230,7 @@ const damage = (obj, damage) => {
     if (obj.health <= 0) {
       removeObject(obj)
       playExplosion()
+      player.score = player.score + (obj.points ?? 0)
     } else{
       playBum()
     }
@@ -259,6 +265,7 @@ Events.on(engine, "beforeUpdate", (event) => {
 
   lookAt(player.camera.position)
   drawHealthBar()
+  drawScore()
 })
 
 const lookAt = (pos) => {
@@ -283,6 +290,11 @@ const drawHealthBar = () => {
   ctx.fill()
 }
 
+const drawScore = () => {
+  const ctx = canvas.getContext("2d");
+  ctx.font = "48px serif";
+  ctx.fillText(player.score, room.width - 40, 50);
+}
 
 Events.on(engine, "collisionStart", (event) => {
   const objA = gameObjects.find(updateable => updateable.body == event.pairs[0].bodyA)

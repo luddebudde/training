@@ -62,6 +62,7 @@ export const createBomber = (player, getGameObjects, position) => {
     health: 0,
     damage: 20,
     type: 'bomber',
+    points: 10,
   }
 
 }

@@ -47,5 +47,6 @@ export const createPlayer = () => {
         worldObjects: [playerBody, cameraBody, cameraConstraint],
         camera: cameraBody,
         health: 200,
+        score: 0,
     }
 }
