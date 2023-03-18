@@ -1,30 +1,59 @@
-import { Bodies, Body, Composite, Engine, Events, Mouse, MouseConstraint, Render, Runner, Vector } from "matter-js";
-import { black, darkGrey, green, red, white } from './src/palette.js'
-import { down, left, right, up } from "./src/vectors.js";
-import { applyTorque } from "./src/applyTorque.js";
-import { createRoom  } from "./src/createRoom.js";
-import { sprites } from "./src/sprites.js";
-import { keyDownTracker } from "./src/keyDownTracker.js";
-import { direction } from "./src/direction.js";
-import { applySpringTorque } from "./src/applySpringTorque";
-import { applyAngularFriction } from "./src/applyAngularFriction.js";
-import { asteroid } from "./src/asteroid.js";
-import { zeros } from "./src/zeros.js";
-import { bullet, setBulletDirection } from "./src/bullet.js";
-import { createPlayer, playerRadius } from "./src/createPlayer.js";
-import { createEnemy, engineStrength, } from "./src/createEnemy.js";
-import { createBomber } from "./src/createBomber.js";
-import { ebullet } from "./src/eBullet.js";
-import { throttle } from "throttle-debounce";
-import { random } from "./src/random.js";
-import { sum } from "./src/math.js";
-import { radiansToCartesian } from "./src/radianstToCartesian.js";
-import { playBum, playExplosion } from "./src/audio.js";
+import {Composite, Engine, Events, Mouse, MouseConstraint, Render, Runner, Vector} from "matter-js";
+import {applyTorque} from "./src/applyTorque.js";
+import {sprites} from "./src/sprites.js";
+import {keyDownTracker} from "./src/keyDownTracker.js";
+import {direction} from "./src/direction.js";
+import {applyAngularFriction} from "./src/applyAngularFriction.js";
+import {asteroid} from "./src/asteroid.js";
+import {zeros} from "./src/zeros.js";
+import {bullet} from "./src/bullet.js";
+import {createPlayer, playerRadius} from "./src/createPlayer.js";
+import {createEnemy,} from "./src/createEnemy.js";
+import {createBomber} from "./src/createBomber.js";
+import {throttle} from "throttle-debounce";
+import {random} from "./src/random.js";
+import {radiansToCartesian} from "./src/radianstToCartesian.js";
+import {playBum, playExplosion} from "./src/audio.js";
 import {hollowCircle} from "./src/hollowCircle.js";
 import {collisionCategories} from "./src/collision.js";
 import {thrust} from "./src/thrust.js";
+import {drawHealthBar} from "./drawHealthBar.js";
+import {drawScore} from "./drawScore.js";
+import {moveCameraTo} from "./moveCameraTo.js";
 
+const roomRadius = 2000
+const asteroidAmounts = 100
 const shouldPlayMusic = true
+
+
+const canvas = document.getElementById('app');
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+export const room = {
+  height: canvas.height,
+  width: canvas.width,
+}
+
+const testCollision = (objA, objB) => {
+  if (objB !== undefined && objB.isBullet) {
+    damage(objA, objB.damage ?? 0)
+    damage(objB, objA.damage ?? 0)
+  }
+}
+
+// create runner
+const runner = Runner.create({
+  isFixed: false,
+})
+
+const spawnPositionOutsideRoom = () => {
+  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
+}
+
+const spawnPostionInsideRoom = () => {
+  return radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius + 500))
+}
 
 const engineAudio = new Audio('audio/engine.mp3');
 engineAudio.loop = true
@@ -34,7 +63,8 @@ const playEngine = () => {
   const response = engineAudio.play()
   response.then(e => {
     document.body.removeEventListener("mousemove", playEngine)
-  }).catch(e => { })
+  }).catch(e => {
+  })
 }
 
 document.body.addEventListener("mousemove", playEngine)
@@ -49,281 +79,240 @@ const playMusic = () => {
   const response = musicAudio.play()
   response.then(e => {
     document.body.removeEventListener("mousemove", playMusic)
-  }).catch(e => { })
+  }).catch(e => {
+  })
 }
 
 document.body.addEventListener("mousemove", playMusic)
 
-// create an engine
-const engine = Engine.create({
-  gravity: {
-    scale: 0,
-  },
-  timing: {
-    timeScale: 0.5
-  }
-});
-
-const canvas = document.getElementById('app');
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight
-
-export const room = {
-  height: canvas.height,
-  width: canvas.width,
-}
-const roomRadius = 2000
-
-// create a renderer
-const render = Render.create({
-  canvas: canvas,
-  element: document.body,
-  engine: engine,
-  options: {
-    // showCollisions: true,  
-    wireframes: false,
-    height: room.height,
-    width: room.width,
-    // wireframeBackground: true,
-    background: undefined,
-    showDebug: import.meta.env.DEV,
-    // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
-    // For debugging
-    // showMousePosition: true,
-    // showAngleIndicator: import.meta.env.DEV,
-    // showVelocity: true,
-    // showPerformance: true,
-  },
-});
-if (import.meta.env.DEV) {
-  // add mouse control and make the mouse revolute
-  const mouse = Mouse.create(render.canvas)
-  const mouseConstraint = MouseConstraint.create(engine, {
-    mouse: mouse,
-    constraint: {
-      stiffness: 0.6,
-      length: 0,
-      angularStiffness: 0,
-      render: {
-        visible: false
-      }
-    }
-  });
-
-  Composite.add(engine.world, [mouseConstraint])
-
-
-  // keep the mouse in sync with rendering
-  render.mouse = mouse;
-}
-
-// fit the render viewport to the scene
-
-
-// create runner
-const runner = Runner.create({
-  isFixed: false,
-})
-// run the renderer
-Render.run(render);
-// run the engine
-Runner.run(runner, engine);
-
-// ============= DO NOT EDIT ABOVE ==============
-
-const addObject = (obj) => {
-  Composite.add(engine.world, obj.worldObjects ?? obj.body)
-  gameObjects = [
-    ...gameObjects,
+const addObject = (game, obj) => {
+  Composite.add(game.engine.world, obj.worldObjects ?? obj.body)
+  game.gameObjects = [
+    ...game.gameObjects,
     obj,
   ]
 }
-const removeObject = (obj) => {
-  Composite.remove(engine.world, obj.body)
-  gameObjects = gameObjects.filter(updateable => updateable !== obj)
+
+const removeObject = (game, obj) => {
+  Composite.remove(game.engine.world, obj.body)
+  game.gameObjects = game.gameObjects.filter(updateable => updateable !== obj)
 }
 
-const getGameObjects = () => gameObjects
-
-// Init game here
-const player = createPlayer()
-// const enemies = zeros(3).map(() => createEnemy(player, addObject))
-// const bombers = zeros(20).map(() => createBomber(player, getGameObjects))
-const asteroidAmounts = 100
-
-let bullets = [
-]
-let gameObjects = [
-]
-
-const spawnPositionOutsideRoom = () => {
-  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
-}
-
-
-const spawnPostionInsideRoom = () => {
-  return radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius + 500))
-}
-
-// Spawn in the beginning
-
-zeros(asteroidAmounts).map(() => {
-  return asteroid(spawnPostionInsideRoom())
-}).forEach(addObject)
-Composite.add(
-  engine.world,
-  hollowCircle(Vector.create(0, 0), 100, roomRadius, {
-    width: 100,
-    isStatic: true,
-    label: 'World Boundary',
-    collisionFilter: {
-      category: collisionCategories.roomBoundary,
-      mask: collisionCategories.player,
+const getGameObjects = () => game.gameObjects
+const createGame = () => {
+  const engine = Engine.create({
+    gravity: {
+      scale: 0,
     },
-    render: {
-      fillStyle: '#FFFFFF',
-      opacity: 0.1,
-    },
+    timing: {
+      timeScale: 0.5
+    }
   })
-)
+  const game = {
+    id: Math.random().toString(10).slice(2),
+    bullets: [],
+    gameObjects: [],
+    player: createPlayer(),
+    engine,
+    render: Render.create({
+      canvas: canvas,
+      element: document.body,
+      engine,
+      options: {
+        // showCollisions: true,
+        wireframes: false,
+        height: room.height,
+        width: room.width,
+        // wireframeBackground: true,
+        background: undefined,
+        showDebug: import.meta.env.DEV,
+        // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
+        // For debugging
+        // showMousePosition: true,
+        // showAngleIndicator: import.meta.env.DEV,
+        // showVelocity: true,
+        // showPerformance: true,
+      },
+    })
+  }
 
-addObject(player)
+  // Spawn Player
+  addObject(game, game.player)
+
+  // Spawn asteroid
+  zeros(asteroidAmounts).map(() => {
+    return asteroid(spawnPostionInsideRoom())
+  }).forEach(ast => addObject(game, ast))
+
+  // Spawn room boundary
+  Composite.add(
+    engine.world,
+    hollowCircle(Vector.create(0, 0), 100, roomRadius, {
+      width: 100,
+      isStatic: true,
+      label: 'World Boundary',
+      collisionFilter: {
+        category: collisionCategories.roomBoundary,
+        mask: collisionCategories.player,
+      },
+      render: {
+        fillStyle: '#FFFFFF',
+        opacity: 0.1,
+      },
+    })
+  )
+
+
+  if (import.meta.env.DEV) {
+    // add mouse control and make the mouse revolute
+    const mouse = Mouse.create(game.render.canvas)
+    const mouseConstraint = MouseConstraint.create(game.engine, {
+      mouse: mouse,
+      constraint: {
+        stiffness: 0.6,
+        length: 0,
+        angularStiffness: 0,
+        render: {
+          visible: false
+        }
+      }
+    })
+
+    Composite.add(game.engine.world, [mouseConstraint])
+
+    // keep the mouse in sync with rendering
+    game.render.mouse = mouse;
+  }
+  return game
+}
+
+const registerEventListeners = () => {
+  const handleClickKeydown = (event) => {
+    if (event.code === `Space` && game.player.health > 0) {
+      fireP()
+    }
+    if (event.code === 'KeyR') {
+      restartGame()
+    }
+  }
+  addEventListener(`keydown`, handleClickKeydown)
+
+  const handleBeforeUpdate = () => {
+    const playerTorque = 0.2
+    const playerThrust = 1
+
+    if (isKeyDown(`KeyW`)) {
+      thrust(game.player.body, playerThrust)
+      game.player.body.render.sprite.texture = sprites.playerWithJet.texture
+      engineAudio.volume = 1
+    } else {
+      game.player.body.render.sprite.texture = sprites.playerWithoutJet.texture
+      engineAudio.volume = 0
+    }
+    if (isKeyDown(`KeyS`)) {
+      thrust(game.player.body, -playerThrust * 0.3)
+    }
+    if (isKeyDown(`KeyA`)) {
+      applyTorque(game.player.body, playerTorque)
+    }
+    if (isKeyDown(`KeyD`)) {
+      applyTorque(game.player.body, -playerTorque)
+    }
+
+    applyAngularFriction(game.player.body, 5)
+
+    game.bullets.forEach(bullet => {
+      // Reset speed
+      bullet.update()
+    });
+
+    game.gameObjects.forEach((updateable) => updateable.update?.())
+    spawnEnemies()
+
+    moveCameraTo(game.player.camera.position, game.render, room.width, room.height)
+    drawHealthBar(canvas, 0, room.height - 20, room.width, 20, game.player.health)
+    drawScore(canvas, room.width - 40, 50, game.player.score)
+  }
+  Events.on(game.engine, "beforeUpdate", handleBeforeUpdate)
+
+  const handleCollisionStart = (event) => {
+    const objA = game.gameObjects.find(updateable => updateable.body === event.pairs[0].bodyA)
+    const objB = game.gameObjects.find(updateable => updateable.body === event.pairs[0].bodyB)
+
+    testCollision(objA, objB)
+    testCollision(objB, objA)
+  }
+
+  Events.on(game.engine, "collisionStart", handleCollisionStart)
+
+  return () => {
+    removeEventListener(`keydown`, handleClickKeydown)
+    Events.off(game.engine, "beforeUpdate", handleBeforeUpdate)
+    Events.off(game.engine, "collisionStart", handleCollisionStart)
+  }
+}
+const startGame = () => {
+  // run the renderer
+  Render.run(game.render);
+  // run the engine
+  Runner.run(runner, game.engine);
+  const cleanupEventListeners = registerEventListeners()
+  return () => {
+    cleanupEventListeners()
+    Render.stop(game.render)
+    Runner.stop(runner)
+  }
+}
+const restartGame = () => {
+  stopGame()
+  game = createGame()
+  startGame()
+}
 
 const isKeyDown = keyDownTracker()
 
-
 const fireP = throttle(300, () => {
-  const spawnPos = Vector.add(player.body.position, Vector.mult(direction(player.body), playerRadius))
-  const newBullet = bullet(spawnPos, direction(player.body))
-  addObject(newBullet)
+  const spawnPos = Vector.add(game.player.body.position, Vector.mult(direction(game.player.body), playerRadius))
+  const newBullet = bullet(spawnPos, direction(game.player.body))
+  addObject(game, newBullet)
   const audio = new Audio('audio/player-rifle.mp3');
   audio.play();
-
 })
 
 const spawnEnemies = throttle(3000, () => {
-  const r = random(0, 100)
-  const position = spawnPositionOutsideRoom()
-  if (r < 15) {
-    zeros(3).forEach(() => {
-      addObject(createEnemy(player, getGameObjects, position))
-    })
-  } else if (r < 25) {
-    zeros(15).forEach(() => {
-      addObject(createBomber(player, getGameObjects, position))
-    })
+    const r = random(0, 100)
+    const position = spawnPositionOutsideRoom()
+    if (r < 15) {
+      zeros(3).forEach(() => {
+        addObject(game, createEnemy(game.player, getGameObjects, position))
+      })
+    } else if (r < 25) {
+      zeros(15).forEach(() => {
+        addObject(game, createBomber(game.player, getGameObjects, position))
+      })
 
-  } else if (r < 40) {
-    zeros(10).forEach(() => {
-      addObject(createBomber(player, getGameObjects, position))
-    })
-  } else {
-    addObject(createEnemy(player, addObject, position))
+    } else if (r < 40) {
+      zeros(10).forEach(() => {
+        addObject(game, createBomber(game.player, getGameObjects, position))
+      })
+    } else {
+      addObject(game, createEnemy(game.player, (obj) => addObject(game, obj), position))
+    }
   }
-}
 )
-
-addEventListener(`keydown`, (event) => {
-  if (event.code === `Space` && player.health > 0) {
-    fireP()
-  }
-})
-
-
-const testCollision = (objA, objB) => {
-  if (objB !== undefined && objB.isBullet) {
-    damage(objA, objB.damage ?? 0)
-    damage(objB, objA.damage ?? 0)
-
-  }
-}
 
 const damage = (obj, damage) => {
   if (obj !== undefined && obj.health !== undefined) {
     obj.health = obj.health - damage
     if (obj.health <= 0) {
-      removeObject(obj)
+      removeObject(game, obj)
       playExplosion()
-      player.score = player.score + (obj.points ?? 0)
-    } else{
+      game.player.score = game.player.score + (obj.points ?? 0)
+    } else {
       playBum()
     }
   }
-
 }
 
-Events.on(engine, "beforeUpdate", (event) => {
-  //  Called very update
-  const playerTorque = 0.2
-  const playerThrust = 1
-
-  if (isKeyDown(`KeyW`)) {
-    thrust(player.body, playerThrust)
-    player.body.render.sprite.texture = sprites.playerWithJet.texture
-    engineAudio.volume = 1
-  } else{
-    player.body.render.sprite.texture = sprites.playerWithoutJet.texture
-    engineAudio.volume = 0
-  }
-  if (isKeyDown(`KeyS`)) {
-    thrust(player.body, -playerThrust * 0.3)
-  }
-  if (isKeyDown(`KeyA`)) {
-    applyTorque(player.body, playerTorque)
-  }
-  if (isKeyDown(`KeyD`)) {
-    applyTorque(player.body, -playerTorque)
-  }
-
-
-  applyAngularFriction(player.body, 5)
-
-  bullets.forEach(bullet => {
-    // Reset speed
-    bullet.update()
-  });
-
-  gameObjects.forEach((updateable) => updateable.update?.())
-  spawnEnemies()
-
-  lookAt(player.camera.position)
-  drawHealthBar()
-  drawScore()
-})
-
-const lookAt = (pos) => {
-  Render.lookAt(render, {
-    min: { x: pos.x - room.width / 2, y: pos.y - room.height / 2, },
-    max: { x: pos.x + room.width / 2, y: pos.y + room.height / 2 },
-  });
-}
-
-const drawHealthBar = () => {
-  const maxHealth = 200
-  const health = player.health
-  const percentageHealth = health / maxHealth
-  const ctx = canvas.getContext("2d");
-  ctx.beginPath();
-  ctx.rect(0, room.height - 30, room.width, room.height);
-  ctx.fillStyle = "green"
-  ctx.fill()
-  ctx.beginPath();
-  ctx.rect(percentageHealth * room.width, room.height - 30, room.width, room.height)
-  ctx.fillStyle = "red"
-  ctx.fill()
-}
-
-const drawScore = () => {
-  const ctx = canvas.getContext("2d");
-  ctx.font = "48px serif";
-  ctx.fillText(player.score, room.width - 40, 50);
-}
-
-Events.on(engine, "collisionStart", (event) => {
-  const objA = gameObjects.find(updateable => updateable.body == event.pairs[0].bodyA)
-  const objB = gameObjects.find(updateable => updateable.body == event.pairs[0].bodyB)
-
-  testCollision(objA, objB)
-  testCollision(objB, objA)
-}
-)
+let game = createGame()
+const stopGame = startGame()
