@@ -51,5 +51,6 @@ export const createPlayer = () => {
         camera: cameraBody,
         health: 200,
         score: 0,
+        type: 'player',
     }
 }

@@ -9,13 +9,14 @@ import {random} from "./random"
 import {sprites} from "./sprites"
 import {left, right, up} from "./vectors"
 import {setLookForward} from "./setLookForward.js";
+import {collisionCategories} from "./collision.js";
 
-const engineStrength = 5
-const turboStrengh = engineStrength * 3
+const engineStrength = 0.5
+const turboStrengh = engineStrength * 5
 export const BomberRadius = 15
 export const createBomber = (player, getGameObjects, position) => {
   const body = Bodies.circle(position.x, position.y, BomberRadius, {
-    mass: 500,
+    mass: 100,
     frictionAir: 0.1,
     angle: random(0, 2 * Math.PI),
     render: {
@@ -25,6 +26,10 @@ export const createBomber = (player, getGameObjects, position) => {
         yScale: 2 * BomberRadius / sprites.bomber.height,
       },
     },
+    collisionFilter: {
+      category: collisionCategories.bomber,
+      mask:~collisionCategories.bomber,
+    }
   })
   applyForceTo(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
   return {
@@ -32,8 +37,10 @@ export const createBomber = (player, getGameObjects, position) => {
     update: () => {
       const dirToPlayer = Vector.normalise(Vector.sub(player.body.position, body.position))
 
-      const allBodies = getGameObjects().map(obj => obj.body).filter(body => body)
+      const bomberBodies = getGameObjects().filter((obj) => obj.type === 'bomber').map(obj => obj.body).filter(body => body)
+      const allBodies = getGameObjects().filter((obj) => obj.type !== 'player').map(obj => obj.body).filter(body => body)
       const neighbors = getNeighbors(body, allBodies, 100)
+      const bomberNeighbors = getNeighbors(body, bomberBodies, 100)
 
       const neighborRepulsion = sum(
         ...neighbors.map(neighbor => {
@@ -42,16 +49,16 @@ export const createBomber = (player, getGameObjects, position) => {
         })
       )
 
-      const neighborDirection = averageNeighborDirection(neighbors)
+      const neighborDirection = averageNeighborDirection(bomberNeighbors)
 
       const isTurboOn = isDistanceGreaterThan(player.body.position, body.position, 300)
       const forceMagnitude = isTurboOn ? turboStrengh : engineStrength
 
       const forceDir = Vector.normalise(
         sum(
-          Vector.mult(neighborRepulsion, 0.5),
+          Vector.mult(neighborRepulsion, 1),
           Vector.mult(neighborDirection, 1),
-          Vector.mult(dirToPlayer, 0.5),
+          Vector.mult(dirToPlayer, 0.3),
         )
       )
       const force = Vector.mult(forceDir, forceMagnitude)
