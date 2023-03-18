@@ -287,12 +287,12 @@ const spawnEnemies = throttle(3000, () => {
         addObject(game, createEnemy(game.player, getGameObjects, position))
       })
     } else if (r < 25) {
-      zeros(15).forEach(() => {
+      zeros(10).forEach(() => {
         addObject(game, createBomber(game.player, getGameObjects, position))
       })
 
     } else if (r < 40) {
-      zeros(10).forEach(() => {
+      zeros(5).forEach(() => {
         addObject(game, createBomber(game.player, getGameObjects, position))
       })
     } else {

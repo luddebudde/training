@@ -8,7 +8,7 @@ import {thrust} from "./thrust.js";
 import {isFacing} from "./isFacing.js";
 
 export const engineStrength = 0.3
-export const enemyRadius = 55
+export const enemyRadius = 45
 export const createEnemy = (player, addObject, position) => {
     const body = Bodies.circle(position.x, position.y, enemyRadius, {
         mass: 500,
