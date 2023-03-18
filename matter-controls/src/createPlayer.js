@@ -12,9 +12,9 @@ export const createPlayer = () => {
         label: "Player",
         render: {
             sprite: {
-                texture: sprites.player.texture,
-                xScale: 2 * playerRadius / sprites.player.width,
-                yScale: 2 * playerRadius / sprites.player.height,
+                texture: sprites.playerWithoutJet.texture,
+                xScale: 2 * playerRadius / sprites.playerWithoutJet.width,
+                yScale: 2 * playerRadius / sprites.playerWithoutJet.height,
             },
         },
         collisionFilter: {

@@ -26,13 +26,27 @@ import {thrust} from "./src/thrust.js";
 
 const shouldPlayMusic = true
 
-const audio = new Audio('audio/synthwave-outrun.mp3');
-audio.loop = true
+const engineAudio = new Audio('audio/engine.mp3');
+engineAudio.loop = true
+engineAudio.volume = 0
+
+const playEngine = () => {
+  const response = engineAudio.play()
+  response.then(e => {
+    document.body.removeEventListener("mousemove", playEngine)
+  }).catch(e => { })
+}
+
+document.body.addEventListener("mousemove", playEngine)
+
+const musicAudio = new Audio('audio/synthwave-outrun.mp3');
+musicAudio.loop = true
+musicAudio.volume = 0.7
 const playMusic = () => {
   if (!shouldPlayMusic) {
     return
   }
-  const response = audio.play()
+  const response = musicAudio.play()
   response.then(e => {
     document.body.removeEventListener("mousemove", playMusic)
   }).catch(e => { })
@@ -76,7 +90,7 @@ const render = Render.create({
     // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
     // For debugging
     // showMousePosition: true,
-    // showAngleIndicator: true,
+    // showAngleIndicator: import.meta.env.DEV,
     // showVelocity: true,
     // showPerformance: true,
   },
@@ -242,6 +256,11 @@ Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
   if (isKeyDown(`KeyW`)) {
     thrust(player.body, 1)
+    player.body.render.sprite.texture = sprites.playerWithJet.texture
+    engineAudio.volume = 1
+  } else{
+    player.body.render.sprite.texture = sprites.playerWithoutJet.texture
+    engineAudio.volume = 0
   }
   if (isKeyDown(`KeyS`)) {
     thrust(player.body, -1)
@@ -252,6 +271,7 @@ Events.on(engine, "beforeUpdate", (event) => {
   if (isKeyDown(`KeyD`)) {
     applyTorque(player.body, -0.5)
   }
+
 
   applyAngularFriction(player.body, 5)
 

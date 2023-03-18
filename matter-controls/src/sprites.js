@@ -9,10 +9,15 @@ export const sprites = {
     height: 512,
     width: 512,
   },
-  player: {
-    texture: "/player.png",
-    height: 422,
-    width: 372,
+  playerWithoutJet: {
+    texture: "/player-without-jet.png",
+    height: 936,
+    width: 850,
+  },
+  playerWithJet: {
+    texture: "/player-with-jet.png",
+    height: 936,
+    width: 850,
   },
   enemy: {
     texture: "/enemy.png",
