@@ -3,12 +3,12 @@ import { createEnemy } from "./createEnemy"
 import { sprites } from "./sprites"
 import {collisionCategories} from "./collision.js";
 
-export const playerRadius = 45
+export const playerRadius = 30
 export const createPlayer = () => {
 
     const playerBody = Bodies.circle(0, 0, playerRadius, {
         mass: 500,
-        frictionAir: 0.05,
+        frictionAir: 0.08,
         label: "Player",
         render: {
             sprite: {
@@ -21,7 +21,7 @@ export const createPlayer = () => {
             category: collisionCategories.player,
         }
     })
-    const cameraBody = Bodies.circle(playerRadius + 100, 0, 10, {
+    const cameraBody = Bodies.circle(playerRadius, 0, 10, {
         mass: 1,
         frictionAir: 0.05,
         label: "Camera",
@@ -29,13 +29,16 @@ export const createPlayer = () => {
         render: {
             visible: false,
         },
+        collisionFilter: {
+            mask: 0,
+        }
     })
 
     const cameraConstraint = Constraint.create({
         bodyA: playerBody,
         bodyB: cameraBody,
         length: 0,
-        stiffness: 0.005,
+        stiffness: 0.0005,
         damping: 0.1,
         render: {
             visible: false,

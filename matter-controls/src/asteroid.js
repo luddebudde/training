@@ -30,6 +30,8 @@ export const asteroid = (position) => {
     
     return {
         body: body,
+        health: 99999999,
+        points: 99999999,
         // damage: 100,
         // isBullet: true,
     }

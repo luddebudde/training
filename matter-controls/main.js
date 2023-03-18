@@ -254,8 +254,11 @@ const damage = (obj, damage) => {
 
 Events.on(engine, "beforeUpdate", (event) => {
   //  Called very update
+  const playerTorque = 0.2
+  const playerThrust = 1
+
   if (isKeyDown(`KeyW`)) {
-    thrust(player.body, 1)
+    thrust(player.body, playerThrust)
     player.body.render.sprite.texture = sprites.playerWithJet.texture
     engineAudio.volume = 1
   } else{
@@ -263,13 +266,13 @@ Events.on(engine, "beforeUpdate", (event) => {
     engineAudio.volume = 0
   }
   if (isKeyDown(`KeyS`)) {
-    thrust(player.body, -1)
+    thrust(player.body, -playerThrust * 0.3)
   }
   if (isKeyDown(`KeyA`)) {
-    applyTorque(player.body, 0.5)
+    applyTorque(player.body, playerTorque)
   }
   if (isKeyDown(`KeyD`)) {
-    applyTorque(player.body, -0.5)
+    applyTorque(player.body, -playerTorque)
   }
 
 
