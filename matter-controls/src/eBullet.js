@@ -2,6 +2,7 @@ import { Bodies, Body, Vector } from "matter-js"
 import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
+import {collisionCategories} from "./collision.js";
 
 const eBulletSpeed = 10
 
@@ -31,6 +32,10 @@ export const ebullet = (pos, direction) => {
                 yScale: 2 * eBulletRadius / sprites.eBullet.width,
             },
         },
+        collisionFilter: {
+            category: collisionCategories.bullets,
+            mask: ~collisionCategories.bullets,
+        }
     })
     setBulletDirection(body, direction)
     return {

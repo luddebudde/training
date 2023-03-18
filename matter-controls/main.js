@@ -151,13 +151,18 @@ zeros(asteroidAmounts).map(() => {
 }).forEach(addObject)
 Composite.add(
   engine.world,
-  hollowCircle(0, 0, 100, roomRadius, {
+  hollowCircle(Vector.create(0, 0), 100, roomRadius, {
     width: 100,
     isStatic: true,
+    label: 'World Boundary',
     collisionFilter: {
       category: collisionCategories.roomBoundary,
       mask: collisionCategories.player,
-    }
+    },
+    render: {
+      fillStyle: '#FFFFFF',
+      opacity: 0.1,
+    },
   })
 )
 

@@ -3,6 +3,7 @@ import { angle } from "./angle"
 import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
+import {collisionCategories} from "./collision.js";
 
 const bulletSpeed = 30
 
@@ -32,6 +33,10 @@ export const bullet = (pos, direction) => {
                 yScale: 2 * bulletRadius / sprites.bullet.width,
             },
         },
+        collisionFilter: {
+            category: collisionCategories.bullets,
+            mask: ~(collisionCategories.bullets & collisionCategories.player),
+        }
     })
     setBulletDirection(body, direction)
     return {
