@@ -143,10 +143,11 @@ let gameObjects = [
 ]
 
 const spawnPosition = () => {
-  return Vector.add(radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius * 1.2)), player.body.position)
+  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
 }
 
 // Spawn in the beginning
+
 zeros(asteroidAmounts).map(() => {
   return asteroid(spawnPosition())
 }).forEach(addObject)

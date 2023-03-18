@@ -4,6 +4,7 @@ import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
 import {collisionCategories} from "./collision.js";
+import {setLookForward} from "./setLookForward.js";
 
 const bulletSpeed = 30
 
@@ -15,7 +16,7 @@ export const setBulletDirection = (body, direction) => {
             bulletSpeed
         )
     )
-    Body.setAngle(body, angle(direction))
+    setLookForward(body)
 }
 
 export const bullet = (pos, direction) => {
@@ -23,7 +24,7 @@ export const bullet = (pos, direction) => {
     // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position) 
     const p = Vector.add(pos, Vector.mult(direction, bulletRadius))
     const body = Bodies.circle(p.x, p.y, bulletRadius, {
-        mass: 1,
+        mass: 0.001,
         friction: 0,
         frictionAir: 0,
         render: {

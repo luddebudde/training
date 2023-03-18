@@ -5,6 +5,7 @@ import {ebullet} from "./eBullet"
 import {sprites} from "./sprites"
 import {turnTowards} from "./turnTowards.js";
 import {thrust} from "./thrust.js";
+import {isFacing} from "./isFacing.js";
 
 export const engineStrength = 0.3
 export const enemyRadius = 55
@@ -33,13 +34,11 @@ export const createEnemy = (player, addObject, position) => {
     return {
         body: body,
         update: () => {
-            // Turn
-            turnTowards(body, player.body)
+            turnTowards(body, player.body, 0.1)
 
             if (Vector.magnitude(Vector.sub(player.body.position, body.position)) < 500) {
                 fire()
-            } else {
-                // Move
+            } else if(isFacing(body, player.body)) {
                 thrust(body, engineStrength)
             }
         },

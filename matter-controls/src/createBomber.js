@@ -8,6 +8,7 @@ import {radiansToCartesian} from "./radianstToCartesian"
 import {random} from "./random"
 import {sprites} from "./sprites"
 import {left, right, up} from "./vectors"
+import {setLookForward} from "./setLookForward.js";
 
 const engineStrength = 5
 const turboStrengh = engineStrength * 3
@@ -55,7 +56,7 @@ export const createBomber = (player, getGameObjects, position) => {
       )
       const force = Vector.mult(forceDir, forceMagnitude)
       applyForceTo(body, force)
-      Body.setAngle(body, angle(body.velocity))
+      setLookForward(body)
     },
     isBullet: true,
     health: 0,

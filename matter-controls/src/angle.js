@@ -1,1 +1,1 @@
-export const angle = (v) => Math.atan2(v.y, v.x)
+export const angle = (vec) => Math.atan2(vec.y, vec.x)

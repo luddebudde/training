@@ -3,6 +3,7 @@ import { direction } from "./direction"
 import { sprites } from "./sprites"
 import { right } from "./vectors"
 import {collisionCategories} from "./collision.js";
+import {setLookForward} from "./setLookForward.js";
 
 const eBulletSpeed = 10
 
@@ -14,6 +15,7 @@ export const setBulletDirection = (body, direction) => {
             eBulletSpeed
         )
     )
+    setLookForward(body)
 }
 
 export const ebullet = (pos, direction) => {
