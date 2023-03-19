@@ -1,20 +1,19 @@
-import {Bodies, Body, Vector} from "matter-js"
-import {angle} from "./angle"
+import {Bodies, Vector} from "matter-js"
 import {applyForceTo} from "./applyForceTo"
-import {applyTorque} from "./applyTorque"
-import {direction} from "./direction"
-import {angleBetween, sum} from "./math"
+import {sum} from "./math"
 import {radiansToCartesian} from "./radianstToCartesian"
 import {random} from "./random"
 import {sprites} from "./sprites"
-import {left, right, up} from "./vectors"
 import {setLookForward} from "./setLookForward.js";
 import {collisionCategories} from "./collision.js";
+import {closestPlayer} from "./closestPlayer.js";
+import {isCircle} from "./isCircle.js";
+import {getNeighbors} from "./getNeighbors.js";
 
 const engineStrength = 0.5
 const turboStrengh = engineStrength * 5
 export const BomberRadius = 15
-export const createBomber = (player, getGameObjects, position) => {
+export const createBomber = (players, getGameObjects, position) => {
   const body = Bodies.circle(position.x, position.y, BomberRadius, {
     mass: 100,
     frictionAir: 0.1,
@@ -35,6 +34,7 @@ export const createBomber = (player, getGameObjects, position) => {
   return {
     body: body,
     update: () => {
+      const player = closestPlayer(body.position, players)
       const dirToPlayer = Vector.normalise(Vector.sub(player.body.position, body.position))
 
       const bomberBodies = getGameObjects().filter((obj) => obj.type === 'bomber').map(obj => obj.body).filter(body => body)
@@ -74,17 +74,11 @@ export const createBomber = (player, getGameObjects, position) => {
 
 }
 
-export const getNeighbors = (selfBody, bodies, neighborMaxDistance) => (
-  bodies.filter(body => body !== selfBody && isDistanceGreaterThan(selfBody.position, isCircle(body) ? closestPointOnCircle(selfBody.position, body.position, body.circleRadius) : body.position, neighborMaxDistance))
-)
-
 export const averageNeighborDirection = (neighbors) => Vector.normalise(
   sum(
     ...neighbors.map(neighbor => Vector.normalise(neighbor.velocity))
   )
 )
-
-const isCircle = (body) => typeof body.circleRadius !== 'undefined'
 
 /**
  * Whether the distance between two points `aPos` and `bPos` are greater than `distance`.
@@ -95,6 +89,9 @@ const isCircle = (body) => typeof body.circleRadius !== 'undefined'
  */
 export const isDistanceGreaterThan = (aPos, bPos, distance) =>
   Vector.magnitudeSquared(Vector.sub(aPos, bPos)) < distance * distance
+
+export const distance = (aPos, bPos) => Vector.magnitude(Vector.sub(aPos, bPos))
+export const distanceSquared = (aPos, bPos) => Vector.magnitudeSquared(Vector.sub(aPos, bPos))
 
 export const electricForce = (r1, r2, q1, q2) => {
   const r = Vector.sub(r1, r2)

@@ -6,10 +6,11 @@ import {sprites} from "./sprites"
 import {turnTowards} from "./turnTowards.js";
 import {thrust} from "./thrust.js";
 import {isFacing} from "./isFacing.js";
+import {closestPlayer} from "./closestPlayer.js";
 
 export const engineStrength = 0.3
 export const enemyRadius = 45
-export const createEnemy = (player, addObject, position) => {
+export const createEnemy = (players, addObject, position) => {
     const body = Bodies.circle(position.x, position.y, enemyRadius, {
         mass: 500,
         frictionAir: 0.05,
@@ -34,6 +35,7 @@ export const createEnemy = (player, addObject, position) => {
     return {
         body: body,
         update: () => {
+            const player = closestPlayer(body.position, players)
             turnTowards(body, player.body, 0.1)
 
             if (Vector.magnitude(Vector.sub(player.body.position, body.position)) < 500) {

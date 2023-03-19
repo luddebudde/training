@@ -113,8 +113,10 @@ const createGame = () => {
   const game = {
     bullets: [],
     gameObjects: [],
-    player: createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
-    player2: createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject),
+    players: [
+      createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
+      createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject),
+    ],
     engine,
     render: Render.create({
       canvas: canvas,
@@ -139,8 +141,8 @@ const createGame = () => {
   }
 
   // Spawn Player
-  addObject(game, game.player)
-  addObject(game, game.player2)
+  addObject(game, game.players[0])
+  addObject(game, game.players[1])
 
   // Spawn asteroid
   zeros(asteroidAmounts).map(() => {
@@ -191,11 +193,11 @@ const createGame = () => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-    if (event.code === `Space` && game.player.health > 0) {
-      game.player.fire()
+    if (event.code === `Space` && game.players[0].health > 0) {
+      game.players[0].fire()
     }
-    if (event.code === `Period` && game.player2.health > 0) {
-      game.player2.fire()
+    if (event.code === `Period` && game.players[1].health > 0) {
+      game.players[1].fire()
     }
     if (event.code === 'KeyR') {
       restartGame()
@@ -207,37 +209,37 @@ const registerEventListeners = () => {
 
 
     if (isKeyDown(`KeyW`)) {
-      game.player.thrust()
+      game.players[0].thrust()
       engineAudio.volume = 1
     } else {
-      game.player.dontThrust()
+      game.players[0].dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`KeyS`)) {
-      game.player.back()
+      game.players[0].back()
     }
     if (isKeyDown(`KeyA`)) {
-      game.player.turnLeft()
+      game.players[0].turnLeft()
     }
     if (isKeyDown(`KeyD`)) {
-      game.player.turnRight()
+      game.players[0].turnRight()
     }
 
     if (isKeyDown(`ArrowUp`)) {
-      game.player2.thrust()
+      game.players[1].thrust()
       engineAudio.volume = 1
     } else {
-      game.player2.dontThrust()
+      game.players[1].dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`ArrowDown`)) {
-      game.player2.back()
+      game.players[1].back()
     }
     if (isKeyDown(`ArrowLeft`)) {
-      game.player2.turnLeft()
+      game.players[1].turnLeft()
     }
     if (isKeyDown(`ArrowRight`)) {
-      game.player2.turnRight()
+      game.players[1].turnRight()
     }
 
     game.bullets.forEach(bullet => {
@@ -248,10 +250,10 @@ const registerEventListeners = () => {
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
 
-    moveCameraTo(average(game.player.camera.position, game.player2.camera.position), game.render, room.width, room.height)
-    drawHealthBar(canvas, 0, room.height - 20, room.width, 20, game.player.health)
-    drawHealthBar(canvas, 0, room.height - 50, room.width, 20, game.player2.health)
-    drawScore(canvas, room.width - 40, 50, game.player.score)
+    moveCameraTo(average(game.players[0].camera.position, game.players[1].camera.position), game.render, room.width, room.height)
+    drawHealthBar(canvas, 0, room.height - 20, room.width, 20, game.players[0].health)
+    drawHealthBar(canvas, 0, room.height - 50, room.width, 20, game.players[1].health)
+    drawScore(canvas, room.width - 40, 50, game.players[0].score)
   }
   Events.on(game.engine, "beforeUpdate", handleBeforeUpdate)
 
@@ -296,19 +298,19 @@ const spawnEnemies = throttle(3000, () => {
     const position = spawnPositionOutsideRoom()
     if (r < 15) {
       zeros(3).forEach(() => {
-        addObject(game, createEnemy(game.player, getGameObjects, position))
+        addObject(game, createEnemy(game.players, getGameObjects, position))
       })
     } else if (r < 25) {
       zeros(10).forEach(() => {
-        addObject(game, createBomber(game.player, getGameObjects, position))
+        addObject(game, createBomber(game.players, getGameObjects, position))
       })
 
     } else if (r < 40) {
       zeros(5).forEach(() => {
-        addObject(game, createBomber(game.player, getGameObjects, position))
+        addObject(game, createBomber(game.players, getGameObjects, position))
       })
     } else {
-      addObject(game, createEnemy(game.player, (obj) => addObject(game, obj), position))
+      addObject(game, createEnemy(game.players, (obj) => addObject(game, obj), position))
     }
   }
 )
@@ -319,7 +321,7 @@ const damage = (obj, damage) => {
     if (obj.health <= 0) {
       removeObject(game, obj)
       playExplosion()
-      game.player.score = game.player.score + (obj.points ?? 0)
+      game.players[0].score = game.players[0].score + (obj.points ?? 0)
     } else {
       playBum()
     }
