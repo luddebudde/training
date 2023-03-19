@@ -251,10 +251,12 @@ const registerEventListeners = () => {
 
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
-
+    const margin = 20
+    const height = 20
+    const width = room.width / 2 - margin * 2
     moveCameraTo(average(game.players[0].camera.position, game.players[1].camera.position), game.render, room.width, room.height)
-    drawHealthBar(canvas, 0, room.height - 20, room.width, 20, game.players[0].health)
-    drawHealthBar(canvas, 0, room.height - 50, room.width, 20, game.players[1].health)
+    drawHealthBar(canvas, margin, room.height - height - margin, width, height, game.players[0].health)
+    drawHealthBar(canvas, room.width - width - margin, room.height - margin - height, width , 20, game.players[1].health)
     drawScore(canvas, room.width - 40, 50, game.players[0].score)
   }
   Events.on(game.engine, "beforeUpdate", handleBeforeUpdate)
