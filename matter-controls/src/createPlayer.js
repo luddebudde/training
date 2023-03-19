@@ -12,7 +12,7 @@ import {throttle} from "throttle-debounce";
 export const playerRadius = 30
 const playerTorque = 0.2
 const playerThrust = 1
-export const createPlayer = (addObject) => {
+export const createPlayer = (sprite, spriteWithJet, addObject) => {
 
     const playerBody = Bodies.circle(0, 0, playerRadius, {
         mass: 500,
@@ -20,9 +20,9 @@ export const createPlayer = (addObject) => {
         label: "Player",
         render: {
             sprite: {
-                texture: sprites.playerWithoutJet.texture,
-                xScale: 2 * playerRadius / sprites.playerWithoutJet.width,
-                yScale: 2 * playerRadius / sprites.playerWithoutJet.height,
+                texture: sprite.texture,
+                xScale: 2 * playerRadius / sprite.width,
+                yScale: 2 * playerRadius / sprite.height,
             },
         },
         collisionFilter: {
@@ -65,7 +65,10 @@ export const createPlayer = (addObject) => {
     },
         thrust: () => {
             thrust(playerBody, playerThrust)
-            playerBody.render.sprite.texture = sprites.playerWithJet.texture
+            playerBody.render.sprite.texture = spriteWithJet.texture
+        },
+        dontThrust: () => {
+            playerBody.render.sprite.texture = sprite.texture
         },
         back: () => {
             thrust(playerBody, -playerThrust * 0.3)

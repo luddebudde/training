@@ -113,8 +113,8 @@ const createGame = () => {
   const game = {
     bullets: [],
     gameObjects: [],
-    player: createPlayer(addGameObject),
-    player2: createPlayer(addGameObject),
+    player: createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
+    player2: createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject),
     engine,
     render: Render.create({
       canvas: canvas,
@@ -210,7 +210,7 @@ const registerEventListeners = () => {
       game.player.thrust()
       engineAudio.volume = 1
     } else {
-      game.player.body.render.sprite.texture = sprites.playerWithoutJet.texture
+      game.player.dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`KeyS`)) {
@@ -227,7 +227,7 @@ const registerEventListeners = () => {
       game.player2.thrust()
       engineAudio.volume = 1
     } else {
-      game.player2.body.render.sprite.texture = sprites.playerWithoutJet.texture
+      game.player2.dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`ArrowDown`)) {
@@ -299,7 +299,7 @@ const spawnEnemies = throttle(3000, () => {
         addObject(game, createEnemy(game.player, getGameObjects, position))
       })
     } else if (r < 25) {
-      zeros(100).forEach(() => {
+      zeros(10).forEach(() => {
         addObject(game, createBomber(game.player, getGameObjects, position))
       })
 
