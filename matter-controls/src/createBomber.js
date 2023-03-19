@@ -1,5 +1,5 @@
 import {Bodies, Vector} from "matter-js"
-import {applyForceTo} from "./applyForceTo"
+import {applyForce} from "./applyForce.js"
 import {sum} from "./math"
 import {radiansToCartesian} from "./radianstToCartesian"
 import {random} from "./random"
@@ -30,7 +30,7 @@ export const createBomber = (players, getGameObjects, position) => {
       mask:~collisionCategories.bomber,
     }
   })
-  applyForceTo(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
+  applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
   return {
     body: body,
     update: () => {
@@ -62,7 +62,7 @@ export const createBomber = (players, getGameObjects, position) => {
         )
       )
       const force = Vector.mult(forceDir, forceMagnitude)
-      applyForceTo(body, force)
+      applyForce(body, force)
       setLookForward(body)
     },
     isBullet: true,

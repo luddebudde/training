@@ -22,6 +22,7 @@ import {drawScore} from "./drawScore.js";
 import {moveCameraTo} from "./moveCameraTo.js";
 import {average, sum} from "./src/math.js";
 import {createB2} from "./src/createB2.js";
+import {createCamera} from "./src/createCamera.js";
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -111,13 +112,15 @@ const createGame = () => {
       timeScale: 0.5
     }
   })
+  const players = [
+    createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
+    createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject)
+  ]
   const game = {
     bullets: [],
     gameObjects: [],
-    players: [
-      createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
-      createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject),
-    ],
+    players,
+    camera: createCamera(players),
     engine,
     render: Render.create({
       canvas: canvas,
@@ -137,6 +140,10 @@ const createGame = () => {
         // showAngleIndicator: import.meta.env.DEV,
         // showVelocity: true,
         // showPerformance: true,
+        // showAxes: true,
+        // showVelocity: true,
+        // showPositions: true,
+        // showCollisions: true,
       },
     })
   }
@@ -144,6 +151,7 @@ const createGame = () => {
   // Spawn Player
   addObject(game, game.players[0])
   addObject(game, game.players[1])
+  addObject(game, game.camera)
 
   // Spawn asteroid
   zeros(asteroidAmounts).map(() => {
@@ -249,12 +257,13 @@ const registerEventListeners = () => {
       bullet.update()
     });
 
+    moveCameraTo(game.camera.body.position, game.render, room.width, room.height)
+
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
-    moveCameraTo(average(game.players[0].camera.position, game.players[1].camera.position), game.render, room.width, room.height)
     drawHealthBar(canvas, margin, room.height - height - margin, width, height, game.players[0].health)
     drawHealthBar(canvas, room.width - width - margin, room.height - margin - height, width , 20, game.players[1].health)
     drawScore(canvas, room.width - 40, 50, game.players[0].score)

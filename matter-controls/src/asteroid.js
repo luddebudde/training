@@ -1,6 +1,6 @@
 import { Bodies, Vector } from "matter-js"
 import { room } from "../main.js"
-import { applyForceTo } from "./applyForceTo.js"
+import { applyForce } from "./applyForce.js"
 import { applyTorque } from "./applyTorque"
 import { radiansToCartesian } from "./radianstToCartesian.js"
 import { random } from "./random.js"
@@ -26,7 +26,7 @@ export const asteroid = (position) => {
         },
     })
     applyTorque(body, 1)
-    applyForceTo(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20))) 
+    applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
     
     return {
         body: body,
