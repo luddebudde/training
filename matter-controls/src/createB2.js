@@ -37,6 +37,8 @@ export const createB2 = (players, addObject, position) => {
         addObject(newEBullet)
         const audio = new Audio('audio/enemy-rifle.mp3');
         audio.play();
+    }, {
+        noTrailing: true,
     })
     return {
         body: body,
