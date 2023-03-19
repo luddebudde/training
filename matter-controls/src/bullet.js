@@ -36,7 +36,7 @@ export const bullet = (pos, direction) => {
         },
         collisionFilter: {
             category: collisionCategories.bullets,
-            mask: ~(collisionCategories.bullets & collisionCategories.player),
+            mask: ~collisionCategories.bullets,
         }
     })
     setBulletDirection(body, direction)
