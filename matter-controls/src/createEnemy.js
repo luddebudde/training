@@ -24,10 +24,10 @@ export const createEnemy = (players, addObject, position) => {
         },
     })
     const gunPosition = () => {
-        return Vector.add(body.position, Vector.mult(direction(body), enemyRadius))
+        return Vector.add(body.position, Vector.mult(direction(body), enemyRadius * 1.1))
     }
     const fire = throttle(1000,() => {
-        const newEBullet = ebullet(gunPosition(), direction(body))
+        const newEBullet = ebullet(gunPosition(), direction(body), 10)
         addObject(newEBullet)
         const audio = new Audio('audio/enemy-rifle.mp3');
         audio.play();

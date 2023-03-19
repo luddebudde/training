@@ -12,17 +12,17 @@ import {getNeighbors} from "./getNeighbors.js";
 
 const engineStrength = 0.5
 const turboStrengh = engineStrength * 5
-export const BomberRadius = 15
+export const bomberRadius = 15
 export const createBomber = (players, getGameObjects, position) => {
-  const body = Bodies.circle(position.x, position.y, BomberRadius, {
+  const body = Bodies.circle(position.x, position.y, bomberRadius, {
     mass: 100,
     frictionAir: 0.1,
     angle: random(0, 2 * Math.PI),
     render: {
       sprite: {
         texture: sprites.bomber.texture,
-        xScale: 2 * BomberRadius / sprites.bomber.width,
-        yScale: 2 * BomberRadius / sprites.bomber.height,
+        xScale: 2 * bomberRadius / sprites.bomber.width,
+        yScale: 2 * bomberRadius / sprites.bomber.height,
       },
     },
     collisionFilter: {
@@ -51,7 +51,7 @@ export const createBomber = (players, getGameObjects, position) => {
 
       const neighborDirection = averageNeighborDirection(bomberNeighbors)
 
-      const isTurboOn = isDistanceGreaterThan(player.body.position, body.position, 300)
+      const isTurboOn = isDistanceLessThan(player.body.position, body.position, 300)
       const forceMagnitude = isTurboOn ? turboStrengh : engineStrength
 
       const forceDir = Vector.normalise(
@@ -69,7 +69,7 @@ export const createBomber = (players, getGameObjects, position) => {
     health: 0,
     damage: 20,
     type: 'bomber',
-    points: 10,
+    points: 5,
   }
 
 }
@@ -87,7 +87,7 @@ export const averageNeighborDirection = (neighbors) => Vector.normalise(
  * @param distance
  * @returns {boolean}
  */
-export const isDistanceGreaterThan = (aPos, bPos, distance) =>
+export const isDistanceLessThan = (aPos, bPos, distance) =>
   Vector.magnitudeSquared(Vector.sub(aPos, bPos)) < distance * distance
 
 export const distance = (aPos, bPos) => Vector.magnitude(Vector.sub(aPos, bPos))

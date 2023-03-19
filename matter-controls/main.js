@@ -21,6 +21,7 @@ import {drawHealthBar} from "./drawHealthBar.js";
 import {drawScore} from "./drawScore.js";
 import {moveCameraTo} from "./moveCameraTo.js";
 import {average, sum} from "./src/math.js";
+import {createB2} from "./src/createB2.js";
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -160,6 +161,7 @@ const createGame = () => {
         category: collisionCategories.roomBoundary,
         mask: collisionCategories.player,
       },
+      friction: 0,
       render: {
         fillStyle: '#FFFFFF',
         opacity: 0.1,
@@ -296,17 +298,12 @@ const isKeyDown = keyDownTracker()
 const spawnEnemies = throttle(3000, () => {
     const r = random(0, 100)
     const position = spawnPositionOutsideRoom()
-    if (r < 15) {
-      zeros(3).forEach(() => {
-        addObject(game, createEnemy(game.players, getGameObjects, position))
+    if (r < 10) {
+      zeros(1).forEach(() => {
+        addObject(game, createB2(game.players, (obj) => addObject(game, obj), position))
       })
-    } else if (r < 25) {
-      zeros(10).forEach(() => {
-        addObject(game, createBomber(game.players, getGameObjects, position))
-      })
-
     } else if (r < 40) {
-      zeros(5).forEach(() => {
+      zeros(7).forEach(() => {
         addObject(game, createBomber(game.players, getGameObjects, position))
       })
     } else {

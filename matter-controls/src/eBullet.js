@@ -18,7 +18,7 @@ export const setBulletDirection = (body, direction) => {
     setLookForward(body)
 }
 
-export const ebullet = (pos, direction) => {
+export const ebullet = (pos, direction, damage) => {
     const eBulletRadius = 15
     // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position) 
     const p = Vector.add(pos, Vector.mult(direction, eBulletRadius))
@@ -47,6 +47,6 @@ export const ebullet = (pos, direction) => {
         },
         isBullet: true,
         health: 0,
-        damage: 10
+        damage,
     }
 }
