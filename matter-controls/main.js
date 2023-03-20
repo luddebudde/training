@@ -23,6 +23,7 @@ import {moveCameraTo} from "./moveCameraTo.js";
 import {average, sum} from "./src/math.js";
 import {createB2} from "./src/createB2.js";
 import {createCamera} from "./src/createCamera.js";
+import { createCoward } from "./src/createCoward.js";
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -317,6 +318,8 @@ const spawnEnemies = throttle(3000, () => {
       zeros(7).forEach(() => {
         addObject(game, createBomber(game.players, getGameObjects, position))
       })
+    } else if(r < 50){
+      addObject(game, createCoward(game.players, getGameObjects, position,  spawnPostionInsideRoom()))
     } else {
       addObject(game, createEnemy(game.players, (obj) => addObject(game, obj), position))
     }

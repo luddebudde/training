@@ -35,8 +35,9 @@ export const ebullet = (pos, direction, damage) => {
             },
         },
         collisionFilter: {
-            category: collisionCategories.bullets,
-            mask: ~collisionCategories.bullets,
+            category: collisionCategories.eBullets,
+            mask: ~(collisionCategories.eBullets | collisionCategories.eBullets),
+
         }
     })
     setBulletDirection(body, direction)

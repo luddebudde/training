@@ -1,7 +1,8 @@
 export const collisionCategories = {
-  player: 0b10000000000000000000000000000000,
-  roomBoundary: 0b01000000000000000000000000000000,
-  items: 0b00100000000000000000000000000000,
-  bullets: 0b00010000000000000000000000000000,
-  bomber: 0b00001000000000000000000000000000,
+  player: 1 << 0,
+  roomBoundary: 1 << 1,
+  items: 1 << 2,
+  bullets: 1 << 3,
+  eBullets: 1 << 4,
+  bomber: 1 << 5,
 }
