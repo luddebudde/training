@@ -109,7 +109,7 @@ const createGame = () => {
       scale: 0,
     },
     timing: {
-      timeScale: 0.5
+      timeScale: 1
     }
   })
   const players = [
