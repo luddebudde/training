@@ -1,13 +1,11 @@
-import {Bodies} from "matter-js"
-import {applyForce} from "./applyForce.js"
-import {applyTorque} from "./applyTorque"
-import {radiansToCartesian} from "./radianstToCartesian.js"
-import {random} from "./random.js"
-import {sprites} from "./sprites.js"
-
+import { Bodies } from 'matter-js'
+import { applyForce } from './applyForce.js'
+import { applyTorque } from './applyTorque'
+import { radiansToCartesian } from './radianstToCartesian.js'
+import { random } from './random.js'
+import { sprites } from './sprites.js'
 
 export const miniBox = (position) => {
-
   const radius = 20
 
   const body = Bodies.circle(position.x, position.y, radius, {
@@ -16,9 +14,8 @@ export const miniBox = (position) => {
     render: {
       sprite: {
         texture: sprites.ammoBox.texture,
-        xScale: 2 * radius / sprites.ammoBox.width * 1.23,
-        yScale: 2 * radius / sprites.ammoBox.height * 1.23,
-
+        xScale: ((2 * radius) / sprites.ammoBox.width) * 1.23,
+        yScale: ((2 * radius) / sprites.ammoBox.height) * 1.23,
       },
     },
   })

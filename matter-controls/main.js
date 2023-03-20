@@ -1,37 +1,45 @@
-import {Composite, Engine, Events, Mouse, MouseConstraint, Render, Runner, Vector} from "matter-js";
-import {applyTorque} from "./src/applyTorque.js";
-import {sprites} from "./src/sprites.js";
-import {keyDownTracker} from "./src/keyDownTracker.js";
-import {direction} from "./src/direction.js";
-import {applyAngularFriction} from "./src/applyAngularFriction.js";
-import {asteroid} from "./src/asteroid.js";
-import {zeros} from "./src/zeros.js";
-import {bullet} from "./src/bullet.js";
-import {createPlayer, playerRadius} from "./src/createPlayer.js";
-import {createEnemy,} from "./src/createEnemy.js";
-import {createBomber} from "./src/createBomber.js";
-import {throttle} from "throttle-debounce";
-import {random} from "./src/random.js";
-import {radiansToCartesian} from "./src/radianstToCartesian.js";
-import {playBum, playExplosion} from "./src/audio.js";
-import {hollowCircle} from "./src/hollowCircle.js";
-import {collisionCategories} from "./src/collision.js";
-import {thrust} from "./src/thrust.js";
-import {drawHealthBar} from "./drawHealthBar.js";
-import {drawScore} from "./drawScore.js";
-import {moveCameraTo} from "./moveCameraTo.js";
-import {average, sum} from "./src/math.js";
-import {createB2} from "./src/createB2.js";
-import {createCamera} from "./src/createCamera.js";
-import {createCoward} from "./src/createCoward.js";
-import {miniBox} from "./src/ammoBox.js";
+import {
+  Composite,
+  Engine,
+  Events,
+  Mouse,
+  MouseConstraint,
+  Render,
+  Runner,
+  Vector,
+} from 'matter-js'
+import { applyTorque } from './src/applyTorque.js'
+import { sprites } from './src/sprites.js'
+import { keyDownTracker } from './src/keyDownTracker.js'
+import { direction } from './src/direction.js'
+import { applyAngularFriction } from './src/applyAngularFriction.js'
+import { asteroid } from './src/asteroid.js'
+import { zeros } from './src/zeros.js'
+import { bullet } from './src/bullet.js'
+import { createPlayer, playerRadius } from './src/createPlayer.js'
+import { createEnemy } from './src/createEnemy.js'
+import { createBomber } from './src/createBomber.js'
+import { throttle } from 'throttle-debounce'
+import { random } from './src/random.js'
+import { radiansToCartesian } from './src/radianstToCartesian.js'
+import { playBum, playExplosion } from './src/audio.js'
+import { hollowCircle } from './src/hollowCircle.js'
+import { collisionCategories } from './src/collision.js'
+import { thrust } from './src/thrust.js'
+import { drawHealthBar } from './drawHealthBar.js'
+import { drawScore } from './drawScore.js'
+import { moveCameraTo } from './moveCameraTo.js'
+import { average, sum } from './src/math.js'
+import { createB2 } from './src/createB2.js'
+import { createCamera } from './src/createCamera.js'
+import { createCoward } from './src/createCoward.js'
+import { miniBox } from './src/ammoBox.js'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
 const shouldPlayMusic = true
 
-
-const canvas = document.getElementById('app');
+const canvas = document.getElementById('app')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
@@ -57,24 +65,28 @@ const spawnPositionOutsideRoom = () => {
 }
 
 const spawnPostionInsideRoom = () => {
-  return radiansToCartesian(random(0, 2 * Math.PI), random(400, roomRadius + 500))
+  return radiansToCartesian(
+    random(0, 2 * Math.PI),
+    random(400, roomRadius + 500),
+  )
 }
 
-const engineAudio = new Audio('audio/engine.mp3');
+const engineAudio = new Audio('audio/engine.mp3')
 engineAudio.loop = true
 engineAudio.volume = 0
 
 const playEngine = () => {
   const response = engineAudio.play()
-  response.then(e => {
-    document.body.removeEventListener("mousemove", playEngine)
-  }).catch(e => {
-  })
+  response
+    .then((e) => {
+      document.body.removeEventListener('mousemove', playEngine)
+    })
+    .catch((e) => {})
 }
 
-document.body.addEventListener("mousemove", playEngine)
+document.body.addEventListener('mousemove', playEngine)
 
-const musicAudio = new Audio('audio/synthwave-outrun.mp3');
+const musicAudio = new Audio('audio/synthwave-outrun.mp3')
 musicAudio.loop = true
 musicAudio.volume = 0.7
 const playMusic = () => {
@@ -82,41 +94,47 @@ const playMusic = () => {
     return
   }
   const response = musicAudio.play()
-  response.then(e => {
-    document.body.removeEventListener("mousemove", playMusic)
-  }).catch(e => {
-  })
+  response
+    .then((e) => {
+      document.body.removeEventListener('mousemove', playMusic)
+    })
+    .catch((e) => {})
 }
 
-document.body.addEventListener("mousemove", playMusic)
+document.body.addEventListener('mousemove', playMusic)
 
 const addObject = (game, obj) => {
   Composite.add(game.engine.world, obj.worldObjects ?? obj.body)
-  game.gameObjects = [
-    ...game.gameObjects,
-    obj,
-  ]
+  game.gameObjects = [...game.gameObjects, obj]
 }
 
 const removeObject = (game, obj) => {
   Composite.remove(game.engine.world, obj.body)
-  game.gameObjects = game.gameObjects.filter(updateable => updateable !== obj)
+  game.gameObjects = game.gameObjects.filter((updateable) => updateable !== obj)
 }
 
 const getGameObjects = () => game.gameObjects
 const createGame = () => {
-  const addGameObject = obj => addObject(game, obj)
+  const addGameObject = (obj) => addObject(game, obj)
   const engine = Engine.create({
     gravity: {
       scale: 0,
     },
     timing: {
-      timeScale: 1
-    }
+      timeScale: 1,
+    },
   })
   const players = [
-    createPlayer(sprites.player('green'), sprites.playerWithJet('green'), addGameObject),
-    createPlayer(sprites.player('blue'), sprites.playerWithJet('blue'), addGameObject)
+    createPlayer(
+      sprites.player('green'),
+      sprites.playerWithJet('green'),
+      addGameObject,
+    ),
+    createPlayer(
+      sprites.player('blue'),
+      sprites.playerWithJet('blue'),
+      addGameObject,
+    ),
   ]
   const game = {
     bullets: [],
@@ -147,7 +165,7 @@ const createGame = () => {
         // showPositions: true,
         // showCollisions: true,
       },
-    })
+    }),
   }
 
   // Spawn Player
@@ -156,9 +174,11 @@ const createGame = () => {
   addObject(game, game.camera)
 
   // Spawn asteroid
-  zeros(asteroidAmounts).map(() => {
-    return asteroid(spawnPostionInsideRoom())
-  }).forEach(addGameObject)
+  zeros(asteroidAmounts)
+    .map(() => {
+      return asteroid(spawnPostionInsideRoom())
+    })
+    .forEach(addGameObject)
 
   // Spawn room boundary
   Composite.add(
@@ -176,9 +196,8 @@ const createGame = () => {
         fillStyle: '#FFFFFF',
         opacity: 0.1,
       },
-    })
+    }),
   )
-
 
   if (import.meta.env.DEV) {
     // add mouse control and make the mouse revolute
@@ -190,22 +209,21 @@ const createGame = () => {
         length: 0,
         angularStiffness: 0,
         render: {
-          visible: false
-        }
-      }
+          visible: false,
+        },
+      },
     })
 
     Composite.add(game.engine.world, [mouseConstraint])
 
     // keep the mouse in sync with rendering
-    game.render.mouse = mouse;
+    game.render.mouse = mouse
   }
   return game
 }
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-
     if (event.code === 'KeyR') {
       restartGame()
     }
@@ -213,7 +231,6 @@ const registerEventListeners = () => {
   addEventListener(`keydown`, handleClickKeydown)
 
   const handleBeforeUpdate = () => {
-
     // Player 1
     if (isKeyDown(`KeyW`)) {
       game.players[0].thrust()
@@ -256,12 +273,17 @@ const registerEventListeners = () => {
       game.players[1].fire()
     }
 
-    game.bullets.forEach(bullet => {
+    game.bullets.forEach((bullet) => {
       // Reset speed
       bullet.update()
-    });
+    })
 
-    moveCameraTo(game.camera.body.position, game.render, room.width, room.height)
+    moveCameraTo(
+      game.camera.body.position,
+      game.render,
+      room.width,
+      room.height,
+    )
 
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
@@ -269,33 +291,51 @@ const registerEventListeners = () => {
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
-    drawHealthBar(canvas, margin, room.height - height - margin, width, height, game.players[0].health)
-    drawHealthBar(canvas, room.width - width - margin, room.height - margin - height, width, 20, game.players[1].health)
+    drawHealthBar(
+      canvas,
+      margin,
+      room.height - height - margin,
+      width,
+      height,
+      game.players[0].health,
+    )
+    drawHealthBar(
+      canvas,
+      room.width - width - margin,
+      room.height - margin - height,
+      width,
+      20,
+      game.players[1].health,
+    )
     drawScore(canvas, room.width - 40, 50, game.players[0].score)
   }
-  Events.on(game.engine, "beforeUpdate", handleBeforeUpdate)
+  Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
 
   const handleCollisionStart = (event) => {
-    const objA = game.gameObjects.find(updateable => updateable.body === event.pairs[0].bodyA)
-    const objB = game.gameObjects.find(updateable => updateable.body === event.pairs[0].bodyB)
+    const objA = game.gameObjects.find(
+      (updateable) => updateable.body === event.pairs[0].bodyA,
+    )
+    const objB = game.gameObjects.find(
+      (updateable) => updateable.body === event.pairs[0].bodyB,
+    )
 
     testCollision(objA, objB)
     testCollision(objB, objA)
   }
 
-  Events.on(game.engine, "collisionStart", handleCollisionStart)
+  Events.on(game.engine, 'collisionStart', handleCollisionStart)
 
   return () => {
     removeEventListener(`keydown`, handleClickKeydown)
-    Events.off(game.engine, "beforeUpdate", handleBeforeUpdate)
-    Events.off(game.engine, "collisionStart", handleCollisionStart)
+    Events.off(game.engine, 'beforeUpdate', handleBeforeUpdate)
+    Events.off(game.engine, 'collisionStart', handleCollisionStart)
   }
 }
 const startGame = () => {
   // run the renderer
-  Render.run(game.render);
+  Render.run(game.render)
   // run the engine
-  Runner.run(runner, game.engine);
+  Runner.run(runner, game.engine)
   const cleanupEventListeners = registerEventListeners()
   return () => {
     cleanupEventListeners()
@@ -312,32 +352,43 @@ const restartGame = () => {
 const isKeyDown = keyDownTracker()
 
 const spawnEnemies = throttle(3000, () => {
-    const r = random(0, 100)
-    const position = spawnPositionOutsideRoom()
-    if (r < 10) {
-      zeros(1).forEach(() => {
-        addObject(game, createB2(game.players, (obj) => addObject(game, obj), position))
-      })
-    } else if (r < 40) {
-      zeros(7).forEach(() => {
-        addObject(game, createBomber(game.players, getGameObjects, position))
-      })
-    } else if (r < 50) {
-      addObject(game, createCoward(game.players, getGameObjects, position, spawnPostionInsideRoom()))
-    } else {
-      addObject(game, createEnemy(game.players, (obj) => addObject(game, obj), position))
-    }
+  const r = random(0, 100)
+  const position = spawnPositionOutsideRoom()
+  if (r < 10) {
+    zeros(1).forEach(() => {
+      addObject(
+        game,
+        createB2(game.players, (obj) => addObject(game, obj), position),
+      )
+    })
+  } else if (r < 40) {
+    zeros(7).forEach(() => {
+      addObject(game, createBomber(game.players, getGameObjects, position))
+    })
+  } else if (r < 50) {
+    addObject(
+      game,
+      createCoward(
+        game.players,
+        getGameObjects,
+        position,
+        spawnPostionInsideRoom(),
+      ),
+    )
+  } else {
+    addObject(
+      game,
+      createEnemy(game.players, (obj) => addObject(game, obj), position),
+    )
   }
-)
-
+})
 
 const spawnAmmo = throttle(3000, () => {
-    const r = random(0, 100)
-    if (r < 100) {
-      addObject(game, miniBox(spawnPostionInsideRoom()))
-    }
+  const r = random(0, 100)
+  if (r < 100) {
+    addObject(game, miniBox(spawnPostionInsideRoom()))
   }
-)
+})
 
 const damage = (obj, damage) => {
   if (obj !== undefined && obj.health !== undefined) {

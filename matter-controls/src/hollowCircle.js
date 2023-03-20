@@ -1,4 +1,4 @@
-import {Bodies, Body} from "matter-js"
+import { Bodies, Body } from 'matter-js'
 
 /**
  * Creates a polygon that can contain other objects by putting together
@@ -18,27 +18,35 @@ import {Bodies, Body} from "matter-js"
  *  'initialRotation': The initital rotation to be applied to the shape.
  */
 export const hollowCircle = (position, sides, radius, options = {}) => {
-  const {width = 20, extraLength = 1.15, initialRotation = 0, ...otherOptions} = options
+  const {
+    width = 20,
+    extraLength = 1.15,
+    initialRotation = 0,
+    ...otherOptions
+  } = options
 
-  const theta = 2 * Math.PI / sides;
-  const sideLength = 2 * radius * theta / 2 * extraLength;
+  const theta = (2 * Math.PI) / sides
+  const sideLength = ((2 * radius * theta) / 2) * extraLength
 
-  const parts = [];
+  const parts = []
   for (let i = 0; i < sides; i++) {
     // We'll build thin sides and then translate + rotate them appropriately.
     const body = Bodies.rectangle(0, 0, sideLength, width, {
       render: otherOptions.render,
-    });
-    Body.rotate(body, i * theta);
-    Body.translate(body, {x: radius * Math.sin(i * theta), y: -radius * Math.cos(i * theta)});
-    parts.push(body);
+    })
+    Body.rotate(body, i * theta)
+    Body.translate(body, {
+      x: radius * Math.sin(i * theta),
+      y: -radius * Math.cos(i * theta),
+    })
+    parts.push(body)
   }
-  const ret = Body.create(otherOptions);
-  Body.setParts(ret, parts);
+  const ret = Body.create(otherOptions)
+  Body.setParts(ret, parts)
   if (initialRotation) {
-    Body.rotate(ret, initialRotation);
+    Body.rotate(ret, initialRotation)
   }
-  Body.translate(ret, position);
+  Body.translate(ret, position)
 
-  return ret;
+  return ret
 }

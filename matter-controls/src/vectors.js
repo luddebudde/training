@@ -1,4 +1,4 @@
-import {Vector} from "matter-js";
+import { Vector } from 'matter-js'
 
 export const left = Vector.create(-1, 0)
 export const right = Vector.create(1, 0)
