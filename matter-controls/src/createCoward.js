@@ -70,7 +70,7 @@ export const createCoward = (players, getGameObjects, position,  homePos) => {
     health: 60,
     damage: 0,
     type: 'coward',
-    points: 5,
+    points: 150,
   }
 
 }

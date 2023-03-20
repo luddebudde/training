@@ -8,6 +8,7 @@ import {applyTorque} from "./applyTorque.js";
 import {direction} from "./direction.js";
 import {bullet} from "./bullet.js";
 import {throttle} from "throttle-debounce";
+import { miniBullet } from "./miniBullet";
 
 export const playerRadius = 30
 const playerTorque = 0.2
@@ -52,7 +53,30 @@ export const createPlayer = (sprite, spriteWithJet, addObject) => {
             visible: false,
         },
     });
+    const cannon = throttle(300, () => {
+        const spawnPos = Vector.add(playerBody.position, Vector.mult(direction(playerBody), playerRadius))
+        const newBullet = bullet(spawnPos, direction(playerBody))
+        addObject(newBullet)
+        const audio = new Audio('audio/player-rifle.mp3');
+        audio.play();
+    })
 
+    let miniAmmo = 100
+    const minigun = throttle(60, () => {
+        if (miniAmmo > 0) {
+            const spawnPos = Vector.add(playerBody.position, Vector.mult(direction(playerBody), playerRadius))
+            const newBullet = miniBullet(spawnPos, direction(playerBody))
+            addObject(newBullet)
+            const audio = new Audio('audio/player-rifle.mp3');
+            audio.play();
+            miniAmmo = miniAmmo - 1
+        } else {
+            currentWeapon = cannon
+        }
+        
+    })
+
+    let currentWeapon = minigun
     return {
         body: playerBody,
         worldObjects: [playerBody, cameraBody, cameraConstraint],
@@ -79,12 +103,8 @@ export const createPlayer = (sprite, spriteWithJet, addObject) => {
         turnRight: () => {
             applyTorque(playerBody, -playerTorque)
         },
-        fire: throttle(300, () => {
-            const spawnPos = Vector.add(playerBody.position, Vector.mult(direction(playerBody), playerRadius))
-            const newBullet = bullet(spawnPos, direction(playerBody))
-            addObject(newBullet)
-            const audio = new Audio('audio/player-rifle.mp3');
-            audio.play();
-        }),
+        fire: () => {
+            currentWeapon()
+        }
     }
 }

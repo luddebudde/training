@@ -59,7 +59,7 @@ export const createB2 = (players, addObject, position) => {
                 fire()
             }
         },
-        health: 120,
+        health: 150,
         points: 300,
     }
 }

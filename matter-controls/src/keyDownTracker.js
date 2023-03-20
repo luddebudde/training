@@ -2,7 +2,9 @@ export const keyDownTracker = () => {
   const keysDown = new Set()
 
   document.addEventListener("keydown", event => {
-    keysDown.add(event.code)
+    if(!event.repeat){
+      keysDown.add(event.code)
+    }
   })
 
   document.addEventListener("keyup", event => {

@@ -66,7 +66,7 @@ export const createBomber = (players, getGameObjects, position) => {
       setLookForward(body)
     },
     isBullet: true,
-    health: 0,
+    health: 10,
     damage: 20,
     type: 'bomber',
     points: 5,

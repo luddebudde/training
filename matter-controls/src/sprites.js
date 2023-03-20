@@ -9,6 +9,11 @@ export const sprites = {
     height: 512,
     width: 512,
   },
+  ammoBox: {
+    texture: "/space-objects/8.png",
+    height: 512,
+    width: 512,
+  },
   player: (color) => ({
     texture: `/ships/player/large/${color}.png`,
     width: 844,
@@ -54,5 +59,10 @@ export const sprites = {
     height: 127,
     width: 123,
   },
+  miniBullet: {
+    texture: "/laser-sprites/09.png",
+    height: 123,
+    width: 119,
+  },  
 }
 

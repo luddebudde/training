@@ -24,6 +24,7 @@ import {average, sum} from "./src/math.js";
 import {createB2} from "./src/createB2.js";
 import {createCamera} from "./src/createCamera.js";
 import { createCoward } from "./src/createCoward.js";
+import { miniBox } from "./src/ammoBox.js";
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -204,12 +205,7 @@ const createGame = () => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-    if (event.code === `Space` && game.players[0].health > 0) {
-      game.players[0].fire()
-    }
-    if (event.code === `Period` && game.players[1].health > 0) {
-      game.players[1].fire()
-    }
+    
     if (event.code === 'KeyR') {
       restartGame()
     }
@@ -218,7 +214,7 @@ const registerEventListeners = () => {
 
   const handleBeforeUpdate = () => {
 
-
+    // Player 1
     if (isKeyDown(`KeyW`)) {
       game.players[0].thrust()
       engineAudio.volume = 1
@@ -235,7 +231,11 @@ const registerEventListeners = () => {
     if (isKeyDown(`KeyD`)) {
       game.players[0].turnRight()
     }
+    if (isKeyDown(`Space`) && game.players[0].health > 0) {
+      game.players[0].fire()
+    }
 
+    // Player 2
     if (isKeyDown(`ArrowUp`)) {
       game.players[1].thrust()
       engineAudio.volume = 1
@@ -252,6 +252,9 @@ const registerEventListeners = () => {
     if (isKeyDown(`ArrowRight`)) {
       game.players[1].turnRight()
     }
+    if (isKeyDown(`Period`) && game.players[1].health > 0) {
+      game.players[1].fire()
+    }
 
     game.bullets.forEach(bullet => {
       // Reset speed
@@ -262,6 +265,7 @@ const registerEventListeners = () => {
 
     game.gameObjects.forEach((updateable) => updateable.update?.())
     spawnEnemies()
+    spawnAmmo()
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
@@ -324,6 +328,16 @@ const spawnEnemies = throttle(3000, () => {
       addObject(game, createEnemy(game.players, (obj) => addObject(game, obj), position))
     }
   }
+)
+
+
+const spawnAmmo = throttle(3000, () => {
+  const r = random(0, 100)
+  const position = spawnPositionOutsideRoom()
+  if (r < 100) {
+    addObject(miniBox(position))   
+  }
+}
 )
 
 const damage = (obj, damage) => {

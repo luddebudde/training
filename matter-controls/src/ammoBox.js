@@ -7,20 +7,20 @@ import { random } from "./random.js"
 import { sprites } from "./sprites.js"
 
 
-export const asteroid = (position) => {
+export const miniBox = (position) => {
 
-    const asteroidRadius = random(30, 100)
+    const radius = 40
     
     
-    const body = Bodies.circle(position.x, position.y , asteroidRadius, {
+    const body = Bodies.circle(position.x, position.y , radius, {
         density: 0.1,
         frictionAir: 0,
         mass: 10000,
         render: {
             sprite: {
-                texture: sprites.asteroid.texture,
-                xScale: 2 * asteroidRadius / sprites.asteroid.width * 1.23,
-                yScale: 2 * asteroidRadius / sprites.asteroid.height * 1.23,
+                texture: sprites.ammoBox.texture,
+                xScale: 2 * radius / sprites.ammoBox.width * 1.23,
+                yScale: 2 * radius / sprites.ammoBox.height * 1.23,
 
             },
         },
@@ -30,9 +30,9 @@ export const asteroid = (position) => {
     
     return {
         body: body,
-        health: 9999999,
-        points: 99999999,
-        // damage: 100,
-        // isBullet: true,
+        health: 0,
+        points: 0,
+        damage: 0,
+        isBullet: true,
     }
 }
