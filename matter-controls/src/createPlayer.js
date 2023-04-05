@@ -29,6 +29,22 @@ export const createPlayer = (sprite, spriteWithJet, addObject) => {
       category: collisionCategories.player,
     },
   })
+  const playerBody2 = Bodies.circle(0, 0, playerRadius, {
+    mass: 500,
+    frictionAir: 0.08,
+    label: 'Player',
+    render: {
+      sprite: {
+        texture: sprite.texture,
+        xScale: (2 * playerRadius) / sprite.width,
+        yScale: (2 * playerRadius) / sprite.height,
+      },
+    },
+    collisionFilter: {
+      category: collisionCategories.player,
+    },
+  })
+  
   const cameraBody = Bodies.circle(playerRadius, 0, 10, {
     mass: 1,
     frictionAir: 0.05,

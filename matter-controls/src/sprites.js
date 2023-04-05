@@ -19,6 +19,11 @@ export const sprites = {
     width: 844,
     height: 890,
   }),
+  playerCannon: (color) => ({
+    texture: `/ships/player/large/${color}-cannon.png`,
+    width: 125,
+    height: 125,
+  }),
   playerWithJet: (color) => ({
     texture: `/ships/player/large/${color}-jet.png`,
     width: 844,

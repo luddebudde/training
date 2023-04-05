@@ -135,10 +135,27 @@ const createGame = () => {
       sprites.playerWithJet('blue'),
       addGameObject,
     ),
+    createPlayer(
+      sprites.player('green'),
+      sprites.playerWithJet('blue'),
+      addGameObject,
+    ),
+    createPlayer(
+      sprites.player('green'),
+      sprites.playerWithJet('blue'),
+      addGameObject,
+    ),
+    createPlayer(
+      sprites.player('green'),
+      sprites.playerWithJet('blue'),
+      addGameObject,
+    ),
   ]
   const game = {
     bullets: [],
     gameObjects: [],
+    playerA: players[0],
+    playerB: players[1],
     players,
     camera: createCamera(players),
     engine,
@@ -169,8 +186,9 @@ const createGame = () => {
   }
 
   // Spawn Player
-  addObject(game, game.players[0])
-  addObject(game, game.players[1])
+  game.players.forEach((player) => {
+    addObject(game, player)  
+  })
   addObject(game, game.camera)
 
   // Spawn asteroid
@@ -225,52 +243,62 @@ const createGame = () => {
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
     if (event.code === 'KeyR') {
-      restartGame()
+      restartGame() 
+    }
+    if (event.code === "Numpad0") {
+          const freePlayers = game.players.filter((player) => {
+        return player !== game.playerB
+      })
+      const playerAIndex = freePlayers.indexOf(game.playerA)
+      const newIndex = (playerAIndex + 1) % freePlayers.length
+      const newPlayer = freePlayers[newIndex]
+      game.playerA = newPlayer
     }
   }
+  
   addEventListener(`keydown`, handleClickKeydown)
 
   const handleBeforeUpdate = () => {
     // Player 1
     if (isKeyDown(`KeyW`)) {
-      game.players[0].thrust()
+      game.playerA.thrust()
       engineAudio.volume = 1
     } else {
-      game.players[0].dontThrust()
+      game.playerA.dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`KeyS`)) {
-      game.players[0].back()
+      game.playerA.back()
     }
     if (isKeyDown(`KeyA`)) {
-      game.players[0].turnLeft()
+      game.playerA.turnLeft()
     }
     if (isKeyDown(`KeyD`)) {
-      game.players[0].turnRight()
+      game.playerA.turnRight()
     }
-    if (isKeyDown(`Space`) && game.players[0].health > 0) {
-      game.players[0].fire()
+    if (isKeyDown(`Space`) && game.playerA.health > 0) {
+      game.playerA.fire()
     }
 
     // Player 2
     if (isKeyDown(`ArrowUp`)) {
-      game.players[1].thrust()
+      game.playerB.thrust()
       engineAudio.volume = 1
     } else {
-      game.players[1].dontThrust()
+      game.playerB.dontThrust()
       engineAudio.volume = 0
     }
     if (isKeyDown(`ArrowDown`)) {
-      game.players[1].back()
+      game.playerB.back()
     }
     if (isKeyDown(`ArrowLeft`)) {
-      game.players[1].turnLeft()
+      game.playerB.turnLeft()
     }
     if (isKeyDown(`ArrowRight`)) {
-      game.players[1].turnRight()
+      game.playerB.turnRight()
     }
-    if (isKeyDown(`Period`) && game.players[1].health > 0) {
-      game.players[1].fire()
+    if (isKeyDown(`Period`) && game.playerB.health > 0) {
+      game.playerB.fire()
     }
 
     game.bullets.forEach((bullet) => {
@@ -297,7 +325,7 @@ const registerEventListeners = () => {
       room.height - height - margin,
       width,
       height,
-      game.players[0].health,
+      game.playerA.health,
     )
     drawHealthBar(
       canvas,
@@ -305,9 +333,9 @@ const registerEventListeners = () => {
       room.height - margin - height,
       width,
       20,
-      game.players[1].health,
+      game.playerB.health,
     )
-    drawScore(canvas, room.width - 40, 50, game.players[0].score)
+    drawScore(canvas, room.width - 40, 50, game.playerA.score)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
 
