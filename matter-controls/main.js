@@ -32,8 +32,9 @@ import { moveCameraTo } from './moveCameraTo.js'
 import { average, sum } from './src/math.js'
 import { createB2 } from './src/createB2.js'
 import { createCamera } from './src/createCamera.js'
-import { createCoward } from './src/createCoward.js'
+import { createCoward, isDistanceLessThan } from './src/createCoward.js'
 import { miniBox } from './src/ammoBox.js'
+import { getNeighbors } from './src/getNeighbors'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -240,22 +241,30 @@ const createGame = () => {
   return game
 }
 
+const getNextShip = (thisPlayer, otherPlayer) => {
+  const emptyShips = game.players.filter((ship) => {
+    return ship !== otherPlayer
+  })
+  const nearbyShips = emptyShips.filter((ship) => isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200))
+  const playerAIndex = nearbyShips.indexOf(thisPlayer)
+  const newIndex = (playerAIndex + 1) % nearbyShips.length
+  const nextShip = nearbyShips[newIndex]
+  return nextShip
+}
+
+
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
     if (event.code === 'KeyR') {
       restartGame() 
     }
+    if (event.code === "KeyC") {
+      game.playerA = getNextShip(game.playerA, game.playerB)
+    }
     if (event.code === "Numpad0") {
-          const freePlayers = game.players.filter((player) => {
-        return player !== game.playerB
-      })
-      const playerAIndex = freePlayers.indexOf(game.playerA)
-      const newIndex = (playerAIndex + 1) % freePlayers.length
-      const newPlayer = freePlayers[newIndex]
-      game.playerA = newPlayer
+      game.playerB = getNextShip(game.playerB, game.playerA)
     }
   }
-  
   addEventListener(`keydown`, handleClickKeydown)
 
   const handleBeforeUpdate = () => {
