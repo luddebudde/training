@@ -328,8 +328,9 @@ const registerEventListeners = () => {
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
+    const ctx = canvas.getContext("2d");
     drawHealthBar(
-      canvas,
+      ctx,
       margin,
       room.height - height - margin,
       width,
@@ -337,13 +338,26 @@ const registerEventListeners = () => {
       game.playerA.health,
     )
     drawHealthBar(
-      canvas,
+      ctx,
       room.width - width - margin,
       room.height - margin - height,
       width,
       20,
       game.playerB.health,
     )
+    // const cameraPos = game.camera.body.position
+    // game.gameObjects.filter((gameObject) => gameObject.health > 1).forEach(gameObject => {
+    //   ctx.translate(cameraPos.x + room.width / 2 + gameObject.body.position.x, -cameraPos.y   + room.height / 2 + gameObject.body.position.y);
+    //   drawHealthBar(
+    //     ctx,
+    //     0,
+    //     0,
+    //     20,
+    //     5,
+    //     20,
+          
+    //   )  
+    // });   
     drawScore(canvas, room.width - 40, 50, game.playerA.score)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
