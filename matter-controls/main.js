@@ -29,12 +29,13 @@ import { thrust } from './src/thrust.js'
 import { drawHealthBar } from './drawHealthBar.js'
 import { drawScore } from './drawScore.js'
 import { moveCameraTo } from './moveCameraTo.js'
-import { average, sum } from './src/math.js'
+import { average, scale, sum } from './src/math.js'
 import { createB2 } from './src/createB2.js'
 import { createCamera } from './src/createCamera.js'
 import { createCoward, isDistanceLessThan } from './src/createCoward.js'
 import { miniBox } from './src/ammoBox.js'
 import { getNeighbors } from './src/getNeighbors'
+import { down } from './src/vectors.js'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -188,7 +189,7 @@ const createGame = () => {
 
   // Spawn Player
   game.players.forEach((player) => {
-    addObject(game, player)  
+    addObject(game, player)
   })
   addObject(game, game.camera)
 
@@ -245,23 +246,24 @@ const getNextShip = (thisPlayer, otherPlayer) => {
   const emptyShips = game.players.filter((ship) => {
     return ship !== otherPlayer
   })
-  const nearbyShips = emptyShips.filter((ship) => isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200))
+  const nearbyShips = emptyShips.filter((ship) =>
+    isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
+  )
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
   const nextShip = nearbyShips[newIndex]
   return nextShip
 }
 
-
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
     if (event.code === 'KeyR') {
-      restartGame() 
+      restartGame()
     }
-    if (event.code === "KeyC") {
+    if (event.code === 'KeyC') {
       game.playerA = getNextShip(game.playerA, game.playerB)
     }
-    if (event.code === "Numpad0") {
+    if (event.code === 'Numpad0') {
       game.playerB = getNextShip(game.playerB, game.playerA)
     }
   }
@@ -328,7 +330,7 @@ const registerEventListeners = () => {
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d')
     drawHealthBar(
       ctx,
       margin,
@@ -336,6 +338,7 @@ const registerEventListeners = () => {
       width,
       height,
       game.playerA.health,
+      200,
     )
     drawHealthBar(
       ctx,
@@ -344,20 +347,38 @@ const registerEventListeners = () => {
       width,
       20,
       game.playerB.health,
+      200,
     )
-    // const cameraPos = game.camera.body.position
-    // game.gameObjects.filter((gameObject) => gameObject.health > 1).forEach(gameObject => {
-    //   ctx.translate(cameraPos.x + room.width / 2 + gameObject.body.position.x, -cameraPos.y   + room.height / 2 + gameObject.body.position.y);
-    //   drawHealthBar(
-    //     ctx,
-    //     0,
-    //     0,
-    //     20,
-    //     5,
-    //     20,
-          
-    //   )  
-    // });   
+    const canvasPos = (pos) => {
+      const cameraPos = game.camera.body.position
+      return sum(
+        pos,
+        Vector.neg(cameraPos),
+        Vector.create(canvas.width / 2, canvas.height / 2),
+      )
+    }
+    game.gameObjects
+      .filter((gameObject) => gameObject.type !== 'asteroid')
+      .filter((gameObject) => gameObject.health > 1 && gameObject.maxHealth)
+      .forEach((gameObject) => {
+        const position = canvasPos(
+          sum(
+            gameObject.body.position,
+            scale(down, gameObject.body.circleRadius * 1),
+          ),
+        )
+        const barWidth = gameObject.body.circleRadius * 1.2
+        const barHeight = 5
+        drawHealthBar(
+          ctx,
+          position.x - barWidth / 2,
+          position.y + barHeight / 2,
+          barWidth,
+          barHeight,
+          gameObject.health,
+          gameObject.maxHealth,
+        )
+      })
     drawScore(canvas, room.width - 40, 50, game.playerA.score)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)

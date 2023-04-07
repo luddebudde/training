@@ -7,6 +7,8 @@ export const sum = (...terms) =>
     return accumulation
   }, Vector.create(0, 0))
 
+export const scale = (vector, scalar) => Vector.mult(vector, scalar)
+
 export const average = (...terms) =>
   terms.length > 0 ? Vector.div(sum(...terms), terms.length) : undefined
 

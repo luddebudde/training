@@ -55,6 +55,7 @@ export const createEnemy = (players, addObject, position) => {
       }
     },
     health: 40,
+    maxHealth: 40,
     points: 50,
   }
 }

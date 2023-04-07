@@ -25,6 +25,7 @@ export const asteroid = (position) => {
   applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
 
   return {
+    type: 'asteroid',
     body: body,
     health: 9999999,
     points: 99999999,

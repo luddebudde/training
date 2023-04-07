@@ -85,6 +85,7 @@ export const createBomber = (players, getGameObjects, position) => {
     },
     isBullet: true,
     health: 10,
+    maxHealth: 10,
     damage: 20,
     type: 'bomber',
     points: 5,

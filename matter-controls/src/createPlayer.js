@@ -44,7 +44,7 @@ export const createPlayer = (sprite, spriteWithJet, addObject) => {
       category: collisionCategories.player,
     },
   })
-  
+
   const cameraBody = Bodies.circle(playerRadius, 0, 10, {
     mass: 1,
     frictionAir: 0.05,
@@ -102,6 +102,7 @@ export const createPlayer = (sprite, spriteWithJet, addObject) => {
     worldObjects: [playerBody, cameraBody, cameraConstraint],
     camera: cameraBody,
     health: 200,
+    maxHealth: 200,
     score: 0,
     type: 'player',
     update: () => {

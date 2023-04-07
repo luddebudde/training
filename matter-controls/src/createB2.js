@@ -69,6 +69,7 @@ export const createB2 = (players, addObject, position) => {
       }
     },
     health: 150,
+    maxHealth: 150,
     points: 300,
   }
 }
