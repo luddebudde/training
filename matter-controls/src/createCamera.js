@@ -10,9 +10,9 @@ import { average } from './math.js'
 
 import { distance } from './distance.js'
 
-export const createCamera = (players) => {
-  const averagePos = () => {
-    const livePlayers = players.filter((player) => {
+export const createCamera = () => {
+  const averagePos = (ships) => {
+    const livePlayers = ships.filter((player) => {
       return player.health > 0
     })
     return average(
@@ -22,7 +22,7 @@ export const createCamera = (players) => {
     )
   }
 
-  const body = Bodies.circle(averagePos().x, averagePos().y, 10, {
+  const body = Bodies.circle(0, 0, 10, {
     mass: 1,
     frictionAir: 1,
     render: {
@@ -30,13 +30,11 @@ export const createCamera = (players) => {
     },
     collisionFilter: { mask: 0 },
   })
-  applyTorque(body, 1)
-  applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
 
   return {
     body: body,
-    update: () => {
-      const equilibriumPoint = averagePos()
+    update: (game) => {
+      const equilibriumPoint = averagePos([game.playerA, game.playerB])
       if (equilibriumPoint !== undefined) {
         const force = Vector.mult(
           Vector.normalise(Vector.sub(equilibriumPoint, body.position)),

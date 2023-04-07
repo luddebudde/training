@@ -150,7 +150,7 @@ const createGame = () => {
     playerA: players[0],
     playerB: players[1],
     players,
-    camera: createCamera(players),
+    camera: createCamera(),
     engine,
     render: Render.create({
       canvas: canvas,
@@ -315,7 +315,7 @@ const registerEventListeners = () => {
       room.height,
     )
 
-    game.gameObjects.forEach((updateable) => updateable.update?.())
+    game.gameObjects.forEach((updateable) => updateable.update?.(game))
 
     game.players.forEach((ship) => applyRoomBoundaryForce(ship.body))
 
