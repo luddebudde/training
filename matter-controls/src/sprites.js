@@ -14,7 +14,7 @@ export const sprites = {
     height: 512,
     width: 512,
   },
-  player: (color) => ({
+  fighterWithoutJet: (color) => ({
     texture: `/ships/player/large/${color}.png`,
     width: 844,
     height: 890,
@@ -24,11 +24,16 @@ export const sprites = {
     width: 125,
     height: 125,
   }),
-  playerWithJet: (color) => ({
+  fighterWithJet: (color) => ({
     texture: `/ships/player/large/${color}-jet.png`,
     width: 844,
     height: 890,
   }),
+  assault: {
+    texture: `/ships/player/large/assault.png`,
+    width: 304,
+    height: 336,
+  },
   enemy: {
     texture: '/enemy.png',
     height: 338,

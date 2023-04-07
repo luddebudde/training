@@ -8,15 +8,11 @@ import {
   Runner,
   Vector,
 } from 'matter-js'
-import { applyTorque } from './src/applyTorque.js'
 import { sprites } from './src/sprites.js'
 import { keyDownTracker } from './src/keyDownTracker.js'
-import { direction } from './src/direction.js'
-import { applyAngularFriction } from './src/applyAngularFriction.js'
 import { asteroid } from './src/asteroid.js'
 import { zeros } from './src/zeros.js'
-import { bullet } from './src/bullet.js'
-import { createPlayer, playerRadius } from './src/createPlayer.js'
+import { createFighter } from './src/createFighter.js'
 import { createEnemy } from './src/createEnemy.js'
 import { closestPointOnCircle, createBomber } from './src/createBomber.js'
 import { throttle } from 'throttle-debounce'
@@ -25,7 +21,7 @@ import { radiansToCartesian } from './src/radianstToCartesian.js'
 import { playBum, playExplosion } from './src/audio.js'
 import { hollowCircle } from './src/hollowCircle.js'
 import { collisionCategories } from './src/collision.js'
-import { thrust } from './src/thrust.js'
+import { applyThrust } from './src/applyThrust.js'
 import { drawHealthBar } from './drawHealthBar.js'
 import { drawScore } from './drawScore.js'
 import { moveCameraTo } from './moveCameraTo.js'
@@ -34,9 +30,9 @@ import { createB2 } from './src/createB2.js'
 import { createCamera } from './src/createCamera.js'
 import { createCoward, isDistanceLessThan } from './src/createCoward.js'
 import { miniBox } from './src/ammoBox.js'
-import { getNeighbors } from './src/getNeighbors'
 import { down, origo } from './src/vectors.js'
 import { applyForce } from './src/applyForce.js'
+import { createAssault } from './src/createAssault.js'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -128,21 +124,9 @@ const createGame = () => {
     },
   })
   const players = [
-    createPlayer(
-      sprites.player('green'),
-      sprites.playerWithJet('green'),
-      addGameObject,
-    ),
-    createPlayer(
-      sprites.player('blue'),
-      sprites.playerWithJet('blue'),
-      addGameObject,
-    ),
-    createPlayer(
-      sprites.player('green'),
-      sprites.playerWithJet('blue'),
-      addGameObject,
-    ),
+    createFighter(addGameObject),
+    createFighter(addGameObject),
+    createAssault(addGameObject),
   ]
   const game = {
     bullets: [],

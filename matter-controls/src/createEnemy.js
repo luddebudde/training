@@ -4,7 +4,7 @@ import { direction } from './direction'
 import { ebullet } from './eBullet'
 import { sprites } from './sprites'
 import { turnTowards } from './turnTowards.js'
-import { thrust } from './thrust.js'
+import { applyThrust } from './applyThrust.js'
 import { isFacing } from './isFacing.js'
 import { closestPlayer } from './closestPlayer.js'
 
@@ -51,7 +51,7 @@ export const createEnemy = (players, addObject, position) => {
       ) {
         fire()
       } else if (isFacing(body, player.body)) {
-        thrust(body, engineStrength)
+        applyThrust(body, engineStrength)
       }
     },
     health: 40,

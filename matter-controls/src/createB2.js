@@ -4,7 +4,7 @@ import { direction } from './direction'
 import { ebullet } from './eBullet'
 import { sprites } from './sprites'
 import { turnTowards } from './turnTowards.js'
-import { thrust } from './thrust.js'
+import { applyThrust } from './applyThrust.js'
 import { closestPlayer } from './closestPlayer.js'
 import { collisionCategories } from './collision.js'
 
@@ -52,7 +52,7 @@ export const createB2 = (players, addObject, position) => {
     update: () => {
       const player = closestPlayer(body.position, players)
       turnTowards(body, player.body, torque)
-      thrust(body, engineStrength)
+      applyThrust(body, engineStrength)
 
       const projection = Vector.dot(
         direction(body),
