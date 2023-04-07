@@ -7,7 +7,8 @@ import { random } from './random.js'
 import { sprites } from './sprites.js'
 import { moveCameraTo } from '../moveCameraTo.js'
 import { average } from './math.js'
-import { distance } from './createBomber.js'
+
+import { distance } from './distance.js'
 
 export const createCamera = (players) => {
   const averagePos = () => {

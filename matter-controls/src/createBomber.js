@@ -9,6 +9,7 @@ import { collisionCategories } from './collision.js'
 import { closestPlayer } from './closestPlayer.js'
 import { isCircle } from './isCircle.js'
 import { getNeighbors } from './getNeighbors.js'
+import { isDistanceLessThan } from './isDistanceLessThan.js'
 
 const engineStrength = 0.5
 const turboStrengh = engineStrength * 5
@@ -96,20 +97,6 @@ export const averageNeighborDirection = (neighbors) =>
   Vector.normalise(
     sum(...neighbors.map((neighbor) => Vector.normalise(neighbor.velocity))),
   )
-
-/**
- * Whether the distance between two points `aPos` and `bPos` are greater than `distance`.
- * @param aPos
- * @param bPos
- * @param distance
- * @returns {boolean}
- */
-export const isDistanceLessThan = (aPos, bPos, distance) =>
-  Vector.magnitudeSquared(Vector.sub(aPos, bPos)) < distance * distance
-
-export const distance = (aPos, bPos) => Vector.magnitude(Vector.sub(aPos, bPos))
-export const distanceSquared = (aPos, bPos) =>
-  Vector.magnitudeSquared(Vector.sub(aPos, bPos))
 
 export const electricForce = (r1, r2, q1, q2) => {
   const r = Vector.sub(r1, r2)

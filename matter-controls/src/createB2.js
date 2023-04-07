@@ -7,7 +7,8 @@ import { turnTowards } from './turnTowards.js'
 import { thrust } from './thrust.js'
 import { closestPlayer } from './closestPlayer.js'
 import { collisionCategories } from './collision.js'
-import { isDistanceLessThan } from './createBomber.js'
+
+import { isDistanceLessThan } from './isDistanceLessThan.js'
 
 export const engineStrength = 3
 export const enemyRadius = 80

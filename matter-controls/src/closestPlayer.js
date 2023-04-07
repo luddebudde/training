@@ -1,4 +1,4 @@
-import { distanceSquared } from './createBomber.js'
+import { distanceSquared } from './distance.js'
 
 export const closestPlayer = (pos, players) =>
   players.reduce(function (minPlayer, currentPlayer) {

@@ -9,6 +9,12 @@ import { direction } from './direction.js'
 import { bullet } from './bullet.js'
 import { throttle } from 'throttle-debounce'
 import { miniBullet } from './miniBullet'
+import { applyForce } from './applyForce.js'
+import { down, origo } from './vectors.js'
+import { scale } from './math.js'
+
+import { distance } from './distance.js'
+import { isDistanceLessThan } from './isDistanceLessThan.js'
 
 export const playerRadius = 30
 const playerTorque = 0.2

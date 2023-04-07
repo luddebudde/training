@@ -18,7 +18,7 @@ import { zeros } from './src/zeros.js'
 import { bullet } from './src/bullet.js'
 import { createPlayer, playerRadius } from './src/createPlayer.js'
 import { createEnemy } from './src/createEnemy.js'
-import { createBomber } from './src/createBomber.js'
+import { closestPointOnCircle, createBomber } from './src/createBomber.js'
 import { throttle } from 'throttle-debounce'
 import { random } from './src/random.js'
 import { radiansToCartesian } from './src/radianstToCartesian.js'
@@ -35,7 +35,8 @@ import { createCamera } from './src/createCamera.js'
 import { createCoward, isDistanceLessThan } from './src/createCoward.js'
 import { miniBox } from './src/ammoBox.js'
 import { getNeighbors } from './src/getNeighbors'
-import { down } from './src/vectors.js'
+import { down, origo } from './src/vectors.js'
+import { applyForce } from './src/applyForce.js'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -142,16 +143,6 @@ const createGame = () => {
       sprites.playerWithJet('blue'),
       addGameObject,
     ),
-    createPlayer(
-      sprites.player('green'),
-      sprites.playerWithJet('blue'),
-      addGameObject,
-    ),
-    createPlayer(
-      sprites.player('green'),
-      sprites.playerWithJet('blue'),
-      addGameObject,
-    ),
   ]
   const game = {
     bullets: [],
@@ -209,7 +200,7 @@ const createGame = () => {
       label: 'World Boundary',
       collisionFilter: {
         category: collisionCategories.roomBoundary,
-        mask: collisionCategories.player,
+        mask: 0,
       },
       friction: 0,
       render: {
@@ -325,6 +316,9 @@ const registerEventListeners = () => {
     )
 
     game.gameObjects.forEach((updateable) => updateable.update?.())
+
+    game.players.forEach((ship) => applyRoomBoundaryForce(ship.body))
+
     spawnEnemies()
     spawnAmmo()
     const margin = 20
@@ -472,6 +466,21 @@ const damage = (obj, damage) => {
     } else {
       playBum()
     }
+  }
+}
+
+const applyRoomBoundaryForce = (body) => {
+  if (!isDistanceLessThan(body.position, origo, roomRadius)) {
+    applyForce(
+      body,
+      scale(
+        Vector.sub(
+          closestPointOnCircle(body.position, origo, roomRadius),
+          body.position,
+        ),
+        0.05,
+      ),
+    )
   }
 }
 
