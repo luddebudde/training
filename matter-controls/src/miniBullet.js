@@ -18,9 +18,10 @@ export const miniBullet = (pos, direction) => {
   // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
   const p = Vector.add(pos, Vector.mult(direction, bulletRadius))
   const body = Bodies.circle(p.x, p.y, bulletRadius, {
-    mass: 0.001,
+    mass: 0,
     friction: 0,
     frictionAir: 0,
+    isSensor: true,
     render: {
       sprite: {
         texture: sprites.miniBullet.texture,

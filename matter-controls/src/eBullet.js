@@ -20,6 +20,7 @@ export const ebullet = (pos, direction, damage) => {
     mass: 1,
     friction: 0,
     frictionAir: 0,
+    isSensor: true,
     label: 'Enemy Bullet',
     render: {
       sprite: {

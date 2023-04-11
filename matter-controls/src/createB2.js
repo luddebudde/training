@@ -38,7 +38,7 @@ export const createB2 = (players, addObject, position) => {
   const fire = throttle(
     100,
     () => {
-      const newEBullet = ebullet(gunPosition(), direction(body), 3)
+      const newEBullet = ebullet(gunPosition(), direction(body), 3.5)
       addObject(newEBullet)
       const audio = new Audio('audio/enemy-rifle.mp3')
       audio.play()

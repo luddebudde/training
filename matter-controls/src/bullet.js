@@ -8,18 +8,18 @@ import { setLookForward } from './setLookForward.js'
 
 const bulletSpeed = 30
 
-export const setBulletDirection = (body, direction) => {
-  Body.setVelocity(body, Vector.mult(Vector.normalise(direction), bulletSpeed))
+export const setBulletDirection = (body) => {
   setLookForward(body)
 }
 
 export const bullet = (pos, direction) => {
   const bulletRadius = 20
-  // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
   const p = Vector.add(pos, Vector.mult(direction, bulletRadius))
   const body = Bodies.circle(p.x, p.y, bulletRadius, {
-    mass: 0.001,
+    mass: 0.01,
     friction: 0,
+    restitution: 1,
+
     frictionAir: 0,
     render: {
       sprite: {
@@ -33,11 +33,12 @@ export const bullet = (pos, direction) => {
       mask: ~collisionCategories.bullets,
     },
   })
-  setBulletDirection(body, direction)
+  Body.setVelocity(body, Vector.mult(Vector.normalise(direction), bulletSpeed))
+  setBulletDirection(body)
   return {
     body: body,
     update: () => {
-      setBulletDirection(body, body.velocity)
+      setBulletDirection(body)
     },
     isBullet: true,
     health: 60,
