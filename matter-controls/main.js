@@ -80,7 +80,7 @@ const playEngine = () => {
     .then((e) => {
       document.body.removeEventListener('mousemove', playEngine)
     })
-    .catch((e) => {})
+    .catch((e) => { })
 }
 
 document.body.addEventListener('mousemove', playEngine)
@@ -97,7 +97,7 @@ const playMusic = () => {
     .then((e) => {
       document.body.removeEventListener('mousemove', playMusic)
     })
-    .catch((e) => {})
+    .catch((e) => { })
 }
 
 document.body.addEventListener('mousemove', playMusic)
@@ -327,14 +327,15 @@ const registerEventListeners = () => {
       game.playerB.health,
       game.playerB.maxHealth,
     )
-    const canvasPos = (pos) => {
-      const cameraPos = game.camera.body.position
-      return sum(
-        pos,
-        Vector.neg(cameraPos),
-        Vector.create(canvas.width / 2, canvas.height / 2),
-      )
+    const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
+    const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
+    if (nextPlayerAShip !== game.playerA) {
+      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position)
     }
+    if (nextPlayerBShip !== game.playerB) {
+      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position)
+    }
+
     game.gameObjects
       .filter((gameObject) => gameObject.type !== 'asteroid')
       .filter((gameObject) => gameObject.health > 1 && gameObject.maxHealth)
@@ -380,6 +381,24 @@ const registerEventListeners = () => {
     Events.off(game.engine, 'beforeUpdate', handleBeforeUpdate)
     Events.off(game.engine, 'collisionStart', handleCollisionStart)
   }
+}
+
+const canvasPos = (pos) => {
+  const cameraPos = game.camera.body.position
+  return sum(
+    pos,
+    Vector.neg(cameraPos),
+    Vector.create(canvas.width / 2, canvas.height / 2),
+  )
+}
+
+const drawCirleAroundEmptyShip = (ctx, shipPos) => {
+  const pos = canvasPos(shipPos)
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI, false);
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+  ctx.stroke();
 }
 const startGame = () => {
   // run the renderer
