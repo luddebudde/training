@@ -120,7 +120,7 @@ const createGame = () => {
       scale: 0,
     },
     timing: {
-      timeScale: 1,
+      // timeScale: 0.7,
     },
   })
   const players = [
@@ -316,7 +316,7 @@ const registerEventListeners = () => {
       width,
       height,
       game.playerA.health,
-      200,
+      game.playerA.maxHealth,
     )
     drawHealthBar(
       ctx,
@@ -325,7 +325,7 @@ const registerEventListeners = () => {
       width,
       20,
       game.playerB.health,
-      200,
+      game.playerB.maxHealth,
     )
     const canvasPos = (pos) => {
       const cameraPos = game.camera.body.position
