@@ -232,13 +232,14 @@ const getNextShip = (thisPlayer, otherPlayer) => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
+    
     if (event.code === 'KeyR') {
       restartGame()
     }
     if (event.code === 'KeyC') {
       game.playerA = getNextShip(game.playerA, game.playerB)
     }
-    if (event.code === 'Numpad0') {
+    if (event.code === 'Comma') {
       game.playerB = getNextShip(game.playerB, game.playerA)
     }
   }
@@ -330,10 +331,10 @@ const registerEventListeners = () => {
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
     if (nextPlayerAShip !== game.playerA) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position)
+      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position, "C")
     }
     if (nextPlayerBShip !== game.playerB) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position)
+      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position, ";")
     }
 
     game.gameObjects
@@ -392,14 +393,17 @@ const canvasPos = (pos) => {
   )
 }
 
-const drawCirleAroundEmptyShip = (ctx, shipPos) => {
+const drawCirleAroundEmptyShip = (ctx, shipPos, text) => {
   const pos = canvasPos(shipPos)
   ctx.beginPath();
   ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI, false);
   ctx.lineWidth = 3;
   ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
   ctx.stroke();
-}
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+  ctx.font = '35px serif'
+  ctx.fillText(text, pos.x + 15, pos.y + 70)
+  }
 const startGame = () => {
   // run the renderer
   Render.run(game.render)
