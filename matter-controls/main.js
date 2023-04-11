@@ -124,8 +124,8 @@ const createGame = () => {
     },
   })
   const players = [
-    createFighter(addGameObject),
-    createFighter(addGameObject),
+    createFighter(addGameObject, "green"),
+    createFighter(addGameObject, "blue"),
     createAssault(addGameObject),
   ]
   const game = {
