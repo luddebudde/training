@@ -471,7 +471,6 @@ const damage = (obj, damage) => {
     obj.health = obj.health - damage
     if (obj.health <= 0) {
       removeObject(game, obj)
-      playExplosion()
       game.players[0].score = game.players[0].score + (obj.points ?? 0)
 
       obj.onDestroy?.()

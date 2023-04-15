@@ -4,6 +4,7 @@ import { sprites } from './sprites'
 import { right } from './vectors'
 import { collisionCategories } from './collision.js'
 import { setLookForward } from './setLookForward.js'
+import { playExplosion } from './audio'
 
 
 export const setBulletDirection = (body, direction) => {
@@ -44,5 +45,8 @@ export const ebullet = (pos, direction, damage, radius, speed) => {
     isBullet: true,
     health: 0,
     damage,
+    onDestroy: () => {
+      playExplosion(0.8) 
+    }
   }
 }

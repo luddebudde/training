@@ -5,6 +5,7 @@ import { sprites } from './sprites'
 import { right } from './vectors'
 import { collisionCategories } from './collision.js'
 import { setLookForward } from './setLookForward.js'
+import { playExplosion, playPlayerDeath } from './audio'
 
 const bulletSpeed = 30
 
@@ -43,5 +44,9 @@ export const bullet = (pos, direction) => {
     isBullet: true,
     health: 0,
     damage: 20,
+    
+    onDestroy: () => {
+      playExplosion(1)
+    }
   }
 }
