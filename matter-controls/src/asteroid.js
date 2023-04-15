@@ -7,12 +7,11 @@ import { random } from './random.js'
 import { sprites } from './sprites.js'
 
 export const asteroid = (position) => {
-  const asteroidRadius = random(30, 100)
+  const asteroidRadius = random(30, 150)
 
   const body = Bodies.circle(position.x, position.y, asteroidRadius, {
-    density: 0.1,
+    density: 1,
     frictionAir: 0,
-    mass: 10000,
     render: {
       sprite: {
         texture: sprites.asteroid.texture,

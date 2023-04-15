@@ -95,7 +95,7 @@ export const createCoward = (getPlayers, getGameObjects, position, homePos) => {
     maxHealth: 60,
     damage: 0,
     type: 'coward',
-    points: 150,
+    points: 50,
   }
 }
 

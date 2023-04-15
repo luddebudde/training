@@ -133,6 +133,9 @@ const createGame = () => {
     gameObjects: [],
     playerA: players[0],
     playerB: players[1],
+    // playerAScore: 0,
+    // playerBScore: 0,
+    score: 0,
     players,
     camera: createCamera(),
     engine,
@@ -359,7 +362,8 @@ const registerEventListeners = () => {
           gameObject.maxHealth,
         )
       })
-    drawScore(canvas, room.width - 40, 50, game.playerA.score)
+    drawScore(canvas, room.width / 2, 50, game.score)
+    // drawScore(canvas, room.width - 60, 70, game.playerBScore)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
 
@@ -437,11 +441,11 @@ const spawnEnemies = throttle(3000, () => {
         createB2(getPlayers, (obj) => addObject(game, obj), position),
       )
     })
-  } else if (r < 40) {
+  } else if (r < 30) {
     zeros(7).forEach(() => {
       addObject(game, createBomber(getPlayers, getGameObjects, position))
     })
-  } else if (r < 50) {
+  } else if (r < 40) {
     addObject(
       game,
       createCoward(
@@ -471,7 +475,7 @@ const damage = (obj, damage) => {
     obj.health = obj.health - damage
     if (obj.health <= 0) {
       removeObject(game, obj)
-      game.players[0].score = game.players[0].score + (obj.points ?? 0)
+      game.score = game.score + (obj.points ?? 0)
 
       obj.onDestroy?.()
     } else {
