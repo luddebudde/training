@@ -423,26 +423,29 @@ const restartGame = () => {
 }
 
 const isKeyDown = keyDownTracker()
+const getPlayers = () => [game.playerA, game.playerB].filter((player) => player.health >   0) 
+
 
 const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
   const position = spawnPositionOutsideRoom()
-  if (r < 10) {
+  console.log(getPlayers().map((player) => player.health))
+  if (r < 100) {
     zeros(1).forEach(() => {
       addObject(
         game,
-        createB2(game.players, (obj) => addObject(game, obj), position),
+        createB2(getPlayers, (obj) => addObject(game, obj), position),
       )
     })
   } else if (r < 40) {
     zeros(7).forEach(() => {
-      addObject(game, createBomber(game.players, getGameObjects, position))
+      addObject(game, createBomber(getPlayers, getGameObjects, position))
     })
   } else if (r < 50) {
     addObject(
       game,
       createCoward(
-        game.players,
+        getPlayers,
         getGameObjects,
         position,
         spawnPostionInsideRoom(),
@@ -451,7 +454,7 @@ const spawnEnemies = throttle(3000, () => {
   } else {
     addObject(
       game,
-      createEnemy(game.players, (obj) => addObject(game, obj), position),
+      createEnemy(getPlayers, (obj) => addObject(game, obj), position),
     )
   }
 })

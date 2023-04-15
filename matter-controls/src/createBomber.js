@@ -14,7 +14,7 @@ import { isDistanceLessThan } from './isDistanceLessThan.js'
 const engineStrength = 0.5
 const turboStrengh = engineStrength * 5
 export const bomberRadius = 15
-export const createBomber = (players, getGameObjects, position) => {
+export const createBomber = (getPlayers, getGameObjects, position) => {
   const body = Bodies.circle(position.x, position.y, bomberRadius, {
     mass: 100,
     frictionAir: 0.1,
@@ -35,7 +35,10 @@ export const createBomber = (players, getGameObjects, position) => {
   return {
     body: body,
     update: () => {
-      const player = closestPlayer(body.position, players)
+      const player = closestPlayer(body.position, getPlayers())
+      if (!player) {
+        return
+      }
       const dirToPlayer = Vector.normalise(
         Vector.sub(player.body.position, body.position),
       )

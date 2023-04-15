@@ -10,7 +10,7 @@ import { closestPlayer } from './closestPlayer.js'
 
 export const engineStrength = 0.3
 export const enemyRadius = 45
-export const createEnemy = (players, addObject, position) => {
+export const createEnemy = (getPlayers, addObject, position) => {
   const body = Bodies.circle(position.x, position.y, enemyRadius, {
     mass: 500,
     frictionAir: 0.05,
@@ -31,7 +31,7 @@ export const createEnemy = (players, addObject, position) => {
   const fire = throttle(
     1000,
     () => {
-      const newEBullet = ebullet(gunPosition(), direction(body), 10)
+      const newEBullet = ebullet(gunPosition(), direction(body), 10, 15, 10)
       addObject(newEBullet)
       const audio = new Audio('audio/enemy-rifle.mp3')
       audio.play()
@@ -43,7 +43,10 @@ export const createEnemy = (players, addObject, position) => {
   return {
     body: body,
     update: () => {
-      const player = closestPlayer(body.position, players)
+      const player = closestPlayer(body.position, getPlayers())
+      if (!player) {
+        return
+      }
       turnTowards(body, player.body, 0.1)
 
       if (

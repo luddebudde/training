@@ -19,8 +19,7 @@ export const bullet = (pos, direction) => {
     mass: 0.01,
     friction: 0,
     restitution: 1,
-
-    frictionAir: 0,
+    frictionAir: 0, 
     render: {
       sprite: {
         texture: sprites.bullet.texture,

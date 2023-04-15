@@ -13,8 +13,8 @@ import { isDistanceLessThan } from './isDistanceLessThan.js'
 export const engineStrength = 3
 export const enemyRadius = 80
 const torque = 0.3
-const fireDist = 500
-export const createB2 = (players, addObject, position) => {
+const fireDist = 700
+export const createB2 = (getPlayers, addObject, position) => {
   const body = Bodies.circle(position.x, position.y, enemyRadius, {
     mass: 5000,
     frictionAir: 0.05,
@@ -38,7 +38,7 @@ export const createB2 = (players, addObject, position) => {
   const fire = throttle(
     100,
     () => {
-      const newEBullet = ebullet(gunPosition(), direction(body), 3.5)
+      const newEBullet = ebullet(gunPosition(), direction(body), 8.5, 35, 15)
       addObject(newEBullet)
       const audio = new Audio('audio/enemy-rifle.mp3')
       audio.play()
@@ -50,7 +50,10 @@ export const createB2 = (players, addObject, position) => {
   return {
     body: body,
     update: () => {
-      const player = closestPlayer(body.position, players)
+      const player = closestPlayer(body.position, getPlayers())
+      if (!player) {
+        return
+      }
       turnTowards(body, player.body, torque)
       applyThrust(body, engineStrength)
 
@@ -58,7 +61,7 @@ export const createB2 = (players, addObject, position) => {
         direction(body),
         Vector.normalise(Vector.sub(player.body.position, body.position)),
       )
-      const isFacing = projection > 0.7
+      const isFacing = projection > 0.8
 
       const isClose = isDistanceLessThan(
         body.position,

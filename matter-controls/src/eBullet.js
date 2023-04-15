@@ -5,20 +5,20 @@ import { right } from './vectors'
 import { collisionCategories } from './collision.js'
 import { setLookForward } from './setLookForward.js'
 
-const eBulletSpeed = 10
 
 export const setBulletDirection = (body, direction) => {
-  Body.setVelocity(body, Vector.mult(Vector.normalise(direction), eBulletSpeed))
+  
   setLookForward(body)
 }
 
-export const ebullet = (pos, direction, damage) => {
-  const eBulletRadius = 15
+export const ebullet = (pos, direction, damage, radius, speed) => {
+  const eBulletRadius = radius
   // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
   const p = Vector.add(pos, Vector.mult(direction, eBulletRadius))
   const body = Bodies.circle(p.x, p.y, eBulletRadius, {
     mass: 1,
     friction: 0,
+    restitution: 1,
     frictionAir: 0,
     isSensor: true,
     label: 'Enemy Bullet',
@@ -34,6 +34,7 @@ export const ebullet = (pos, direction, damage) => {
       mask: ~(collisionCategories.eBullets | collisionCategories.eBullets),
     },
   })
+  Body.setVelocity(body, Vector.mult(Vector.normalise(direction), speed))
   setBulletDirection(body, direction)
   return {
     body: body,

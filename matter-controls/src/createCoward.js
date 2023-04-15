@@ -13,7 +13,7 @@ import { getNeighbors } from './getNeighbors.js'
 const engineStrength = 0.2
 const turboStrengh = engineStrength * 5
 export const cowardRadius = 25
-export const createCoward = (players, getGameObjects, position, homePos) => {
+export const createCoward = (getPlayers, getGameObjects, position, homePos) => {
   const body = Bodies.circle(position.x, position.y, cowardRadius, {
     mass: 100,
     frictionAir: 0.015,
@@ -33,7 +33,10 @@ export const createCoward = (players, getGameObjects, position, homePos) => {
   return {
     body: body,
     update: () => {
-      const player = closestPlayer(body.position, players)
+      const player = closestPlayer(body.position, getPlayers())
+      if (!player) {
+        return
+      }
       const dirToPlayer = Vector.normalise(
         Vector.sub(player.body.position, body.position),
       )
