@@ -232,7 +232,7 @@ const getNextShip = (thisPlayer, otherPlayer) => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-    
+
     if (event.code === 'KeyR') {
       restartGame()
     }
@@ -403,7 +403,7 @@ const drawCirleAroundEmptyShip = (ctx, shipPos, text) => {
   ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
   ctx.font = '35px serif'
   ctx.fillText(text, pos.x + 15, pos.y + 70)
-  }
+}
 const startGame = () => {
   // run the renderer
   Render.run(game.render)
@@ -423,7 +423,7 @@ const restartGame = () => {
 }
 
 const isKeyDown = keyDownTracker()
-const getPlayers = () => [game.playerA, game.playerB].filter((player) => player.health >   0) 
+const getPlayers = () => [game.playerA, game.playerB].filter((player) => player.health > 0)
 
 
 const spawnEnemies = throttle(3000, () => {
@@ -473,6 +473,8 @@ const damage = (obj, damage) => {
       removeObject(game, obj)
       playExplosion()
       game.players[0].score = game.players[0].score + (obj.points ?? 0)
+
+      obj.onDestroy?.()
     } else {
       playBum()
     }

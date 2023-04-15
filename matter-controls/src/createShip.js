@@ -4,6 +4,7 @@ import { applyTorque } from './applyTorque.js'
 import { Bodies, Vector } from 'matter-js'
 import { direction } from './direction.js'
 import { collisionCategories } from './collision.js'
+import { playPlayerDeath } from './audio.js'
 
 export const createShip = (sprite, spriteWithJet, addObject, options) => {
   const { radius, torque, thrust, health, mass, weapon } = options
@@ -56,5 +57,8 @@ export const createShip = (sprite, spriteWithJet, addObject, options) => {
       )
       weapon(spawnPos, direction(playerBody), addObject)
     },
+    onDestroy: () => {
+      playPlayerDeath()
+    }
   }
 }

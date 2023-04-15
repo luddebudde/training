@@ -6,3 +6,9 @@ export const playExplosion = () => {
   audio.volume = 0.5
   audio.play()
 }
+
+export const playPlayerDeath = () => {
+  const audio = new Audio('audio/wilhelm.mp3')
+  audio.volume = 1
+  audio.play()
+}
