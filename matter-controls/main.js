@@ -430,7 +430,7 @@ const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
   const position = spawnPositionOutsideRoom()
   console.log(getPlayers().map((player) => player.health))
-  if (r < 100) {
+  if (r < 5) {
     zeros(1).forEach(() => {
       addObject(
         game,

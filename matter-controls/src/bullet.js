@@ -20,6 +20,7 @@ export const bullet = (pos, direction) => {
     friction: 0,
     restitution: 1,
     frictionAir: 0, 
+    isSensor: true, 
     render: {
       sprite: {
         texture: sprites.bullet.texture,
@@ -37,10 +38,10 @@ export const bullet = (pos, direction) => {
   return {
     body: body,
     update: () => {
-      setBulletDirection(body)
+      // setBulletDirection(body)
     },
     isBullet: true,
-    health: 60,
+    health: 0,
     damage: 20,
   }
 }

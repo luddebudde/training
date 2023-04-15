@@ -39,7 +39,7 @@ export const ebullet = (pos, direction, damage, radius, speed) => {
   return {
     body: body,
     update: () => {
-      setBulletDirection(body, body.velocity)
+      // setBulletDirection(body, body.velocity)
     },
     isBullet: true,
     health: 0,

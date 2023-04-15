@@ -7,4 +7,8 @@ export const createMinigun = () =>
     addObject(newBullet)
     const audio = new Audio('audio/player-rifle.mp3')
     audio.play()
-  })
+  },
+  {
+    noTrailing: true,
+  },
+  )
