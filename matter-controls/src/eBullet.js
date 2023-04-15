@@ -32,7 +32,7 @@ export const ebullet = (pos, direction, damage, radius, speed) => {
     },
     collisionFilter: {
       category: collisionCategories.eBullets,
-      mask: ~(collisionCategories.eBullets | collisionCategories.eBullets),
+      mask: ~(collisionCategories.eBullets | collisionCategories.bullets),
     },
   })
   Body.setVelocity(body, Vector.mult(Vector.normalise(direction), speed))
