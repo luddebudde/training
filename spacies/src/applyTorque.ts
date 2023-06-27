@@ -1,7 +1,7 @@
 import { Body, Vector } from 'matter-js'
-import { down, left, right, up } from './vectors.js'
+import { down, left, right, up } from './vectors'
 
-export const applyTorque = (body, torque) => {
+export const applyTorque = (body: Body, torque: number) => {
   Body.applyForce(
     body,
     Vector.add(body.position, up),

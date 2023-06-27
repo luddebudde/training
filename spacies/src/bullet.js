@@ -3,8 +3,8 @@ import { angle } from './angle'
 import { direction } from './direction'
 import { sprites } from './sprites'
 import { right } from './vectors'
-import { collisionCategories } from './collision.js'
-import { setLookForward } from './setLookForward.js'
+import { collisionCategories } from './collision'
+import { setLookForward } from './setLookForward'
 import { playExplosion, playPlayerDeath } from './audio'
 
 const bulletSpeed = 30

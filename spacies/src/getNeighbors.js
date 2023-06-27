@@ -1,6 +1,6 @@
-import { isCircle } from './isCircle.js'
-import { closestPointOnCircle } from './createBomber.js'
-import { isDistanceLessThan } from './isDistanceLessThan.js'
+import { isCircle } from './isCircle'
+import { closestPointOnCircle } from './createBomber'
+import { isDistanceLessThan } from './isDistanceLessThan'
 
 export const getNeighbors = (selfBody, bodies, neighborMaxDistance) =>
   bodies.filter(

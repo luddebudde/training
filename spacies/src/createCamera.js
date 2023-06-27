@@ -1,14 +1,14 @@
 import { Bodies, Vector } from 'matter-js'
-import { room } from '../main.js'
-import { applyForce } from './applyForce.js'
+import { room } from '../main'
+import { applyForce } from './applyForce'
 import { applyTorque } from './applyTorque'
-import { radiansToCartesian } from './radianstToCartesian.js'
-import { random } from './random.js'
-import { sprites } from './sprites.js'
-import { moveCameraTo } from '../moveCameraTo.js'
-import { average } from './math.js'
+import { radiansToCartesian } from './radianstToCartesian'
+import { random } from './random'
+import { sprites } from './sprites'
+import { moveCameraTo } from '../moveCameraTo'
+import { average } from './math'
 
-import { distance } from './distance.js'
+import { distance } from './distance'
 
 export const createCamera = () => {
   const averagePos = (ships) => {

@@ -10,12 +10,12 @@ import {
   Runner,
   Vector,
 } from 'matter-js'
-import { black, darkGrey, green, red, white } from './src/palette.js'
-import { down, left, right, up } from './src/vectors.js'
-import { applyTorque } from './src/applyTorque.js'
-import { createRoom } from './src/createRoom.js'
-import { sprites } from './src/sprites.js'
-import { keyDownTracker } from './src/keyDownTracker.js'
+import { black, darkGrey, green, red, white } from './src/palette'
+import { down, left, right, up } from './src/vectors'
+import { applyTorque } from './src/applyTorque'
+import { createRoom } from './src/createRoom'
+import { sprites } from './src/sprites'
+import { keyDownTracker } from './src/keyDownTracker'
 
 // create an engine
 const engine = Engine.create()

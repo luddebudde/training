@@ -1,4 +1,4 @@
-import { angle } from './angle.js'
+import { angle } from './angle'
 import { Body } from 'matter-js'
 
 export const setLookForward = (body) => {

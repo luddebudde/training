@@ -1,10 +1,10 @@
-import { applyAngularFriction } from './applyAngularFriction.js'
-import { applyThrust } from './applyThrust.js'
-import { applyTorque } from './applyTorque.js'
+import { applyAngularFriction } from './applyAngularFriction'
+import { applyThrust } from './applyThrust'
+import { applyTorque } from './applyTorque'
 import { Bodies, Vector } from 'matter-js'
-import { direction } from './direction.js'
-import { collisionCategories } from './collision.js'
-import { playPlayerDeath } from './audio.js'
+import { direction } from './direction'
+import { collisionCategories } from './collision'
+import { playPlayerDeath } from './audio'
 
 export const createShip = (sprite, spriteWithJet, addObject, options) => {
   const { radius, torque, thrust, health, mass, weapon } = options

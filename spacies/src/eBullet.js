@@ -2,8 +2,8 @@ import { Bodies, Body, Vector } from 'matter-js'
 import { direction } from './direction'
 import { sprites } from './sprites'
 import { right } from './vectors'
-import { collisionCategories } from './collision.js'
-import { setLookForward } from './setLookForward.js'
+import { collisionCategories } from './collision'
+import { setLookForward } from './setLookForward'
 import { playExplosion } from './audio'
 
 

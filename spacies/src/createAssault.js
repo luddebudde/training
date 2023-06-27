@@ -1,6 +1,6 @@
-import { createShip } from './createShip.js'
-import { sprites } from './sprites.js'
-import { createMinigun } from './weapons/createMinigun.js'
+import { createShip } from './createShip'
+import { sprites } from './sprites'
+import { createMinigun } from './weapons/createMinigun'
 
 export const createAssault = (addObject) => {
   return createShip(sprites.assault, sprites.assault, addObject, {

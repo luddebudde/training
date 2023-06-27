@@ -1,5 +1,5 @@
 import { throttle } from 'throttle-debounce'
-import { bullet } from '../bullet.js'
+import { bullet } from '../bullet'
 
 export const createRifle = () =>
   throttle(300, (spawnPos, dir, addObject) => {

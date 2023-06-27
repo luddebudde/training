@@ -1,10 +1,10 @@
 import { Bodies, Vector } from 'matter-js'
-import { room } from '../main.js'
-import { applyForce } from './applyForce.js'
+import { room } from '../main'
+import { applyForce } from './applyForce'
 import { applyTorque } from './applyTorque'
-import { radiansToCartesian } from './radianstToCartesian.js'
-import { random } from './random.js'
-import { sprites } from './sprites.js'
+import { radiansToCartesian } from './radianstToCartesian'
+import { random } from './random'
+import { sprites } from './sprites'
 
 export const asteroid = (position) => {
   const asteroidRadius = random(30, 150)

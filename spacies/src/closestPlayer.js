@@ -1,4 +1,4 @@
-import { distanceSquared } from './distance.js'
+import { distanceSquared } from './distance'
 
 export const closestPlayer = (pos, players) =>
   players.reduce(function (minPlayer, currentPlayer) {

@@ -1,6 +1,6 @@
 import { throttle } from 'throttle-debounce'
-import { playMini } from '../audio.js'
-import { miniBullet } from '../miniBullet.js'
+import { playMini } from '../audio'
+import { miniBullet } from '../miniBullet'
 
 export const createMinigun = () =>
   throttle(60, (spawnPos, dir, addObject) => {

@@ -3,12 +3,12 @@ import { throttle } from 'throttle-debounce'
 import { direction } from './direction'
 import { ebullet } from './eBullet'
 import { sprites } from './sprites'
-import { turnTowards } from './turnTowards.js'
-import { applyThrust } from './applyThrust.js'
-import { closestPlayer } from './closestPlayer.js'
-import { collisionCategories } from './collision.js'
+import { turnTowards } from './turnTowards'
+import { applyThrust } from './applyThrust'
+import { closestPlayer } from './closestPlayer'
+import { collisionCategories } from './collision'
 
-import { isDistanceLessThan } from './isDistanceLessThan.js'
+import { isDistanceLessThan } from './isDistanceLessThan'
 
 export const engineStrength = 3
 export const enemyRadius = 80

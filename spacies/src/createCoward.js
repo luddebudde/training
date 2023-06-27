@@ -1,14 +1,14 @@
 import { Bodies, Vector } from 'matter-js'
-import { applyForce } from './applyForce.js'
+import { applyForce } from './applyForce'
 import { sum } from './math'
 import { radiansToCartesian } from './radianstToCartesian'
 import { random } from './random'
 import { sprites } from './sprites'
-import { setLookForward } from './setLookForward.js'
-import { collisionCategories } from './collision.js'
-import { closestPlayer } from './closestPlayer.js'
-import { isCircle } from './isCircle.js'
-import { getNeighbors } from './getNeighbors.js'
+import { setLookForward } from './setLookForward'
+import { collisionCategories } from './collision'
+import { closestPlayer } from './closestPlayer'
+import { isCircle } from './isCircle'
+import { getNeighbors } from './getNeighbors'
 
 const engineStrength = 0.2
 const turboStrengh = engineStrength * 5

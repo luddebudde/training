@@ -1,6 +1,6 @@
-import { createShip } from './createShip.js'
-import { sprites } from './sprites.js'
-import { createRifle } from './weapons/createRifle.js'
+import { createShip } from './createShip'
+import { sprites } from './sprites'
+import { createRifle } from './weapons/createRifle'
 
 export const createFighter = (addObject, color) => {
   return createShip(
