@@ -1,4 +1,12 @@
-import { Bodies, Body } from 'matter-js'
+import Matter, { Bodies, Body, Vector } from 'matter-js'
+
+type HollowCircleOptions = {
+  width: number,
+  extraLength: number,
+  initialRotation: number,
+  otherOptions: Matter.IBodyDefinition,
+  render: Matter.IBodyRenderOptions | undefined
+}
 
 /**
  * Creates a polygon that can contain other objects by putting together
@@ -17,13 +25,13 @@ import { Bodies, Body } from 'matter-js'
  *  being pushed in / out of teh object.
  *  'initialRotation': The initital rotation to be applied to the shape.
  */
-export const hollowCircle = (position, sides, radius, options = {}) => {
+export const hollowCircle = (position: Vector, sides: number, radius: number, options: HollowCircleOptions) => {
   const {
     width = 20,
     extraLength = 1.15,
     initialRotation = 0,
     ...otherOptions
-  } = options
+  } = options ?? {}
 
   const theta = (2 * Math.PI) / sides
   const sideLength = ((2 * radius * theta) / 2) * extraLength

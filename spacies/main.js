@@ -36,7 +36,7 @@ import { createAssault } from './src/createAssault'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
-const shouldPlayMusic = true
+const shouldPlayMusic = false
 
 const canvas = document.getElementById('app')
 canvas.width = window.innerWidth

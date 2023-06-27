@@ -1,27 +1,24 @@
 import { Bodies, Body, Vector } from 'matter-js'
-import { angle } from './angle'
-import { direction } from './direction'
 import { sprites } from './sprites'
-import { right } from './vectors'
 import { collisionCategories } from './collision'
 import { setLookForward } from './setLookForward'
-import { playExplosion, playPlayerDeath } from './audio'
+import { playExplosion } from './audio'
 
 const bulletSpeed = 30
 
-export const setBulletDirection = (body) => {
+export const setBulletDirection = (body: Body) => {
   setLookForward(body)
 }
 
-export const bullet = (pos, direction) => {
+export const bullet = (pos: Vector, direction: Vector) => {
   const bulletRadius = 20
   const p = Vector.add(pos, Vector.mult(direction, bulletRadius))
   const body = Bodies.circle(p.x, p.y, bulletRadius, {
     mass: 0.01,
     friction: 0,
     restitution: 1,
-    frictionAir: 0, 
-    isSensor: true, 
+    frictionAir: 0,
+    isSensor: true,
     render: {
       sprite: {
         texture: sprites.bullet.texture,
@@ -44,7 +41,7 @@ export const bullet = (pos, direction) => {
     isBullet: true,
     health: 0,
     damage: 20,
-    
+
     onDestroy: () => {
       playExplosion(1)
     }

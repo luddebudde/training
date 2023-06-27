@@ -7,5 +7,5 @@ import { Vector } from 'matter-js'
  * @param distance
  * @returns {boolean}
  */
-export const isDistanceLessThan = (aPos, bPos, distance) =>
+export const isDistanceLessThan = (aPos: Vector, bPos: Vector, distance: number) =>
   Vector.magnitudeSquared(Vector.sub(aPos, bPos)) < distance * distance

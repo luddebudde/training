@@ -1,4 +1,11 @@
-export const sprites = {
+
+type Sprite = {
+  texture: string,
+  height: number,
+  width: number,
+}
+
+export const sprites: Record<string, Sprite> = {
   pingPongBall: {
     texture: '/ping-pong-ball.png',
     height: 800,

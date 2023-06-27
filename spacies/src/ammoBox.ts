@@ -1,11 +1,11 @@
-import { Bodies } from 'matter-js'
+import { Bodies, Vector } from 'matter-js'
 import { applyForce } from './applyForce'
 import { applyTorque } from './applyTorque'
 import { radiansToCartesian } from './radianstToCartesian'
 import { random } from './random'
 import { sprites } from './sprites'
 
-export const miniBox = (position) => {
+export const miniBox = (position: Vector) => {
   const radius = 20
 
   const body = Bodies.circle(position.x, position.y, radius, {
