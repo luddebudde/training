@@ -6,7 +6,7 @@ import { radiansToCartesian } from './radianstToCartesian'
 import { random } from './random'
 import { sprites } from './sprites'
 
-export const asteroid = (position) => {
+export const asteroid = (position: Vector) => {
   const asteroidRadius = random(30, 150)
 
   const body = Bodies.circle(position.x, position.y, asteroidRadius, {
