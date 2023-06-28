@@ -17,6 +17,11 @@
   resolved "https://registry.yarnpkg.com/@types/matter-js/-/matter-js-0.18.2.tgz#68a971386368882d3445de95dcf31289346dc22f"
   integrity sha512-W9UC9DOPNBRTUocqqPZmzX3cbHmlZBI9jLn6SuxZz0n5QrPk382Ig3hbBWHqYU8TRUmTCJJhuanXeyMTavF7Mg==
 
+"@types/throttle-debounce@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@types/throttle-debounce/-/throttle-debounce-5.0.0.tgz#8208087f0af85107bcc681c50fa837fc9505483e"
+  integrity sha512-Pb7k35iCGFcGPECoNE4DYp3Oyf2xcTd3FbFQxXUI9hEYKUl6YX+KLf7HrBmgVcD05nl50LIH6i+80js4iYmWbw==
+
 esbuild-android-64@0.15.12:
   version "0.15.12"
   resolved "https://registry.yarnpkg.com/esbuild-android-64/-/esbuild-android-64-0.15.12.tgz#5e8151d5f0a748c71a7fbea8cee844ccf008e6fc"
@@ -233,6 +238,11 @@ throttle-debounce@^5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-5.0.0.tgz#a17a4039e82a2ed38a5e7268e4132d6960d41933"
   integrity sha512-2iQTSgkkc1Zyk0MeVrt/3BvuOXYPl/R8Z0U2xxo9rjwNciaHDG3R+Lm6dh4EeUci49DanvBnuqI6jshoQQRGEg==
+
+typescript@^5.0.2:
+  version "5.1.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.5.tgz#a3ae755082488b6046fe64345d293ef26af08671"
+  integrity sha512-FOH+WN/DQjUvN6WgW+c4Ml3yi0PH+a/8q+kNIfRehv1wLhWONedw85iu+vQ39Wp49IzTJEsZ2lyLXpBF7mkF1g==
 
 vite@^3.1.0:
   version "3.1.8"

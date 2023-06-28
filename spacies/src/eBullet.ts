@@ -1,18 +1,16 @@
 import { Bodies, Body, Vector } from 'matter-js'
-import { direction } from './direction'
 import { sprites } from './sprites'
-import { right } from './vectors'
 import { collisionCategories } from './collision'
 import { setLookForward } from './setLookForward'
 import { playExplosion } from './audio'
 
 
-export const setBulletDirection = (body, direction) => {
+export const setBulletDirection = (body: Body) => {
   
   setLookForward(body)
 }
 
-export const ebullet = (pos, direction, damage, radius, speed) => {
+export const ebullet = (pos: Vector, direction: Vector, damage: number, radius: number, speed: number) => {
   const eBulletRadius = radius
   // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
   const p = Vector.add(pos, Vector.mult(direction, eBulletRadius))
@@ -36,7 +34,7 @@ export const ebullet = (pos, direction, damage, radius, speed) => {
     },
   })
   Body.setVelocity(body, Vector.mult(Vector.normalise(direction), speed))
-  setBulletDirection(body, direction)
+  setBulletDirection(body)
   return {
     body: body,
     update: () => {

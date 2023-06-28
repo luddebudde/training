@@ -1,5 +1,5 @@
 
-type Sprite = {
+export type Sprite = {
   texture: string,
   height: number,
   width: number,

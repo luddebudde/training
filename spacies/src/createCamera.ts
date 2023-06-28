@@ -1,22 +1,21 @@
-import { Bodies, Vector } from 'matter-js'
-import { room } from '../main'
+import { Bodies, Body, Vector } from 'matter-js'
 import { applyForce } from './applyForce'
-import { applyTorque } from './applyTorque'
-import { radiansToCartesian } from './radianstToCartesian'
-import { random } from './random'
-import { sprites } from './sprites'
-import { moveCameraTo } from '../moveCameraTo'
 import { average } from './math'
 
 import { distance } from './distance'
 
+type Player = {
+  health: number,
+  body: Body,
+}
+
 export const createCamera = () => {
-  const averagePos = (ships) => {
-    const livePlayers = ships.filter((player) => {
+  const averagePos = (players: Player[]) => {
+    const livePlayers = players.filter((player: Player) => {
       return player.health > 0
     })
     return average(
-      ...livePlayers.map((player) => {
+      ...livePlayers.map((player: Player) => {
         return player.body.position
       }),
     )

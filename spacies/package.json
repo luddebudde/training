@@ -14,8 +14,9 @@
   },
   "devDependencies": {
     "@types/matter-js": "0.18.2",
-    "typescript": "^5.0.2",
+    "@types/throttle-debounce": "^5.0.0",
     "prettier": "2.8.5",
+    "typescript": "^5.0.2",
     "vite": "^3.1.0"
   }
 }
