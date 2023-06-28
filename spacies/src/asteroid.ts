@@ -1,5 +1,4 @@
 import { Bodies, Vector } from 'matter-js'
-import { room } from '../main'
 import { applyForce } from './applyForce'
 import { applyTorque } from './applyTorque'
 import { radiansToCartesian } from './radianstToCartesian'

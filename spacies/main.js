@@ -39,6 +39,7 @@ const asteroidAmounts = 100
 const shouldPlayMusic = false
 
 const canvas = document.getElementById('app')
+const ctx = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 
@@ -362,7 +363,7 @@ const registerEventListeners = () => {
           gameObject.maxHealth,
         )
       })
-    drawScore(canvas, room.width / 2, 50, game.score)
+    drawScore(ctx, room.width / 2, 50, game.score)
     // drawScore(canvas, room.width - 60, 70, game.playerBScore)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
