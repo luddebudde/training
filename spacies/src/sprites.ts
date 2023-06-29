@@ -1,8 +1,7 @@
-
 export type Sprite = {
-  texture: string,
-  height: number,
-  width: number,
+  texture: string
+  height: number
+  width: number
 }
 
 export const sprites: Record<string, Sprite> = {

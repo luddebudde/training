@@ -1,10 +1,10 @@
 import Matter, { Bodies, Body, Vector } from 'matter-js'
 
 type HollowCircleOptions = {
-  width: number,
-  extraLength: number,
-  initialRotation: number,
-  otherOptions: Matter.IBodyDefinition,
+  width: number
+  extraLength: number
+  initialRotation: number
+  otherOptions: Matter.IBodyDefinition
   render: Matter.IBodyRenderOptions | undefined
 }
 
@@ -25,7 +25,12 @@ type HollowCircleOptions = {
  *  being pushed in / out of teh object.
  *  'initialRotation': The initital rotation to be applied to the shape.
  */
-export const hollowCircle = (position: Vector, sides: number, radius: number, options: HollowCircleOptions) => {
+export const hollowCircle = (
+  position: Vector,
+  sides: number,
+  radius: number,
+  options: HollowCircleOptions,
+) => {
   const {
     width = 20,
     extraLength = 1.15,

@@ -44,6 +44,6 @@ export const bullet = (pos: Vector, direction: Vector) => {
 
     onDestroy: () => {
       playExplosion(1)
-    }
+    },
   }
 }

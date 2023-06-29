@@ -1,6 +1,11 @@
 import { Bodies, Composite, IChamferableBodyDefinition } from 'matter-js'
 
-export const createRoom = (width: number, height: number, wallThickness: number, options: IChamferableBodyDefinition) => {
+export const createRoom = (
+  width: number,
+  height: number,
+  wallThickness: number,
+  options: IChamferableBodyDefinition,
+) => {
   const ground = Bodies.rectangle(
     width / 2,
     height,

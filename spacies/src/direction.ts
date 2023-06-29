@@ -1,4 +1,4 @@
-import { Body } from "matter-js";
+import { Body } from 'matter-js'
 
 export const direction = (body: Body) => ({
   x: Math.cos(body.angle),

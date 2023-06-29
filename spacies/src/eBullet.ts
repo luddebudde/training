@@ -4,13 +4,17 @@ import { collisionCategories } from './collision'
 import { setLookForward } from './setLookForward'
 import { playExplosion } from './audio'
 
-
 export const setBulletDirection = (body: Body) => {
-  
   setLookForward(body)
 }
 
-export const ebullet = (pos: Vector, direction: Vector, damage: number, radius: number, speed: number) => {
+export const ebullet = (
+  pos: Vector,
+  direction: Vector,
+  damage: number,
+  radius: number,
+  speed: number,
+) => {
   const eBulletRadius = radius
   // const pos = Vector.add(Vector.mult (direction(player.body), playerRadius + bulletRadius), player.body.position)
   const p = Vector.add(pos, Vector.mult(direction, eBulletRadius))
@@ -44,7 +48,7 @@ export const ebullet = (pos: Vector, direction: Vector, damage: number, radius: 
     health: 0,
     damage,
     onDestroy: () => {
-      playExplosion(0.8) 
-    }
+      playExplosion(0.8)
+    },
   }
 }

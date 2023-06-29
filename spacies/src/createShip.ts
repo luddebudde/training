@@ -13,15 +13,22 @@ import { closestPlayer } from './closestPlayer'
 import { isFacing } from './isFacing'
 
 type ShipOptions = {
-  radius: number,
-  torque: number,
-  thrust: number,
-  health: number,
-  mass: number,
-  weapon: Weapon,
+  radius: number
+  torque: number
+  thrust: number
+  health: number
+  mass: number
+  weapon: Weapon
 }
 
-export const createShip = (postion: Vector, spriteWithoutJet: Sprite, spriteWithJet: Sprite, addObject: (obj: GameObject) => void, getPlayers: () => void, options: ShipOptions) => {
+export const createShip = (
+  postion: Vector,
+  spriteWithoutJet: Sprite,
+  spriteWithJet: Sprite,
+  addObject: (obj: GameObject) => void,
+  getPlayers: () => void,
+  options: ShipOptions,
+) => {
   const { radius, torque, thrust, health, mass, weapon } = options
 
   const sprite = {
@@ -35,7 +42,7 @@ export const createShip = (postion: Vector, spriteWithoutJet: Sprite, spriteWith
     frictionAir: 0.08,
     label: 'Fighter',
     render: {
-      sprite: sprite
+      sprite: sprite,
     },
     collisionFilter: {
       category: collisionCategories.player,
@@ -52,15 +59,16 @@ export const createShip = (postion: Vector, spriteWithoutJet: Sprite, spriteWith
     score: 0,
     type: 'player',
     update: () => {
-      if (useAI){
+      if (useAI) {
         const player = closestPlayer(body.position, getPlayers())
         if (!player) {
           return
         }
         turnTowards(body, player.body, torque)
-  
+
         if (
-          Vector.magnitude(Vector.sub(player.body.position, body.position)) < 250
+          Vector.magnitude(Vector.sub(player.body.position, body.position)) <
+          250
         ) {
           useAI = false
         } else if (isFacing(body, player.body)) {
@@ -95,6 +103,6 @@ export const createShip = (postion: Vector, spriteWithoutJet: Sprite, spriteWith
     },
     onDestroy: () => {
       playPlayerDeath()
-    }
+    },
   }
 }

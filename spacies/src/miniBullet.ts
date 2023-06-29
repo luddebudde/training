@@ -42,7 +42,7 @@ export const miniBullet = (pos: Vector, direction: Vector) => {
     health: 0,
     damage: 5,
     onDestroy: () => {
-      playExplosion(0.3) 
-    }
+      playExplosion(0.3)
+    },
   }
 }

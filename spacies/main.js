@@ -82,7 +82,7 @@ const playEngine = () => {
     .then((e) => {
       document.body.removeEventListener('mousemove', playEngine)
     })
-    .catch((e) => { })
+    .catch((e) => {})
 }
 
 document.body.addEventListener('mousemove', playEngine)
@@ -99,7 +99,7 @@ const playMusic = () => {
     .then((e) => {
       document.body.removeEventListener('mousemove', playMusic)
     })
-    .catch((e) => { })
+    .catch((e) => {})
 }
 
 document.body.addEventListener('mousemove', playMusic)
@@ -126,8 +126,8 @@ const createGame = () => {
     },
   })
   const playerShips = [
-    createFighter(origo, addGameObject, getPlayers, "green"),
-    createFighter(origo, addGameObject, getPlayers, "blue"),
+    createFighter(origo, addGameObject, getPlayers, 'green'),
+    createFighter(origo, addGameObject, getPlayers, 'blue'),
   ]
   const game = {
     bullets: [],
@@ -225,12 +225,16 @@ const getNextShip = (thisPlayer, otherPlayer) => {
   const emptyShips = game.playerShips.filter((ship) => {
     return ship !== otherPlayer
   })
-  const nearbyShips = emptyShips.filter((ship) =>
-    isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
-  ).sort((a, b) =>{
-    return distanceSquared(a.body.position, thisPlayer.body.position) - distanceSquared(b.body.position, thisPlayer.body.position)
-    
-  })
+  const nearbyShips = emptyShips
+    .filter((ship) =>
+      isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
+    )
+    .sort((a, b) => {
+      return (
+        distanceSquared(a.body.position, thisPlayer.body.position) -
+        distanceSquared(b.body.position, thisPlayer.body.position)
+      )
+    })
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
   const nextShip = nearbyShips[newIndex]
@@ -239,7 +243,6 @@ const getNextShip = (thisPlayer, otherPlayer) => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-
     if (event.code === 'KeyR') {
       restartGame()
     }
@@ -249,13 +252,17 @@ const registerEventListeners = () => {
     if (event.code === 'Comma') {
       game.playerB = getNextShip(game.playerB, game.playerA)
     }
-    if (event.code === "Digit1" || event.code === "Numpad1"){
-      // if (game.score >= 1000){
-      const newShip = createAssault( spawnPositionOutsideRoom(), (obj) => addObject(game, obj), getPlayers)
-      addObject(game, newShip)
-      game.playerShips = [...game.playerShips, newShip]
-      game.score = game.score - 1000
-    // }
+    if (event.code === 'Digit1' || event.code === 'Numpad1') {
+      if (game.score >= 1000) {
+        const newShip = createAssault(
+          spawnPositionOutsideRoom(),
+          (obj) => addObject(game, obj),
+          getPlayers,
+        )
+        addObject(game, newShip)
+        game.playerShips = [...game.playerShips, newShip]
+        game.score = game.score - 1000
+      }
     }
   }
   addEventListener(`keydown`, handleClickKeydown)
@@ -346,10 +353,10 @@ const registerEventListeners = () => {
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
     if (nextPlayerAShip !== game.playerA) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position, "C")
+      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position, 'C')
     }
     if (nextPlayerBShip !== game.playerB) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position, ";")
+      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position, ';')
     }
 
     game.gameObjects
@@ -411,12 +418,12 @@ const canvasPos = (pos) => {
 
 const drawCirleAroundEmptyShip = (ctx, shipPos, text) => {
   const pos = canvasPos(shipPos)
-  ctx.beginPath();
-  ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI, false);
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
-  ctx.stroke();
-  ctx.fillStyle = 'rgba(0, 255, 255, 0.5)';
+  ctx.beginPath()
+  ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI, false)
+  ctx.lineWidth = 3
+  ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)'
+  ctx.stroke()
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.5)'
   ctx.font = '35px serif'
   ctx.fillText(text, pos.x + 15, pos.y + 70)
 }
@@ -439,8 +446,8 @@ const restartGame = () => {
 }
 
 const isKeyDown = keyDownTracker()
-const getPlayers = () => [game.playerA, game.playerB].filter((player) => player.health > 0)
-
+const getPlayers = () =>
+  [game.playerA, game.playerB].filter((player) => player.health > 0)
 
 const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)

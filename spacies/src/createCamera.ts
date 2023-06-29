@@ -5,8 +5,8 @@ import { average } from './math'
 import { distance } from './distance'
 
 type Player = {
-  health: number,
-  body: Body,
+  health: number
+  body: Body
 }
 
 export const createCamera = () => {

@@ -1,1 +1,1 @@
-export type GameObject = {};
+export type GameObject = {}

@@ -7,9 +7,9 @@ import { GameObject } from './GameObject'
 export const createFighter = (
   postion: Vector,
   addObject: (obj: GameObject) => void,
-   getPlayers: () => void,
-   color: string
-   ) => {
+  getPlayers: () => void,
+  color: string,
+) => {
   return createShip(
     postion,
     sprites.fighterWithoutJet(color),
