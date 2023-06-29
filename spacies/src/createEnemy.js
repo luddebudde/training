@@ -1,4 +1,4 @@
-import { Bodies, Body, Vector } from 'matter-js'
+import { Bodies, Vector } from 'matter-js'
 import { throttle } from 'throttle-debounce'
 import { direction } from './direction'
 import { ebullet } from './eBullet'

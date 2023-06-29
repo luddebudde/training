@@ -124,20 +124,19 @@ const createGame = () => {
       // timeScale: 0.7,
     },
   })
-  const players = [
-    createFighter(addGameObject, "green"),
-    createFighter(addGameObject, "blue"),
-    createAssault(addGameObject),
+  const playerShips = [
+    createFighter(origo, addGameObject, getPlayers, "green"),
+    createFighter(origo, addGameObject, getPlayers, "blue"),
   ]
   const game = {
     bullets: [],
     gameObjects: [],
-    playerA: players[0],
-    playerB: players[1],
+    playerA: playerShips[0],
+    playerB: playerShips[1],
     // playerAScore: 0,
     // playerBScore: 0,
     score: 0,
-    players,
+    playerShips: playerShips,
     camera: createCamera(),
     engine,
     render: Render.create({
@@ -167,7 +166,7 @@ const createGame = () => {
   }
 
   // Spawn Player
-  game.players.forEach((player) => {
+  game.playerShips.forEach((player) => {
     addObject(game, player)
   })
   addObject(game, game.camera)
@@ -222,7 +221,7 @@ const createGame = () => {
 }
 
 const getNextShip = (thisPlayer, otherPlayer) => {
-  const emptyShips = game.players.filter((ship) => {
+  const emptyShips = game.playerShips.filter((ship) => {
     return ship !== otherPlayer
   })
   const nearbyShips = emptyShips.filter((ship) =>
@@ -245,6 +244,14 @@ const registerEventListeners = () => {
     }
     if (event.code === 'Comma') {
       game.playerB = getNextShip(game.playerB, game.playerA)
+    }
+    if (event.code === "Digit1" || event.code === "Numpad1"){
+      // if (game.score >= 1000){
+      const newShip = createAssault( spawnPositionOutsideRoom(), (obj) => addObject(game, obj), getPlayers)
+      addObject(game, newShip)
+      game.playerShips = [...game.playerShips, newShip]
+      game.score = game.score - 1000
+    // }
     }
   }
   addEventListener(`keydown`, handleClickKeydown)
@@ -306,7 +313,7 @@ const registerEventListeners = () => {
 
     game.gameObjects.forEach((updateable) => updateable.update?.(game))
 
-    game.players.forEach((ship) => applyRoomBoundaryForce(ship.body))
+    game.playerShips.forEach((ship) => applyRoomBoundaryForce(ship.body))
 
     spawnEnemies()
     spawnAmmo()

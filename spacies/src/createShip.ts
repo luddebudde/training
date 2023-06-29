@@ -8,6 +8,9 @@ import { playPlayerDeath } from './audio'
 import { Sprite } from './sprites'
 import { GameObject } from './GameObject'
 import { Weapon } from './weapons/Weapon'
+import { turnTowards } from './turnTowards'
+import { closestPlayer } from './closestPlayer'
+import { isFacing } from './isFacing'
 
 type ShipOptions = {
   radius: number,
@@ -18,16 +21,16 @@ type ShipOptions = {
   weapon: Weapon,
 }
 
-export const createShip = (spriteWithoutJet: Sprite, spriteWithJet: Sprite, addObject: (obj: GameObject) => void, options: ShipOptions) => {
+export const createShip = (postion: Vector, spriteWithoutJet: Sprite, spriteWithJet: Sprite, addObject: (obj: GameObject) => void, getPlayers: () => void, options: ShipOptions) => {
   const { radius, torque, thrust, health, mass, weapon } = options
 
   const sprite = {
-      texture: spriteWithoutJet.texture,
-      xScale: (2 * radius) / spriteWithoutJet.width,
-      yScale: (2 * radius) / spriteWithoutJet.height,
+    texture: spriteWithoutJet.texture,
+    xScale: (2 * radius) / spriteWithoutJet.width,
+    yScale: (2 * radius) / spriteWithoutJet.height,
   }
 
-  const playerBody = Bodies.circle(0, 0, radius, {
+  const body = Bodies.circle(postion.x, postion.y, radius, {
     mass,
     frictionAir: 0.08,
     label: 'Fighter',
@@ -39,38 +42,56 @@ export const createShip = (spriteWithoutJet: Sprite, spriteWithJet: Sprite, addO
     },
   })
 
+  let useAI = true
+
   return {
-    body: playerBody,
-    worldObjects: [playerBody],
+    body: body,
+    worldObjects: [body],
     health,
     maxHealth: health,
     score: 0,
     type: 'player',
     update: () => {
-      applyAngularFriction(playerBody, 5)
+      if (useAI){
+        const player = closestPlayer(body.position, getPlayers())
+        if (!player) {
+          return
+        }
+        turnTowards(body, player.body, torque)
+  
+        if (
+          Vector.magnitude(Vector.sub(player.body.position, body.position)) < 250
+        ) {
+          useAI = false
+        } else if (isFacing(body, player.body)) {
+          applyThrust(body, thrust)
+        }
+      }
+
+      applyAngularFriction(body, 5)
     },
     thrust: () => {
-      applyThrust(playerBody, thrust)
-      playerBody.render.sprite!.texture = spriteWithJet.texture
+      applyThrust(body, thrust)
+      body.render.sprite!.texture = spriteWithJet.texture
     },
     dontThrust: () => {
-      playerBody.render.sprite!.texture = spriteWithoutJet.texture
+      body.render.sprite!.texture = spriteWithoutJet.texture
     },
     back: () => {
-      applyThrust(playerBody, -thrust * 0.3)
+      applyThrust(body, -thrust * 0.3)
     },
     turnLeft: () => {
-      applyTorque(playerBody, torque)
+      applyTorque(body, torque)
     },
     turnRight: () => {
-      applyTorque(playerBody, -torque)
+      applyTorque(body, -torque)
     },
     fire: () => {
       const spawnPos = Vector.add(
-        playerBody.position,
-        Vector.mult(direction(playerBody), radius),
+        body.position,
+        Vector.mult(direction(body), radius),
       )
-      weapon(spawnPos, direction(playerBody), addObject)
+      weapon(spawnPos, direction(body), addObject)
     },
     onDestroy: () => {
       playPlayerDeath()
