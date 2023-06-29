@@ -33,6 +33,7 @@ import { miniBox } from './src/ammoBox'
 import { down, origo } from './src/vectors'
 import { applyForce } from './src/applyForce'
 import { createAssault } from './src/createAssault'
+import { distanceSquared } from './src/distance'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -226,7 +227,10 @@ const getNextShip = (thisPlayer, otherPlayer) => {
   })
   const nearbyShips = emptyShips.filter((ship) =>
     isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
-  )
+  ).sort((a, b) =>{
+    return distanceSquared(a.body.position, thisPlayer.body.position) - distanceSquared(b.body.position, thisPlayer.body.position)
+    
+  })
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
   const nextShip = nearbyShips[newIndex]
