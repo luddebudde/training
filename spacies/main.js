@@ -382,10 +382,20 @@ const registerEventListeners = () => {
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
     if (nextPlayerAShip !== game.playerA) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerAShip.body.position, 'C')
+      drawCirleAroundEmptyShip(
+        ctx,
+        nextPlayerAShip.body.position,
+        'C',
+        nextPlayerAShip.body.circleRadius * 1.3,
+      )
     }
     if (nextPlayerBShip !== game.playerB) {
-      drawCirleAroundEmptyShip(ctx, nextPlayerBShip.body.position, ';')
+      drawCirleAroundEmptyShip(
+        ctx,
+        nextPlayerBShip.body.position,
+        ';',
+        nextPlayerBShip.body.circleRadius * 1.3,
+      )
     }
 
     game.gameObjects
@@ -458,10 +468,10 @@ const canvasPos = (pos) => {
   )
 }
 
-const drawCirleAroundEmptyShip = (ctx, shipPos, text) => {
+const drawCirleAroundEmptyShip = (ctx, shipPos, text, radius) => {
   const pos = canvasPos(shipPos)
   ctx.beginPath()
-  ctx.arc(pos.x, pos.y, 40, 0, 2 * Math.PI, false)
+  ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false)
   ctx.lineWidth = 3
   ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)'
   ctx.stroke()
