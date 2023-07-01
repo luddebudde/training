@@ -47,6 +47,7 @@ export const createRhino = (
   
     let useAI = true
     let fuel = 1000
+    let speed = body.speed
 
     return {
       body: body,
@@ -56,9 +57,10 @@ export const createRhino = (
       score: 0,
       type: 'player',
       maxFuel: fuel,
-      damage: 50,
       fuel: () => fuel,
+      speed: () => speed,
       update: () => {
+        speed = body.speed
         if (useAI) {
           const player = closestPlayer(body.position, getPlayers())
           if (!player) {

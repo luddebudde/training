@@ -91,11 +91,11 @@ export const createCoward = (getPlayers, getGameObjects, position, homePos) => {
       setLookForward(body)
     },
     isBullet: true,
-    health: 60,
-    maxHealth: 60,
+    health: 120,
+    maxHealth: 120,
     damage: 0,
     type: 'coward',
-    points: 50,
+    points: 200,
   }
 }
 

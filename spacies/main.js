@@ -41,7 +41,7 @@ import { drawFuelBar } from './drawFuelBar'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
-const shouldPlayMusic = false
+const shouldPlayMusic = true
 
 const canvas = document.getElementById('app')
 const ctx = canvas.getContext('2d')
@@ -57,6 +57,13 @@ const testCollision = (objA, objB) => {
   if (objB !== undefined && objB.damage > 0) {
     damage(objA, objB.damage ?? 0)
     damage(objB, objA.damage ?? 0)
+  }
+
+  if (objA.speed !== undefined) {
+    const energy = objA.body.mass * objA.speed() * objA.speed()
+    const collisionDamage = energy * 0.0005
+    damage(objB, collisionDamage)
+    console.log(collisionDamage)
   }
 }
 
@@ -130,8 +137,8 @@ const createGame = () => {
     },
   })
   const playerShips = [
-    createRhino(origo, addGameObject, getPlayers, 'green'),
-    createRhino(origo, addGameObject, getPlayers, 'blue'),
+    createFighter(origo, addGameObject, getPlayers, 'green'),
+    createFighter(origo, addGameObject, getPlayers, 'blue'),
   ]
   const game = {
     bullets: [],
@@ -256,30 +263,30 @@ const registerEventListeners = () => {
     if (event.code === 'Comma') {
       game.playerB = getNextShip(game.playerB, game.playerA)
     }
-    if (event.code === 'Digit1' || event.code === 'Numpad1') {
-      if (game.score >= 1000) {
-        const newShip = createAssault(
-          spawnPositionOutsideRoom(),
-          (obj) => addObject(game, obj),
-          getPlayers,
-        )
-        addObject(game, newShip)
-        game.playerShips = [...game.playerShips, newShip]
-        game.score = game.score - 1000
+
+    const buy = (keyNumber, price, createShip) => {
+      if (
+        event.code === `Digit${keyNumber}` ||
+        event.code === `Numpad${keyNumber}`
+      ) {
+        if (game.score >= price) {
+          const newShip = createShip(
+            spawnPositionOutsideRoom(),
+            (obj) => addObject(game, obj),
+            getPlayers,
+          )
+          addObject(game, newShip)
+          game.playerShips = [...game.playerShips, newShip]
+          game.score = game.score - price
+        }
       }
     }
-    if (event.code === 'Digit2' || event.code === 'Numpad2') {
-      if (game.score >= 1500) {
-        const newShip = createRhino(
-          spawnPositionOutsideRoom(),
-          (obj) => addObject(game, obj),
-          getPlayers,
-        )
-        addObject(game, newShip)
-        game.playerShips = [...game.playerShips, newShip]
-        game.score = game.score - 1000
-      }
-    }
+
+    buy(1, 750, createFighter)
+
+    buy(2, 1000, createAssault)
+
+    buy(3, 1500, createRhino)
   }
   addEventListener(`keydown`, handleClickKeydown)
 
@@ -481,7 +488,6 @@ const getPlayers = () =>
 const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
   const position = spawnPositionOutsideRoom()
-  console.log(getPlayers().map((player) => player.health))
   if (r < 5) {
     zeros(1).forEach(() => {
       addObject(

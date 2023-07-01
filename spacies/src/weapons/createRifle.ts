@@ -6,7 +6,7 @@ import { Weapon } from './Weapon'
 
 export const createRifle = (): Weapon =>
   throttle(
-    300,
+    500,
     (spawnPos: Vector, dir: Vector, addObject: (obj: GameObject) => void) => {
       const newBullet = bullet(spawnPos, dir)
       addObject(newBullet)

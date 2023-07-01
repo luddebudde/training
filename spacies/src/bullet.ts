@@ -40,7 +40,7 @@ export const bullet = (pos: Vector, direction: Vector) => {
     },
     isBullet: true,
     health: 0,
-    damage: 20,
+    damage: 30,
 
     onDestroy: () => {
       playExplosion(1)
