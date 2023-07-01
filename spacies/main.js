@@ -255,8 +255,8 @@ const getNextShip = (thisPlayer, otherPlayer) => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-    if (isKeyDown(`KeyS`)) {
-      game.playerA.back()
+    if (event.code === 'KeyR') {
+      restartGame()
     }
     if (event.code === 'KeyC') {
       game.playerA = getNextShip(game.playerA, game.playerB)
@@ -278,7 +278,7 @@ const registerEventListeners = () => {
             spawnPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
-            'blue',
+            event.code.startsWith('Digit') ? 'green' : 'blue',
           )
           addObject(game, newShip)
           game.playerShips = [...game.playerShips, newShip]
