@@ -5,4 +5,5 @@ export const collisionCategories = {
   bullets: 1 << 3,
   eBullets: 1 << 4,
   bomber: 1 << 5,
+  rhino: 1 << 6,
 }

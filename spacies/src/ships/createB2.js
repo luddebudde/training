@@ -24,8 +24,9 @@ export const createB2 = (getPlayers, addObject, position) => {
         yScale: (2 * enemyRadius) / sprites.b2.height,
       },
     },
+    isSensor: true,
     collisionFilter: {
-      mask: collisionCategories.bullets,
+      mask: collisionCategories.bullets | collisionCategories.rhino,
     },
   })
   const gunPosition = () => {

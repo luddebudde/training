@@ -423,7 +423,7 @@ const registerEventListeners = () => {
         }
       })
     drawScore(ctx, room.width / 2, 50, game.score)
-    drawScore(ctx, room.width / 2, 100, game.balance)
+    drawScore(ctx, room.width / 2, 100, `€${game.balance}`)
     // drawScore(canvas, room.width - 60, 70, game.playerBScore)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)

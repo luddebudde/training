@@ -45,7 +45,7 @@ export const createRhino = (
       sprite: sprite,
     },
     collisionFilter: {
-      category: collisionCategories.player,
+      category: collisionCategories.rhino,
     },
   })
 
