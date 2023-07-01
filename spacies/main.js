@@ -41,7 +41,7 @@ import { drawFuelBar } from './drawFuelBar'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
-const shouldPlayMusic = true
+const shouldPlayMusic = false
 
 const canvas = document.getElementById('app')
 const ctx = canvas.getContext('2d')
@@ -148,6 +148,7 @@ const createGame = () => {
     // playerAScore: 0,
     // playerBScore: 0,
     score: 0,
+    balance: 0,
     playerShips: playerShips,
     camera: createCamera(),
     engine,
@@ -254,8 +255,8 @@ const getNextShip = (thisPlayer, otherPlayer) => {
 
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
-    if (event.code === 'KeyR') {
-      restartGame()
+    if (isKeyDown(`KeyS`)) {
+      game.playerA.back()
     }
     if (event.code === 'KeyC') {
       game.playerA = getNextShip(game.playerA, game.playerB)
@@ -264,20 +265,24 @@ const registerEventListeners = () => {
       game.playerB = getNextShip(game.playerB, game.playerA)
     }
 
+    if (isKeyDown(`KeyP`)) {
+      game.balance = game.balance + 100000
+    }
     const buy = (keyNumber, price, createShip) => {
       if (
         event.code === `Digit${keyNumber}` ||
         event.code === `Numpad${keyNumber}`
       ) {
-        if (game.score >= price) {
+        if (game.balance >= price) {
           const newShip = createShip(
             spawnPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
+            'blue',
           )
           addObject(game, newShip)
           game.playerShips = [...game.playerShips, newShip]
-          game.score = game.score - price
+          game.balance = game.balance - price
         }
       }
     }
@@ -418,6 +423,7 @@ const registerEventListeners = () => {
         }
       })
     drawScore(ctx, room.width / 2, 50, game.score)
+    drawScore(ctx, room.width / 2, 100, game.balance)
     // drawScore(canvas, room.width - 60, 70, game.playerBScore)
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
@@ -530,7 +536,7 @@ const damage = (obj, damage) => {
     if (obj.health <= 0) {
       removeObject(game, obj)
       game.score = game.score + (obj.points ?? 0)
-
+      game.balance = game.balance + (obj.points ?? 0)
       obj.onDestroy?.()
     } else {
       playBum()

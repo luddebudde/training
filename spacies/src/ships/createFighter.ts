@@ -8,7 +8,7 @@ export const createFighter = (
   postion: Vector,
   addObject: (obj: GameObject) => void,
   getPlayers: () => void,
-  color: string,
+  color: "green" | "blue",
 ) => {
   return createShip(
     postion,

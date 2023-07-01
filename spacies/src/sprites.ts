@@ -4,7 +4,7 @@ export type Sprite = {
   width: number
 }
 
-export const sprites: Record<string, Sprite> = {
+export const sprites = {
   pingPongBall: {
     texture: '/ping-pong-ball.png',
     height: 800,
@@ -20,30 +20,27 @@ export const sprites: Record<string, Sprite> = {
     height: 512,
     width: 512,
   },
-  fighterWithoutJet: (color) => ({
+  fighterWithoutJet: (color: 'green' | 'blue') => ({
     texture: `/ships/player/large/${color}.png`,
     width: 844,
     height: 890,
   }),
-  playerCannon: (color) => ({
-    texture: `/ships/player/large/${color}-cannon.png`,
-    width: 125,
-    height: 125,
-  }),
-  fighterWithJet: (color) => ({
+  fighterWithJet: (color: 'green' | 'blue') => ({
     texture: `/ships/player/large/${color}-jet.png`,
     width: 844,
     height: 890,
   }),
-  assault: {
+  assault: (color: 'green' | 'blue') => ({
     texture: `/ships/player/large/assault.png`,
     width: 304,
     height: 336,
-  },
-  rhino: {
-    texture: `/ships/player/large/green-rhino.png`,
-    width: 125,
-    height: 125,
+  }),
+  rhino: (color: 'green' | 'blue') => {
+    return {
+      texture: `/ships/player/large/${color}-rhino.png`,
+      width: 125,
+      height: 125,
+    }
   },
   enemy: {
     texture: '/enemy.png',
@@ -85,4 +82,4 @@ export const sprites: Record<string, Sprite> = {
     height: 123,
     width: 119,
   },
-}
+} as const

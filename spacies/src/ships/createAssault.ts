@@ -8,11 +8,12 @@ export const createAssault = (
   postion: Vector,
   addObject: (obj: GameObject) => void,
   getPlayers: () => void,
+  color: 'green' | 'blue',
 ) => {
   return createShip(
     postion,
-    sprites.assault,
-    sprites.assault,
+    sprites.assault(color),
+    sprites.assault(color),
     addObject,
     getPlayers,
     {
