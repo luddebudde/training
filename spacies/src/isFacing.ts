@@ -1,5 +1,5 @@
 import { Body, Vector } from 'matter-js'
-import { direction } from './direction'
+import { direction } from './math'
 
 export const isFacing = (self: Body, other: Body) => {
   return (

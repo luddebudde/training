@@ -1,10 +1,9 @@
-import { Bodies, Body, Vector } from 'matter-js'
+import { Bodies, Vector } from 'matter-js'
 import { throttle } from 'throttle-debounce'
-import { direction } from './direction'
+import { direction } from './math'
 import { ebullet } from './eBullet'
 import { sprites } from './sprites'
-import { turnTowards } from './turnTowards'
-import { applyThrust } from './applyThrust'
+import { applyThrust, turnTowards } from './physics'
 import { closestPlayer } from './closestPlayer'
 import { collisionCategories } from './collision'
 

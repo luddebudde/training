@@ -1,14 +1,16 @@
-import { applyAngularFriction } from './applyAngularFriction'
-import { applyThrust } from './applyThrust'
-import { applyTorque } from './applyTorque'
+import {
+  applyAngularFriction,
+  applyTorque,
+  applyThrust,
+  turnTowards,
+} from './physics'
 import { Bodies, Vector } from 'matter-js'
-import { direction } from './direction'
+import { direction } from './math'
 import { collisionCategories } from './collision'
 import { playPlayerDeath } from './audio'
 import { Sprite } from './sprites'
 import { GameObject } from './GameObject'
 import { Weapon } from './weapons/Weapon'
-import { turnTowards } from './turnTowards'
 import { closestPlayer } from './closestPlayer'
 import { isFacing } from './isFacing'
 

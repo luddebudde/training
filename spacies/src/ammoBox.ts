@@ -1,8 +1,7 @@
 import { Bodies, Vector } from 'matter-js'
-import { applyForce } from './applyForce'
-import { applyTorque } from './applyTorque'
-import { radiansToCartesian } from './radianstToCartesian'
-import { random } from './random'
+import { applyForce, applyTorque } from './physics'
+import { radiansToCartesian } from './math'
+import { random } from './math'
 import { sprites } from './sprites'
 
 export const miniBox = (position: Vector) => {

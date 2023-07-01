@@ -1,5 +1,5 @@
 import { Bodies, Body, Vector } from 'matter-js'
-import { applyForce } from './applyForce'
+import { applyForce } from './physics'
 import { average } from './math'
 
 import { distance } from './distance'

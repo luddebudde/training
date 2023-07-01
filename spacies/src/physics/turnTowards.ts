@@ -1,4 +1,4 @@
-import { direction } from './direction'
+import { direction } from '../math'
 import { Body, Vector } from 'matter-js'
 import { applyTorque } from './applyTorque'
 export const turnTowards = (self: Body, other: Body, factor = 1) => {
