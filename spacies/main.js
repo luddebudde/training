@@ -36,7 +36,7 @@ import { scale, sum } from './src/math'
 import { createCamera } from './src/createCamera'
 import { miniBox } from './src/ammoBox'
 import { down, origo } from './src/math'
-import { distanceSquared } from './src/distance'
+import { distanceToCircle } from './src/distance'
 import { drawFuelBar } from './drawFuelBar'
 
 const roomRadius = 2000
@@ -243,8 +243,16 @@ const getNextShip = (thisPlayer, otherPlayer) => {
     )
     .sort((a, b) => {
       return (
-        distanceSquared(a.body.position, thisPlayer.body.position) -
-        distanceSquared(b.body.position, thisPlayer.body.position)
+        distanceToCircle(
+          thisPlayer.body.position,
+          a.body.position,
+          a.body.circleRadius,
+        ) -
+        distanceToCircle(
+          thisPlayer.body.position,
+          b.body.position,
+          b.body.circleRadius,
+        )
       )
     })
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
