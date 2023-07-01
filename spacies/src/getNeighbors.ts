@@ -1,16 +1,17 @@
 import { isCircle } from './isCircle'
-import { closestPointOnCircle } from './createBomber'
+import { closestPointOnCircle } from './math'
 import { isDistanceLessThan } from './isDistanceLessThan'
+import { Body } from 'matter-js'
 
-export const getNeighbors = (selfBody, bodies, neighborMaxDistance) =>
+export const getNeighbors = (self: Body, bodies: Body[], neighborMaxDistance: number) =>
   bodies.filter(
     (body) =>
-      body !== selfBody &&
+      body !== self &&
       isDistanceLessThan(
-        selfBody.position,
+        self.position,
         isCircle(body)
           ? closestPointOnCircle(
-              selfBody.position,
+              self.position,
               body.position,
               body.circleRadius,
             )

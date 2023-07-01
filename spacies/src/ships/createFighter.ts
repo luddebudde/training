@@ -1,8 +1,8 @@
 import { Vector } from 'matter-js'
 import { createShip } from './createShip'
-import { sprites } from './sprites'
-import { createRifle } from './weapons/createRifle'
-import { GameObject } from './GameObject'
+import { sprites } from '../sprites'
+import { createRifle } from '../weapons/createRifle'
+import { GameObject } from '../GameObject'
 
 export const createFighter = (
   postion: Vector,

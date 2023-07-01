@@ -1,14 +1,14 @@
 import { Bodies, Vector } from 'matter-js'
-import { applyForce } from './physics'
-import { sum, radiansToCartesian } from './math'
-import { random } from './math'
-import { sprites } from './sprites'
-import { setLookForward } from './setLookForward'
-import { collisionCategories } from './collision'
-import { closestPlayer } from './closestPlayer'
-import { isCircle } from './isCircle'
-import { getNeighbors } from './getNeighbors'
-import { isDistanceLessThan } from './isDistanceLessThan'
+import { applyForce } from '../physics'
+import { sum, radiansToCartesian, closestPointOnCircle } from '../math'
+import { random } from '../math'
+import { sprites } from '../sprites'
+import { setLookForward } from '../setLookForward'
+import { collisionCategories } from '../collision'
+import { closestPlayer } from '../closestPlayer'
+import { isCircle } from '../isCircle'
+import { getNeighbors } from '../getNeighbors'
+import { isDistanceLessThan } from '../isDistanceLessThan'
 
 const engineStrength = 0.5
 const turboStrengh = engineStrength * 5
@@ -107,13 +107,4 @@ export const electricForce = (r1, r2, q1, q2) => {
     return Vector.create(0, 0)
   }
   return Vector.mult(Vector.normalise(r), (q1 * q2) / rSquare)
-}
-
-export const closestPointOnCircle = (pos, circlePos, radius) => {
-  const r = Vector.sub(pos, circlePos)
-  const dist = Vector.magnitude(r)
-  if (dist < 0.0001) {
-    return circlePos
-  }
-  return sum(circlePos, Vector.mult(r, radius / dist))
 }

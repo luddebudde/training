@@ -1,13 +1,13 @@
 import { Bodies, Vector } from 'matter-js'
 import { throttle } from 'throttle-debounce'
-import { direction } from './math'
-import { ebullet } from './eBullet'
-import { sprites } from './sprites'
-import { applyThrust, turnTowards } from './physics'
-import { closestPlayer } from './closestPlayer'
-import { collisionCategories } from './collision'
+import { direction } from '../math'
+import { ebullet } from '../eBullet'
+import { sprites } from '../sprites'
+import { applyThrust, turnTowards } from '../physics'
+import { closestPlayer } from '../closestPlayer'
+import { collisionCategories } from '../collision'
 
-import { isDistanceLessThan } from './isDistanceLessThan'
+import { isDistanceLessThan } from '../isDistanceLessThan'
 
 export const engineStrength = 3
 export const enemyRadius = 80

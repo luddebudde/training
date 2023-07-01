@@ -11,26 +11,30 @@ import {
 import { keyDownTracker } from './src/keyDownTracker'
 import { asteroid } from './src/asteroid'
 import { zeros } from './src/math'
-import { createFighter } from './src/createFighter'
-import { createEnemy } from './src/createEnemy'
-import { closestPointOnCircle, createBomber } from './src/createBomber'
+import {
+  createEnemy,
+  createFighter,
+  closestPointOnCircle,
+  createBomber,
+  createB2,
+  createCoward,
+  isDistanceLessThan,
+  createAssault,
+} from './src/ships'
 import { throttle } from 'throttle-debounce'
 import { random } from './src/math'
 import { radiansToCartesian } from './src/math'
-import { playBum, playExplosion } from './src/audio'
+import { playBum } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
-import { applyThrust, applyForce } from './src/physics'
+import { applyForce } from './src/physics'
 import { drawHealthBar } from './drawHealthBar'
 import { drawScore } from './drawScore'
 import { moveCameraTo } from './moveCameraTo'
-import { average, scale, sum } from './src/math'
-import { createB2 } from './src/createB2'
+import { scale, sum } from './src/math'
 import { createCamera } from './src/createCamera'
-import { createCoward, isDistanceLessThan } from './src/createCoward'
 import { miniBox } from './src/ammoBox'
 import { down, origo } from './src/math'
-import { createAssault } from './src/createAssault'
 import { distanceSquared } from './src/distance'
 
 const roomRadius = 2000

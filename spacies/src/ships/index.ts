@@ -1,0 +1,6 @@
+export * from "./createFighter"
+export * from "./createAssault"
+export * from "./createEnemy"
+export * from "./createB2"
+export * from "./createBomber"
+export * from "./createCoward"

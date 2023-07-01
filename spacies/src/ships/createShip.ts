@@ -3,16 +3,16 @@ import {
   applyTorque,
   applyThrust,
   turnTowards,
-} from './physics'
+} from '../physics'
 import { Bodies, Vector } from 'matter-js'
-import { direction } from './math'
-import { collisionCategories } from './collision'
-import { playPlayerDeath } from './audio'
-import { Sprite } from './sprites'
-import { GameObject } from './GameObject'
-import { Weapon } from './weapons/Weapon'
-import { closestPlayer } from './closestPlayer'
-import { isFacing } from './isFacing'
+import { direction } from '../math'
+import { collisionCategories } from '../collision'
+import { playPlayerDeath } from '../audio'
+import { Sprite } from '../sprites'
+import { GameObject } from '../GameObject'
+import { Weapon } from '../weapons/Weapon'
+import { closestPlayer } from '../closestPlayer'
+import { isFacing } from '../isFacing'
 
 type ShipOptions = {
   radius: number
