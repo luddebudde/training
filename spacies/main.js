@@ -28,6 +28,7 @@ import { radiansToCartesian } from './src/math'
 import { playBum } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
+import { greenLight, blueLight } from './src/palette'
 import { applyForce } from './src/physics'
 import { drawHealthBar } from './drawHealthBar'
 import { drawScore } from './drawScore'
@@ -41,7 +42,7 @@ import { drawFuelBar } from './drawFuelBar'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
-const shouldPlayMusic = false
+const shouldPlayMusic = true
 
 const canvas = document.getElementById('app')
 const ctx = canvas.getContext('2d')
@@ -395,6 +396,7 @@ const registerEventListeners = () => {
         nextPlayerAShip.body.position,
         'C',
         nextPlayerAShip.body.circleRadius * 1.3,
+        greenLight,
       )
     }
     if (nextPlayerBShip !== game.playerB) {
@@ -403,6 +405,7 @@ const registerEventListeners = () => {
         nextPlayerBShip.body.position,
         ';',
         nextPlayerBShip.body.circleRadius * 1.3,
+        blueLight,
       )
     }
 
@@ -476,14 +479,14 @@ const canvasPos = (pos) => {
   )
 }
 
-const drawCirleAroundEmptyShip = (ctx, shipPos, text, radius) => {
+const drawCirleAroundEmptyShip = (ctx, shipPos, text, radius, color) => {
   const pos = canvasPos(shipPos)
   ctx.beginPath()
   ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false)
   ctx.lineWidth = 3
-  ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)'
+  ctx.strokeStyle = color
   ctx.stroke()
-  ctx.fillStyle = 'rgba(0, 255, 255, 0.5)'
+  ctx.fillStyle = color
   ctx.font = '35px serif'
   ctx.fillText(text, pos.x + 15, pos.y + 70)
 }
