@@ -20,6 +20,7 @@ import {
   createCoward,
   isDistanceLessThan,
   createAssault,
+  createRhino,
 } from './src/ships'
 import { throttle } from 'throttle-debounce'
 import { random } from './src/math'
@@ -36,6 +37,7 @@ import { createCamera } from './src/createCamera'
 import { miniBox } from './src/ammoBox'
 import { down, origo } from './src/math'
 import { distanceSquared } from './src/distance'
+import { drawFuelBar } from './drawFuelBar'
 
 const roomRadius = 2000
 const asteroidAmounts = 100
@@ -52,7 +54,7 @@ export const room = {
 }
 
 const testCollision = (objA, objB) => {
-  if (objB !== undefined && objB.isBullet) {
+  if (objB !== undefined && objB.damage > 0) {
     damage(objA, objB.damage ?? 0)
     damage(objB, objA.damage ?? 0)
   }
@@ -128,8 +130,8 @@ const createGame = () => {
     },
   })
   const playerShips = [
-    createFighter(origo, addGameObject, getPlayers, 'green'),
-    createFighter(origo, addGameObject, getPlayers, 'blue'),
+    createRhino(origo, addGameObject, getPlayers, 'green'),
+    createRhino(origo, addGameObject, getPlayers, 'blue'),
   ]
   const game = {
     bullets: [],
@@ -266,6 +268,18 @@ const registerEventListeners = () => {
         game.score = game.score - 1000
       }
     }
+    if (event.code === 'Digit2' || event.code === 'Numpad2') {
+      if (game.score >= 1500) {
+        const newShip = createRhino(
+          spawnPositionOutsideRoom(),
+          (obj) => addObject(game, obj),
+          getPlayers,
+        )
+        addObject(game, newShip)
+        game.playerShips = [...game.playerShips, newShip]
+        game.score = game.score - 1000
+      }
+    }
   }
   addEventListener(`keydown`, handleClickKeydown)
 
@@ -348,10 +362,11 @@ const registerEventListeners = () => {
       room.width - width - margin,
       room.height - margin - height,
       width,
-      20,
+      height,
       game.playerB.health,
       game.playerB.maxHealth,
     )
+
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
     if (nextPlayerAShip !== game.playerA) {
@@ -382,6 +397,18 @@ const registerEventListeners = () => {
           gameObject.health,
           gameObject.maxHealth,
         )
+
+        if (gameObject.fuel !== undefined) {
+          drawFuelBar(
+            ctx,
+            position.x - barWidth / 2.2,
+            position.y + barHeight / 2 + 12,
+            barWidth,
+            barHeight,
+            gameObject.fuel(),
+            gameObject.maxFuel,
+          )
+        }
       })
     drawScore(ctx, room.width / 2, 50, game.score)
     // drawScore(canvas, room.width - 60, 70, game.playerBScore)

@@ -14,7 +14,7 @@ import { Weapon } from '../weapons/Weapon'
 import { closestPlayer } from '../closestPlayer'
 import { isFacing } from '../isFacing'
 
-type ShipOptions = {
+export type ShipOptions = {
   radius: number
   torque: number
   thrust: number

@@ -40,6 +40,11 @@ export const sprites: Record<string, Sprite> = {
     width: 304,
     height: 336,
   },
+  rhino: {
+    texture: `/ships/player/large/green-rhino.png`,
+    width: 125,
+    height: 125,
+  },
   enemy: {
     texture: '/enemy.png',
     height: 338,
