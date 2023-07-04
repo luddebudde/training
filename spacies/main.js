@@ -43,6 +43,7 @@ import { drawFuelBar } from './drawFuelBar'
 import { addObject } from './src/addObject'
 import { removeObject } from './src/removeObject'
 import { applyGravitationalWellForce } from './src/physics'
+import { canvasCoordinate } from './src/canvasCoordinate'
 
 const roomRadius = 2000
 const shouldPlayMusic = true
@@ -413,7 +414,7 @@ const registerEventListeners = () => {
             gameObject.body.position,
             scale(down, gameObject.body.circleRadius * 1),
           ),
-          game.camera,
+          game.camera.body.position,
           canvas,
         )
         const barWidth = gameObject.body.circleRadius * 1.2
@@ -467,15 +468,8 @@ const registerEventListeners = () => {
   }
 }
 
-const canvasCoordinate = (pos, camera, canvas) =>
-  sum(
-    pos,
-    Vector.neg(camera.body.position),
-    Vector.create(canvas.width / 2, canvas.height / 2),
-  )
-
 const drawCircleAroundEmptyShip = (ctx, shipPos, text, radius, color) => {
-  const pos = canvasCoordinate(shipPos, game.camera, canvas)
+  const pos = canvasCoordinate(shipPos, game.camera.body.position, canvas)
   ctx.beginPath()
   ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false)
   ctx.lineWidth = 3
