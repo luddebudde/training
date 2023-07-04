@@ -20,7 +20,6 @@ import {
   zeros,
 } from './src/math'
 import {
-  closestPointOnCircle,
   createAssault,
   createB2,
   createBomber,
@@ -35,16 +34,15 @@ import { playBum } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
 import { blueLight, greenLight } from './src/palette'
-import { applyForce } from './src/physics'
 import { drawHealthBar } from './drawHealthBar'
 import { drawScore } from './drawScore'
 import { moveCameraTo } from './moveCameraTo'
 import { createCamera } from './src/createCamera'
-import { miniBox } from './src/ammoBox'
 import { distanceToCircle } from './src/distance'
 import { drawFuelBar } from './drawFuelBar'
 import { addObject } from './src/addObject'
 import { removeObject } from './src/removeObject'
+import { applyGravitationalWellForce } from './src/physics'
 
 const roomRadius = 2000
 const shouldPlayMusic = true
@@ -357,7 +355,9 @@ const registerEventListeners = () => {
 
     game.gameObjects.forEach((updateable) => updateable.update?.(game))
 
-    game.playerShips.forEach((ship) => applyRoomBoundaryForce(ship.body))
+    game.playerShips.forEach((ship) =>
+      applyGravitationalWellForce(ship.body, roomRadius, 0.05),
+    )
 
     spawnEnemies()
     const margin = 20
@@ -550,21 +550,6 @@ const damage = (obj, damage) => {
     } else {
       playBum()
     }
-  }
-}
-
-const applyRoomBoundaryForce = (body) => {
-  if (!isDistanceLessThan(body.position, origo, roomRadius)) {
-    applyForce(
-      body,
-      scale(
-        Vector.sub(
-          closestPointOnCircle(body.position, origo, roomRadius),
-          body.position,
-        ),
-        0.05,
-      ),
-    )
   }
 }
 
