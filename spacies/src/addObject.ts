@@ -3,6 +3,6 @@ import { GameObject } from './GameObject'
 import { Game } from './Game.ts'
 
 export const addObject = (game: Game, obj: GameObject) => {
-  Composite.add(game.engine.world, obj.worldObjects ?? obj.body)
+  Composite.add(game.engine.world, obj.body)
   game.gameObjects = [...game.gameObjects, obj]
 }
