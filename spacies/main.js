@@ -77,14 +77,17 @@ const runner = Runner.create({
   isFixed: false,
 })
 
-const spawnPositionOutsideRoom = () => {
-  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
+const randomPositionOutsideRoom = () => {
+  const margin = 500
+  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + margin)
 }
 
 const randomPositionInsideRoom = () => {
+  const innerMargin = 400
+  const outerMargin = -500
   return radiansToCartesian(
     random(0, 2 * Math.PI),
-    random(400, roomRadius + 500),
+    random(innerMargin, roomRadius - outerMargin),
   )
 }
 
@@ -253,8 +256,7 @@ const getNextShip = (thisPlayer, otherPlayer) => {
     })
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
-  const nextShip = nearbyShips[newIndex]
-  return nextShip
+  return nearbyShips[newIndex]
 }
 
 const registerEventListeners = () => {
@@ -279,7 +281,7 @@ const registerEventListeners = () => {
       ) {
         if (game.balance >= price) {
           const newShip = createShip(
-            spawnPositionOutsideRoom(),
+            randomPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
             event.code.startsWith('Digit') ? 'green' : 'blue',
@@ -354,7 +356,7 @@ const registerEventListeners = () => {
       room.height,
     )
 
-    game.gameObjects.forEach((updateable) => updateable.update?.(game))
+    game.gameObjects.forEach((gameObject) => gameObject.update?.(game))
 
     game.playerShips.forEach((ship) =>
       applyGravitationalWellForce(ship.body, roomRadius, 0.05),
@@ -503,7 +505,7 @@ const getPlayers = () =>
 
 const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
-  const position = spawnPositionOutsideRoom()
+  const position = randomPositionOutsideRoom()
   if (r < 5) {
     zeros(1).forEach(() => {
       addObject(
