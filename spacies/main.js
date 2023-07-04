@@ -408,11 +408,13 @@ const registerEventListeners = () => {
       .filter((gameObject) => gameObject.type !== 'asteroid')
       .filter((gameObject) => gameObject.health > 1 && gameObject.maxHealth)
       .forEach((gameObject) => {
-        const position = canvasPos(
+        const position = canvasCoordinate(
           sum(
             gameObject.body.position,
             scale(down, gameObject.body.circleRadius * 1),
           ),
+          game.camera,
+          canvas,
         )
         const barWidth = gameObject.body.circleRadius * 1.2
         const barHeight = 5
@@ -465,17 +467,15 @@ const registerEventListeners = () => {
   }
 }
 
-const canvasPos = (pos) => {
-  const cameraPos = game.camera.body.position
-  return sum(
+const canvasCoordinate = (pos, camera, canvas) =>
+  sum(
     pos,
-    Vector.neg(cameraPos),
+    Vector.neg(camera.body.position),
     Vector.create(canvas.width / 2, canvas.height / 2),
   )
-}
 
 const drawCircleAroundEmptyShip = (ctx, shipPos, text, radius, color) => {
-  const pos = canvasPos(shipPos)
+  const pos = canvasCoordinate(shipPos, game.camera, canvas)
   ctx.beginPath()
   ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false)
   ctx.lineWidth = 3
