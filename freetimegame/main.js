@@ -1,13 +1,15 @@
-import { blackhole } from "./blackhole.js";
+import { blackhole, blackholes } from "./blackhole.js";
 import { canvas } from "./canvas.js";
-import { dragObject } from "./dragObject.js";
-import { drawBlackhole } from "./drawBlackhole.js";
+import { pullAcceleration } from "./pullAcceleration.js";
+import { drawCircle } from "./drawBlackhole.js";
 import { world } from "./world.js";
+import { attack, enemy } from "./src/enemy.js";
+import { airFriction } from "./airFriction.js";
 
 export const ctx = canvas.getContext("2d");
 
-let player = {
-  xPos: world.width / 2,
+export let player = {
+  xPos: world.width * 0.5,
   yPos: world.height * 0.9,
   radius: 20,
   acc: {
@@ -21,6 +23,8 @@ let player = {
   color: "blue",
   airFrictionPercentage: 1.02,
 };
+
+const units = [player, enemy];
 
 let playerCopy1 = {
   xPos: 0,
@@ -54,73 +58,76 @@ setInterval(() => {
   playerCopy2.xPos = player.xPos - world.width;
   playerCopy2.yPos = player.yPos;
 
-  if (player.xPos - player.radius >= world.width) {
-    player.xPos = player.radius;
-  }
-  if (player.xPos + player.radius <= 0) {
-    player.xPos = world.width - player.radius;
-  }
-  if (player.yPos - player.radius <= 0) {
-    player.yPos = player.radius;
-    player.vel.y = -player.vel.y;
-  }
-  if (player.yPos + player.radius >= world.height) {
-    player.yPos = world.height - player.radius;
-    player.vel.y = -player.vel.y;
-  }
-
-  player.xPos = player.xPos + player.vel.x;
-  player.yPos = player.yPos + player.vel.y;
-
-  if (player.vel.x >= 1) {
-    player.vel.x = player.vel.x / player.airFrictionPercentage;
-  } else {
-    if (player.vel.x <= -1) {
-      player.vel.x = player.vel.x / player.airFrictionPercentage;
+  units.forEach((unit) => {
+    if (unit.xPos - unit.radius >= world.width) {
+      unit.xPos = unit.radius;
     }
-  }
-  if (player.vel.y >= 1) {
-    player.vel.y = player.vel.y / player.airFrictionPercentage;
-  } else {
-    if (player.vel.y <= -1) {
-      player.vel.y = player.vel.y / player.airFrictionPercentage;
+    if (unit.xPos + unit.radius <= 0) {
+      unit.xPos = world.width - unit.radius;
     }
-  }
+    if (unit.yPos - unit.radius <= 0) {
+      unit.yPos = unit.radius;
+      unit.vel.y = -unit.vel.y;
+    }
+    if (unit.yPos + unit.radius >= world.height) {
+      unit.yPos = world.height - unit.radius;
+      unit.vel.y = -unit.vel.y;
+    }
+  });
 
-  dragObject(blackhole, player.xPos, player.yPos);
+  const airFrictionOnBody = airFriction(
+    player.vel.x,
+    player.vel.y,
+    player.airFrictionPercentage
+  );
+  player.vel.x = player.vel.x - airFrictionOnBody.x / 70;
+  player.vel.y = player.vel.y - airFrictionOnBody.y / 70;
 
-  drawBlackhole();
-  ctx.beginPath();
-  ctx.globalAlpha = 1;
-  ctx.arc(player.xPos, player.yPos, player.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
+  player.xPos += player.vel.x;
+  player.yPos += player.vel.y;
+  enemy.xPos += enemy.vel.x;
+  enemy.yPos += enemy.vel.y;
 
-  ctx.beginPath();
-  ctx.globalAlpha = 1;
-  ctx.arc(playerCopy1.xPos, playerCopy1.yPos, player.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
+  blackholes.forEach((blackhole) => {
+    const acc = pullAcceleration(blackhole, player.xPos, player.yPos);
+    console.log(acc);
+    player.vel.y += acc.y;
+    player.vel.x += acc.x;
 
-  ctx.beginPath();
-  ctx.globalAlpha = 1;
-  ctx.arc(playerCopy2.xPos, playerCopy2.yPos, player.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
+    drawCircle(
+      blackhole.xPos,
+      blackhole.yPos,
+      Math.sqrt(Math.abs(blackhole.pullForce)) * 0.5,
+      blackhole.pullForce > 0 ? "red" : "blue"
+    );
+  });
+
+  attack();
+
+  // draw player/player copies
+  drawCircle(player.xPos, player.yPos, player.radius, "blue");
+  drawCircle(playerCopy1.xPos, player.yPos, player.radius, "blue");
+  drawCircle(playerCopy2.xPos, player.yPos, player.radius, "blue");
+
+  drawCircle(enemy.xPos, enemy.yPos, enemy.radius, "red");
 }, delay);
 
 document.addEventListener("keydown", (event) => {
+  if (isKeyDown(`KeyQ`)) {
+    player.vel.x += 10;
+    player.vel.y += 10;
+  }
   // Moment
   if (event.code === "KeyW") {
-    player.vel.y = player.vel.y - player.acc.y;
+    player.vel.y -= player.acc.y;
   }
   if (event.code === "KeyA") {
-    player.vel.x = player.vel.x - player.acc.x;
+    player.vel.x -= player.acc.x;
   }
   if (event.code === "KeyS") {
-    player.vel.y = player.vel.y + player.acc.y;
+    player.vel.y += player.acc.y;
   }
   if (event.code === "KeyD") {
-    player.vel.x = player.vel.x + player.acc.x;
+    player.vel.x += player.acc.x;
   }
 });
