@@ -10,38 +10,42 @@ import {
 } from 'matter-js'
 import { keyDownTracker } from './src/keyDownTracker'
 import { asteroid } from './src/asteroid'
-import { zeros } from './src/math'
 import {
+  down,
+  origo,
+  radiansToCartesian,
+  random,
+  scale,
+  sum,
+  zeros,
+} from './src/math'
+import {
+  createAssault,
+  createB2,
+  createBomber,
+  createCoward,
   createEnemy,
   createFighter,
-  closestPointOnCircle,
-  createBomber,
-  createB2,
-  createCoward,
-  isDistanceLessThan,
-  createAssault,
   createRhino,
+  isDistanceLessThan,
 } from './src/ships'
 import { throttle } from 'throttle-debounce'
-import { random } from './src/math'
-import { radiansToCartesian } from './src/math'
 import { playBum } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
-import { greenLight, blueLight } from './src/palette'
-import { applyForce } from './src/physics'
+import { blueLight, greenLight } from './src/palette'
 import { drawHealthBar } from './drawHealthBar'
 import { drawScore } from './drawScore'
 import { moveCameraTo } from './moveCameraTo'
-import { scale, sum } from './src/math'
 import { createCamera } from './src/createCamera'
-import { miniBox } from './src/ammoBox'
-import { down, origo } from './src/math'
 import { distanceToCircle } from './src/distance'
 import { drawFuelBar } from './drawFuelBar'
+import { addObject } from './src/addObject'
+import { removeObject } from './src/removeObject'
+import { applyGravitationalWellForce } from './src/physics'
+import { canvasCoordinate } from './src/canvasCoordinate'
 
 const roomRadius = 2000
-const asteroidAmounts = 100
 const shouldPlayMusic = true
 
 const canvas = document.getElementById('app')
@@ -73,14 +77,17 @@ const runner = Runner.create({
   isFixed: false,
 })
 
-const spawnPositionOutsideRoom = () => {
-  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + 500)
+const randomPositionOutsideRoom = () => {
+  const margin = 500
+  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + margin)
 }
 
-const spawnPostionInsideRoom = () => {
+const randomPositionInsideRoom = () => {
+  const innerMargin = 400
+  const outerMargin = -500
   return radiansToCartesian(
     random(0, 2 * Math.PI),
-    random(400, roomRadius + 500),
+    random(innerMargin, roomRadius - outerMargin),
   )
 }
 
@@ -115,16 +122,6 @@ const playMusic = () => {
 }
 
 document.body.addEventListener('mousemove', playMusic)
-
-const addObject = (game, obj) => {
-  Composite.add(game.engine.world, obj.worldObjects ?? obj.body)
-  game.gameObjects = [...game.gameObjects, obj]
-}
-
-const removeObject = (game, obj) => {
-  Composite.remove(game.engine.world, obj.body)
-  game.gameObjects = game.gameObjects.filter((updateable) => updateable !== obj)
-}
 
 const getGameObjects = () => game.gameObjects
 const createGame = () => {
@@ -186,9 +183,10 @@ const createGame = () => {
   addObject(game, game.camera)
 
   // Spawn asteroid
+  const asteroidAmounts = 100
   zeros(asteroidAmounts)
     .map(() => {
-      return asteroid(spawnPostionInsideRoom())
+      return asteroid(randomPositionInsideRoom())
     })
     .forEach(addGameObject)
 
@@ -258,8 +256,7 @@ const getNextShip = (thisPlayer, otherPlayer) => {
     })
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
-  const nextShip = nearbyShips[newIndex]
-  return nextShip
+  return nearbyShips[newIndex]
 }
 
 const registerEventListeners = () => {
@@ -284,7 +281,7 @@ const registerEventListeners = () => {
       ) {
         if (game.balance >= price) {
           const newShip = createShip(
-            spawnPositionOutsideRoom(),
+            randomPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
             event.code.startsWith('Digit') ? 'green' : 'blue',
@@ -359,12 +356,13 @@ const registerEventListeners = () => {
       room.height,
     )
 
-    game.gameObjects.forEach((updateable) => updateable.update?.(game))
+    game.gameObjects.forEach((gameObject) => gameObject.update?.(game))
 
-    game.playerShips.forEach((ship) => applyRoomBoundaryForce(ship.body))
+    game.playerShips.forEach((ship) =>
+      applyGravitationalWellForce(ship.body, roomRadius, 0.05),
+    )
 
     spawnEnemies()
-    spawnAmmo()
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
@@ -391,7 +389,7 @@ const registerEventListeners = () => {
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
     if (nextPlayerAShip !== game.playerA) {
-      drawCirleAroundEmptyShip(
+      drawCircleAroundEmptyShip(
         ctx,
         nextPlayerAShip.body.position,
         'C',
@@ -400,7 +398,7 @@ const registerEventListeners = () => {
       )
     }
     if (nextPlayerBShip !== game.playerB) {
-      drawCirleAroundEmptyShip(
+      drawCircleAroundEmptyShip(
         ctx,
         nextPlayerBShip.body.position,
         ';',
@@ -413,11 +411,13 @@ const registerEventListeners = () => {
       .filter((gameObject) => gameObject.type !== 'asteroid')
       .filter((gameObject) => gameObject.health > 1 && gameObject.maxHealth)
       .forEach((gameObject) => {
-        const position = canvasPos(
+        const position = canvasCoordinate(
           sum(
             gameObject.body.position,
             scale(down, gameObject.body.circleRadius * 1),
           ),
+          game.camera.body.position,
+          canvas,
         )
         const barWidth = gameObject.body.circleRadius * 1.2
         const barHeight = 5
@@ -470,17 +470,8 @@ const registerEventListeners = () => {
   }
 }
 
-const canvasPos = (pos) => {
-  const cameraPos = game.camera.body.position
-  return sum(
-    pos,
-    Vector.neg(cameraPos),
-    Vector.create(canvas.width / 2, canvas.height / 2),
-  )
-}
-
-const drawCirleAroundEmptyShip = (ctx, shipPos, text, radius, color) => {
-  const pos = canvasPos(shipPos)
+const drawCircleAroundEmptyShip = (ctx, shipPos, text, radius, color) => {
+  const pos = canvasCoordinate(shipPos, game.camera.body.position, canvas)
   ctx.beginPath()
   ctx.arc(pos.x, pos.y, radius, 0, 2 * Math.PI, false)
   ctx.lineWidth = 3
@@ -514,7 +505,7 @@ const getPlayers = () =>
 
 const spawnEnemies = throttle(3000, () => {
   const r = random(0, 100)
-  const position = spawnPositionOutsideRoom()
+  const position = randomPositionOutsideRoom()
   if (r < 5) {
     zeros(1).forEach(() => {
       addObject(
@@ -533,7 +524,7 @@ const spawnEnemies = throttle(3000, () => {
         getPlayers,
         getGameObjects,
         position,
-        spawnPostionInsideRoom(),
+        randomPositionInsideRoom(),
       ),
     )
   } else {
@@ -541,13 +532,6 @@ const spawnEnemies = throttle(3000, () => {
       game,
       createEnemy(getPlayers, (obj) => addObject(game, obj), position),
     )
-  }
-})
-
-const spawnAmmo = throttle(3000, () => {
-  const r = random(0, 100)
-  if (r < 100) {
-    addObject(game, miniBox(spawnPostionInsideRoom()))
   }
 })
 
@@ -562,21 +546,6 @@ const damage = (obj, damage) => {
     } else {
       playBum()
     }
-  }
-}
-
-const applyRoomBoundaryForce = (body) => {
-  if (!isDistanceLessThan(body.position, origo, roomRadius)) {
-    applyForce(
-      body,
-      scale(
-        Vector.sub(
-          closestPointOnCircle(body.position, origo, roomRadius),
-          body.position,
-        ),
-        0.05,
-      ),
-    )
   }
 }
 

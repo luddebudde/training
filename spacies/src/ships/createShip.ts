@@ -55,7 +55,6 @@ export const createShip = (
 
   return {
     body: body,
-    worldObjects: [body],
     health,
     maxHealth: health,
     score: 0,
