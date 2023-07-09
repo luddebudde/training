@@ -42,7 +42,6 @@ export const attack = () => {
     drawLine(enemy.xPos, lineY2, oldPlayerPos.x, oldPlayerPos.y);
 
     x = x + 1;
-    console.log(x);
     if (x % phaseTime === 0) {
       prePhase = false;
       hasDecidedDirection = false;

@@ -1,4 +1,4 @@
-import { blackhole, blackholes } from "./blackhole.js";
+import { blackholes } from "./blackhole.js";
 import { canvas } from "./canvas.js";
 import { pullAcceleration } from "./pullAcceleration.js";
 import { drawCircle } from "./drawBlackhole.js";
@@ -53,17 +53,21 @@ setInterval(() => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  playerCopy1.xPos = player.xPos + world.width;
+  playerCopy1.xPos = player.xPos + world.width * 2;
   playerCopy1.yPos = player.yPos;
-  playerCopy2.xPos = player.xPos - world.width;
+  playerCopy2.xPos = player.xPos - world.width * 2;
   playerCopy2.yPos = player.yPos;
 
   units.forEach((unit) => {
-    if (unit.xPos - unit.radius >= world.width) {
-      unit.xPos = unit.radius;
-    }
-    if (unit.xPos + unit.radius <= 0) {
+    if (unit.xPos + unit.radius >= world.width) {
+      // unit.xPos = unit.radius;
       unit.xPos = world.width - unit.radius;
+      unit.vel.x = -unit.vel.x;
+    }
+    if (unit.xPos - unit.radius <= 0) {
+      // unit.xPos = world.width - unit.radius;
+      unit.xPos = unit.radius;
+      unit.vel.x = -unit.vel.x;
     }
     if (unit.yPos - unit.radius <= 0) {
       unit.yPos = unit.radius;
@@ -90,7 +94,6 @@ setInterval(() => {
 
   blackholes.forEach((blackhole) => {
     const acc = pullAcceleration(blackhole, player.xPos, player.yPos);
-    console.log(acc);
     player.vel.y += acc.y;
     player.vel.x += acc.x;
 
@@ -98,7 +101,7 @@ setInterval(() => {
       blackhole.xPos,
       blackhole.yPos,
       Math.sqrt(Math.abs(blackhole.pullForce)) * 0.5,
-      blackhole.pullForce > 0 ? "red" : "blue"
+      "black"
     );
   });
 
@@ -113,10 +116,6 @@ setInterval(() => {
 }, delay);
 
 document.addEventListener("keydown", (event) => {
-  if (isKeyDown(`KeyQ`)) {
-    player.vel.x += 10;
-    player.vel.y += 10;
-  }
   // Moment
   if (event.code === "KeyW") {
     player.vel.y -= player.acc.y;

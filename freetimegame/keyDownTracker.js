@@ -17,5 +17,5 @@ export const keyDownTracker = () => {
     }
   });
 
-  return (keyCode: string) => keysDown.has(keyCode);
+  return (keyCode) => keysDown.has(keyCode);
 };
