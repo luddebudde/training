@@ -13,9 +13,9 @@ import {
   ArrowHelper,
   AxesHelper,
   BackSide,
+  Color,
   DirectionalLight,
   Group,
-  Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
   MeshPhysicalMaterial,
@@ -28,18 +28,35 @@ import {
 } from 'three'
 import { keyDownTracker } from './keyDownTracker.ts'
 import { modelLoader } from './modelLoader.ts'
-import { closestDirectionOnSphere, projectOnSurface } from './vectorMath.ts'
+import {
+  closestDirectionOnSphere,
+  projectOnSurface,
+  sphereSurfaceNorm,
+} from './vectorMath.ts'
 import {
   randomAngle,
   randomColor,
   randomLinear,
   randomPointOnSphere,
 } from './random.ts'
-import { origo, up } from './vectors.ts'
-import { springForce, torqueToAlign } from './forces.ts'
+import { front, origo, up } from './vectors.ts'
+import {
+  springForce,
+  thrustBackward,
+  thrustForward,
+  torqueToAlign,
+  turnLeft,
+  turnRight,
+} from './forces.ts'
 import { throttle } from 'throttle-debounce'
 import { createTextureLoader } from './createTextureLoader.ts'
 import { vector3 } from './vector3.ts'
+import { GameObject } from './GameObject.ts'
+import { createDrone } from './createDrone.ts'
+import { zeros } from './zeros.ts'
+import Stats from 'stats.js'
+import { Player } from './Player.ts'
+import { GameQueries } from './gameQueries.ts'
 
 const createTrajectoryLine = () => {
   const lineGeometry = new THREE.BufferGeometry()
@@ -93,14 +110,6 @@ waterNormalMap.minFilter = THREE.LinearFilter
 waterNormalMap.wrapS = THREE.RepeatWrapping
 waterNormalMap.wrapT = THREE.RepeatWrapping
 waterNormalMap.repeat.set(10, 10)
-
-type GameObject = {
-  body: Body
-  mesh: Mesh
-  debugMesh?: Mesh
-  gravitational: boolean
-  arrowHelper: ArrowHelper
-}
 
 const sunLight: DirectionalLight = new DirectionalLight(0xffffff, 1)
 const line = createTrajectoryLine()
@@ -182,14 +191,33 @@ const initThree = () => {
   scene.add(skyScene)
   // new OrbitControls(camera, renderer.domElement)
 
+  const stats = document.createElement('div')
+  stats.style.position = 'fixed'
+  stats.style.left = '0px'
+  stats.style.top = '0px'
+  stats.style.display = 'flex'
+  stats.appendChild(stats0.dom)
+  stats.appendChild(stats2.dom)
+  stats0.dom.style.position = 'relative'
+  stats2.dom.style.position = 'relative'
+  document.body.appendChild(stats)
   document.body.appendChild(renderer1.domElement)
   document.body.appendChild(renderer2.domElement)
 }
 
+const stats0 = new Stats()
+stats0.showPanel(0)
+const stats2 = new Stats()
+stats2.showPanel(2)
+
 const animate = () => {
   requestAnimationFrame(animate)
+  stats0.begin()
+  stats2.begin()
   updatePhysics()
   render()
+  stats0.end()
+  stats2.end()
 }
 
 const render = () => {
@@ -280,15 +308,18 @@ const updatePhysics = () => {
 
   // Follow camera
   // const cameraPos = player.body.vectorToWorldFrame()
+
+  const gameQueries: GameQueries = {
+    getPlayers: () => players,
+  }
+
   const players = [player1, player2]
   players.forEach((player) => {
-    const forward = new Vec3(0, 0, 1)
-    const forwardDir = player.body.vectorToWorldFrame(forward)
-    const sphereNorm = player.body.position.vsub(origo)
-    sphereNorm.normalize()
+    const sphereNorm = sphereSurfaceNorm(origo, player.body.position)
 
     torqueToAlign(player.body, sphereNorm)
 
+    const forwardDir = player.body.vectorToWorldFrame(front)
     const directionOnSurface = projectOnSurface(forwardDir, sphereNorm)
     directionOnSurface.normalize()
     const cameraDistanceAbove = 20
@@ -313,6 +344,7 @@ const updatePhysics = () => {
     // player.camera
   })
 
+  // Trace Trajectory
   // const dt = 1 / 60
   // const initVel = cannonImpulse.scale(1 / cannonBallMass)
   // const trajectory = zeros(200)
@@ -352,6 +384,8 @@ const updatePhysics = () => {
       const force = springForce(obj.body.position, surfacePos, 5)
       obj.body.applyForce(force, obj.body.position)
     }
+
+    obj.update?.(gameQueries)
 
     // Gravity
     // if (obj.gravitational) {
@@ -460,8 +494,11 @@ const createAsteroid = (): GameObject => {
   // mesh.scale.copy(mesh.scale.multiplyScalar(0.05))
   const mesh = asteriodsGltf2.scene.clone()
   mesh.scale.copy(mesh.scale.multiplyScalar(0.6 * radius1))
-  mesh.traverse((it) => {
-    it.castShadow = true
+  mesh.traverse((obj) => {
+    if ('material' in obj && obj.material instanceof MeshStandardMaterial) {
+      obj.material.color = new Color(0x776666)
+      obj.material.roughness = 0.8
+    }
   })
   mesh.position.copy(vector3(new Vec3(3, 0, 0)))
   mesh.rotateX(0.4)
@@ -512,15 +549,6 @@ const createCannonBall = (): GameObject => {
 }
 const planetRadius = 90
 const atmosphereHeight = 10
-
-type Player = GameObject & {
-  thrustForward: () => void
-  thrustBackward: () => void
-  turnLeft: () => void
-  turnRight: () => void
-  shoot: () => void
-  camera: OrthographicCamera
-}
 
 const createPlayer = (camera: OrthographicCamera): Player => {
   const shapeBody = new Box(new Vec3(0.3, 0.5, 1.5))
@@ -578,38 +606,10 @@ const createPlayer = (camera: OrthographicCamera): Player => {
     debugMesh: meshGroup,
     arrowHelper: new ArrowHelper(),
     camera,
-    thrustForward: () => {
-      body.applyLocalForce(
-        new Vec3(0, 0, 1).scale(engineForwardStrength),
-        new Vec3(0, 0, 0),
-      )
-    },
-    thrustBackward: () => {
-      body.applyLocalForce(
-        new Vec3(0, 0, -1).scale(engineBackwardStrength),
-        new Vec3(0, 0, 0),
-      )
-    },
-    turnLeft: () => {
-      body.applyLocalForce(
-        new Vec3(1, 0, 0).scale(rotationStrength),
-        new Vec3(0, 0, 1),
-      )
-      body.applyLocalForce(
-        new Vec3(-1, 0, 0).scale(rotationStrength),
-        new Vec3(0, 0, -1),
-      )
-    },
-    turnRight: () => {
-      body.applyLocalForce(
-        new Vec3(-1, 0, 0).scale(rotationStrength),
-        new Vec3(0, 0, 1),
-      )
-      body.applyLocalForce(
-        new Vec3(1, 0, 0).scale(rotationStrength),
-        new Vec3(0, 0, -1),
-      )
-    },
+    thrustForward: () => thrustForward(body, engineForwardStrength),
+    thrustBackward: () => () => thrustBackward(body, engineBackwardStrength),
+    turnLeft: () => turnLeft(body, rotationStrength),
+    turnRight: () => turnRight(body, rotationStrength),
     shoot: throttle(
       1000,
       () => {
@@ -763,6 +763,15 @@ addGameObject(player2)
 for (let i = 0; i < 100; i++) {
   addGameObject(createAsteroid())
 }
+zeros(50).forEach(() =>
+  addGameObject(
+    createDrone(
+      randomPointOnSphere(origo, planetRadius + atmosphereHeight),
+      spaceshipMesh.clone(),
+    ),
+  ),
+)
+
 addGameObject(createPlanet())
 
 animate()

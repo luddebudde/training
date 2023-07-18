@@ -44,8 +44,10 @@ import { addObject } from './src/addObject'
 import { removeObject } from './src/removeObject'
 import { applyGravitationalWellForce } from './src/physics'
 import { canvasCoordinate } from './src/canvasCoordinate'
+import { createOuterBoundary } from './src/createOuterBoundary.ts'
 
 const roomRadius = 2000
+// const roomRadius = 500
 const shouldPlayMusic = true
 
 const canvas = document.getElementById('app')
@@ -68,7 +70,6 @@ const testCollision = (objA, objB) => {
     const energy = objA.body.mass * objA.speed() * objA.speed()
     const collisionDamage = energy * 0.0005
     damage(objB, collisionDamage)
-    console.log(collisionDamage)
   }
 }
 
@@ -131,7 +132,7 @@ const createGame = () => {
       scale: 0,
     },
     timing: {
-      // timeScale: 0.7,
+      timeScale: 0.7,
     },
   })
   const playerShips = [
@@ -183,7 +184,7 @@ const createGame = () => {
   addObject(game, game.camera)
 
   // Spawn asteroid
-  const asteroidAmounts = 100
+  const asteroidAmounts = 10
   zeros(asteroidAmounts)
     .map(() => {
       return asteroid(randomPositionInsideRoom())
@@ -208,6 +209,8 @@ const createGame = () => {
       },
     }),
   )
+  // Outerboundry
+  addGameObject(createOuterBoundary(roomRadius + 2000))
 
   if (import.meta.env.DEV) {
     // add mouse control and make the mouse revolute
@@ -450,15 +453,25 @@ const registerEventListeners = () => {
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
 
   const handleCollisionStart = (event) => {
+    const { bodyA, bodyB } = event.pairs[0]
     const objA = game.gameObjects.find(
-      (updateable) => updateable.body === event.pairs[0].bodyA,
+      (updateable) => updateable.body === bodyA,
     )
     const objB = game.gameObjects.find(
-      (updateable) => updateable.body === event.pairs[0].bodyB,
+      (updateable) => updateable.body === bodyB,
     )
 
-    testCollision(objA, objB)
-    testCollision(objB, objA)
+    if (objA && objB) {
+      testCollision(objA, objB)
+      testCollision(objB, objA)
+    }
+
+    if (bodyA.label === 'OuterBoundary') {
+      removeObject(game, objB)
+    }
+    if (bodyB.label === 'OuterBoundary') {
+      removeObject(game, objA)
+    }
   }
 
   Events.on(game.engine, 'collisionStart', handleCollisionStart)
