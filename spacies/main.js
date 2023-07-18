@@ -12,6 +12,7 @@ import { keyDownTracker } from './src/keyDownTracker'
 import { asteroid } from './src/asteroid'
 import {
   down,
+  left,
   origo,
   radiansToCartesian,
   random,
@@ -30,7 +31,7 @@ import {
   isDistanceLessThan,
 } from './src/ships'
 import { throttle } from 'throttle-debounce'
-import { playBum } from './src/audio'
+import { playBum, playBuy } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
 import { blueLight, greenLight } from './src/palette'
@@ -47,6 +48,8 @@ import { canvasCoordinate } from './src/canvasCoordinate'
 import { createOuterBoundary } from './src/createOuterBoundary.ts'
 
 const roomRadius = 2000
+const spawnRadius = roomRadius + 1000
+const outerBoundaryRadius = spawnRadius + 1000
 // const roomRadius = 500
 const shouldPlayMusic = true
 
@@ -79,8 +82,7 @@ const runner = Runner.create({
 })
 
 const randomPositionOutsideRoom = () => {
-  const margin = 500
-  return radiansToCartesian(random(0, 2 * Math.PI), roomRadius + margin)
+  return radiansToCartesian(random(0, 2 * Math.PI), spawnRadius)
 }
 
 const randomPositionInsideRoom = () => {
@@ -187,7 +189,7 @@ const createGame = () => {
   const asteroidAmounts = 10
   zeros(asteroidAmounts)
     .map(() => {
-      return asteroid(randomPositionInsideRoom())
+      return asteroid(randomPositionInsideRoom(), Vector.mult(left, 100))
     })
     .forEach(addGameObject)
 
@@ -210,7 +212,7 @@ const createGame = () => {
     }),
   )
   // Outerboundry
-  addGameObject(createOuterBoundary(roomRadius + 2000))
+  addGameObject(createOuterBoundary(outerBoundaryRadius))
 
   if (import.meta.env.DEV) {
     // add mouse control and make the mouse revolute
@@ -292,6 +294,7 @@ const registerEventListeners = () => {
           addObject(game, newShip)
           game.playerShips = [...game.playerShips, newShip]
           game.balance = game.balance - price
+          playBuy()
         }
       }
     }
@@ -366,6 +369,7 @@ const registerEventListeners = () => {
     )
 
     spawnEnemies()
+    spawnAsteriods()
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
@@ -548,6 +552,14 @@ const spawnEnemies = throttle(3000, () => {
   }
 })
 
+const spawnAsteriods = throttle(500, () => {
+  zeros(2).forEach(() => {
+    addObject(
+      game,
+      asteroid(randomPositionOutsideRoom(), Vector.mult(left, 2000)),
+    )
+  })
+})
 const damage = (obj, damage) => {
   if (obj !== undefined && obj.health !== undefined) {
     obj.health = obj.health - damage
