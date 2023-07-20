@@ -275,6 +275,26 @@ const getNextShip = (thisPlayer, otherPlayer) => {
   return nearbyShips[newIndex]
 }
 
+const priceList = [
+  {
+    keyNumber: 1,
+    price: 750,
+    createShip: createFighter,
+    image: assets.fighter,
+  },
+  {
+    keyNumber: 2,
+    price: 1000,
+    createShip: createAssault,
+    image: assets.assault,
+  },
+  {
+    keyNumber: 3,
+    price: 1500,
+    createShip: createRhino,
+    image: assets.rhino,
+  },
+]
 const registerEventListeners = () => {
   const handleClickKeydown = (event) => {
     if (event.code === 'KeyR') {
@@ -296,30 +316,33 @@ const registerEventListeners = () => {
     if (isKeyDown(`KeyP`)) {
       game.balance = game.balance + 100000
     }
-    const buy = (keyNumber, price, createShip) => {
+
+    const buy = (keyNumber, price, createShip) => {}
+
+    // buy(1, 750, createFighter)
+    //
+    // buy(2, 1000, createAssault)
+    //
+    // buy(3, 1500, createRhino)
+
+    priceList.forEach((item) => {
       if (
-        event.code === `Digit${keyNumber}` ||
-        event.code === `Numpad${keyNumber}`
+        event.code === `Digit${item.keyNumber}` ||
+        event.code === `Numpad${item.keyNumber}`
       ) {
-        if (game.balance >= price) {
-          const newShip = createShip(
+        if (game.balance >= item.price) {
+          const newShip = item.createShip(
             randomPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
             assets,
           )
           addObject(game, newShip)
-          game.balance = game.balance - price
+          game.balance = game.balance - item.price
           playBuy()
         }
       }
-    }
-
-    buy(1, 750, createFighter)
-
-    buy(2, 1000, createAssault)
-
-    buy(3, 1500, createRhino)
+    })
   }
   addEventListener(`keydown`, handleClickKeydown)
 
@@ -402,9 +425,17 @@ const registerEventListeners = () => {
       }
     })
 
+    priceList.forEach((item, index) => {
+      ctx.fillStyle = 'yellow'
+      ctx.font = '30px serif'
+      ctx.fillText(item.price.toString(), 110, 100 + index * 50)
+      ctx.drawImage(item.image, 5, 80 + index * 50, 40, 40)
+    })
+
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
+
     drawHealthBar(
       ctx,
       margin,
