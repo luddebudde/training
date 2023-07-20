@@ -1,7 +1,6 @@
 import { Bodies, Vector } from 'matter-js'
 import { GameObject } from '../GameObject'
 import { ShipOptions } from './createShip'
-import { sprites } from '../sprites'
 import { collisionCategories } from '../collision'
 import { closestPlayer } from '../closestPlayer'
 import {
@@ -16,11 +15,9 @@ import { playPlayerDeath } from '../audio'
 
 export const createRhino = (
   postion: Vector,
-  // spriteWithoutJet: Sprite,
-  // spriteWithJet: Sprite,
   addObject: (obj: GameObject) => void,
   getPlayers: () => void,
-  color: 'green' | 'blue',
+  assets: any,
 ) => {
   const { radius, torque, thrust, health, mass } = {
     health: 1000,
@@ -30,19 +27,13 @@ export const createRhino = (
     mass: 2000,
   } satisfies Partial<ShipOptions>
 
-  const sprite = {
-    texture: sprites.rhino(color).texture,
-    xScale: (2 * radius) / sprites.rhino(color).width,
-    yScale: (2 * radius) / sprites.rhino(color).height,
-  }
-
   const body = Bodies.circle(postion.x, postion.y, radius, {
     mass,
     frictionAir: 0.08,
     friction: 0,
     label: 'Fighter',
     render: {
-      sprite: sprite,
+      visible: false,
     },
     collisionFilter: {
       category: collisionCategories.rhino,
@@ -107,6 +98,29 @@ export const createRhino = (
     },
     onDestroy: () => {
       playPlayerDeath()
+    },
+    draw: (
+      ctx: CanvasRenderingContext2D,
+      assets: any,
+      gameObject: GameObject,
+    ) => {
+      if (gameObject.health > 0) {
+        ctx.drawImage(
+          assets.rhino,
+          -body.circleRadius,
+          -body.circleRadius,
+          body.circleRadius * 2,
+          body.circleRadius * 2,
+        )
+      } else {
+        ctx.drawImage(
+          assets.astronaut,
+          -body.circleRadius * 0.5,
+          -body.circleRadius * 1.5 * 0.5,
+          body.circleRadius,
+          body.circleRadius * 1.5,
+        )
+      }
     },
   }
 }

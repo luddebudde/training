@@ -46,6 +46,15 @@ import { removeObject } from './src/removeObject'
 import { applyGravitationalWellForce } from './src/physics'
 import { canvasCoordinate } from './src/canvasCoordinate'
 import { createOuterBoundary } from './src/createOuterBoundary.ts'
+import { loadImage } from './src/image.ts'
+import { createAstronaut } from './src/ships/createAstronaut.ts'
+
+const assets = {
+  astronaut: await loadImage('/ships/player/astronaut.png'),
+  assault: await loadImage(`/ships/player/large/assault.png`),
+  fighter: await loadImage(`/ships/player/large/green.png`),
+  rhino: await loadImage(`/ships/player/large/green-rhino.png`),
+}
 
 const roomRadius = 2000
 const spawnRadius = roomRadius + 1000
@@ -137,20 +146,14 @@ const createGame = () => {
       timeScale: 0.7,
     },
   })
-  const playerShips = [
-    createFighter(origo, addGameObject, getPlayers, 'green'),
-    createFighter(origo, addGameObject, getPlayers, 'blue'),
-  ]
   const game = {
     bullets: [],
     gameObjects: [],
-    playerA: playerShips[0],
-    playerB: playerShips[1],
     // playerAScore: 0,
     // playerBScore: 0,
     score: 0,
     balance: 0,
-    playerShips: playerShips,
+    playerShips: [],
     camera: createCamera(),
     engine,
     render: Render.create({
@@ -180,9 +183,12 @@ const createGame = () => {
   }
 
   // Spawn Player
-  game.playerShips.forEach((player) => {
-    addObject(game, player)
+  zeros(2).forEach((player) => {
+    addObject(game, createFighter(origo, addGameObject, getPlayers, assets))
   })
+  game.playerA = game.playerShips[0]
+  game.playerB = game.playerShips[1]
+
   addObject(game, game.camera)
 
   // Spawn asteroid
@@ -242,8 +248,10 @@ const getNextShip = (thisPlayer, otherPlayer) => {
     return ship !== otherPlayer
   })
   const nearbyShips = emptyShips
-    .filter((ship) =>
-      isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
+    .filter(
+      (ship) =>
+        ship.health > 0 &&
+        isDistanceLessThan(thisPlayer.body.position, ship.body.position, 200),
     )
     .sort((a, b) => {
       return (
@@ -259,6 +267,9 @@ const getNextShip = (thisPlayer, otherPlayer) => {
         )
       )
     })
+  if (nearbyShips.length === 0) {
+    return undefined
+  }
   const playerAIndex = nearbyShips.indexOf(thisPlayer)
   const newIndex = (playerAIndex + 1) % nearbyShips.length
   return nearbyShips[newIndex]
@@ -270,10 +281,16 @@ const registerEventListeners = () => {
       restartGame()
     }
     if (event.code === 'KeyC') {
-      game.playerA = getNextShip(game.playerA, game.playerB)
+      const nextShip = getNextShip(game.playerA, game.playerB)
+      if (nextShip !== undefined) {
+        game.playerA = nextShip
+      }
     }
     if (event.code === 'Comma') {
-      game.playerB = getNextShip(game.playerB, game.playerA)
+      const nextShip = getNextShip(game.playerB, game.playerA)
+      if (nextShip !== undefined) {
+        game.playerB = nextShip
+      }
     }
 
     if (isKeyDown(`KeyP`)) {
@@ -289,10 +306,9 @@ const registerEventListeners = () => {
             randomPositionOutsideRoom(),
             (obj) => addObject(game, obj),
             getPlayers,
-            event.code.startsWith('Digit') ? 'green' : 'blue',
+            assets,
           )
           addObject(game, newShip)
-          game.playerShips = [...game.playerShips, newShip]
           game.balance = game.balance - price
           playBuy()
         }
@@ -319,16 +335,15 @@ const registerEventListeners = () => {
     if (isKeyDown(`KeyS`)) {
       game.playerA.back()
     }
+    if (isKeyDown(`Space`)) {
+      game.playerA.fire()
+    }
     if (isKeyDown(`KeyA`)) {
       game.playerA.turnLeft()
     }
     if (isKeyDown(`KeyD`)) {
       game.playerA.turnRight()
     }
-    if (isKeyDown(`Space`) && game.playerA.health > 0) {
-      game.playerA.fire()
-    }
-
     // Player 2
     if (isKeyDown(`ArrowUp`)) {
       game.playerB.thrust()
@@ -340,16 +355,16 @@ const registerEventListeners = () => {
     if (isKeyDown(`ArrowDown`)) {
       game.playerB.back()
     }
+
+    if (isKeyDown(`Period`)) {
+      game.playerB.fire()
+    }
     if (isKeyDown(`ArrowLeft`)) {
       game.playerB.turnLeft()
     }
     if (isKeyDown(`ArrowRight`)) {
       game.playerB.turnRight()
     }
-    if (isKeyDown(`Period`) && game.playerB.health > 0) {
-      game.playerB.fire()
-    }
-
     game.bullets.forEach((bullet) => {
       // Reset speed
       bullet.update()
@@ -370,10 +385,26 @@ const registerEventListeners = () => {
 
     spawnEnemies()
     spawnAsteriods()
+
+    const ctx = canvas.getContext('2d')
+
+    game.gameObjects.forEach((gameObject) => {
+      if (gameObject.draw !== undefined) {
+        ctx.translate(
+          -game.camera.body.position.x,
+          -game.camera.body.position.y,
+        )
+        ctx.translate(gameObject.body.position.x, gameObject.body.position.y)
+        ctx.translate(canvas.width / 2, canvas.height / 2)
+        ctx.rotate(gameObject.body.angle)
+        gameObject.draw(ctx, assets, gameObject)
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+      }
+    })
+
     const margin = 20
     const height = 20
     const width = room.width / 2 - margin * 2
-    const ctx = canvas.getContext('2d')
     drawHealthBar(
       ctx,
       margin,
@@ -395,7 +426,7 @@ const registerEventListeners = () => {
 
     const nextPlayerAShip = getNextShip(game.playerA, game.playerB)
     const nextPlayerBShip = getNextShip(game.playerB, game.playerA)
-    if (nextPlayerAShip !== game.playerA) {
+    if (nextPlayerAShip !== undefined && nextPlayerAShip !== game.playerA) {
       drawCircleAroundEmptyShip(
         ctx,
         nextPlayerAShip.body.position,
@@ -404,7 +435,7 @@ const registerEventListeners = () => {
         greenLight,
       )
     }
-    if (nextPlayerBShip !== game.playerB) {
+    if (nextPlayerBShip !== undefined && nextPlayerBShip !== game.playerB) {
       drawCircleAroundEmptyShip(
         ctx,
         nextPlayerBShip.body.position,
@@ -561,16 +592,43 @@ const spawnAsteriods = throttle(500, () => {
   })
 })
 const damage = (obj, damage) => {
-  if (obj !== undefined && obj.health !== undefined) {
-    obj.health = obj.health - damage
-    if (obj.health <= 0) {
+  console.log(damage)
+  if (obj === undefined) {
+    return
+  }
+  const wasAlive = obj.health > 0
+  if (obj.health !== undefined) {
+    obj.health -= damage
+  }
+  const isAlive = obj.health > 0
+  const died = wasAlive && !isAlive
+  const shouldDestroy = obj.isBullet || died
+  if (shouldDestroy) {
+    game.score = game.score + (obj.points ?? 0)
+    game.balance = game.balance + (obj.points ?? 0)
+    const keep = obj.onDestroy?.()
+    if (!keep) {
       removeObject(game, obj)
-      game.score = game.score + (obj.points ?? 0)
-      game.balance = game.balance + (obj.points ?? 0)
-      obj.onDestroy?.()
-    } else {
-      playBum()
     }
+    game.playerShips.forEach((player) => {
+      if (obj === player) {
+        const astronaut = createAstronaut(
+          player.body.position,
+          (obj) => addObject(game, obj),
+          () => game.playerShips,
+          assets,
+        )
+
+        addObject(game, astronaut)
+        if (player === game.playerA) {
+          game.playerA = astronaut
+        } else {
+          game.playerB = astronaut
+        }
+      }
+    })
+  } else {
+    playBum()
   }
 }
 

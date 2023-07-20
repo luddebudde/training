@@ -13,6 +13,7 @@ import { GameObject } from '../GameObject'
 import { Weapon } from '../weapons/Weapon'
 import { closestPlayer } from '../closestPlayer'
 import { isFacing } from '../isFacing'
+import { Game } from '../Game.ts'
 
 export type ShipOptions = {
   radius: number
@@ -25,27 +26,18 @@ export type ShipOptions = {
 
 export const createShip = (
   postion: Vector,
-  spriteWithoutJet: Sprite,
-  spriteWithJet: Sprite,
+  asset: any,
   addObject: (obj: GameObject) => void,
-  getPlayers: () => void,
+  getPlayers: () => GameObject,
   options: ShipOptions,
 ) => {
   const { radius, torque, thrust, health, mass, weapon } = options
-
-  const sprite = {
-    texture: spriteWithoutJet.texture,
-    xScale: (2 * radius) / spriteWithoutJet.width,
-    yScale: (2 * radius) / spriteWithoutJet.height,
-  }
 
   const body = Bodies.circle(postion.x, postion.y, radius, {
     mass,
     frictionAir: 0.08,
     label: 'Fighter',
-    render: {
-      sprite: sprite,
-    },
+    render: { visible: false },
     collisionFilter: {
       category: collisionCategories.player,
     },
@@ -54,6 +46,9 @@ export const createShip = (
   let useAI = true
 
   return {
+    // render: () => {
+    //
+    // }
     body: body,
     health,
     maxHealth: health,
@@ -77,14 +72,14 @@ export const createShip = (
         }
       }
 
-      applyAngularFriction(body, 5)
+      applyAngularFriction(body, radius / 6)
     },
     thrust: () => {
       applyThrust(body, thrust)
-      body.render.sprite!.texture = spriteWithJet.texture
+      // body.render.sprite!.texture = spriteWithJet.texture
     },
     dontThrust: () => {
-      body.render.sprite!.texture = spriteWithoutJet.texture
+      // body.render.sprite!.texture = spriteWithoutJet.texture
     },
     back: () => {
       applyThrust(body, -thrust * 0.3)
@@ -104,6 +99,29 @@ export const createShip = (
     },
     onDestroy: () => {
       playPlayerDeath()
+      return true
+    },
+    draw: (
+      ctx: CanvasRenderingContext2D,
+      assets: any,
+      gameObject: GameObject,
+    ) => {
+      ctx.globalAlpha = gameObject.health > 0 ? 1 : 0.5
+      ctx.drawImage(
+        asset,
+        -body.circleRadius,
+        -body.circleRadius,
+        body.circleRadius * 2,
+        body.circleRadius * 2,
+      )
+      ctx.globalAlpha = 1
+      // ctx.drawImage(
+      //   assets.astronaut,
+      //   -body.circleRadius * 0.5,
+      //   -body.circleRadius * 1.5 * 0.5,
+      //   body.circleRadius,
+      //   body.circleRadius * 1.5,
+      // )
     },
   }
 }
