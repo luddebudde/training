@@ -44,6 +44,9 @@ export const createShip = (
   })
 
   let useAI = true
+  const jetImageSlowDown = 4
+  let jetImageIndex = 0
+  let isThrusting = false
 
   return {
     // render: () => {
@@ -76,9 +79,11 @@ export const createShip = (
     },
     thrust: () => {
       applyThrust(body, thrust)
+      isThrusting = true
       // body.render.sprite!.texture = spriteWithJet.texture
     },
     dontThrust: () => {
+      isThrusting = false
       // body.render.sprite!.texture = spriteWithoutJet.texture
     },
     back: () => {
@@ -99,6 +104,7 @@ export const createShip = (
     },
     onDestroy: () => {
       playPlayerDeath()
+      isThrusting = false
       return true
     },
     draw: (
@@ -107,6 +113,26 @@ export const createShip = (
       gameObject: GameObject,
     ) => {
       ctx.globalAlpha = gameObject.health > 0 ? 1 : 0.5
+
+      const jetWidth = 1426
+      const jetHeight = 4374
+      if (isThrusting) {
+        jetImageIndex += 1
+        if (jetImageIndex === 9 * jetImageSlowDown) {
+          jetImageIndex = 0
+        }
+        ctx.drawImage(
+          assets.jet,
+          0,
+          (Math.floor(jetImageIndex / jetImageSlowDown) * jetHeight) / 9,
+          jetWidth,
+          jetHeight / 9,
+          -radius * 2.6,
+          -radius / 2,
+          radius * 2,
+          radius,
+        )
+      }
       ctx.drawImage(
         asset,
         -body.circleRadius,

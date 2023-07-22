@@ -54,6 +54,8 @@ const assets = {
   assault: await loadImage(`/ships/player/large/assault.png`),
   fighter: await loadImage(`/ships/player/large/green.png`),
   rhino: await loadImage(`/ships/player/large/green-rhino.png`),
+  jet: await loadImage('/animations/jet-even.png'),
+  explosion: await loadImage('/animations/explosion.png'),
 }
 
 const roomRadius = 2000
@@ -155,6 +157,7 @@ const createGame = () => {
     balance: 0,
     playerShips: [],
     camera: createCamera(),
+    explosions: [],
     engine,
     render: Render.create({
       canvas: canvas,
@@ -425,6 +428,29 @@ const registerEventListeners = () => {
       }
     })
 
+    game.explosions.forEach((explosion) => {
+      explosion.animationState += 1
+      const imageMaxCount = 7
+      const imageCount = Math.floor(explosion.animationState / 10)
+      if (imageCount >= imageMaxCount) {
+        // todo remove from list
+        return
+      }
+      ctx.translate(-game.camera.body.position.x, -game.camera.body.position.y)
+      ctx.translate(canvas.width / 2, canvas.height / 2)
+      ctx.drawImage(
+        assets.explosion,
+        imageCount * (assets.explosion.width / imageMaxCount),
+        0,
+        assets.explosion.width / imageMaxCount,
+        assets.explosion.height,
+        explosion.position.x - explosion.radius,
+        explosion.position.y - explosion.radius,
+        explosion.radius * 2,
+        explosion.radius * 2,
+      )
+      ctx.setTransform(1, 0, 0, 1, 0, 0)
+    })
     priceList.forEach((item, index) => {
       ctx.fillStyle = 'yellow'
       ctx.font = '30px serif'
@@ -623,7 +649,6 @@ const spawnAsteriods = throttle(500, () => {
   })
 })
 const damage = (obj, damage) => {
-  console.log(damage)
   if (obj === undefined) {
     return
   }
@@ -638,22 +663,26 @@ const damage = (obj, damage) => {
     game.score = game.score + (obj.points ?? 0)
     game.balance = game.balance + (obj.points ?? 0)
     const keep = obj.onDestroy?.()
+    game.explosions.push({
+      position: Vector.clone(obj.body.position),
+      animationState: 0,
+      radius: obj.body.circleRadius * 2,
+    })
     if (!keep) {
       removeObject(game, obj)
     }
-    game.playerShips.forEach((player) => {
-      if (obj === player) {
+    game.playerShips.forEach((ship) => {
+      if (obj === ship && (ship === game.playerA || ship === game.playerB)) {
         const astronaut = createAstronaut(
-          player.body.position,
+          ship.body.position,
           (obj) => addObject(game, obj),
           () => game.playerShips,
           assets,
         )
-
         addObject(game, astronaut)
-        if (player === game.playerA) {
+        if (ship === game.playerA) {
           game.playerA = astronaut
-        } else {
+        } else if (ship === game.playerB) {
           game.playerB = astronaut
         }
       }
