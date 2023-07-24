@@ -5,4 +5,5 @@ export type Game = {
   engine: Engine
   gameObjects: GameObject[]
   playerShips: GameObject[]
+  comets: GameObject[]
 }

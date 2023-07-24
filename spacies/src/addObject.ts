@@ -6,6 +6,9 @@ export const addObject = (game: Game, obj: GameObject) => {
   Composite.add(game.engine.world, obj.body)
   game.gameObjects = [...game.gameObjects, obj]
   if (obj.type === 'player') {
-    game.playerShips = [...game.playerShips, obj]
+    game.playerShips.push(obj)
+  }
+  if (obj.type === 'comet') {
+    game.comets.push(obj)
   }
 }

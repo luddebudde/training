@@ -34,7 +34,14 @@ import { throttle } from 'throttle-debounce'
 import { playBum, playBuy } from './src/audio'
 import { hollowCircle } from './src/hollowCircle'
 import { collisionCategories } from './src/collision'
-import { blueLight, greenLight } from './src/palette'
+import {
+  blueLight,
+  green,
+  greenLight,
+  red,
+  redLight,
+  white,
+} from './src/palette'
 import { drawHealthBar } from './drawHealthBar'
 import { drawScore } from './drawScore'
 import { moveCameraTo } from './moveCameraTo'
@@ -48,6 +55,8 @@ import { canvasCoordinate } from './src/canvasCoordinate'
 import { createOuterBoundary } from './src/createOuterBoundary.ts'
 import { loadImage } from './src/image.ts'
 import { createAstronaut } from './src/ships/createAstronaut.ts'
+import { comet } from './src/comet.ts'
+import { drawOffScreenArrow } from './src/drawOffScreenArrow.ts'
 
 const assets = {
   astronaut: await loadImage('/ships/player/astronaut.png'),
@@ -56,6 +65,7 @@ const assets = {
   rhino: await loadImage(`/ships/player/large/green-rhino.png`),
   jet: await loadImage('/animations/jet-even.png'),
   explosion: await loadImage('/animations/explosion.png'),
+  comet: await loadImage('/animations/comet.png'),
 }
 
 const roomRadius = 2000
@@ -149,8 +159,8 @@ const createGame = () => {
     },
   })
   const game = {
-    bullets: [],
     gameObjects: [],
+    comets: [],
     // playerAScore: 0,
     // playerBScore: 0,
     score: 0,
@@ -168,13 +178,13 @@ const createGame = () => {
         wireframes: false,
         height: room.height,
         width: room.width,
-        // wireframeBackground: true,
+        wireframeBackground: true,
         background: undefined,
         showDebug: import.meta.env.DEV,
         // background: `radial-gradient(circle, ${darkGrey} 0%, ${black} 100%)`,
         // For debugging
         // showMousePosition: true,
-        // showAngleIndicator: import.meta.env.DEV,
+        showAngleIndicator: import.meta.env.DEV,
         // showVelocity: true,
         // showPerformance: true,
         // showAxes: true,
@@ -391,10 +401,6 @@ const registerEventListeners = () => {
     if (isKeyDown(`ArrowRight`)) {
       game.playerB.turnRight()
     }
-    game.bullets.forEach((bullet) => {
-      // Reset speed
-      bullet.update()
-    })
 
     moveCameraTo(
       game.camera.body.position,
@@ -410,7 +416,8 @@ const registerEventListeners = () => {
     )
 
     spawnEnemies()
-    spawnAsteriods()
+    // spawnAsteriods()
+    spawnComet()
 
     const ctx = canvas.getContext('2d')
 
@@ -451,6 +458,7 @@ const registerEventListeners = () => {
       )
       ctx.setTransform(1, 0, 0, 1, 0, 0)
     })
+
     priceList.forEach((item, index) => {
       ctx.fillStyle = 'yellow'
       ctx.font = '30px serif'
@@ -540,7 +548,40 @@ const registerEventListeners = () => {
       })
     drawScore(ctx, room.width / 2, 50, game.score)
     drawScore(ctx, room.width / 2, 100, `€${game.balance}`)
-    // drawScore(canvas, room.width - 60, 70, game.playerBScore)
+
+    // UI
+    game.comets.forEach((obj) =>
+      drawOffScreenArrow(
+        ctx,
+        obj.body.position,
+        canvas,
+        game.camera.body.position,
+        redLight,
+      ),
+    )
+    const players = [game.playerA, game.playerB]
+    game.playerShips
+      .filter((ship) => players.indexOf(ship) < 0)
+      .forEach((obj) =>
+        drawOffScreenArrow(
+          ctx,
+          obj.body.position,
+          canvas,
+          game.camera.body.position,
+          greenLight,
+        ),
+      )
+
+    players.forEach((obj) =>
+      drawOffScreenArrow(
+        ctx,
+        obj.body.position,
+        canvas,
+        game.camera.body.position,
+        blueLight,
+        40,
+      ),
+    )
   }
   Events.on(game.engine, 'beforeUpdate', handleBeforeUpdate)
 
@@ -646,6 +687,16 @@ const spawnAsteriods = throttle(500, () => {
       game,
       asteroid(randomPositionOutsideRoom(), Vector.mult(left, 2000)),
     )
+  })
+})
+const spawnComet = throttle(1000, () => {
+  zeros(1).forEach(() => {
+    const spawnPos = randomPositionOutsideRoom()
+    const speed = 10
+    const target = randomPositionInsideRoom()
+    const dir = Vector.normalise(Vector.sub(target, spawnPos))
+    const vel = Vector.mult(dir, speed)
+    addObject(game, comet(spawnPos, vel))
   })
 })
 const damage = (obj, damage) => {
