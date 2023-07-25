@@ -13,7 +13,7 @@ export const blackholes = [
     radius: 40,
     xPos: world.width / 2,
     yPos: world.height / 2,
-    pullRadius: 2000,
+    pullRadius: 200,
     pullForce: 4000,
   },
   // {

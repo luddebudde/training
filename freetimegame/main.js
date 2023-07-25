@@ -3,10 +3,19 @@ import { canvas } from "./canvas.js";
 import { pullAcceleration } from "./pullAcceleration.js";
 import { drawCircle } from "./drawBlackhole.js";
 import { world } from "./world.js";
-import { attack, enemy } from "./src/enemy.js";
+import { attack, enemy, preCharge } from "./src/enemy.js";
 import { airFriction } from "./airFriction.js";
+import { shoot } from "./shoot.js";
+import { playerBullet } from "./playerBullet.js";
+import { checkCollsion } from "./checkCollsion.js";
 
 export const ctx = canvas.getContext("2d");
+export let mousePos = { x: 0, y: 0 };
+
+let attackCounter = 0;
+let enemyPhaseTime = 200;
+let enemyLoadPhase = true;
+export let hasDecidedDirection = false;
 
 export let player = {
   xPos: world.width * 0.5,
@@ -25,6 +34,8 @@ export let player = {
 };
 
 const units = [player, enemy];
+export const bullets = [playerBullet];
+export const worldObjects = [player, enemy, playerBullet];
 
 let playerCopy1 = {
   xPos: 0,
@@ -78,7 +89,6 @@ setInterval(() => {
       unit.vel.y = -unit.vel.y;
     }
   });
-
   const airFrictionOnBody = airFriction(
     player.vel.x,
     player.vel.y,
@@ -87,6 +97,14 @@ setInterval(() => {
   player.vel.x = player.vel.x - airFrictionOnBody.x / 70;
   player.vel.y = player.vel.y - airFrictionOnBody.y / 70;
 
+  worldObjects.forEach((object) => {
+    object.xPos += object.vel.x;
+    object.yPos += object.vel.y;
+  });
+  bullets.forEach((bullet) => {
+    bullet.xPos += bullet.vel.x;
+    bullet.yPos += bullet.vel.y;
+  });
   player.xPos += player.vel.x;
   player.yPos += player.vel.y;
   enemy.xPos += enemy.vel.x;
@@ -105,9 +123,34 @@ setInterval(() => {
     );
   });
 
-  attack();
+  if (!enemyLoadPhase) {
+    attack();
+    hasDecidedDirection = true;
+  } else {
+    preCharge();
+    hasDecidedDirection = false;
+  }
+  attackCounter += 1;
+  if (attackCounter % enemyPhaseTime === 0 && enemyLoadPhase) {
+    enemyLoadPhase = false;
+    // hasDecidedDirection = false;
+    attackCounter = 0;
+  } else if (attackCounter % (enemyPhaseTime * 2) === 0 && !enemyLoadPhase) {
+    enemyLoadPhase = true;
+    // hasDecidedDirection = false;
+    attackCounter = 0;
+  }
 
-  // draw player/player copies
+  worldObjects.forEach((objectA) => {
+    worldObjects.forEach((objectB) => {
+      checkCollsion(objectA, objectB);
+    });
+  });
+
+  // draw circles
+  bullets.forEach((bullet) => {
+    drawCircle(bullet.xPos, bullet.yPos, bullet.radius, bullet.color);
+  });
   drawCircle(player.xPos, player.yPos, player.radius, "blue");
   drawCircle(playerCopy1.xPos, player.yPos, player.radius, "blue");
   drawCircle(playerCopy2.xPos, player.yPos, player.radius, "blue");
@@ -115,8 +158,13 @@ setInterval(() => {
   drawCircle(enemy.xPos, enemy.yPos, enemy.radius, "red");
 }, delay);
 
+window.addEventListener("mousemove", (event) => {
+  mousePos = { x: event.clientX, y: event.clientY };
+});
+
 document.addEventListener("keydown", (event) => {
   // Moment
+
   if (event.code === "KeyW") {
     player.vel.y -= player.acc.y;
   }
@@ -128,5 +176,8 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.code === "KeyD") {
     player.vel.x += player.acc.x;
+  }
+  if (event.code === "KeyQ") {
+    shoot(player, playerBullet);
   }
 });
