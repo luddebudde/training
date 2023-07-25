@@ -44,14 +44,14 @@ import {
   springForce,
   thrustBackward,
   thrustForward,
-  torqueToAlign,
+  applyTorqueToAlign,
   turnLeft,
   turnRight,
 } from './forces.ts'
 import { throttle } from 'throttle-debounce'
 import { createTextureLoader } from './createTextureLoader.ts'
 import { vector3 } from './vector3.ts'
-import { GameObject } from './GameObject.ts'
+import { GameObject, GameObjectIndex } from './GameObject.ts'
 import { createDrone } from './createDrone.ts'
 import { zeros } from './zeros.ts'
 import Stats from 'stats.js'
@@ -119,8 +119,8 @@ helperArrow.setLength(10)
 let camera1: PerspectiveCamera
 let camera2: PerspectiveCamera
 let scene
-let world,
-  shape,
+
+let shape,
   timeStep = 1 / 60,
   geometry,
   material
@@ -131,11 +131,12 @@ let renderer2: WebGLRenderer
 
 const lightWidth = 100
 const lightDistance = 50
-const initCannon = () => {
-  world = new World()
+const createWorld = (): World => {
+  const world = new World()
   world.gravity.set(0, 0, 0)
   world.broadphase = new NaiveBroadphase()
   world.solver.iterations = 10
+  return world
 }
 
 const initThree = () => {
@@ -210,14 +211,16 @@ stats0.showPanel(0)
 const stats2 = new Stats()
 stats2.showPanel(2)
 
-const animate = () => {
-  requestAnimationFrame(animate)
+const loop = (then: number) => (now: number) => {
+  const timeSinceLastCalled = now - then
   stats0.begin()
   stats2.begin()
-  updatePhysics()
+
+  updatePhysics(timeSinceLastCalled)
   render()
   stats0.end()
   stats2.end()
+  requestAnimationFrame(loop(now))
 }
 
 const render = () => {
@@ -253,8 +256,7 @@ const cannonBallMass = 0.1
 //   },
 // )
 
-const updatePhysics = () => {
-  const forceFieldStrength = 5
+const updatePhysics = (timeSinceLastCalled: number) => {
   const jumpStrength = 1
 
   // Player 1
@@ -298,7 +300,7 @@ const updatePhysics = () => {
     player2.shoot()
   }
   // Step the physics world
-  world.step(timeStep)
+  world.step(timeStep, timeSinceLastCalled, 5)
 
   // const [axis, angle] = player.body.quaternion.toAxisAngle() as [Vec3, number]
   // player.body.quaternion.toEuler(dir)
@@ -308,16 +310,12 @@ const updatePhysics = () => {
 
   // Follow camera
   // const cameraPos = player.body.vectorToWorldFrame()
-
-  const gameQueries: GameQueries = {
-    getPlayers: () => players,
-  }
-
   const players = [player1, player2]
+
   players.forEach((player) => {
     const sphereNorm = sphereSurfaceNorm(origo, player.body.position)
 
-    torqueToAlign(player.body, sphereNorm)
+    applyTorqueToAlign(player.body, sphereNorm)
 
     const forwardDir = player.body.vectorToWorldFrame(front)
     const directionOnSurface = projectOnSurface(forwardDir, sphereNorm)
@@ -369,7 +367,7 @@ const updatePhysics = () => {
   // helperArrow.position.copy(vector3(player1.body.position))
   // line.geometry.setFromPoints(trajectory)
 
-  gameObjects.forEach((obj) => {
+  gameObjectIndex.all.forEach((obj) => {
     // Hover above xy
     // obj.body.applyLocalForce(
     //   new Vec3(0, -forceFieldStrength * obj.body.position.y, 0),
@@ -385,7 +383,7 @@ const updatePhysics = () => {
       obj.body.applyForce(force, obj.body.position)
     }
 
-    obj.update?.(gameQueries)
+    obj.update?.(gameObjectIndex)
 
     // Gravity
     // if (obj.gravitational) {
@@ -425,7 +423,13 @@ const setSunlight = (
 }
 
 const addGameObject = (obj: GameObject) => {
-  gameObjects.push(obj)
+  gameObjectIndex.all.push(obj)
+
+  Object.entries(obj.indices ?? {})
+    .filter(([_, isIndexed]) => Boolean(isIndexed))
+    .forEach(([index]) => {
+      gameObjectIndex[index].push(obj)
+    })
   world.addBody(obj.body)
   scene.add(obj.mesh)
   if (obj.arrowHelper) {
@@ -550,14 +554,15 @@ const createCannonBall = (): GameObject => {
 const planetRadius = 90
 const atmosphereHeight = 10
 
-const createPlayer = (camera: OrthographicCamera): Player => {
+const createPlayer = (position: Vec3, camera: OrthographicCamera): Player => {
   const shapeBody = new Box(new Vec3(0.3, 0.5, 1.5))
   const shapeWings = new Box(new Vec3(2.4, 0.3, 0.9))
   const body = new Body({
     mass: 1,
     linearDamping: 0.9,
     angularDamping: 0.95,
-    position: new Vec3(0, planetRadius + atmosphereHeight, 0),
+    position,
+    // collisionFilterMask: 0,
   })
   const bodyOffset = new Vec3(0, 0, 1)
   body.addShape(shapeBody, bodyOffset)
@@ -600,6 +605,9 @@ const createPlayer = (camera: OrthographicCamera): Player => {
   const rotationStrength = 5
 
   return {
+    indices: {
+      players: true,
+    },
     body,
     gravitational: true,
     mesh,
@@ -753,25 +761,35 @@ const createSkyScene = (): Scene => {
 }
 
 const skyScene = createSkyScene()
-const gameObjects: GameObject[] = []
+const gameObjectIndex: GameObjectIndex = {
+  all: [],
+  players: [],
+  enemies: [],
+}
 initThree()
-initCannon()
-let player1 = createPlayer(camera1)
-let player2 = createPlayer(camera2)
+const playerSpawnPosition = randomPointOnSphere(
+  origo,
+  planetRadius + atmosphereHeight,
+)
+
+const world = createWorld()
+const player1 = createPlayer(playerSpawnPosition, camera1)
+const player2 = createPlayer(playerSpawnPosition, camera2)
 addGameObject(player1)
 addGameObject(player2)
-for (let i = 0; i < 100; i++) {
-  addGameObject(createAsteroid())
-}
-zeros(50).forEach(() =>
+// for (let i = 0; i < 100; i++) {
+//   addGameObject(createAsteroid())
+// }
+zeros(100).forEach(() =>
   addGameObject(
     createDrone(
-      randomPointOnSphere(origo, planetRadius + atmosphereHeight),
-      spaceshipMesh.clone(),
+      // randomPointOnSphere(origo, planetRadius + atmosphereHeight),
+      playerSpawnPosition,
+      spaceshipMesh,
     ),
   ),
 )
 
 addGameObject(createPlanet())
 
-animate()
+requestAnimationFrame(loop(0))

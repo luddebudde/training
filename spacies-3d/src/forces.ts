@@ -1,8 +1,9 @@
 import { Body, Quaternion, Vec3 } from 'cannon'
 import { back, front, left, origo, right } from './vectors.ts'
-import { projectForward, rightTorque } from './bodyVectorMath.ts'
+import { forwardProjectDir, frontDir, torqueTowards } from './bodyVectorMath.ts'
+import { dir, distance } from './vectorMath.ts'
 
-export const torqueToAlign = (body: Body, alignWith: Vec3) => {
+export const applyTorqueToAlign = (body: Body, alignWith: Vec3) => {
   const upDir = body.vectorToWorldFrame(new Vec3(0, 1, 0))
   const deltaQuat = new Quaternion()
   deltaQuat.setFromVectors(alignWith, upDir)
@@ -29,12 +30,12 @@ export const thrustBackward = (body: Body, force: number) => {
 }
 // TODO calculate real torque this is not the real torque
 export const turnLeft = (body: Body, torque: number) => {
-  applyTorque(body, -2 * torque)
+  applyLocalYTorque(body, -2 * torque)
 }
 export const turnRight = (body: Body, torque: number) => {
-  applyTorque(body, 2 * torque)
+  applyLocalYTorque(body, 2 * torque)
 }
-export const applyTorque = (body: Body, torque: number) => {
+export const applyLocalYTorque = (body: Body, torque: number) => {
   body.applyLocalForce(left.scale(0.5 * torque), front)
   body.applyLocalForce(right.scale(0.5 * torque), back)
 }
@@ -50,8 +51,8 @@ export const turnTowards = (
   targetPosition: Vec3,
   maxTorque: number,
 ) => {
-  const torque = maxTorque * rightTorque(body, targetPosition)
-  applyTorque(body, torque)
+  const torque = maxTorque * torqueTowards(body, targetPosition)
+  applyLocalYTorque(body, torque)
 }
 
 /**
@@ -65,6 +66,18 @@ export const thrustTowards = (
   targetPosition: Vec3,
   maxForce: number,
 ) => {
-  const force = maxForce * projectForward(body, targetPosition)
+  const force = maxForce * forwardProjectDir(body, targetPosition)
   body.applyLocalForce(front.scale(force), origo)
+}
+
+export const thrustToDistance = (
+  body: Body,
+  targetPosition: Vec3,
+  maxForce: number,
+  distance: number,
+) => {
+  const equilibriumPosition = targetPosition.vadd(
+    dir(targetPosition, body.position).scale(distance),
+  )
+  thrustTowards(body, equilibriumPosition, maxForce)
 }
