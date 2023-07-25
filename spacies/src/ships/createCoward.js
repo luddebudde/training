@@ -90,7 +90,6 @@ export const createCoward = (getPlayers, getGameObjects, position, homePos) => {
       applyForce(body, force)
       setLookForward(body)
     },
-    isBullet: true,
     health: 120,
     maxHealth: 120,
     damage: 0,

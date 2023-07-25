@@ -1,6 +1,9 @@
 export const playBum = () => {
   new Audio('audio/bum.mp3').play()
 }
+export const playBuy = () => {
+  new Audio('audio/cash-register-purchase.mp3').play()
+}
 export const playExplosion = (volume: number) => {
   const audio = new Audio('audio/bang.mp3')
   audio.volume = volume

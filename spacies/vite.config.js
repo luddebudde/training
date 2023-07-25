@@ -5,4 +5,7 @@ export default defineConfig({
     port: 3000,
     host: true,
   },
+  build: {
+    target: 'esnext', //browsers can handle the latest ES features
+  },
 })

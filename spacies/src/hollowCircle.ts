@@ -1,12 +1,11 @@
-import Matter, { Bodies, Body, Vector } from 'matter-js'
+import Matter, { Bodies, Body, IBodyDefinition, Vector } from 'matter-js'
 
 type HollowCircleOptions = {
   width: number
   extraLength: number
   initialRotation: number
-  otherOptions: Matter.IBodyDefinition
   render: Matter.IBodyRenderOptions | undefined
-}
+} & IBodyDefinition
 
 /**
  * Creates a polygon that can contain other objects by putting together
@@ -46,6 +45,8 @@ export const hollowCircle = (
     // We'll build thin sides and then translate + rotate them appropriately.
     const body = Bodies.rectangle(0, 0, sideLength, width, {
       render: otherOptions.render,
+      isSensor: otherOptions.isSensor,
+      label: otherOptions.label,
     })
     Body.rotate(body, i * theta)
     Body.translate(body, {

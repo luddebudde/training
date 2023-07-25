@@ -13,6 +13,8 @@ import { GameObject } from '../GameObject'
 import { Weapon } from '../weapons/Weapon'
 import { closestPlayer } from '../closestPlayer'
 import { isFacing } from '../isFacing'
+import { Game } from '../Game.ts'
+import { animation } from '../animation.ts'
 
 export type ShipOptions = {
   radius: number
@@ -25,35 +27,37 @@ export type ShipOptions = {
 
 export const createShip = (
   postion: Vector,
-  spriteWithoutJet: Sprite,
-  spriteWithJet: Sprite,
+  asset: any,
   addObject: (obj: GameObject) => void,
-  getPlayers: () => void,
+  getPlayers: () => GameObject,
   options: ShipOptions,
 ) => {
   const { radius, torque, thrust, health, mass, weapon } = options
-
-  const sprite = {
-    texture: spriteWithoutJet.texture,
-    xScale: (2 * radius) / spriteWithoutJet.width,
-    yScale: (2 * radius) / spriteWithoutJet.height,
-  }
 
   const body = Bodies.circle(postion.x, postion.y, radius, {
     mass,
     frictionAir: 0.08,
     label: 'Fighter',
-    render: {
-      sprite: sprite,
-    },
+    render: { visible: false },
     collisionFilter: {
       category: collisionCategories.player,
     },
   })
 
   let useAI = true
+  let isThrusting = false
+
+  const jetAnimation = animation({
+    imageCount: 9,
+    slowDown: 4,
+    reverse: false,
+    repeat: true,
+  })
 
   return {
+    // render: () => {
+    //
+    // }
     body: body,
     health,
     maxHealth: health,
@@ -77,14 +81,16 @@ export const createShip = (
         }
       }
 
-      applyAngularFriction(body, 5)
+      applyAngularFriction(body, radius / 6)
     },
     thrust: () => {
       applyThrust(body, thrust)
-      body.render.sprite!.texture = spriteWithJet.texture
+      isThrusting = true
+      // body.render.sprite!.texture = spriteWithJet.texture
     },
     dontThrust: () => {
-      body.render.sprite!.texture = spriteWithoutJet.texture
+      isThrusting = false
+      // body.render.sprite!.texture = spriteWithoutJet.texture
     },
     back: () => {
       applyThrust(body, -thrust * 0.3)
@@ -104,6 +110,36 @@ export const createShip = (
     },
     onDestroy: () => {
       playPlayerDeath()
+      isThrusting = false
+      return true
+    },
+    draw: (
+      ctx: CanvasRenderingContext2D,
+      assets: any,
+      gameObject: GameObject,
+    ) => {
+      ctx.globalAlpha = gameObject.health > 0 ? 1 : 0.5
+
+      jetAnimation.step()
+
+      if (isThrusting) {
+        jetAnimation.draw(
+          ctx,
+          assets.jet,
+          -radius * 2.6,
+          -radius / 2,
+          radius * 2,
+          radius,
+        )
+      }
+      ctx.drawImage(
+        asset,
+        -body.circleRadius,
+        -body.circleRadius,
+        body.circleRadius * 2,
+        body.circleRadius * 2,
+      )
+      ctx.globalAlpha = 1
     },
   }
 }

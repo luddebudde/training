@@ -19,6 +19,7 @@ export const bullet = (pos: Vector, direction: Vector) => {
     restitution: 1,
     frictionAir: 0,
     isSensor: true,
+    label: 'Bullet',
     render: {
       sprite: {
         texture: sprites.bullet.texture,

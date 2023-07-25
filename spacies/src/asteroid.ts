@@ -1,10 +1,9 @@
 import { Bodies, Vector } from 'matter-js'
 import { applyTorque, applyForce } from './physics'
-import { radiansToCartesian } from './math'
 import { random } from './math'
 import { sprites } from './sprites'
 
-export const asteroid = (position: Vector) => {
+export const asteroid = (position: Vector, initForce: Vector) => {
   const asteroidRadius = random(30, 150)
 
   const body = Bodies.circle(position.x, position.y, asteroidRadius, {
@@ -19,7 +18,8 @@ export const asteroid = (position: Vector) => {
     },
   })
   applyTorque(body, 1)
-  applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
+  applyForce(body, initForce)
+  // applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
 
   return {
     type: 'asteroid',
