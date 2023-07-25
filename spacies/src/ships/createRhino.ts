@@ -12,6 +12,7 @@ import {
 import { isFacing } from '../isFacing'
 
 import { playPlayerDeath } from '../audio'
+import { animation } from '../animation.ts'
 
 export const createRhino = (
   postion: Vector,
@@ -22,14 +23,16 @@ export const createRhino = (
   const { radius, torque, thrust, health, mass } = {
     health: 1000,
     radius: 70,
-    torque: 0.5,
-    thrust: 3,
-    mass: 2000,
+    torque: 1,
+    thrust: 0.5,
+    mass: 4000,
   } satisfies Partial<ShipOptions>
+  const angularFriction = 100
+  const boost = 4
 
   const body = Bodies.circle(postion.x, postion.y, radius, {
     mass,
-    frictionAir: 0.08,
+    frictionAir: 0.01,
     friction: 0,
     label: 'Fighter',
     render: {
@@ -43,6 +46,14 @@ export const createRhino = (
   let useAI = true
   let fuel = 1000
   let speed = body.speed
+  let isThrusting = false
+
+  const jetAnimation = animation({
+    imageCount: 9,
+    slowDown: 4,
+    reverse: false,
+    repeat: true,
+  })
 
   return {
     body: body,
@@ -72,7 +83,7 @@ export const createRhino = (
         }
       }
 
-      applyAngularFriction(body, 5)
+      applyAngularFriction(body, angularFriction)
     },
     thrust: () => {
       applyThrust(body, thrust)
@@ -92,7 +103,7 @@ export const createRhino = (
     },
     fire: () => {
       if (fuel >= 0) {
-        applyThrust(body, thrust * 2)
+        applyThrust(body, thrust * boost)
         fuel = fuel - 1
       }
     },
@@ -104,6 +115,15 @@ export const createRhino = (
       assets: any,
       gameObject: GameObject,
     ) => {
+      jetAnimation.step()
+      jetAnimation.draw(
+        ctx,
+        assets.jet,
+        -radius * 2.6,
+        -radius / 2,
+        radius * 2,
+        radius,
+      )
       if (gameObject.health > 0) {
         ctx.drawImage(
           assets.rhino,

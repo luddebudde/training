@@ -57,6 +57,7 @@ import { loadImage } from './src/image.ts'
 import { createAstronaut } from './src/ships/createAstronaut.ts'
 import { comet } from './src/comet.ts'
 import { drawOffScreenArrow } from './src/drawOffScreenArrow.ts'
+import { animation } from './src/animation.ts'
 
 const assets = {
   astronaut: await loadImage('/ships/player/astronaut.png'),
@@ -196,9 +197,13 @@ const createGame = () => {
   }
 
   // Spawn Player
-  zeros(2).forEach((player) => {
-    addObject(game, createFighter(origo, addGameObject, getPlayers, assets))
-  })
+  // zeros(2).forEach((player) => {
+  //   addObject(game, createAssault(origo, addGameObject, getPlayers, assets))
+  // })
+
+  addObject(game, createRhino(origo, addGameObject, getPlayers, assets))
+  addObject(game, createAssault(origo, addGameObject, getPlayers, assets))
+
   game.playerA = game.playerShips[0]
   game.playerB = game.playerShips[1]
 
@@ -416,7 +421,7 @@ const registerEventListeners = () => {
     )
 
     spawnEnemies()
-    // spawnAsteriods()
+    spawnAsteriods()
     spawnComet()
 
     const ctx = canvas.getContext('2d')
@@ -435,22 +440,18 @@ const registerEventListeners = () => {
       }
     })
 
+    const explosionsToRemove = []
     game.explosions.forEach((explosion) => {
-      explosion.animationState += 1
-      const imageMaxCount = 7
-      const imageCount = Math.floor(explosion.animationState / 10)
-      if (imageCount >= imageMaxCount) {
-        // todo remove from list
+      const shouldRemove = explosion.animation.step()
+      if (shouldRemove) {
+        explosionsToRemove.push(explosion)
         return
       }
       ctx.translate(-game.camera.body.position.x, -game.camera.body.position.y)
       ctx.translate(canvas.width / 2, canvas.height / 2)
-      ctx.drawImage(
+      explosion.animation.draw(
+        ctx,
         assets.explosion,
-        imageCount * (assets.explosion.width / imageMaxCount),
-        0,
-        assets.explosion.width / imageMaxCount,
-        assets.explosion.height,
         explosion.position.x - explosion.radius,
         explosion.position.y - explosion.radius,
         explosion.radius * 2,
@@ -458,6 +459,9 @@ const registerEventListeners = () => {
       )
       ctx.setTransform(1, 0, 0, 1, 0, 0)
     })
+    game.explosions = game.explosions.filter(
+      (it) => explosionsToRemove.indexOf(it) < 0,
+    )
 
     priceList.forEach((item, index) => {
       ctx.fillStyle = 'yellow'
@@ -715,8 +719,13 @@ const damage = (obj, damage) => {
     game.balance = game.balance + (obj.points ?? 0)
     const keep = obj.onDestroy?.()
     game.explosions.push({
+      animation: animation({
+        imageCount: 7,
+        slowDown: 10,
+        repeat: false,
+        reverse: false,
+      }),
       position: Vector.clone(obj.body.position),
-      animationState: 0,
       radius: obj.body.circleRadius * 2,
     })
     if (!keep) {

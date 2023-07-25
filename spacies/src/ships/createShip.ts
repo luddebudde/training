@@ -14,6 +14,7 @@ import { Weapon } from '../weapons/Weapon'
 import { closestPlayer } from '../closestPlayer'
 import { isFacing } from '../isFacing'
 import { Game } from '../Game.ts'
+import { animation } from '../animation.ts'
 
 export type ShipOptions = {
   radius: number
@@ -44,9 +45,14 @@ export const createShip = (
   })
 
   let useAI = true
-  const jetImageSlowDown = 4
-  let jetImageIndex = 0
   let isThrusting = false
+
+  const jetAnimation = animation({
+    imageCount: 9,
+    slowDown: 4,
+    reverse: false,
+    repeat: true,
+  })
 
   return {
     // render: () => {
@@ -114,19 +120,12 @@ export const createShip = (
     ) => {
       ctx.globalAlpha = gameObject.health > 0 ? 1 : 0.5
 
-      const jetWidth = 1426
-      const jetHeight = 4374
+      jetAnimation.step()
+
       if (isThrusting) {
-        jetImageIndex += 1
-        if (jetImageIndex === 9 * jetImageSlowDown) {
-          jetImageIndex = 0
-        }
-        ctx.drawImage(
+        jetAnimation.draw(
+          ctx,
           assets.jet,
-          0,
-          (Math.floor(jetImageIndex / jetImageSlowDown) * jetHeight) / 9,
-          jetWidth,
-          jetHeight / 9,
           -radius * 2.6,
           -radius / 2,
           radius * 2,
@@ -141,13 +140,6 @@ export const createShip = (
         body.circleRadius * 2,
       )
       ctx.globalAlpha = 1
-      // ctx.drawImage(
-      //   assets.astronaut,
-      //   -body.circleRadius * 0.5,
-      //   -body.circleRadius * 1.5 * 0.5,
-      //   body.circleRadius,
-      //   body.circleRadius * 1.5,
-      // )
     },
   }
 }

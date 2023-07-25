@@ -3,6 +3,7 @@ import { applyTorque } from './physics'
 import { random } from './math'
 import { GameObject } from './GameObject.ts'
 import { setLookForward } from './setLookForward.ts'
+import { animation } from './animation.ts'
 
 export const comet = (position: Vector, initVel: Vector): GameObject => {
   const radius = random(10, 20)
@@ -14,26 +15,28 @@ export const comet = (position: Vector, initVel: Vector): GameObject => {
     friction: 0,
     restitution: 1,
     render: {
-      // visible: false,
+      visible: false,
     },
   })
   applyTorque(body, 1)
   Body.setVelocity(body, initVel)
   const speed = Vector.magnitude(initVel)
-  // applyForce(body, radiansToCartesian(random(0, 2 * Math.PI), random(0, 20)))
 
   const width = radius * 2 * 5
   const height = radius * 2 * 2
-  let imageState = 0
-  let imageCount = 5
-  let imageSlowDown = 3
-  let imageDirection = 1
+
+  const spriteAnimation = animation({
+    repeat: true,
+    reverse: true,
+    slowDown: 3,
+    imageCount: 5,
+  })
 
   return {
     type: 'comet',
     body: body,
-    health: 9999999,
-    points: 99999999,
+    health: 1000,
+    points: 0,
     update: () => {
       setLookForward(body)
     },
@@ -43,18 +46,10 @@ export const comet = (position: Vector, initVel: Vector): GameObject => {
     // damage: 100,
     // isBullet: true,
     draw: (ctx, assets, thisObject) => {
-      imageState += imageDirection
-      if (imageState >= imageCount * imageSlowDown || imageState < 0) {
-        imageDirection = -imageDirection
-        imageState += imageDirection
-      }
-      const currentImage = Math.floor(imageState / imageSlowDown)
-      ctx.drawImage(
+      spriteAnimation.step()
+      spriteAnimation.draw(
+        ctx,
         assets.comet,
-        0,
-        (currentImage * assets.comet.height) / imageCount,
-        assets.comet.width,
-        assets.comet.height / 5,
         -width * 0.82,
         -height * 0.5,
         width,
