@@ -201,8 +201,8 @@ const createGame = () => {
   //   addObject(game, createAssault(origo, addGameObject, getPlayers, assets))
   // })
 
-  addObject(game, createRhino(origo, addGameObject, getPlayers, assets))
-  addObject(game, createAssault(origo, addGameObject, getPlayers, assets))
+  addObject(game, createFighter(origo, addGameObject, getPlayers, assets))
+  addObject(game, createFighter(origo, addGameObject, getPlayers, assets))
 
   game.playerA = game.playerShips[0]
   game.playerB = game.playerShips[1]
