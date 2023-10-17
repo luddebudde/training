@@ -7,7 +7,7 @@ import { attack, enemy, preCharge } from "./src/enemy.js";
 import { airFriction } from "./airFriction.js";
 import { shoot } from "./shoot.js";
 import { playerBullet } from "./playerBullet.js";
-import { checkCollsion } from "./checkCollsion.js";
+import { doCirclesOverlap } from "./doCirclesOverlap.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -31,11 +31,15 @@ export let player = {
   },
   color: "blue",
   airFrictionPercentage: 1.02,
+  health: 100,
+  color: "blue",
+  alive: true,
+  type: "player",
 };
 
 const units = [player, enemy];
-export const bullets = [playerBullet];
-export const worldObjects = [player, enemy, playerBullet];
+export const bullets = [];
+export const worldObjects = [player, enemy];
 
 let playerCopy1 = {
   xPos: 0,
@@ -141,21 +145,30 @@ setInterval(() => {
     attackCounter = 0;
   }
 
-  worldObjects.forEach((objectA) => {
-    worldObjects.forEach((objectB) => {
-      checkCollsion(objectA, objectB);
+  function checkCollisions(object) {
+    worldObjects.forEach((otherObject) => {
+      if (object !== otherObject && doCirclesOverlap(object, otherObject)) {
+        object.health -= otherObject.damage;
+        console.log(object.health);
+      }
     });
+  }
+
+  worldObjects.forEach((object) => {
+    checkCollisions(object);
   });
 
   // draw circles
-  bullets.forEach((bullet) => {
-    drawCircle(bullet.xPos, bullet.yPos, bullet.radius, bullet.color);
+  worldObjects.forEach((object) => {
+    if (object.health >= 0) {
+      drawCircle(object.xPos, object.yPos, object.radius, object.color);
+    }
   });
-  drawCircle(player.xPos, player.yPos, player.radius, "blue");
-  drawCircle(playerCopy1.xPos, player.yPos, player.radius, "blue");
-  drawCircle(playerCopy2.xPos, player.yPos, player.radius, "blue");
+  // drawCircle(player.xPos, player.yPos, player.radius, "blue");
+  // drawCircle(playerCopy1.xPos, player.yPos, player.radius, "blue");
+  // drawCircle(playerCopy2.xPos, player.yPos, player.radius, "blue");
 
-  drawCircle(enemy.xPos, enemy.yPos, enemy.radius, "red");
+  // drawCircle(enemy.xPos, enemy.yPos, enemy.radius, "red");
 }, delay);
 
 window.addEventListener("mousemove", (event) => {
@@ -177,7 +190,7 @@ document.addEventListener("keydown", (event) => {
   if (event.code === "KeyD") {
     player.vel.x += player.acc.x;
   }
-  if (event.code === "KeyQ") {
+  if (event.code === "Space") {
     shoot(player, playerBullet);
   }
 });

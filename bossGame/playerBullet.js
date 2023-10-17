@@ -8,4 +8,7 @@ export const playerBullet = {
   },
   acc: 20,
   color: "blue",
+  health: 1,
+  damage: 20,
+  type: "bullet",
 };
