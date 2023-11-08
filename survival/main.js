@@ -1,9 +1,9 @@
-import { makeDirection } from "./makeDirection";
+import { makeDirection } from "./makeDirection.js";
 
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext("2d");
 
-world = {
+const world = {
   width: 2535,
   height: 1300,
 };
@@ -21,15 +21,18 @@ const player = {
   color: "blue",
 };
 
-// const onMouseMove = (event) => {
-//   const { clientX, clientY } = event;
-//   console.log(clientX, clientY);
+let clientX = 0;
+let clientY = 0;
 
-//   return {
-//     clientX,
-//     clientY,
-//   };
-// };
+document.addEventListener("mousemove", (event) => {
+  clientX = event;
+  clientY = event;
+});
+
+let mousePos = {
+  x: clientX,
+  y: clientY,
+};
 
 setInterval(() => {
   ctx.beginPath();
@@ -38,7 +41,16 @@ setInterval(() => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  makeDirection(player, mousePos);
+  // worldObject.forEach((worldObject) => {});
+
+  mousePos = {
+    pos: {
+      x: clientX,
+      y: clientY,
+    },
+  };
+
+  console.log(makeDirection(player, mousePos));
 
   // mousePos = onMouseMove(mouse);
 
@@ -46,7 +58,7 @@ setInterval(() => {
   player.pos.y += player.vel.y;
 
   ctx.beginPath();
-  ctx.arc(clientX - 7.5, clientY - 7.5, 15, 0, 2 * Math.PI);
+  ctx.arc(mousePos.pos.x - 7.5, mousePos.pos.y - 7.5, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
   ctx.fill();
 
@@ -55,17 +67,6 @@ setInterval(() => {
   ctx.fillStyle = player.color;
   ctx.fill();
 }, 10);
-
-document.addEventListener("mousemove", (event) => {
-  return {
-    const: (mousePos = {
-      pos: {
-        clientX: event,
-        clientY: event,
-      },
-    }),
-  };
-});
 
 document.addEventListener("keydown", (event) => {
   // Moment
