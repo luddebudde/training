@@ -1,38 +1,37 @@
 import { makeDirection } from "./makeDirection.js";
+import { createBullet } from "./createBullet.js";
+import { world } from "./world.js";
+import { player } from "./player.js";
+import {
+  enemies,
+  enemyBullets,
+  kindsOfBullets,
+  playerBullets,
+  worldObjects,
+} from "./arrays.js";
+import { createWalker } from "./createWalker.js";
 
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext("2d");
 
-const world = {
-  width: 2535,
-  height: 1300,
-};
-const player = {
+let mousePos = {
   pos: {
-    x: world.width / 2,
-    y: world.height / 2,
-  },
-  vel: {
     x: 0,
     y: 0,
   },
-  speed: 1,
-  radius: 40,
-  color: "blue",
 };
-
-let clientX = 0;
-let clientY = 0;
-
+createWalker();
 document.addEventListener("mousemove", (event) => {
-  clientX = event;
-  clientY = event;
-});
+  // clientX = event;
+  // clientY = event;
 
-let mousePos = {
-  x: clientX,
-  y: clientY,
-};
+  mousePos = {
+    pos: {
+      x: event.clientX,
+      y: event.clientY,
+    },
+  };
+});
 
 setInterval(() => {
   ctx.beginPath();
@@ -43,29 +42,40 @@ setInterval(() => {
 
   // worldObject.forEach((worldObject) => {});
 
-  mousePos = {
-    pos: {
-      x: clientX,
-      y: clientY,
-    },
-  };
-
-  console.log(makeDirection(player, mousePos));
-
   // mousePos = onMouseMove(mouse);
 
-  player.pos.x += player.vel.x;
-  player.pos.y += player.vel.y;
+  enemies.forEach((enemy) => {
+    const directionToPlayerFromEnemy = makeDirection(enemy, player);
+    enemy.vel.x = directionToPlayerFromEnemy.x * enemy.speed;
+    enemy.vel.y = directionToPlayerFromEnemy.y * enemy.speed;
+  });
 
   ctx.beginPath();
   ctx.arc(mousePos.pos.x - 7.5, mousePos.pos.y - 7.5, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
   ctx.fill();
 
-  ctx.beginPath();
-  ctx.arc(player.pos.x, player.pos.y, player.radius, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
+  playerBullets.forEach((bullet) => {
+    enemies.forEach((enemy) => {
+      if (bullet.pos.x - enemy.pos.x < bullet.radius + enemy.radius) {
+        console.log("Träffad");
+      }
+    });
+  });
+
+  worldObjects.forEach((worldObject) => {
+    worldObject.forEach((object) => {
+      object.forEach((object) => {
+        object.pos.x += object.vel.x;
+        object.pos.y += object.vel.y;
+
+        ctx.beginPath();
+        ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = object.color;
+        ctx.fill();
+      });
+    });
+  });
 }, 10);
 
 document.addEventListener("keydown", (event) => {
@@ -81,5 +91,11 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.code === "KeyD") {
     player.vel.x += player.speed;
+  }
+  if (event.code === "Space") {
+    createBullet(makeDirection(player, mousePos));
+  }
+  if (event.code === "KeyQ") {
+    createWalker();
   }
 });
