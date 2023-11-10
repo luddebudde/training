@@ -1,4 +1,4 @@
 export const world = {
-  width: 2535,
-  height: 1300,
+  width: screen.width,
+  height: screen.height,
 };

@@ -4,12 +4,14 @@ import { world } from "./world.js";
 import { player } from "./player.js";
 import {
   enemies,
-  enemyBullets,
   kindsOfBullets,
   playerBullets,
   worldObjects,
 } from "./arrays.js";
 import { createWalker } from "./createWalker.js";
+import { doCirclesOverlap } from "./doCirlceOverlap.js";
+import { spawnEnemy } from "./spawnEnemy.js";
+import { loopPerSecond } from "./basic.js";
 
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext("2d");
@@ -20,7 +22,9 @@ let mousePos = {
     y: 0,
   },
 };
+
 createWalker();
+
 document.addEventListener("mousemove", (event) => {
   // clientX = event;
   // clientY = event;
@@ -40,9 +44,8 @@ setInterval(() => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  // worldObject.forEach((worldObject) => {});
-
-  // mousePos = onMouseMove(mouse);
+  console.log(world.width);
+  spawnEnemy();
 
   enemies.forEach((enemy) => {
     const directionToPlayerFromEnemy = makeDirection(enemy, player);
@@ -50,33 +53,53 @@ setInterval(() => {
     enemy.vel.y = directionToPlayerFromEnemy.y * enemy.speed;
   });
 
-  ctx.beginPath();
-  ctx.arc(mousePos.pos.x - 7.5, mousePos.pos.y - 7.5, 15, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
-
   playerBullets.forEach((bullet) => {
     enemies.forEach((enemy) => {
-      if (bullet.pos.x - enemy.pos.x < bullet.radius + enemy.radius) {
-        console.log("Träffad");
+      // console.log(doCirclesOverlap(enemy, bullet));
+      if (doCirclesOverlap(enemy, bullet) === true) {
+        enemy.health -= bullet.damage;
+        playerBullets.pop(bullet);
       }
     });
   });
 
+  kindsOfBullets.forEach((bulletKind) => {
+    bulletKind.forEach((bullet) => {
+      console.log(bullet.pos.x);
+      if (
+        bullet.pos.x > player.pos.x + world.width ||
+        bullet.pos.x < player.pos.x - world.width ||
+        bullet.pos.y > player.pos.y + world.width ||
+        bullet.pos.y < player.pos.y - world.width
+      ) {
+        bulletKind.pop(bullet);
+      }
+    });
+  });
+
+  ctx.beginPath();
+  ctx.arc(mousePos.pos.x - 10, mousePos.pos.y, 15, 0, 2 * Math.PI);
+  ctx.fillStyle = player.color;
+  ctx.fill();
+
   worldObjects.forEach((worldObject) => {
-    worldObject.forEach((object) => {
-      object.forEach((object) => {
+    worldObject.forEach((firstObject) => {
+      firstObject.forEach((object) => {
         object.pos.x += object.vel.x;
         object.pos.y += object.vel.y;
 
-        ctx.beginPath();
-        ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = object.color;
-        ctx.fill();
+        if (object.health >= 0 || object.health === undefined) {
+          ctx.beginPath();
+          ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
+          ctx.fillStyle = object.color;
+          ctx.fill();
+        } else {
+          firstObject.pop(object);
+        }
       });
     });
   });
-}, 10);
+}, 1000 / loopPerSecond);
 
 document.addEventListener("keydown", (event) => {
   // Moment
