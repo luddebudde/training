@@ -1,27 +1,12 @@
-import { enemies } from "./arrays.js";
-import { world } from "./world.js";
+import { enemies } from "./main.js";
 
-let widthSpawn = 0;
-let heightSpawn = 0;
-
-export const createWalker = () => {
-  if (Math.random() >= 0.5) {
-    widthSpawn = 100;
-  } else {
-    widthSpawn = -100;
-  }
-
-  if (Math.random() >= 0.5) {
-    heightSpawn = 1.1;
-  } else {
-    heightSpawn = -0.07;
-  }
+export const createWalker = (spawnWidth, spawnHeight) => {
   const walker = {
     health: 100,
-    radius: 60,
+    radius: 40,
     pos: {
-      x: Math.random() * world.width + widthSpawn,
-      y: (Math.random() + world.height) * heightSpawn,
+      x: spawnWidth,
+      y: spawnHeight,
     },
     vel: {
       x: 0,

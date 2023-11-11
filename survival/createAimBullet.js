@@ -1,9 +1,9 @@
-import { playerBullets } from "./arrays.js";
+import { playerBullets } from "./main.js";
 import { player } from "./player.js";
 
 const bulletSpeed = 20;
 
-export const createBullet = (direction) => {
+export const createAimBullet = (direction) => {
   const bullet = {
     radius: 20,
     pos: {
@@ -15,6 +15,7 @@ export const createBullet = (direction) => {
       y: direction.y * bulletSpeed,
     },
     damage: 20,
+    color: "blue",
   };
 
   playerBullets.push(bullet);
