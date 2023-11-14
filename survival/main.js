@@ -7,24 +7,25 @@ import { doCirclesOverlap } from "./doCirlceOverlap.js";
 import { spawnEnemy } from "./spawnEnemy.js";
 import { loopPerSecond } from "./basic.js";
 import { shootWeapons } from "./shootWeapons.js";
-import { createClosestAimingBullet } from "./createClosestAimingBullet.js";
+import { createShotgun } from "./createClosestAimingBullet.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
 
-export const allies = [player];
+export let allies = [player];
 export let enemies = [];
-export const entities = [allies, enemies];
+export let deadEnemies = [];
+export let entities = [allies, enemies];
 
 export const createEnemies = [createWalker];
 
-export const playerBullets = [];
-export const enemyBullets = [];
-export const kindsOfBullets = [playerBullets, enemyBullets];
+export let playerBullets = [];
+export let enemyBullets = [];
+export let kindsOfBullets = [playerBullets, enemyBullets];
 
-export const worldObjects = [kindsOfBullets, entities];
+export let worldObjects = [kindsOfBullets, entities];
 
-export const weapons = [createClosestAimingBullet];
+export const weapons = [createShotgun];
 
 let mousePos = {
   pos: {
@@ -33,7 +34,7 @@ let mousePos = {
   },
 };
 
-createWalker();
+createWalker(100, 100);
 
 document.addEventListener("mousemove", (event) => {
   // clientX = event;
@@ -55,6 +56,7 @@ setInterval(() => {
   ctx.fill();
 
   spawnEnemy();
+  // createWalker(100, 100);
 
   enemies.forEach((enemy) => {
     const directionToPlayerFromEnemy = makeDirection(enemy, player);
@@ -67,7 +69,10 @@ setInterval(() => {
       // console.log(doCirclesOverlap(enemy, bullet));
       if (doCirclesOverlap(enemy, bullet) === true) {
         enemy.health -= bullet.damage;
-        playerBullets.pop(bullet);
+
+        playerBullets = playerBullets.filter((bullet) => bullet.health > 0);
+        playerBullets.splice(0, 1);
+        kindsOfBullets.push(playerBullets);
       }
     });
   });
@@ -85,6 +90,14 @@ setInterval(() => {
           bulletKind.indexOf(bullet),
           bulletKind.indexOf(bullet)
         );
+
+        bulletKind = bulletKind.filter((bullet) => bullet.health > 0);
+        bulletKind.splice(0, 1);
+        kindsOfBullets.push(bulletKind);
+
+        // bulletKind = bulletKind.filter((bullet) => bullet.health > 0);
+        // bulletKind.splice(0, 1);
+        // entities.push(bulletKind);
       }
     });
   });
@@ -94,9 +107,18 @@ setInterval(() => {
   ctx.fillStyle = player.color;
   ctx.fill();
 
-  enemies = enemies.filter((enemy) => enemy.health > 0);
+  // console.log(worldObjects);
 
-  console.log(enemies);
+  // deadEnemies = enemies.filter((enemy) => enemy.health <= 0);
+  // enemies = enemies.filter((enemy) => !deadEnemies.includes(enemy));
+  // entities = entities.filter((entity) => !deadEnemies.includes(entity));
+  // worldObjects = worldObjects.filter((object) => !deadEnemies.includes(object));
+
+  enemies = enemies.filter((enemy) => enemy.health > 0);
+  allies = allies.filter((ally) => ally.health > 0);
+  entities.splice(0, 2);
+  entities.push(enemies);
+  entities.push(allies);
 
   worldObjects.forEach((worldObject) => {
     worldObject.forEach((firstObject) => {
@@ -104,19 +126,10 @@ setInterval(() => {
         object.pos.x += object.vel.x;
         object.pos.y += object.vel.y;
 
-        // if (object.health >= 0 || object.health === undefined) {
-
         ctx.beginPath();
         ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
         ctx.fillStyle = object.color;
         ctx.fill();
-
-        // ctx.beginPath();
-        // ctx.arc(100, 100, object.radius, 0, 2 * Math.PI);
-        // ctx.fillStyle = object.color;
-        // ctx.fill();
-
-        // } else {
       });
     });
   });
@@ -140,7 +153,7 @@ document.addEventListener("keydown", (event) => {
     createAimBullet(makeDirection(player, mousePos));
   }
   if (event.code === "KeyQ") {
-    spawnEnemy();
+    createWalker(100, 100);
   }
   if (event.code === "KeyZ") {
     shootWeapons();

@@ -16,7 +16,7 @@ let direction = {
 };
 // array.forEach((element) => {});
 
-export const createClosestAimingBullet = () => {
+export const createShotgun = () => {
   enemies.forEach((enemy) => {
     const posDifferance = {
       x: player.pos.x - enemy.pos.x,

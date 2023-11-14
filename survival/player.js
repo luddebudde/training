@@ -14,5 +14,6 @@ export const player = {
   },
   speed: 1,
   radius: 40,
+  health: 100,
   color: "blue",
 };

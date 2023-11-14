@@ -9,8 +9,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       y: spawnHeight,
     },
     vel: {
-      x: 0,
-      y: 0,
+      x: 1,
+      y: 1,
     },
     speed: 1.5,
     damage: 20,

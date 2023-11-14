@@ -5,9 +5,13 @@ export const makeDirection = (secondObject, mainObject) => {
   };
   const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
   const direction = {
-    x: diff.x / dist,
-    y: diff.y / dist,
+    x: diff.x / (dist + 0.001),
+    y: diff.y / (dist + 0.001),
   };
+
+  // if (isNaN(direction)) {
+  //   throw new Error("kill me...");
+  // }
 
   return direction;
 };
