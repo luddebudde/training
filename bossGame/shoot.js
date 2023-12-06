@@ -1,13 +1,24 @@
 import { makeDirection } from "./makeDirection.js";
 import { bullets, mousePos, worldObjects } from "./main.js";
 
-export const shoot = (shooter, bullet) => {
-  bullets.push(bullet);
-  worldObjects.push(bullet);
-
+export const shoot = (shooter) => {
   const direction = makeDirection(shooter, mousePos);
-  bullet.vel.x = -direction.x * bullet.acc;
-  bullet.vel.y = -direction.y * bullet.acc;
-  bullet.xPos = shooter.xPos;
-  bullet.yPos = shooter.yPos;
+
+  const playerBullet = {
+    xPos: shooter.xPos,
+    yPos: shooter.yPos,
+    radius: 15,
+    vel: {
+      x: -direction.x * 20,
+      y: -direction.y * 20,
+    },
+    acc: 20,
+    color: "blue",
+    health: 1,
+    damage: 20,
+    type: "bullet",
+  };
+
+  bullets.push(playerBullet);
+  worldObjects.push(playerBullet);
 };

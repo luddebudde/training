@@ -1,4 +1,4 @@
-import { playerBullets } from "./main.js";
+import { bullets } from "./main.js";
 import { player } from "./player.js";
 
 const bulletSpeed = 20;
@@ -6,6 +6,7 @@ const bulletSpeed = 20;
 export const createAimBullet = (direction) => {
   const bullet = {
     radius: 20,
+    bulletHealth: 10,
     pos: {
       x: player.pos.x,
       y: player.pos.y,
@@ -18,5 +19,5 @@ export const createAimBullet = (direction) => {
     color: "blue",
   };
 
-  playerBullets.push(bullet);
+  bullets.push(bullet);
 };

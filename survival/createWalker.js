@@ -1,4 +1,4 @@
-import { enemies } from "./main.js";
+import { entities } from "./main.js";
 
 export const createWalker = (spawnWidth, spawnHeight) => {
   const walker = {
@@ -17,5 +17,5 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     color: "red",
   };
 
-  enemies.push(walker);
+  entities.push(walker);
 };

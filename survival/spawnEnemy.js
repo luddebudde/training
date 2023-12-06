@@ -1,4 +1,4 @@
-import { createEnemies, enemyBullets } from "./main.js";
+import { createEnemies, bullets } from "./main.js";
 import { loopPerSecond } from "./basic.js";
 import { world } from "./world.js";
 

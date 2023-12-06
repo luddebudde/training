@@ -3,6 +3,8 @@ import { drawLine } from "../drawLine.js";
 import { hasDecidedDirection, player } from "../main.js";
 import { world } from "../world.js";
 
+export const enemyMaxHealth = 600;
+
 export let enemy = {
   radius: 80,
   xPos: world.width / 2,
@@ -14,7 +16,9 @@ export let enemy = {
   attackSpeed: 100,
   currentPhase: 1,
   damage: 30,
-  health: 600,
+
+  health: enemyMaxHealth,
+  mass: 1000,
   color: "red",
   alive: true,
   type: "enemy",
@@ -42,15 +46,15 @@ export const preCharge = () => {
 };
 
 export const attack = () => {
-  if (enemy.health >= 500) {
-    if (enemy.currentPhase === 1) {
-      if (!hasDecidedDirection) {
-        const direction = makeDirection(enemy, oldPlayerPos);
-        enemy.vel.x -= direction.x * 20;
-        enemy.vel.y -= direction.y * 20;
-      }
-    } else if (enemy.currentPhase === 2) {
+  // if (enemy.health >= 500) {
+  if (enemy.currentPhase === 1) {
+    if (!hasDecidedDirection) {
+      const direction = makeDirection(enemy, oldPlayerPos);
+      enemy.vel.x -= direction.x * 20;
+      enemy.vel.y -= direction.y * 20;
     }
+  } else if (enemy.currentPhase === 2) {
+    // }
   } else {
   }
 };

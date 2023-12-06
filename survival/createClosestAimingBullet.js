@@ -1,5 +1,5 @@
-import { playerBullets } from "./main.js";
-import { enemies } from "./main.js";
+import { bullets } from "./main.js";
+import { entities } from "./main.js";
 import { makeDirection } from "./makeDirection.js";
 import { player } from "./player.js";
 
@@ -17,7 +17,7 @@ let direction = {
 // array.forEach((element) => {});
 
 export const createShotgun = () => {
-  enemies.forEach((enemy) => {
+  entities.forEach((enemy) => {
     const posDifferance = {
       x: player.pos.x - enemy.pos.x,
       y: player.pos.y - enemy.pos.x,
@@ -51,5 +51,5 @@ export const createShotgun = () => {
     color: "black",
   };
 
-  playerBullets.push(bullet);
+  bullets.push(bullet);
 };

@@ -12,18 +12,18 @@ import { createShotgun } from "./createClosestAimingBullet.js";
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
 
-export let allies = [player];
-export let enemies = [];
+// export let entities = [player];
+// export let entities = [];
 export let deadEnemies = [];
-export let entities = [allies, enemies];
+export let entities = [player];
 
 export const createEnemies = [createWalker];
 
-export let playerBullets = [];
-export let enemyBullets = [];
-export let kindsOfBullets = [playerBullets, enemyBullets];
+// export let bullets = [];
+// export let bullets = [];
+export let bullets = [];
 
-export let worldObjects = [kindsOfBullets, entities];
+export let worldObjects = [bullets, entities];
 
 export const weapons = [createShotgun];
 
@@ -58,48 +58,54 @@ setInterval(() => {
   spawnEnemy();
   // createWalker(100, 100);
 
-  enemies.forEach((enemy) => {
+  entities.forEach((enemy) => {
     const directionToPlayerFromEnemy = makeDirection(enemy, player);
     enemy.vel.x = directionToPlayerFromEnemy.x * enemy.speed;
     enemy.vel.y = directionToPlayerFromEnemy.y * enemy.speed;
   });
 
-  playerBullets.forEach((bullet) => {
-    enemies.forEach((enemy) => {
+  console.log(player.vel);
+
+  bullets.forEach((bullet) => {
+    entities.forEach((enemy) => {
       // console.log(doCirclesOverlap(enemy, bullet));
       if (doCirclesOverlap(enemy, bullet) === true) {
         enemy.health -= bullet.damage;
+        // bullet.bulletHealth -= 10;
 
-        playerBullets = playerBullets.filter((bullet) => bullet.health > 0);
-        playerBullets.splice(0, 1);
-        kindsOfBullets.push(playerBullets);
+        // bulletKind = bulletKind.filter((bullet) => bullet.bulletHealth > 0);
+        // bulletKind.splice(0, 1);
+        // kindsOfBullets.push(bulletKind);
+
+        bullets.pop(bullet);
       }
     });
   });
 
-  kindsOfBullets.forEach((bulletKind) => {
-    bulletKind.forEach((bullet) => {
-      // console.log(bulletKind.indexOf(bullet));
-      if (
-        bullet.pos.x > player.pos.x + world.width ||
-        bullet.pos.x < player.pos.x - world.width ||
-        bullet.pos.y > player.pos.y + world.width ||
-        bullet.pos.y < player.pos.y - world.width
-      ) {
-        bulletKind.splice(
-          bulletKind.indexOf(bullet),
-          bulletKind.indexOf(bullet)
-        );
+  // playerBullets.forEach((bullet) => {
+  //   console.log(bullet);
+  // });
 
-        bulletKind = bulletKind.filter((bullet) => bullet.health > 0);
-        bulletKind.splice(0, 1);
-        kindsOfBullets.push(bulletKind);
+  bullets.forEach((bullet) => {
+    // console.log(bulletKind.indexOf(bullet));
+    if (
+      bullet.pos.x > player.pos.x + world.width ||
+      bullet.pos.x < player.pos.x - world.width ||
+      bullet.pos.y > player.pos.y + world.width ||
+      bullet.pos.y < player.pos.y - world.width
+    ) {
+      bullets.splice(bullets.indexOf(bullet), bullets.indexOf(bullet));
 
-        // bulletKind = bulletKind.filter((bullet) => bullet.health > 0);
-        // bulletKind.splice(0, 1);
-        // entities.push(bulletKind);
-      }
-    });
+      bullets.pop(bullet);
+
+      // bulletKind = bulletKind.filter((bullet) => bullet.bulletHealth > 0);
+      // bulletKind.splice(0, 1);
+      // kindsOfBullets.push(bulletKind);
+
+      // bulletKind = bulletKind.filter((bullet) => bullet.health > 0);
+      // bulletKind.splice(0, 1);
+      // entities.push(bulletKind);
+    }
   });
 
   ctx.beginPath();
@@ -114,23 +120,32 @@ setInterval(() => {
   // entities = entities.filter((entity) => !deadEnemies.includes(entity));
   // worldObjects = worldObjects.filter((object) => !deadEnemies.includes(object));
 
-  enemies = enemies.filter((enemy) => enemy.health > 0);
-  allies = allies.filter((ally) => ally.health > 0);
-  entities.splice(0, 2);
-  entities.push(enemies);
-  entities.push(allies);
+  // enemies = enemies.filter((enemy) => enemy.health > 0);
+  // allies = allies.filter((ally) => ally.health > 0);
+  // entities.splice(0, 2);
+  // entities.push(enemies);
+  // entities.push(allies);
+
+  // entities.forEach((enemy) => {
+  //   console.log(enemy);
+  // });
 
   worldObjects.forEach((worldObject) => {
-    worldObject.forEach((firstObject) => {
-      firstObject.forEach((object) => {
-        object.pos.x += object.vel.x;
-        object.pos.y += object.vel.y;
+    worldObject.forEach((object) => {
+      object.pos.x += object.vel.x;
+      object.pos.y += object.vel.y;
 
-        ctx.beginPath();
-        ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
-        ctx.fillStyle = object.color;
-        ctx.fill();
-      });
+      deadEnemies = entities.filter((enemy) => enemy.health <= 0);
+      entities = entities.filter((enemy) => !deadEnemies.includes(enemy));
+      // entities = entities.filter((entity) => !deadEnemies.includes(entity));
+      // worldObjects = worldObjects.filter(
+      //   (object) => !deadEnemies.includes(object)
+      // );
+
+      ctx.beginPath();
+      ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = object.color;
+      ctx.fill();
     });
   });
 }, 1000 / loopPerSecond);
@@ -145,6 +160,7 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.code === "KeyS") {
     player.vel.y += player.speed;
+    console.log("du");
   }
   if (event.code === "KeyD") {
     player.vel.x += player.speed;

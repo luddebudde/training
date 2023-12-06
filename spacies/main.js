@@ -156,7 +156,7 @@ const createGame = () => {
       scale: 0,
     },
     timing: {
-      timeScale: 0.7,
+      timeScale: 1.4,
     },
   })
   const game = {

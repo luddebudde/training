@@ -3,11 +3,13 @@ import { canvas } from "./canvas.js";
 import { pullAcceleration } from "./pullAcceleration.js";
 import { drawCircle } from "./drawBlackhole.js";
 import { world } from "./world.js";
-import { attack, enemy, preCharge } from "./src/enemy.js";
+import { attack, enemy, enemyMaxHealth, preCharge } from "./src/enemy.js";
 import { airFriction } from "./airFriction.js";
 import { shoot } from "./shoot.js";
-import { playerBullet } from "./playerBullet.js";
 import { doCirclesOverlap } from "./doCirclesOverlap.js";
+import { checkCollisions } from "./checkCollison.js";
+import { checkHealth } from "./checkHealth.js";
+import { drawHealthBar } from "./drawHealthBar.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -17,13 +19,15 @@ let enemyPhaseTime = 200;
 let enemyLoadPhase = true;
 export let hasDecidedDirection = false;
 
+const playerMaxHealth = 100;
+
 export let player = {
   xPos: world.width * 0.5,
   yPos: world.height * 0.9,
   radius: 20,
   acc: {
-    x: 1,
-    y: 1,
+    x: 2,
+    y: 2,
   },
   vel: {
     x: 0,
@@ -31,15 +35,17 @@ export let player = {
   },
   color: "blue",
   airFrictionPercentage: 1.02,
-  health: 100,
+  health: playerMaxHealth,
+  mass: 100,
   color: "blue",
   alive: true,
   type: "player",
 };
 
-const units = [player, enemy];
+let units = [player, enemy];
 export const bullets = [];
-export const worldObjects = [player, enemy];
+export let worldObjects = [player, enemy];
+// const pernamentWorldObjects = [player, enemy];
 
 let playerCopy1 = {
   xPos: 0,
@@ -68,10 +74,10 @@ setInterval(() => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  playerCopy1.xPos = player.xPos + world.width * 2;
-  playerCopy1.yPos = player.yPos;
-  playerCopy2.xPos = player.xPos - world.width * 2;
-  playerCopy2.yPos = player.yPos;
+  // playerCopy1.xPos = player.xPos + world.width * 2;
+  // playerCopy1.yPos = player.yPos;
+  // playerCopy2.xPos = player.xPos - world.width * 2;
+  // playerCopy2.yPos = player.yPos;
 
   units.forEach((unit) => {
     if (unit.xPos + unit.radius >= world.width) {
@@ -109,10 +115,6 @@ setInterval(() => {
     bullet.xPos += bullet.vel.x;
     bullet.yPos += bullet.vel.y;
   });
-  player.xPos += player.vel.x;
-  player.yPos += player.vel.y;
-  enemy.xPos += enemy.vel.x;
-  enemy.yPos += enemy.vel.y;
 
   blackholes.forEach((blackhole) => {
     const acc = pullAcceleration(blackhole, player.xPos, player.yPos);
@@ -145,30 +147,36 @@ setInterval(() => {
     attackCounter = 0;
   }
 
-  function checkCollisions(object) {
-    worldObjects.forEach((otherObject) => {
-      if (object !== otherObject && doCirclesOverlap(object, otherObject)) {
-        object.health -= otherObject.damage;
-        console.log(object.health);
-      }
-    });
-  }
-
   worldObjects.forEach((object) => {
-    checkCollisions(object);
+    worldObjects.forEach((otherObject) => {
+      checkCollisions(object, otherObject);
+    });
   });
 
   // draw circles
-  worldObjects.forEach((object) => {
-    if (object.health >= 0) {
-      drawCircle(object.xPos, object.yPos, object.radius, object.color);
-    }
-  });
-  // drawCircle(player.xPos, player.yPos, player.radius, "blue");
-  // drawCircle(playerCopy1.xPos, player.yPos, player.radius, "blue");
-  // drawCircle(playerCopy2.xPos, player.yPos, player.radius, "blue");
 
-  // drawCircle(enemy.xPos, enemy.yPos, enemy.radius, "red");
+  drawHealthBar(
+    ctx,
+    player.xPos - player.radius * 1.1,
+    player.yPos + player.radius * 1.2,
+    player.radius * 2.2,
+    7,
+    player.health,
+    playerMaxHealth
+  );
+
+  // units = units.filter((unit) => unit.health > 0);
+  worldObjects = worldObjects.filter((worldObject) => worldObject.health > 0);
+
+  // deadUnits = units.filter((unit) => unit.health <= 0);
+  // units = units.filter((unit) => deadUnits.includes(unit));
+
+  worldObjects.forEach((object) => {
+    drawCircle(object.xPos, object.yPos, object.radius, object.color);
+  });
+
+  // worldObjects = pernamentWorldObjects;
+  // console.log(worldObjects);
 }, delay);
 
 window.addEventListener("mousemove", (event) => {
@@ -191,6 +199,8 @@ document.addEventListener("keydown", (event) => {
     player.vel.x += player.acc.x;
   }
   if (event.code === "Space") {
-    shoot(player, playerBullet);
+    if (player.health >= 0) {
+      shoot(player);
+    }
   }
 });
