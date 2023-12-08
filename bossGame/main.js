@@ -3,23 +3,38 @@ import { canvas } from "./canvas.js";
 import { pullAcceleration } from "./pullAcceleration.js";
 import { drawCircle } from "./drawBlackhole.js";
 import { world } from "./world.js";
-import { attack, enemy, enemyMaxHealth, preCharge } from "./src/enemy.js";
+import {
+  charge,
+  enemy,
+  enemyMaxHealth,
+  firstPhase,
+  preCharge,
+} from "./src/enemy.js";
 import { airFriction } from "./airFriction.js";
 import { shoot } from "./shoot.js";
 import { doCirclesOverlap } from "./doCirclesOverlap.js";
 import { checkCollisions } from "./checkCollison.js";
 import { checkHealth } from "./checkHealth.js";
 import { drawHealthBar } from "./drawHealthBar.js";
+import { createObstacle } from "./createObstacle.js";
+import { transitionToPhase2 } from "./transisionToPhase.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
 
-let attackCounter = 0;
+let shouldPreCharge = true;
 let enemyPhaseTime = 200;
-let enemyLoadPhase = true;
+
+let attackCounter = 0;
+export let phaseMoves = 0;
+
 export let hasDecidedDirection = false;
 
+let hasTransitionedToPhase2 = false;
+
 const playerMaxHealth = 100;
+
+export const obstacles = [];
 
 export let player = {
   xPos: world.width * 0.5,
@@ -129,22 +144,21 @@ setInterval(() => {
     );
   });
 
-  if (!enemyLoadPhase) {
-    attack();
-    hasDecidedDirection = true;
-  } else {
-    preCharge();
-    hasDecidedDirection = false;
-  }
   attackCounter += 1;
-  if (attackCounter % enemyPhaseTime === 0 && enemyLoadPhase) {
-    enemyLoadPhase = false;
-    // hasDecidedDirection = false;
-    attackCounter = 0;
-  } else if (attackCounter % (enemyPhaseTime * 2) === 0 && !enemyLoadPhase) {
-    enemyLoadPhase = true;
-    // hasDecidedDirection = false;
-    attackCounter = 0;
+
+  if (attackCounter % firstPhase.cooldown === 0) {
+    phaseMoves += 1;
+    console.log(phaseMoves);
+  }
+
+  if (enemy.health > 400) {
+    enemy.phaseOneAttack(phaseMoves);
+  } else {
+    if (!hasTransitionedToPhase2) {
+      transitionToPhase2();
+    }
+    enemy.phaseTwoAttack(phaseMoves);
+    hasTransitionedToPhase2 = true;
   }
 
   worldObjects.forEach((object) => {
@@ -174,6 +188,17 @@ setInterval(() => {
   worldObjects.forEach((object) => {
     drawCircle(object.xPos, object.yPos, object.radius, object.color);
   });
+  obstacles.forEach((obstacle) => {
+    ctx.beginPath();
+    ctx.rect(
+      obstacle.startPos.x,
+      obstacle.startPos.y,
+      obstacle.endPos.x,
+      obstacle.endPos.y
+    );
+    ctx.fillStyle = obstacle.color;
+    ctx.fill();
+  });
 
   // worldObjects = pernamentWorldObjects;
   // console.log(worldObjects);
@@ -202,5 +227,8 @@ document.addEventListener("keydown", (event) => {
     if (player.health >= 0) {
       shoot(player);
     }
+  }
+  if (event.code === "KeyX") {
+    createObstacle(0, 0, 400, 400, "black");
   }
 });
