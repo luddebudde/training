@@ -22,7 +22,7 @@ export const firstPhase = {
 };
 
 export const secondPhase = {
-  cooldown: 200,
+  cooldown: 100,
 };
 export const thirdPhase = {
   cooldown: 100,
