@@ -10,7 +10,9 @@ export const createObstacle = (spx, spy, epx, epy, color) => {
       x: epx,
       y: epy,
     },
+    damage: 100,
     color: color,
+    health: 100000000000000000,
   };
 
   obstacles.push(obstacle);

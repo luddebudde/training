@@ -5,6 +5,7 @@ import { drawCircle } from "./drawBlackhole.js";
 import { world } from "./world.js";
 import {
   charge,
+  currentPhase,
   enemy,
   enemyMaxHealth,
   firstPhase,
@@ -17,7 +18,13 @@ import { checkCollisions } from "./checkCollison.js";
 import { checkHealth } from "./checkHealth.js";
 import { drawHealthBar } from "./drawHealthBar.js";
 import { createObstacle } from "./createObstacle.js";
-import { transitionToPhase2 } from "./transisionToPhase.js";
+import { transitionToPhase2 } from "./transisionToPhase2.js";
+import { checkRectangleCollison } from "./checkRectangleCollision.js";
+import {
+  playerCopy1,
+  playerCopy2,
+  transitionToPhase3,
+} from "./transisionToPhase3.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -25,12 +32,13 @@ export let mousePos = { x: 0, y: 0 };
 let shouldPreCharge = true;
 let enemyPhaseTime = 200;
 
-let attackCounter = 0;
+export let attackCounter = 0;
 export let phaseMoves = 0;
 
 export let hasDecidedDirection = false;
 
 let hasTransitionedToPhase2 = false;
+let hasTransitionedToPhase3 = false;
 
 const playerMaxHealth = 100;
 
@@ -55,25 +63,16 @@ export let player = {
   color: "blue",
   alive: true,
   type: "player",
+  team: "player",
 };
 
-let units = [player, enemy];
-export const bullets = [];
+export let units = [player, enemy];
+export let bullets = [];
 export let worldObjects = [player, enemy];
 // const pernamentWorldObjects = [player, enemy];
 
-let playerCopy1 = {
-  xPos: 0,
-  yPos: 0,
-};
-
-let playerCopy2 = {
-  xPos: 0,
-  yPos: 0,
-};
-
 const fps = 60;
-const delay = 1000 / fps;
+let delay = 1000 / fps;
 const dt = 1 / fps;
 
 ctx.beginPath();
@@ -89,10 +88,15 @@ setInterval(() => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  // playerCopy1.xPos = player.xPos + world.width * 2;
+  // playerCopy1.xPos = player.xPos + world.width / 3;
   // playerCopy1.yPos = player.yPos;
-  // playerCopy2.xPos = player.xPos - world.width * 2;
+  // playerCopy2.xPos = player.xPos - world.width / 3;
   // playerCopy2.yPos = player.yPos;
+
+  playerCopy1.vel.x = player.vel.x;
+  playerCopy1.vel.y = player.vel.y;
+  playerCopy2.vel.x = player.vel.x;
+  playerCopy2.vel.y = player.vel.y;
 
   units.forEach((unit) => {
     if (unit.xPos + unit.radius >= world.width) {
@@ -114,6 +118,23 @@ setInterval(() => {
       unit.vel.y = -unit.vel.y;
     }
   });
+
+  bullets.forEach((bullet) => {
+    if (bullet.xPos + bullet.radius >= world.width + 400) {
+      // unit.xPos = unit.radius;
+      bullet.health = 0;
+    }
+    if (bullet.xPos - bullet.radius <= -400) {
+      // unit.xPos = world.width - unit.radius;
+      bullet.health = 0;
+    }
+    if (bullet.yPos - bullet.radius <= -400) {
+      bullet.health = 0;
+    }
+    if (bullet.yPos + bullet.radius >= world.height + 50) {
+      bullet.health = 0;
+    }
+  });
   const airFrictionOnBody = airFriction(
     player.vel.x,
     player.vel.y,
@@ -125,10 +146,6 @@ setInterval(() => {
   worldObjects.forEach((object) => {
     object.xPos += object.vel.x;
     object.yPos += object.vel.y;
-  });
-  bullets.forEach((bullet) => {
-    bullet.xPos += bullet.vel.x;
-    bullet.yPos += bullet.vel.y;
   });
 
   blackholes.forEach((blackhole) => {
@@ -146,20 +163,39 @@ setInterval(() => {
 
   attackCounter += 1;
 
-  if (attackCounter % firstPhase.cooldown === 0) {
+  if (attackCounter % currentPhase.cooldown === 0) {
     phaseMoves += 1;
     console.log(phaseMoves);
+    // console.log(currentPhase);
   }
 
   if (enemy.health > 400) {
+    // Fas 1
     enemy.phaseOneAttack(phaseMoves);
-  } else {
+
+    // Fas 2
+  } else if (enemy.health > 200) {
     if (!hasTransitionedToPhase2) {
-      transitionToPhase2();
+      transitionToPhase2(currentPhase);
+      phaseMoves = 0;
+      attackCounter = 0;
+      console.log("hej");
     }
     enemy.phaseTwoAttack(phaseMoves);
     hasTransitionedToPhase2 = true;
+
+    // Fas 3
+  } else {
+    if (!hasTransitionedToPhase3) {
+      currentPhase = transitionToPhase3(currentPhase);
+      phaseMoves = 0;
+      attackCounter = 0;
+      console.log(currentPhase);
+    }
+    enemy.phaseThreeAttack(phaseMoves);
+    hasTransitionedToPhase3 = true;
   }
+  console.log(currentPhase);
 
   worldObjects.forEach((object) => {
     worldObjects.forEach((otherObject) => {
@@ -179,11 +215,7 @@ setInterval(() => {
     playerMaxHealth
   );
 
-  // units = units.filter((unit) => unit.health > 0);
   worldObjects = worldObjects.filter((worldObject) => worldObject.health > 0);
-
-  // deadUnits = units.filter((unit) => unit.health <= 0);
-  // units = units.filter((unit) => deadUnits.includes(unit));
 
   worldObjects.forEach((object) => {
     drawCircle(object.xPos, object.yPos, object.radius, object.color);
@@ -193,15 +225,14 @@ setInterval(() => {
     ctx.rect(
       obstacle.startPos.x,
       obstacle.startPos.y,
-      obstacle.endPos.x,
-      obstacle.endPos.y
+      obstacle.endPos.x - obstacle.startPos.x,
+      obstacle.endPos.y - obstacle.startPos.y
     );
     ctx.fillStyle = obstacle.color;
     ctx.fill();
-  });
 
-  // worldObjects = pernamentWorldObjects;
-  // console.log(worldObjects);
+    checkRectangleCollison(player, obstacle);
+  });
 }, delay);
 
 window.addEventListener("mousemove", (event) => {
@@ -229,6 +260,6 @@ document.addEventListener("keydown", (event) => {
     }
   }
   if (event.code === "KeyX") {
-    createObstacle(0, 0, 400, 400, "black");
+    createObstacle(0, 0, 400, 800, "black");
   }
 });

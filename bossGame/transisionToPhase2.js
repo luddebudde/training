@@ -1,16 +1,25 @@
 import { createObstacle } from "./createObstacle.js";
-import { enemy } from "./src/enemy.js";
+import { attackCounter, phaseMoves, player } from "./main.js";
+import { currentPhase, enemy, secondPhase } from "./src/enemy.js";
 import { world } from "./world.js";
 
-export const transitionToPhase2 = () => {
+export const transitionToPhase2 = (currentPhase) => {
   enemy.xPos = world.width / 2;
   enemy.yPos = enemy.radius;
+  enemy.vel.x = 0;
+  enemy.vel.y = 0;
+
+  player.xPos = world.width / 2;
+  player.yPos = world.height - enemy.radius * 2.5;
+  player.vel.x = 0;
+  player.vel.y = 0;
+
   createObstacle(
     0,
     enemy.radius * 2 + 100,
     500,
 
-    world.height - enemy.radius * 5 - 100,
+    world.height - enemy.radius * 3,
     "red"
   );
 
@@ -18,7 +27,7 @@ export const transitionToPhase2 = () => {
     world.width / 2 + enemy.radius,
     enemy.radius * 2 + 100,
     world.width,
-    world.height - enemy.radius * 5 - 100,
+    world.height - enemy.radius * 3,
     "red"
   );
 
@@ -37,7 +46,7 @@ export const transitionToPhase2 = () => {
     world.height - enemy.radius * 2,
     world.width / 2 - enemy.radius,
 
-    enemy.radius * 2,
+    world.height,
     "red"
   );
   createObstacle(
@@ -45,7 +54,9 @@ export const transitionToPhase2 = () => {
     world.height - enemy.radius * 2,
     world.width,
 
-    enemy.radius * 2,
+    world.height,
     "red"
   );
+
+  return (currentPhase = secondPhase);
 };

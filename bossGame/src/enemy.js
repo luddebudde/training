@@ -3,6 +3,8 @@ import { drawLine } from "../drawLine.js";
 import { phaseMoves, player } from "../main.js";
 import { world } from "../world.js";
 import { createObstacle } from "../createObstacle.js";
+import { shootEnemyBullet } from "../shootEnemyBullet.js";
+import { shoot } from "../shoot.js";
 
 export const enemyMaxHealth = 600;
 
@@ -19,6 +21,16 @@ export const firstPhase = {
   shouldPreCharge: true,
 };
 
+export const secondPhase = {
+  cooldown: 200,
+};
+export const thirdPhase = {
+  cooldown: 100,
+  hasTurned: false,
+};
+
+export let currentPhase = firstPhase;
+
 export let enemy = {
   radius: 100,
   xPos: world.width / 2,
@@ -27,13 +39,14 @@ export let enemy = {
     x: 0,
     y: 0,
   },
-  attackSpeed: 100,
+  // attackSpeed: 100,
   damage: 30,
   health: enemyMaxHealth,
   mass: 1000,
   color: "red",
   alive: true,
   type: "enemy",
+  team: "enemy",
 
   currentPhase: 1,
   phaseOneAttack: () => {
@@ -51,50 +64,90 @@ export let enemy = {
     if (phaseMoves % 2 === 0) {
       shouldStop = false;
     }
+    currentPhase = secondPhase;
 
-    // console.log(shouldStop);
+    // Charge
     if (phaseMoves % 2 && enemy.yPos === enemy.radius && !shouldStop) {
       enemy.yPos += 1;
       enemy.vel.y = 30;
 
-      // setTimeout(() => {
-      shouldStop = true;
+      // Shoot bullets
+      shootEnemyBullet(
+        world.width / 2 - enemy.radius,
+        enemy.radius * 2.5,
+        -5,
+        0,
+        30,
+        70,
+        "red"
+      );
+      shootEnemyBullet(
+        world.width / 2 + enemy.radius,
+        enemy.radius * 2.5,
+        5,
+        0,
+        30,
+        70,
+        "red"
+      );
 
-      // }, 100);
+      shouldStop = true;
     } else if (
       phaseMoves % 2 &&
       enemy.yPos === world.height - enemy.radius &&
       !shouldStop
     ) {
-      // console.log("hej");
       enemy.yPos -= 1;
       enemy.vel.y = -30;
 
-      // setTimeout(() => {
+      // Shoot bullets
+      shootEnemyBullet(
+        world.width / 2 - enemy.radius,
+        world.height - enemy.radius * 2.5,
+        -5,
+        0,
+        30,
+        70,
+        "red"
+      );
+      shootEnemyBullet(
+        world.width / 2 + enemy.radius,
+        world.height - enemy.radius * 2.5,
+        5,
+        0,
+        30,
+        70,
+        "red"
+      );
+
       shouldStop = true;
-      // }, 100);
-      // goingDown = true;
+
+      // Stop enemy
     } else if (enemy.yPos >= world.height - enemy.radius && shouldStop) {
       enemy.yPos = world.height - enemy.radius;
 
-      // if (enemy.vel.y === -30) {
       enemy.vel.y = 0;
-      // }
-
-      // shouldStop = false;
-
-      // goingDown = false;
-
-      // console.log("AYG");
     } else if (enemy.yPos <= enemy.radius && shouldStop) {
       enemy.yPos = enemy.radius;
-
-      // if (enemy.vel.y === 30) {
       enemy.vel.y = 0;
-      // }
-      // shouldStop = false;
-
-      // console.log("234");
+    }
+  },
+  phaseThreeAttack: (phaseMoves) => {
+    // if (phaseMoves % 2 && !thirdPhase.hasTurned) {
+    //   enemy.vel.x = -enemy.vel.x;
+    //   thirdPhase.hasTurned = true;
+    // }
+    if (phaseMoves) {
+      const bulletSize = Math.random() * 20;
+      shootEnemyBullet(
+        Math.random() * world.width,
+        -bulletSize,
+        0,
+        100 / bulletSize,
+        bulletSize,
+        bulletSize,
+        "red"
+      );
     }
   },
 };

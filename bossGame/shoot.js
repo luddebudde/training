@@ -9,14 +9,15 @@ export const shoot = (shooter) => {
     yPos: shooter.yPos,
     radius: 15,
     vel: {
-      x: -direction.x * 20,
-      y: -direction.y * 20,
+      x: -direction.x * 40,
+      y: -direction.y * 40,
     },
     acc: 20,
     color: "blue",
     health: 1,
     damage: 20,
     type: "bullet",
+    team: "player",
   };
 
   bullets.push(playerBullet);
