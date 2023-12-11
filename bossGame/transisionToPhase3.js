@@ -1,8 +1,8 @@
-import { obstacles, player, units, worldObjects } from "./main.js";
+import { bullets, obstacles, player, units, worldObjects } from "./main.js";
 import { enemy, thirdPhase } from "./src/enemy.js";
 import { world } from "./world.js";
 
-export const playerCopy1 = {
+export let playerCopy1 = {
   xPos: 0,
   yPos: 0,
   vel: {
@@ -15,7 +15,7 @@ export const playerCopy1 = {
   damage: 1,
 };
 
-export const playerCopy2 = {
+export let playerCopy2 = {
   xPos: 0,
   yPos: 0,
   vel: {
@@ -30,6 +30,7 @@ export const playerCopy2 = {
 
 export const transitionToPhase3 = (currentPhase) => {
   obstacles.length = 0;
+
   enemy.xPos = world.width / 2;
   enemy.yPos = enemy.radius;
   enemy.vel.x = -20;
@@ -45,10 +46,10 @@ export const transitionToPhase3 = (currentPhase) => {
   playerCopy2.xPos = player.xPos + world.width / 3;
   playerCopy2.yPos = player.yPos;
 
-  //   units.push(playerCopy1, playerCopy2);
+  // units.push(playerCopy1, playerCopy2);
   worldObjects.push(playerCopy1, playerCopy2);
 
-  console.log("hufaiu");
+  // console.log("hufaiu");
   //   console.log((currentPhase = thirdPhase));
-  return (currentPhase = thirdPhase);
+  // return (currentPhase = thirdPhase);
 };

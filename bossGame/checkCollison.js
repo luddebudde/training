@@ -11,6 +11,6 @@ export const checkCollisions = (object, otherObject) => {
     } else {
       // console.log("hejsan");
     }
-    // console.log(object.health);
+    console.log(object.health);
   }
 };

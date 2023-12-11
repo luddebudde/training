@@ -25,6 +25,7 @@ import {
   playerCopy2,
   transitionToPhase3,
 } from "./transisionToPhase3.js";
+import { keyDownTracker } from "./keyDownTracker.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -39,6 +40,8 @@ export let hasDecidedDirection = false;
 
 let hasTransitionedToPhase2 = false;
 let hasTransitionedToPhase3 = false;
+
+let oldAttackCounter = 0;
 
 const playerMaxHealth = 100;
 
@@ -59,6 +62,7 @@ export let player = {
   color: "blue",
   airFrictionPercentage: 1.02,
   health: playerMaxHealth,
+  damage: 20,
   mass: 100,
   color: "blue",
   alive: true,
@@ -165,16 +169,16 @@ setInterval(() => {
 
   if (attackCounter % currentPhase.cooldown === 0) {
     phaseMoves += 1;
-    console.log(phaseMoves);
+    // console.log(phaseMoves);
     // console.log(currentPhase);
   }
 
-  if (enemy.health > 400) {
+  if (enemy.health > (enemyMaxHealth / 3) * 2) {
     // Fas 1
     enemy.phaseOneAttack(phaseMoves);
 
     // Fas 2
-  } else if (enemy.health > 200) {
+  } else if (enemy.health > enemyMaxHealth / 3) {
     if (!hasTransitionedToPhase2) {
       transitionToPhase2(currentPhase);
       phaseMoves = 0;
@@ -187,15 +191,16 @@ setInterval(() => {
     // Fas 3
   } else {
     if (!hasTransitionedToPhase3) {
-      currentPhase = transitionToPhase3(currentPhase);
+      transitionToPhase3(currentPhase);
       phaseMoves = 0;
       attackCounter = 0;
       console.log(currentPhase);
     }
-    enemy.phaseThreeAttack(phaseMoves);
+    oldAttackCounter = attackCounter - 1;
+    enemy.phaseThreeAttack(phaseMoves, attackCounter);
     hasTransitionedToPhase3 = true;
   }
-  console.log(currentPhase);
+  // console.log(currentPhase);
 
   worldObjects.forEach((object) => {
     worldObjects.forEach((otherObject) => {
@@ -220,6 +225,15 @@ setInterval(() => {
   worldObjects.forEach((object) => {
     drawCircle(object.xPos, object.yPos, object.radius, object.color);
   });
+
+  if (playerCopy1.health <= 0) {
+    player.health = 0;
+    playerCopy2.health = 0;
+  } else if (playerCopy2.health <= 0) {
+    player.health = 0;
+    playerCopy1.health = 0;
+  }
+
   obstacles.forEach((obstacle) => {
     ctx.beginPath();
     ctx.rect(
@@ -238,6 +252,8 @@ setInterval(() => {
 window.addEventListener("mousemove", (event) => {
   mousePos = { x: event.clientX, y: event.clientY };
 });
+
+const isKeyDown = keyDownTracker();
 
 document.addEventListener("keydown", (event) => {
   // Moment

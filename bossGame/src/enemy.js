@@ -6,7 +6,7 @@ import { createObstacle } from "../createObstacle.js";
 import { shootEnemyBullet } from "../shootEnemyBullet.js";
 import { shoot } from "../shoot.js";
 
-export const enemyMaxHealth = 600;
+export const enemyMaxHealth = 1200;
 
 let enemyLoadPhase = true;
 
@@ -25,7 +25,7 @@ export const secondPhase = {
   cooldown: 100,
 };
 export const thirdPhase = {
-  cooldown: 100,
+  cooldown: 6,
   hasTurned: false,
 };
 
@@ -132,12 +132,15 @@ export let enemy = {
       enemy.vel.y = 0;
     }
   },
-  phaseThreeAttack: (phaseMoves) => {
+  phaseThreeAttack: (phaseMoves, attackCounter) => {
     // if (phaseMoves % 2 && !thirdPhase.hasTurned) {
     //   enemy.vel.x = -enemy.vel.x;
     //   thirdPhase.hasTurned = true;
     // }
-    if (phaseMoves) {
+
+    currentPhase = thirdPhase;
+    // console.log(currentPhase.cooldown);
+    if (attackCounter % currentPhase.cooldown === 0) {
       const bulletSize = Math.random() * 20;
       shootEnemyBullet(
         Math.random() * world.width,

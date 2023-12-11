@@ -57,6 +57,6 @@ export const transitionToPhase2 = (currentPhase) => {
     world.height,
     "red"
   );
-
+  //
   return (currentPhase = secondPhase);
 };
