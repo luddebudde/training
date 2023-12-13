@@ -5,8 +5,10 @@ import { world } from "../world.js";
 import { createObstacle } from "../createObstacle.js";
 import { shootEnemyBullet } from "../shootEnemyBullet.js";
 import { shoot } from "../shoot.js";
+import { blackholes, createBlackhole } from "../createBlackhole.js";
+import { createWalker } from "../createWalker.js";
 
-export const enemyMaxHealth = 1200;
+export const enemyMaxHealth = 600;
 
 let enemyLoadPhase = true;
 
@@ -27,6 +29,10 @@ export const secondPhase = {
 export const thirdPhase = {
   cooldown: 6,
   hasTurned: false,
+};
+export const fourthPhase = {
+  cooldown: 10,
+  hasSpawnedHole: false,
 };
 
 export let currentPhase = firstPhase;
@@ -151,6 +157,29 @@ export let enemy = {
         bulletSize,
         "red"
       );
+    }
+  },
+  phaseFourAttack: (phaseMoves) => {
+    currentPhase = fourthPhase;
+
+    if (phaseMoves % 20 === 0) {
+      createWalker();
+      console.log("createWalker");
+    }
+    if (phaseMoves % 50 === 0 && !currentPhase.hasSpawnedHole) {
+      const blackholeRadius = Math.random() * 60 + 40;
+      createBlackhole(
+        Math.random() * world.width,
+        -blackholeRadius,
+        0,
+        2,
+        blackholeRadius,
+        blackholeRadius * 10,
+        blackholeRadius * 300
+      );
+      currentPhase.hasSpawnedHole = true;
+    } else if (phaseMoves % 50) {
+      currentPhase.hasSpawnedHole = false;
     }
   },
 };

@@ -1,4 +1,4 @@
-import { blackholes } from "./blackhole.js";
+import { blackholes } from "./createBlackhole.js";
 import { canvas } from "./canvas.js";
 import { pullAcceleration } from "./pullAcceleration.js";
 import { drawCircle } from "./drawBlackhole.js";
@@ -26,6 +26,7 @@ import {
   transitionToPhase3,
 } from "./transisionToPhase3.js";
 import { keyDownTracker } from "./keyDownTracker.js";
+import { transitionToPhase4 } from "./transisionToPhase4.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -40,6 +41,7 @@ export let hasDecidedDirection = false;
 
 let hasTransitionedToPhase2 = false;
 let hasTransitionedToPhase3 = false;
+let hasTransitionedToPhase4 = false;
 
 let oldAttackCounter = 0;
 
@@ -126,17 +128,17 @@ setInterval(() => {
   bullets.forEach((bullet) => {
     if (bullet.xPos + bullet.radius >= world.width + 400) {
       // unit.xPos = unit.radius;
-      bullet.health = 0;
+      bullet.destroy = true;
     }
     if (bullet.xPos - bullet.radius <= -400) {
       // unit.xPos = world.width - unit.radius;
-      bullet.health = 0;
+      bullet.destroy = true;
     }
     if (bullet.yPos - bullet.radius <= -400) {
-      bullet.health = 0;
+      bullet.destroy = true;
     }
     if (bullet.yPos + bullet.radius >= world.height + 50) {
-      bullet.health = 0;
+      bullet.destroy = true;
     }
   });
   const airFrictionOnBody = airFriction(
@@ -157,28 +159,28 @@ setInterval(() => {
     player.vel.y += acc.y;
     player.vel.x += acc.x;
 
-    drawCircle(
-      blackhole.xPos,
-      blackhole.yPos,
-      Math.sqrt(Math.abs(blackhole.pullForce)) * 0.5,
-      "black"
-    );
+    // drawCircle(
+    //   blackhole.xPos,
+    //   blackhole.yPos,
+    //   Math.sqrt(Math.abs(blackhole.pullForce)) * 0.5,
+    //   "black"
+    // );
   });
 
   attackCounter += 1;
 
   if (attackCounter % currentPhase.cooldown === 0) {
     phaseMoves += 1;
-    // console.log(phaseMoves);
+    console.log(phaseMoves);
     // console.log(currentPhase);
   }
 
-  if (enemy.health > (enemyMaxHealth / 3) * 2) {
+  if (enemy.health > (enemyMaxHealth / 5) * 4) {
     // Fas 1
     enemy.phaseOneAttack(phaseMoves);
 
     // Fas 2
-  } else if (enemy.health > enemyMaxHealth / 3) {
+  } else if (enemy.health >= (enemyMaxHealth / 5) * 3) {
     if (!hasTransitionedToPhase2) {
       transitionToPhase2(currentPhase);
       phaseMoves = 0;
@@ -189,22 +191,31 @@ setInterval(() => {
     hasTransitionedToPhase2 = true;
 
     // Fas 3
-  } else {
+  } else if (enemy.health > (enemyMaxHealth / 5) * 2) {
     if (!hasTransitionedToPhase3) {
       transitionToPhase3(currentPhase);
       phaseMoves = 0;
       attackCounter = 0;
-      console.log(currentPhase);
     }
-    oldAttackCounter = attackCounter - 1;
     enemy.phaseThreeAttack(phaseMoves, attackCounter);
     hasTransitionedToPhase3 = true;
+  }
+  // if (enemy.health > enemyMaxHealth / 5)
+  else {
+    if (!hasTransitionedToPhase4) {
+      worldObjects = transitionToPhase4(currentPhase);
+      phaseMoves = 0;
+      attackCounter = 0;
+    }
+    enemy.phaseFourAttack(phaseMoves);
+    hasTransitionedToPhase4 = true;
   }
   // console.log(currentPhase);
 
   worldObjects.forEach((object) => {
     worldObjects.forEach((otherObject) => {
       checkCollisions(object, otherObject);
+      // console.log(object.destroy);
     });
   });
 
@@ -220,10 +231,23 @@ setInterval(() => {
     playerMaxHealth
   );
 
-  worldObjects = worldObjects.filter((worldObject) => worldObject.health > 0);
+  worldObjects = worldObjects.filter(
+    (worldObject) =>
+      worldObject.health > 0 ||
+      worldObject.type === "bullet" ||
+      worldObject.type === "blackhole"
+  );
+  worldObjects = worldObjects.filter(
+    (worldObject) =>
+      worldObject.destroy === false || worldObject.destroy === undefined
+  );
 
   worldObjects.forEach((object) => {
     drawCircle(object.xPos, object.yPos, object.radius, object.color);
+
+    if (object.attack !== undefined) {
+      object.attack();
+    }
   });
 
   if (playerCopy1.health <= 0) {

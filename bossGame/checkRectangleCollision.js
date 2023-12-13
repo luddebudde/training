@@ -34,8 +34,8 @@ export const checkRectangleCollison = (circle, rectangle) => {
   ) {
     // console.log("är i");
     // console.log(smallerValueY);
-    player.vel.y = -player.vel.y;
-    player.vel.x = -player.vel.x;
+    circle.vel.y = -circle.vel.y;
+    circle.vel.x = -circle.vel.x;
   }
 };
 

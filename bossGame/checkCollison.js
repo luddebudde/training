@@ -1,4 +1,5 @@
 import { doCirclesOverlap } from "./doCirclesOverlap.js";
+import { worldObjects } from "./main.js";
 
 export const checkCollisions = (object, otherObject) => {
   if (
@@ -11,6 +12,12 @@ export const checkCollisions = (object, otherObject) => {
     } else {
       // console.log("hejsan");
     }
-    console.log(object.health);
+    // if (object,type === "bullet"){
+    //   worldObjects.filter
+    // }
+    if (object.type === "bullet") {
+      object.destroy = true;
+    }
+    // console.log(object.health);
   }
 };

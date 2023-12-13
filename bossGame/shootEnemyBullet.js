@@ -17,10 +17,12 @@ export const shootEnemyBullet = (
       y: velY,
     },
     damage: bulletDamage,
-    health: 1,
+    // health: 1,
     radius: bulletRadius,
     color: bulletColor,
+    type: "bullet",
     team: "enemy",
+    destroy: false,
   };
 
   bullets.push(enemyBullet);

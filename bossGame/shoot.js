@@ -14,10 +14,11 @@ export const shoot = (shooter) => {
     },
     acc: 20,
     color: "blue",
-    health: 1,
+    // health: 1,
     damage: 20,
     type: "bullet",
     team: "player",
+    destroy: false,
   };
 
   bullets.push(playerBullet);

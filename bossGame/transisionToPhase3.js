@@ -13,6 +13,7 @@ export let playerCopy1 = {
   radius: 20,
   health: 100,
   damage: 1,
+  type: "playerCopy",
 };
 
 export let playerCopy2 = {
@@ -26,6 +27,7 @@ export let playerCopy2 = {
   radius: 20,
   health: 100,
   damage: 1,
+  type: "playerCopy",
 };
 
 export const transitionToPhase3 = (currentPhase) => {
