@@ -1,6 +1,6 @@
 import { obstacles } from "./main.js";
 
-export const createObstacle = (spx, spy, epx, epy, color) => {
+export const createObstacle = (spx, spy, epx, epy, color, bulletFriendly) => {
   const obstacle = {
     startPos: {
       x: spx,
@@ -12,7 +12,8 @@ export const createObstacle = (spx, spy, epx, epy, color) => {
     },
     damage: 100,
     color: color,
-    health: 100000000000000000,
+    // health: 100000000000000000,
+    bulletFriendly: bulletFriendly,
   };
 
   obstacles.push(obstacle);

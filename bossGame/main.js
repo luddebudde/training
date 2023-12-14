@@ -19,7 +19,10 @@ import { checkHealth } from "./checkHealth.js";
 import { drawHealthBar } from "./drawHealthBar.js";
 import { createObstacle } from "./createObstacle.js";
 import { transitionToPhase2 } from "./transisionToPhase2.js";
-import { checkRectangleCollison } from "./checkRectangleCollision.js";
+import {
+  checkRectangleCollison,
+  checkRectangleCollisonForBullet,
+} from "./checkRectangleCollision.js";
 import {
   playerCopy1,
   playerCopy2,
@@ -27,6 +30,8 @@ import {
 } from "./transisionToPhase3.js";
 import { keyDownTracker } from "./keyDownTracker.js";
 import { transitionToPhase4 } from "./transisionToPhase4.js";
+import { makeDirection } from "./makeDirection.js";
+import { transitionToPhase5 } from "./transisionToPhase5.js";
 
 export const ctx = canvas.getContext("2d");
 export let mousePos = { x: 0, y: 0 };
@@ -42,6 +47,7 @@ export let hasDecidedDirection = false;
 let hasTransitionedToPhase2 = false;
 let hasTransitionedToPhase3 = false;
 let hasTransitionedToPhase4 = false;
+let hasTransitionedToPhase5 = false;
 
 let oldAttackCounter = 0;
 
@@ -64,7 +70,7 @@ export let player = {
   color: "blue",
   airFrictionPercentage: 1.02,
   health: playerMaxHealth,
-  damage: 20,
+  damage: 1,
   mass: 100,
   color: "blue",
   alive: true,
@@ -123,6 +129,18 @@ setInterval(() => {
       unit.yPos = world.height - unit.radius;
       unit.vel.y = -unit.vel.y;
     }
+    // obstacles.forEach((obstacle) => {
+    //   if (unit !== enemy) {
+    //     checkRectangleCollison(unit, obstacle);
+    //   }
+    // });
+    if (unit.type === "walker") {
+      const direction = makeDirection(unit, player);
+
+      // console.log(unit);
+      unit.vel.x = -direction.x * 3;
+      unit.vel.y = -direction.y * 3;
+    }
   });
 
   bullets.forEach((bullet) => {
@@ -140,6 +158,11 @@ setInterval(() => {
     if (bullet.yPos + bullet.radius >= world.height + 50) {
       bullet.destroy = true;
     }
+    obstacles.forEach((obstacle) => {
+      if (bullet.team !== "enemy") {
+        checkRectangleCollisonForBullet(bullet, obstacle);
+      }
+    });
   });
   const airFrictionOnBody = airFriction(
     player.vel.x,
@@ -201,7 +224,7 @@ setInterval(() => {
     hasTransitionedToPhase3 = true;
   }
   // if (enemy.health > enemyMaxHealth / 5)
-  else {
+  else if (enemy.health > (enemyMaxHealth / 5) * 1) {
     if (!hasTransitionedToPhase4) {
       worldObjects = transitionToPhase4(currentPhase);
       phaseMoves = 0;
@@ -209,6 +232,15 @@ setInterval(() => {
     }
     enemy.phaseFourAttack(phaseMoves);
     hasTransitionedToPhase4 = true;
+  } else {
+    if (!hasTransitionedToPhase5) {
+      transitionToPhase5(currentPhase);
+      phaseMoves = 0;
+      attackCounter = 0;
+    }
+    enemy.phaseFiveAttack(phaseMoves);
+
+    hasTransitionedToPhase5 = true;
   }
   // console.log(currentPhase);
 
@@ -218,6 +250,8 @@ setInterval(() => {
       // console.log(object.destroy);
     });
   });
+
+  // console.log(units);
 
   // draw circles
 
@@ -232,26 +266,24 @@ setInterval(() => {
   );
 
   worldObjects = worldObjects.filter(
-    (worldObject) =>
-      worldObject.health > 0 ||
-      worldObject.type === "bullet" ||
-      worldObject.type === "blackhole"
+    (worldObject) => worldObject.health > 0 || worldObject.health === undefined
   );
   worldObjects = worldObjects.filter(
     (worldObject) =>
       worldObject.destroy === false || worldObject.destroy === undefined
   );
 
+  units = units.filter((unit) => unit.health >= 0 || unit.health === undefined);
+
+  bullets = bullets.filter((bullet) => !bullet.destroy);
+
+  // draw objects
   worldObjects.forEach((object) => {
     drawCircle(object.xPos, object.yPos, object.radius, object.color);
-
-    if (object.attack !== undefined) {
-      object.attack();
-    }
   });
 
   if (playerCopy1.health <= 0) {
-    player.health = 0;
+    player.health = -100;
     playerCopy2.health = 0;
   } else if (playerCopy2.health <= 0) {
     player.health = 0;
@@ -269,7 +301,11 @@ setInterval(() => {
     ctx.fillStyle = obstacle.color;
     ctx.fill();
 
-    checkRectangleCollison(player, obstacle);
+    units.forEach((unit) => {
+      if (unit !== enemy) {
+        checkRectangleCollison(unit, obstacle);
+      }
+    });
   });
 }, delay);
 
@@ -299,7 +335,7 @@ document.addEventListener("keydown", (event) => {
       shoot(player);
     }
   }
-  if (event.code === "KeyX") {
-    createObstacle(0, 0, 400, 800, "black");
-  }
+  // if (event.code === "KeyX") {
+  //   createObstacle(0, 0, 400, 800, "black", true);
+  // }
 });

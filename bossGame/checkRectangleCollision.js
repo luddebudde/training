@@ -43,3 +43,22 @@ export const checkRectangleCollison = (circle, rectangle) => {
 const clamp = (value, min, max) => {
   return Math.max(min, Math.min(value, max));
 };
+
+export const checkRectangleCollisonForBullet = (bullet, rectangle) => {
+  const biggerValueX = Math.max(rectangle.startPos.x, rectangle.endPos.x);
+  const smallerValueX = Math.min(rectangle.startPos.x, rectangle.endPos.x);
+
+  const biggerValueY = Math.max(rectangle.startPos.y, rectangle.endPos.y);
+  const smallerValueY = Math.min(rectangle.startPos.y, rectangle.endPos.y);
+
+  if (
+    bullet.xPos + bullet.radius >= smallerValueX &&
+    bullet.xPos - bullet.radius <= biggerValueX &&
+    bullet.yPos + bullet.radius >= smallerValueY &&
+    bullet.yPos - bullet.radius <= biggerValueY &&
+    !rectangle.bulletFriendly
+  ) {
+    console.log("Destory");
+    bullet.destroy = true;
+  }
+};

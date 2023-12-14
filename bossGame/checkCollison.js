@@ -5,7 +5,7 @@ export const checkCollisions = (object, otherObject) => {
   if (
     object !== otherObject &&
     doCirclesOverlap(object, otherObject) &&
-    object.team !== otherObject.team
+    (object.team !== otherObject.team) & (object.type !== otherObject.type)
   ) {
     if (otherObject.damage !== undefined) {
       object.health -= otherObject.damage;

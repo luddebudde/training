@@ -7,6 +7,7 @@ import { shootEnemyBullet } from "../shootEnemyBullet.js";
 import { shoot } from "../shoot.js";
 import { blackholes, createBlackhole } from "../createBlackhole.js";
 import { createWalker } from "../createWalker.js";
+import { getRandomInRange } from "../getRandomInRange.js";
 
 export const enemyMaxHealth = 600;
 
@@ -31,11 +32,23 @@ export const thirdPhase = {
   hasTurned: false,
 };
 export const fourthPhase = {
-  cooldown: 10,
+  cooldown: 1,
+  // hasSpawnedHole: false,
+};
+export const fifthPhase = {
+  cooldown: 100,
   hasSpawnedHole: false,
+  bulletSpread: 0.3,
 };
 
 export let currentPhase = firstPhase;
+
+let oldPhaseMoves = 0;
+let randomNumber = 0;
+
+// Enemy stats
+let contactDamage = 30;
+let speed = 30;
 
 export let enemy = {
   radius: 100,
@@ -46,7 +59,7 @@ export let enemy = {
     y: 0,
   },
   // attackSpeed: 100,
-  damage: 30,
+  damage: contactDamage,
   health: enemyMaxHealth,
   mass: 1000,
   color: "red",
@@ -75,7 +88,7 @@ export let enemy = {
     // Charge
     if (phaseMoves % 2 && enemy.yPos === enemy.radius && !shouldStop) {
       enemy.yPos += 1;
-      enemy.vel.y = 30;
+      enemy.vel.y = speed;
 
       // Shoot bullets
       shootEnemyBullet(
@@ -83,7 +96,7 @@ export let enemy = {
         enemy.radius * 2.5,
         -5,
         0,
-        30,
+        300,
         70,
         "red"
       );
@@ -92,7 +105,7 @@ export let enemy = {
         enemy.radius * 2.5,
         5,
         0,
-        30,
+        300,
         70,
         "red"
       );
@@ -104,7 +117,7 @@ export let enemy = {
       !shouldStop
     ) {
       enemy.yPos -= 1;
-      enemy.vel.y = -30;
+      enemy.vel.y = -speed;
 
       // Shoot bullets
       shootEnemyBullet(
@@ -112,7 +125,7 @@ export let enemy = {
         world.height - enemy.radius * 2.5,
         -5,
         0,
-        30,
+        300,
         70,
         "red"
       );
@@ -121,7 +134,7 @@ export let enemy = {
         world.height - enemy.radius * 2.5,
         5,
         0,
-        30,
+        300,
         70,
         "red"
       );
@@ -161,26 +174,109 @@ export let enemy = {
   },
   phaseFourAttack: (phaseMoves) => {
     currentPhase = fourthPhase;
+    // enemy.damage = 0;
 
-    if (phaseMoves % 20 === 0) {
-      createWalker();
+    if (phaseMoves % 60 === 0) {
+      createWalker(enemy.xPos, enemy.yPos, 0, 10);
       console.log("createWalker");
     }
-    if (phaseMoves % 50 === 0 && !currentPhase.hasSpawnedHole) {
-      const blackholeRadius = Math.random() * 60 + 40;
-      createBlackhole(
-        Math.random() * world.width,
-        -blackholeRadius,
-        0,
-        2,
-        blackholeRadius,
-        blackholeRadius * 10,
-        blackholeRadius * 300
-      );
-      currentPhase.hasSpawnedHole = true;
-    } else if (phaseMoves % 50) {
-      currentPhase.hasSpawnedHole = false;
+    // if (phaseMoves % 50 === 0 && !currentPhase.hasSpawnedHole) {
+    //   const blackholeRadius = Math.random() * 60 + 40;
+    //   createBlackhole(
+    //     Math.random() * world.width,
+    //     -blackholeRadius,
+    //     0,
+    //     2,
+    //     blackholeRadius,
+    //     blackholeRadius * 10,
+    //     blackholeRadius * 300
+    //   );
+    //   currentPhase.hasSpawnedHole = true;
+    // } else if (phaseMoves % 50) {
+    //   currentPhase.hasSpawnedHole = false;
+    // }
+
+    if (enemy.xPos <= enemy.radius && enemy.yPos <= enemy.radius) {
+      enemy.vel.x = 0;
+      enemy.vel.y = -speed;
+    } else if (
+      enemy.xPos <= enemy.radius &&
+      enemy.yPos >= world.height - enemy.radius
+    ) {
+      enemy.vel.x = -speed;
+      enemy.vel.y = 0;
+    } else if (
+      enemy.xPos >= world.width - enemy.radius &&
+      enemy.yPos >= world.height - enemy.radius
+    ) {
+      enemy.vel.x = 0;
+      enemy.vel.y = speed;
+    } else if (
+      enemy.xPos >= world.width - enemy.radius &&
+      enemy.yPos <= enemy.radius
+    ) {
+      enemy.vel.x = speed;
+      enemy.vel.y = 0;
     }
+  },
+  phaseFiveAttack: (phaseMoves) => {
+    currentPhase = fifthPhase;
+    if (phaseMoves !== oldPhaseMoves) {
+      randomNumber = Math.random();
+    }
+
+    if (phaseMoves % 2 === 0) {
+      if (randomNumber * 2 > 0.5) {
+        console.log(randomNumber);
+        const direction = makeDirection(player, enemy);
+
+        const spreadX = getRandomInRange(
+          -fifthPhase.bulletSpread,
+          fifthPhase.bulletSpread
+        );
+        const spreadY = getRandomInRange(
+          -fifthPhase.bulletSpread,
+          fifthPhase.bulletSpread
+        );
+
+        const finalDirection = {
+          x: direction.x + spreadX,
+          y: direction.y + spreadY,
+        };
+
+        shootEnemyBullet(
+          enemy.xPos,
+          enemy.yPos,
+          finalDirection.x * 15,
+          finalDirection.y * 15,
+          2.5,
+          15,
+          "red"
+        );
+      }
+      // oldPlayerPos.x = player.xPos;
+      // oldPlayerPos.y = player.yPos;
+      preCharge();
+    } else {
+      charge();
+    }
+    oldPhaseMoves = phaseMoves;
+
+    // if (phaseMoves % 20 === 0 && !currentPhase.hasSpawnedHole) {
+    //   const blackholeRadius = Math.random() * 60 + 40;
+    //   createBlackhole(
+    //     Math.random() * world.width,
+    //     -blackholeRadius,
+    //     0,
+    //     2,
+    //     blackholeRadius,
+    //     blackholeRadius * 10,
+    //     blackholeRadius * 300
+    //   );
+    //   currentPhase.hasSpawnedHole = true;
+    // } else if (phaseMoves % 50) {
+    //   currentPhase.hasSpawnedHole = false;
+    // }
   },
 };
 
@@ -210,8 +306,8 @@ export const preCharge = () => {
 export const charge = () => {
   if (!hasDecidedDirection) {
     const direction = makeDirection(enemy, oldPlayerPos);
-    enemy.vel.x -= direction.x * 30;
-    enemy.vel.y -= direction.y * 30;
+    enemy.vel.x -= direction.x * speed;
+    enemy.vel.y -= direction.y * speed;
 
     hasDecidedDirection = true;
 

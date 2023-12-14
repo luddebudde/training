@@ -1,26 +1,20 @@
 import { player, units, worldObjects } from "./main.js";
 import { makeDirection } from "./makeDirection.js";
 
-export const createWalker = () => {
+export const createWalker = (xPos, yPos, velX, velY) => {
   const walker = {
-    xPos: 0,
-    yPos: 0,
+    xPos: xPos,
+    yPos: yPos,
     vel: {
-      x: 0,
-      y: 0,
+      x: velX,
+      y: velY,
     },
-    radius: 20,
-    damage: 3,
+    radius: Math.random() * 20 + 20,
+    damage: 10,
     health: 40,
     color: "red",
-    type: "enemy",
+    type: "walker",
     team: "enemy",
-
-    attack: () => {
-      const direction = makeDirection(walker, player);
-      walker.vel.x = direction.x * 10;
-      walker.vel.y = direction.y * 10;
-    },
   };
   units.push(walker);
   worldObjects.push(walker);
