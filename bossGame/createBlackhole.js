@@ -24,6 +24,7 @@ export const createBlackhole = (
     pullForce: pullForce,
     color: "black",
     type: "blackhole",
+    team: "enemy",
   };
   blackholes.push(blackhole);
   worldObjects.push(blackhole);

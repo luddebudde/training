@@ -3,11 +3,14 @@ import { worldObjects } from "./main.js";
 
 export const checkCollisions = (object, otherObject) => {
   if (
-    object !== otherObject &&
     doCirclesOverlap(object, otherObject) &&
     (object.team !== otherObject.team) & (object.type !== otherObject.type)
   ) {
-    if (otherObject.damage !== undefined) {
+    if (
+      otherObject.damage !== undefined &&
+      object.type !== "blackhole" &&
+      otherObject.type !== "blackhole"
+    ) {
       object.health -= otherObject.damage;
     } else {
       // console.log("hejsan");
@@ -18,6 +21,7 @@ export const checkCollisions = (object, otherObject) => {
     if (object.type === "bullet") {
       object.destroy = true;
     }
+
     // console.log(object.health);
   }
 };

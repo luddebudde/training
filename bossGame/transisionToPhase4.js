@@ -38,7 +38,7 @@ export const transitionToPhase4 = () => {
   // Bottom obstacles
   createObstacle(
     enemy.radius * 2,
-    enemy.radius * 2 - 0.5,
+    enemy.radius * 2 + 10,
     world.width - enemy.radius * 2,
 
     enemy.radius * 2,
@@ -48,7 +48,7 @@ export const transitionToPhase4 = () => {
 
   createObstacle(
     enemy.radius * 2,
-    world.height - enemy.radius * 2 + 0.5,
+    world.height - enemy.radius * 2 - 10,
     world.width - enemy.radius * 2,
 
     world.height - enemy.radius * 2,

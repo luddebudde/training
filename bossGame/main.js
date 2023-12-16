@@ -335,7 +335,10 @@ document.addEventListener("keydown", (event) => {
       shoot(player);
     }
   }
-  // if (event.code === "KeyX") {
-  //   createObstacle(0, 0, 400, 800, "black", true);
-  // }
+  if (event.code === "KeyX") {
+    player.health = 100;
+    worldObjects.push(player);
+    units.push(player);
+    // createObstacle(0, 0, 400, 800, "black", true);
+  }
 });

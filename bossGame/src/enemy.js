@@ -1,6 +1,6 @@
 import { makeDirection } from "../makeDirection.js";
 import { drawLine } from "../drawLine.js";
-import { phaseMoves, player } from "../main.js";
+import { bullets, obstacles, phaseMoves, player } from "../main.js";
 import { world } from "../world.js";
 import { createObstacle } from "../createObstacle.js";
 import { shootEnemyBullet } from "../shootEnemyBullet.js";
@@ -35,20 +35,29 @@ export const fourthPhase = {
   cooldown: 1,
   // hasSpawnedHole: false,
 };
-export const fifthPhase = {
+export let fifthPhase = {
   cooldown: 100,
   hasSpawnedHole: false,
   bulletSpread: 0.3,
+  hasSpawedObstacle: false,
+  bulletRainDelayRemaining: 200,
+  bulletRainDelay: 200,
 };
 
 export let currentPhase = firstPhase;
 
-let oldPhaseMoves = 0;
+let oldVel = 0;
 let randomNumber = 0;
 
 // Enemy stats
 let contactDamage = 30;
 let speed = 30;
+let hasDecreasedRainDelay = true;
+
+// Increase blackhole stats
+let pullRadiusIncreasement = 0;
+let pullForceIncreasement = 0;
+let hasIncreasedBlackhole = 0;
 
 export let enemy = {
   radius: 100,
@@ -71,7 +80,7 @@ export let enemy = {
   phaseOneAttack: () => {
     if (phaseMoves % 3) {
       if (!hasDecidedDirection) {
-        charge();
+        charge(speed);
         hasDecidedDirection = true;
       }
     } else {
@@ -221,15 +230,32 @@ export let enemy = {
   },
   phaseFiveAttack: (phaseMoves) => {
     currentPhase = fifthPhase;
-    if (phaseMoves !== oldPhaseMoves) {
-      randomNumber = Math.random();
-    }
+    // if (phaseMoves !== oldVel) {
+    //   randomNumber = Math.random();
+    // }
 
     if (phaseMoves % 2 === 0) {
-      if (randomNumber * 2 > 0.5) {
-        console.log(randomNumber);
-        const direction = makeDirection(player, enemy);
+      if (phaseMoves >= 10 && !hasIncreasedBlackhole) {
+        pullRadiusIncreasement += 200;
+        pullForceIncreasement += 500;
+        hasIncreasedBlackhole = true;
 
+        // obstacles.forEach((obstacle) => {
+        //   obstacle.endPos.x += 10;
+        //   obstacle.endPos.y += 10;
+        // });
+      }
+      // console.log(pullRadiusIncreasement, pullForceIncreasement);
+      // if (randomNumber * 2 > 0.5) {
+      // console.log(randomNumber);
+      const direction = makeDirection(player, enemy);
+
+      // if (oldVel.y !== enemy.vel.y) {
+      //   console.log(oldVel);
+      // }
+
+      if (phaseMoves >= 4) {
+        // console.log("hej");
         const spreadX = getRandomInRange(
           -fifthPhase.bulletSpread,
           fifthPhase.bulletSpread
@@ -243,7 +269,6 @@ export let enemy = {
           x: direction.x + spreadX,
           y: direction.y + spreadY,
         };
-
         shootEnemyBullet(
           enemy.xPos,
           enemy.yPos,
@@ -253,16 +278,63 @@ export let enemy = {
           15,
           "red"
         );
+
+        // bullets.forEach((bullet) => {
+        //   console.log(bullet);
+        // });
+        // console.log(bullets);
       }
+
+      // }
       // oldPlayerPos.x = player.xPos;
       // oldPlayerPos.y = player.yPos;
       preCharge();
     } else {
-      charge();
+      charge(speed * 0.9);
+      hasIncreasedBlackhole = false;
     }
-    oldPhaseMoves = phaseMoves;
 
-    // if (phaseMoves % 20 === 0 && !currentPhase.hasSpawnedHole) {
+    if (phaseMoves >= 0 && !currentPhase.hasSpawnedHole) {
+      createBlackhole(enemy.xPos, enemy.yPos, 0, 0, 0, 0);
+      currentPhase.hasSpawnedHole = true;
+    }
+    blackholes.forEach((blackhole) => {
+      blackhole.xPos = enemy.xPos;
+      blackhole.yPos = enemy.yPos;
+      blackhole.pullRadius = pullRadiusIncreasement;
+      blackhole.pullForce = pullForceIncreasement;
+    });
+
+    if (phaseMoves >= 4) {
+      if (fifthPhase.bulletRainDelayRemaining <= 0) {
+        const bulletRadius = 20;
+        shootEnemyBullet(
+          Math.random() * world.width,
+          -bulletRadius,
+          0,
+          15,
+          5,
+          bulletRadius,
+          "red"
+        );
+        fifthPhase.bulletRainDelayRemaining = fifthPhase.bulletRainDelay;
+        // hasDecreasedRainDelay = false;
+      } else if (phaseMoves % 4 == 0 && !hasDecreasedRainDelay) {
+        fifthPhase.bulletRainDelay -= 10;
+        hasDecreasedRainDelay = true;
+      } else if (phaseMoves % 4) {
+        hasDecreasedRainDelay = false;
+      }
+    }
+    fifthPhase.bulletRainDelayRemaining -= 1;
+
+    // if (phaseMoves >= 4 && !fifthPhase.hasSpawedObstacle) {
+    //   createObstacle(0, 0, 0, world.height, "black", false);
+    // }
+
+    oldVel = enemy.vel;
+
+    // if (phaseMoves % 3 === 0 && !currentPhase.hasSpawnedHole) {
     //   const blackholeRadius = Math.random() * 60 + 40;
     //   createBlackhole(
     //     Math.random() * world.width,
@@ -274,7 +346,7 @@ export let enemy = {
     //     blackholeRadius * 300
     //   );
     //   currentPhase.hasSpawnedHole = true;
-    // } else if (phaseMoves % 50) {
+    // } else if (phaseMoves % 3) {
     //   currentPhase.hasSpawnedHole = false;
     // }
   },
@@ -303,11 +375,11 @@ export const preCharge = () => {
   hasDecidedDirection = false;
 };
 
-export const charge = () => {
+export const charge = (chargeSpeed) => {
   if (!hasDecidedDirection) {
     const direction = makeDirection(enemy, oldPlayerPos);
-    enemy.vel.x -= direction.x * speed;
-    enemy.vel.y -= direction.y * speed;
+    enemy.vel.x -= direction.x * chargeSpeed;
+    enemy.vel.y -= direction.y * chargeSpeed;
 
     hasDecidedDirection = true;
 
