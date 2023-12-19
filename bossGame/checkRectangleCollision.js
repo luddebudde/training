@@ -58,7 +58,7 @@ export const checkRectangleCollisonForBullet = (bullet, rectangle) => {
     bullet.yPos - bullet.radius <= biggerValueY &&
     !rectangle.bulletFriendly
   ) {
-    console.log("Destory");
+    // console.log("Destory");
     bullet.destroy = true;
   }
 };

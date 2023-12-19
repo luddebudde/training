@@ -116,13 +116,13 @@ setInterval(() => {
       unit.xPos = world.width - unit.radius;
       unit.vel.x = -unit.vel.x;
     }
-    if (unit.xPos - unit.radius <= 0) {
+    if (unit.xPos - unit.radius <= world.startX) {
       // unit.xPos = world.width - unit.radius;
-      unit.xPos = unit.radius;
+      unit.xPos = world.startX + unit.radius;
       unit.vel.x = -unit.vel.x;
     }
-    if (unit.yPos - unit.radius <= 0) {
-      unit.yPos = unit.radius;
+    if (unit.yPos - unit.radius <= world.startY) {
+      unit.yPos = world.startY + unit.radius;
       unit.vel.y = -unit.vel.y;
     }
     if (unit.yPos + unit.radius >= world.height) {
@@ -203,7 +203,7 @@ setInterval(() => {
     enemy.phaseOneAttack(phaseMoves);
 
     // Fas 2
-  } else if (enemy.health >= (enemyMaxHealth / 5) * 3) {
+  } else if (enemy.health >= (enemyMaxHealth / 5) * 2.5) {
     if (!hasTransitionedToPhase2) {
       transitionToPhase2(currentPhase);
       phaseMoves = 0;
@@ -224,7 +224,7 @@ setInterval(() => {
     hasTransitionedToPhase3 = true;
   }
   // if (enemy.health > enemyMaxHealth / 5)
-  else if (enemy.health > (enemyMaxHealth / 5) * 1) {
+  else if (enemy.health > (enemyMaxHealth / 5) * 1.5) {
     if (!hasTransitionedToPhase4) {
       worldObjects = transitionToPhase4(currentPhase);
       phaseMoves = 0;
@@ -232,7 +232,7 @@ setInterval(() => {
     }
     enemy.phaseFourAttack(phaseMoves);
     hasTransitionedToPhase4 = true;
-  } else {
+  } else if (enemy.health > enemyMaxHealth / 5) {
     if (!hasTransitionedToPhase5) {
       transitionToPhase5(currentPhase);
       phaseMoves = 0;
@@ -307,6 +307,16 @@ setInterval(() => {
       }
     });
   });
+
+  ctx.beginPath();
+  ctx.rect(0, 0, world.startX, world.height);
+  ctx.fillStyle = "black";
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.rect(world.width, 0, canvas.width, world.height);
+  ctx.fillStyle = "black";
+  ctx.fill();
 }, delay);
 
 window.addEventListener("mousemove", (event) => {
@@ -336,9 +346,13 @@ document.addEventListener("keydown", (event) => {
     }
   }
   if (event.code === "KeyX") {
-    player.health = 100;
-    worldObjects.push(player);
-    units.push(player);
+    if (player.health <= 0) {
+      player.health = 100;
+      worldObjects.push(player);
+      units.push(player);
+    } else {
+      player.health = 100;
+    }
     // createObstacle(0, 0, 400, 800, "black", true);
   }
 });

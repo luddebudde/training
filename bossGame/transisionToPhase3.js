@@ -32,6 +32,9 @@ export let playerCopy2 = {
 
 export const transitionToPhase3 = (currentPhase) => {
   obstacles.length = 0;
+  units.lenght = 2;
+  bullets.lenght = 0;
+  worldObjects.length = 2;
 
   enemy.xPos = world.width / 2;
   enemy.yPos = enemy.radius;

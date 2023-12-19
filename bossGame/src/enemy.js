@@ -9,7 +9,7 @@ import { blackholes, createBlackhole } from "../createBlackhole.js";
 import { createWalker } from "../createWalker.js";
 import { getRandomInRange } from "../getRandomInRange.js";
 
-export const enemyMaxHealth = 600;
+export const enemyMaxHealth = 6000;
 
 let enemyLoadPhase = true;
 
@@ -37,11 +37,16 @@ export const fourthPhase = {
 };
 export let fifthPhase = {
   cooldown: 100,
-  hasSpawnedHole: false,
+
   bulletSpread: 0.3,
+
+  bulletRainDelayRemaining: 100,
+  bulletRainDelay: 100,
+  pushFrequency: 4,
+
+  hasPushed: false,
   hasSpawedObstacle: false,
-  bulletRainDelayRemaining: 200,
-  bulletRainDelay: 200,
+  hasSpawnedHole: false,
 };
 
 export let currentPhase = firstPhase;
@@ -51,7 +56,7 @@ let randomNumber = 0;
 
 // Enemy stats
 let contactDamage = 30;
-let speed = 30;
+let speed = 25;
 let hasDecreasedRainDelay = true;
 
 // Increase blackhole stats
@@ -233,6 +238,9 @@ export let enemy = {
     // if (phaseMoves !== oldVel) {
     //   randomNumber = Math.random();
     // }
+    // if (enemy.radius <= 125) {
+    //   enemy.radius += 1;
+    // }
 
     if (phaseMoves % 2 === 0) {
       if (phaseMoves >= 10 && !hasIncreasedBlackhole) {
@@ -294,18 +302,18 @@ export let enemy = {
       hasIncreasedBlackhole = false;
     }
 
-    if (phaseMoves >= 0 && !currentPhase.hasSpawnedHole) {
-      createBlackhole(enemy.xPos, enemy.yPos, 0, 0, 0, 0);
-      currentPhase.hasSpawnedHole = true;
-    }
-    blackholes.forEach((blackhole) => {
-      blackhole.xPos = enemy.xPos;
-      blackhole.yPos = enemy.yPos;
-      blackhole.pullRadius = pullRadiusIncreasement;
-      blackhole.pullForce = pullForceIncreasement;
-    });
+    // if (phaseMoves >= 0 && !currentPhase.hasSpawnedHole) {
+    //   createBlackhole(enemy.xPos, enemy.yPos, 0, 0, 0, 0);
+    //   currentPhase.hasSpawnedHole = true;
+    // }
+    // blackholes.forEach((blackhole) => {
+    //   blackhole.xPos = enemy.xPos;
+    //   blackhole.yPos = enemy.yPos;
+    //   blackhole.pullRadius = pullRadiusIncreasement;
+    //   blackhole.pullForce = pullForceIncreasement;
+    // });
 
-    if (phaseMoves >= 4) {
+    if (phaseMoves >= 6) {
       if (fifthPhase.bulletRainDelayRemaining <= 0) {
         const bulletRadius = 20;
         shootEnemyBullet(
@@ -319,20 +327,81 @@ export let enemy = {
         );
         fifthPhase.bulletRainDelayRemaining = fifthPhase.bulletRainDelay;
         // hasDecreasedRainDelay = false;
-      } else if (phaseMoves % 4 == 0 && !hasDecreasedRainDelay) {
-        fifthPhase.bulletRainDelay -= 10;
+      } else if (
+        phaseMoves % 2 == 0 &&
+        !hasDecreasedRainDelay &&
+        fifthPhase.bulletRainDelay >= 10
+      ) {
+        fifthPhase.bulletRainDelay = fifthPhase.bulletRainDelay * 0.8;
         hasDecreasedRainDelay = true;
-      } else if (phaseMoves % 4) {
+      } else if (phaseMoves % 2) {
         hasDecreasedRainDelay = false;
       }
     }
     fifthPhase.bulletRainDelayRemaining -= 1;
 
+    // console.log(fifthPhase.bulletRainDelay);
+
+    // if (phaseMoves >= 10) {
+    //   if (
+    //     phaseMoves % fifthPhase.pushFrequency === 0 &&
+    //     !fifthPhase.hasPushed
+    //   ) {
+    //     const direction = makeDirection(player, enemy);
+    //     player.vel.x -= direction.x * 5;
+    //     player.vel.y -= direction.y * 5;
+    //     fifthPhase.hasPushed = true;
+    //   } else if (phaseMoves % fifthPhase.pushFrequency) {
+    //     fifthPhase.hasPushed = false;
+    //   }
+    //   if (phaseMoves <= 15) {
+    //     fifthPhase.pushFrequency = 4;
+    //   } else if (phaseMoves <= 25) {
+    //     fifthPhase.pushFrequency = 3;
+    //   } else if (phaseMoves >= 40) {
+    //     fifthPhase.pushFrequency = 2;
+    //   }
+    //   // fifthPhase.hasPushed = false;
+    // }
+    // console.log(fifthPhase.hasPushed);
+
+    if (phaseMoves >= 20) {
+      if (world.width >= 1000) {
+        // createObstacle(
+        // world.width, 0, canvas.width, world.height, "black", false;
+        // );
+
+        // createObstacle(0, 0, world.startX, world.height, "black", false);
+        // createObstacle(
+        //   world.startX - 1,
+        //   world.height,
+        //   0,
+        //   world.height,
+        //   "black",
+        //   false
+        // );
+        world.width -= 1;
+        world.startX += 1;
+      }
+    }
+
+    if (
+      phaseMoves >= 60 &&
+      enemy.yPos <= enemy.radius * 1 &&
+      !fifthPhase.hasRainedBulletRow
+    ) {
+      // fifthPhase.hasRainedBulletRow = true
+      // Gör detta 5 gånger
+      for (let i = 0; i < 20; i++) {
+        // Kalla på funktionen och skicka med nödvändiga argument
+        shootEnemyBullet(world.startX + i * 60, 0, 0, 20, 5, 30, "red");
+      }
+    }
     // if (phaseMoves >= 4 && !fifthPhase.hasSpawedObstacle) {
     //   createObstacle(0, 0, 0, world.height, "black", false);
     // }
 
-    oldVel = enemy.vel;
+    // oldVel = enemy.vel;
 
     // if (phaseMoves % 3 === 0 && !currentPhase.hasSpawnedHole) {
     //   const blackholeRadius = Math.random() * 60 + 40;

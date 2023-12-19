@@ -1,5 +1,5 @@
 import { createObstacle } from "./createObstacle.js";
-import { bullets, player, worldObjects } from "./main.js";
+import { bullets, obstacles, player, units, worldObjects } from "./main.js";
 import { enemy } from "./src/enemy.js";
 import { world } from "./world.js";
 
@@ -13,6 +13,11 @@ export const transitionToPhase4 = () => {
   player.yPos = world.height - enemy.radius * 2.5;
   player.vel.x = 0;
   player.vel.y = 0;
+
+  obstacles.length = 0;
+  units.lenght = 2;
+  bullets.lenght = 0;
+  worldObjects.length = 2;
 
   // Side obstacles
   createObstacle(

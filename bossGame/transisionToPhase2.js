@@ -1,5 +1,13 @@
 import { createObstacle } from "./createObstacle.js";
-import { attackCounter, phaseMoves, player } from "./main.js";
+import {
+  attackCounter,
+  bullets,
+  obstacles,
+  phaseMoves,
+  player,
+  units,
+  worldObjects,
+} from "./main.js";
 import { currentPhase, enemy, secondPhase } from "./src/enemy.js";
 import { world } from "./world.js";
 
@@ -13,6 +21,11 @@ export const transitionToPhase2 = (currentPhase) => {
   player.yPos = world.height - enemy.radius * 2.5;
   player.vel.x = 0;
   player.vel.y = 0;
+
+  obstacles.length = 0;
+  units.lenght = 2;
+  bullets.lenght = 0;
+  worldObjects.length = 2;
 
   createObstacle(
     0,
