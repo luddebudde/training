@@ -9,7 +9,7 @@ import { blackholes, createBlackhole } from "../createBlackhole.js";
 import { createWalker } from "../createWalker.js";
 import { getRandomInRange } from "../getRandomInRange.js";
 
-export const enemyMaxHealth = 6000;
+export const enemyMaxHealth = 3000;
 
 let enemyLoadPhase = true;
 
@@ -25,7 +25,7 @@ export const firstPhase = {
 };
 
 export const secondPhase = {
-  cooldown: 100,
+  cooldown: 150,
 };
 export const thirdPhase = {
   cooldown: 6,
@@ -47,6 +47,8 @@ export let fifthPhase = {
   hasPushed: false,
   hasSpawedObstacle: false,
   hasSpawnedHole: false,
+
+  hasRegainedHealth: false,
 };
 
 export let currentPhase = firstPhase;
@@ -235,6 +237,11 @@ export let enemy = {
   },
   phaseFiveAttack: (phaseMoves) => {
     currentPhase = fifthPhase;
+    if (enemy.health <= enemyMaxHealth / 20 && !fifthPhase.hasRegainedHealth) {
+      enemy.health += 1000;
+      enemy.enemyMaxHealth += 1000;
+      fifthPhase.hasRegainedHealth = true;
+    }
     // if (phaseMoves !== oldVel) {
     //   randomNumber = Math.random();
     // }
@@ -299,7 +306,7 @@ export let enemy = {
       preCharge();
     } else {
       charge(speed * 0.9);
-      hasIncreasedBlackhole = false;
+      // hasIncreasedBlackhole = false;
     }
 
     // if (phaseMoves >= 0 && !currentPhase.hasSpawnedHole) {
@@ -365,7 +372,7 @@ export let enemy = {
     // }
     // console.log(fifthPhase.hasPushed);
 
-    if (phaseMoves >= 20) {
+    if (phaseMoves >= 16) {
       if (world.width >= 1000) {
         // createObstacle(
         // world.width, 0, canvas.width, world.height, "black", false;
@@ -386,15 +393,15 @@ export let enemy = {
     }
 
     if (
-      phaseMoves >= 60 &&
+      phaseMoves >= 50 &&
       enemy.yPos <= enemy.radius * 1 &&
       !fifthPhase.hasRainedBulletRow
     ) {
       // fifthPhase.hasRainedBulletRow = true
       // Gör detta 5 gånger
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 25; i++) {
         // Kalla på funktionen och skicka med nödvändiga argument
-        shootEnemyBullet(world.startX + i * 60, 0, 0, 20, 5, 30, "red");
+        shootEnemyBullet(world.startX + i * 60, 0, 0, 20, 20, 30, "red");
       }
     }
     // if (phaseMoves >= 4 && !fifthPhase.hasSpawedObstacle) {

@@ -8,6 +8,7 @@ import {
   currentPhase,
   enemy,
   enemyMaxHealth,
+  fifthPhase,
   firstPhase,
   preCharge,
 } from "./src/enemy.js";
@@ -208,13 +209,13 @@ setInterval(() => {
       transitionToPhase2(currentPhase);
       phaseMoves = 0;
       attackCounter = 0;
-      console.log("hej");
+      // console.log("hej");
     }
     enemy.phaseTwoAttack(phaseMoves);
     hasTransitionedToPhase2 = true;
 
     // Fas 3
-  } else if (enemy.health > (enemyMaxHealth / 5) * 2) {
+  } else if (enemy.health > (enemyMaxHealth / 5) * 1.5) {
     if (!hasTransitionedToPhase3) {
       transitionToPhase3(currentPhase);
       phaseMoves = 0;
@@ -224,7 +225,10 @@ setInterval(() => {
     hasTransitionedToPhase3 = true;
   }
   // if (enemy.health > enemyMaxHealth / 5)
-  else if (enemy.health > (enemyMaxHealth / 5) * 1.5) {
+  else if (
+    enemy.health > (enemyMaxHealth / 5) * 0.8 &&
+    !fifthPhase.hasRegainedHealth
+  ) {
     if (!hasTransitionedToPhase4) {
       worldObjects = transitionToPhase4(currentPhase);
       phaseMoves = 0;
@@ -232,7 +236,9 @@ setInterval(() => {
     }
     enemy.phaseFourAttack(phaseMoves);
     hasTransitionedToPhase4 = true;
-  } else if (enemy.health > enemyMaxHealth / 5) {
+  }
+  // if (enemy.health > enemyMaxHealth / 5)
+  else {
     if (!hasTransitionedToPhase5) {
       transitionToPhase5(currentPhase);
       phaseMoves = 0;
@@ -353,6 +359,7 @@ document.addEventListener("keydown", (event) => {
     } else {
       player.health = 100;
     }
+
     // createObstacle(0, 0, 400, 800, "black", true);
   }
 });
