@@ -20,23 +20,28 @@ let goingDown = true;
 let shouldStop = false;
 
 export const firstPhase = {
-  cooldown: 200,
+  // cooldown: 200,
+  cooldown: 400,
   shouldPreCharge: true,
 };
 
 export const secondPhase = {
-  cooldown: 75,
+  // cooldown: 75,
+  cooldown: 150,
 };
 export const thirdPhase = {
-  cooldown: 6,
+  // cooldown: 6,
+  cooldown: 12,
   hasTurned: false,
 };
 export const fourthPhase = {
-  cooldown: 1,
+  // cooldown: 1,
+  cooldown: 2,
   // hasSpawnedHole: false,
 };
 export let fifthPhase = {
-  cooldown: 100,
+  // cooldown: 100,
+  cooldown: 200,
 
   bulletSpread: 0.3,
 
