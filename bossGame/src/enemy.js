@@ -20,12 +20,12 @@ let goingDown = true;
 let shouldStop = false;
 
 export const firstPhase = {
-  cooldown: 100,
+  cooldown: 200,
   shouldPreCharge: true,
 };
 
 export const secondPhase = {
-  cooldown: 150,
+  cooldown: 75,
 };
 export const thirdPhase = {
   cooldown: 6,

@@ -1,4 +1,5 @@
 import { player } from "./main.js";
+import { enemy } from "./src/enemy.js";
 
 let xAdder = 0;
 let yAdder = 0;
@@ -40,15 +41,17 @@ export const checkRectangleCollison = (circle, rectangle) => {
     circle.vel.y = -circle.vel.y;
     circle.vel.x = -circle.vel.x;
 
-    if (rectangle.vel !== undefined) {
-      xAdder = rectangle.vel.x;
-      yAdder = rectangle.vel.y;
+    if (circle.team !== "enemy") {
+      if (rectangle.vel !== undefined) {
+        xAdder = rectangle.vel.x;
+        yAdder = rectangle.vel.y;
+      }
+      circle.xPos += circle.vel.x + xAdder;
+      circle.yPos += circle.vel.y + yAdder;
     }
-    circle.xPos += circle.vel.x + xAdder;
-    circle.yPos += circle.vel.y + yAdder;
+    xAdder = 0;
+    yAdder = 0;
   }
-  xAdder = 0;
-  yAdder = 0;
 };
 
 // Find the closest point on the rectangle to the center of the circle

@@ -332,6 +332,8 @@ setInterval(() => {
     }
   });
 
+  // console.log(world);
+
   ctx.beginPath();
   ctx.rect(0, 0, world.startX, world.height);
   ctx.fillStyle = "black";
