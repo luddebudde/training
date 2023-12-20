@@ -2,7 +2,7 @@ import { makeDirection } from "../makeDirection.js";
 import { drawLine } from "../drawLine.js";
 import { bullets, obstacles, phaseMoves, player } from "../main.js";
 import { world } from "../world.js";
-import { createObstacle } from "../createObstacle.js";
+import { createMovingObstacle, createObstacle } from "../createObstacle.js";
 import { shootEnemyBullet } from "../shootEnemyBullet.js";
 import { shoot } from "../shoot.js";
 import { blackholes, createBlackhole } from "../createBlackhole.js";
@@ -20,7 +20,7 @@ let goingDown = true;
 let shouldStop = false;
 
 export const firstPhase = {
-  cooldown: 200,
+  cooldown: 100,
   shouldPreCharge: true,
 };
 
@@ -51,6 +51,18 @@ export let fifthPhase = {
   hasRegainedHealth: false,
 };
 
+export let firstPhaseHard = {
+  hasSpawnedObstacle: false,
+};
+
+const obstacleSpawnPos = [];
+
+let i = 0;
+i < 5;
+i++;
+{
+  obstacleSpawnPos.push((world.width / 6) * i);
+}
 export let currentPhase = firstPhase;
 
 let oldVel = 0;
@@ -67,6 +79,7 @@ let pullForceIncreasement = 0;
 let hasIncreasedBlackhole = 0;
 
 export let enemy = {
+  hardMode: false,
   radius: 100,
   xPos: world.width / 2,
   yPos: world.height / 2,
@@ -425,6 +438,53 @@ export let enemy = {
     // } else if (phaseMoves % 3) {
     //   currentPhase.hasSpawnedHole = false;
     // }
+  },
+  phaseOneAttackHardMode: (phaseMoves) => {
+    if (phaseMoves % 3) {
+      if (!hasDecidedDirection) {
+        charge(speed);
+        hasDecidedDirection = true;
+      }
+    } else {
+      preCharge();
+    }
+    if (phaseMoves % 2 && !firstPhaseHard.hasSpawnedObstacle) {
+      // const amountOfObstacles = Math.round(Math.random() * 5);
+      // for (let i = 0; i < 6; i++) {
+      //   const randomNumber = Math.floor(Math.random() * 6) * (world.width / 6);
+
+      // createMovingObstacle(
+      //   randomNumber,
+      //   -300,
+      //   randomNumber + world.width / 6,
+      //   0,
+      //   "black",
+      //   false,
+      //   0,
+      //   10
+      // );
+      // }
+
+      const randomNumber = Math.random() * (world.width - 200);
+      // (world.width / 6)
+      //  * Math.round(Math.random() * 5);
+
+      createMovingObstacle(0, -300, randomNumber, 0, "black", false, 0, 5);
+      createMovingObstacle(
+        world.width,
+        -300,
+        randomNumber + 200,
+        0,
+        "black",
+        false,
+        0,
+        5
+      );
+
+      firstPhaseHard.hasSpawnedObstacle = true;
+    } else if (phaseMoves % 2 === 0) {
+      firstPhaseHard.hasSpawnedObstacle = false;
+    }
   },
 };
 

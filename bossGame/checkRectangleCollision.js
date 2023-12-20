@@ -1,5 +1,8 @@
 import { player } from "./main.js";
 
+let xAdder = 0;
+let yAdder = 0;
+
 export const checkRectangleCollison = (circle, rectangle) => {
   //   let closestX = clamp(circle.xPos, rectangle.startPos.x, rectangle.endPos.x);
   //   let closestY = clamp(circle.yPos, rectangle.startPos.y, rectangle.endPos.y);
@@ -36,7 +39,16 @@ export const checkRectangleCollison = (circle, rectangle) => {
     // console.log(smallerValueY);
     circle.vel.y = -circle.vel.y;
     circle.vel.x = -circle.vel.x;
+
+    if (rectangle.vel !== undefined) {
+      xAdder = rectangle.vel.x;
+      yAdder = rectangle.vel.y;
+    }
+    circle.xPos += circle.vel.x + xAdder;
+    circle.yPos += circle.vel.y + yAdder;
   }
+  xAdder = 0;
+  yAdder = 0;
 };
 
 // Find the closest point on the rectangle to the center of the circle

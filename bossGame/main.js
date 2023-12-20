@@ -199,54 +199,62 @@ setInterval(() => {
     // console.log(currentPhase);
   }
 
-  if (enemy.health > (enemyMaxHealth / 5) * 4) {
-    // Fas 1
-    enemy.phaseOneAttack(phaseMoves);
+  if (!enemy.hardMode) {
+    // Normal svårhetsgrad
+    if (enemy.health > (enemyMaxHealth / 5) * 4) {
+      // Fas 1
+      enemy.phaseOneAttack(phaseMoves);
 
-    // Fas 2
-  } else if (enemy.health >= (enemyMaxHealth / 5) * 2.5) {
-    if (!hasTransitionedToPhase2) {
-      transitionToPhase2(currentPhase);
-      phaseMoves = 0;
-      attackCounter = 0;
-      // console.log("hej");
-    }
-    enemy.phaseTwoAttack(phaseMoves);
-    hasTransitionedToPhase2 = true;
+      // Fas 2
+    } else if (enemy.health >= (enemyMaxHealth / 5) * 2.5) {
+      if (!hasTransitionedToPhase2) {
+        transitionToPhase2(currentPhase);
+        phaseMoves = 0;
+        attackCounter = 0;
+        // console.log("hej");
+      }
+      enemy.phaseTwoAttack(phaseMoves);
+      hasTransitionedToPhase2 = true;
 
-    // Fas 3
-  } else if (enemy.health > (enemyMaxHealth / 5) * 1.5) {
-    if (!hasTransitionedToPhase3) {
-      transitionToPhase3(currentPhase);
-      phaseMoves = 0;
-      attackCounter = 0;
+      // Fas 3
+    } else if (enemy.health > (enemyMaxHealth / 5) * 1.5) {
+      if (!hasTransitionedToPhase3) {
+        transitionToPhase3(currentPhase);
+        phaseMoves = 0;
+        attackCounter = 0;
+      }
+      enemy.phaseThreeAttack(phaseMoves, attackCounter);
+      hasTransitionedToPhase3 = true;
     }
-    enemy.phaseThreeAttack(phaseMoves, attackCounter);
-    hasTransitionedToPhase3 = true;
-  }
-  // if (enemy.health > enemyMaxHealth / 5)
-  else if (
-    enemy.health > (enemyMaxHealth / 5) * 0.8 &&
-    !fifthPhase.hasRegainedHealth
-  ) {
-    if (!hasTransitionedToPhase4) {
-      worldObjects = transitionToPhase4(currentPhase);
-      phaseMoves = 0;
-      attackCounter = 0;
+    // if (enemy.health > enemyMaxHealth / 5)
+    else if (
+      enemy.health > (enemyMaxHealth / 5) * 0.8 &&
+      !fifthPhase.hasRegainedHealth
+    ) {
+      if (!hasTransitionedToPhase4) {
+        worldObjects = transitionToPhase4(currentPhase);
+        phaseMoves = 0;
+        attackCounter = 0;
+      }
+      enemy.phaseFourAttack(phaseMoves);
+      hasTransitionedToPhase4 = true;
     }
-    enemy.phaseFourAttack(phaseMoves);
-    hasTransitionedToPhase4 = true;
-  }
-  // if (enemy.health > enemyMaxHealth / 5)
-  else {
-    if (!hasTransitionedToPhase5) {
-      transitionToPhase5(currentPhase);
-      phaseMoves = 0;
-      attackCounter = 0;
-    }
-    enemy.phaseFiveAttack(phaseMoves);
+    // if (enemy.health > enemyMaxHealth / 5)
+    else {
+      if (!hasTransitionedToPhase5) {
+        transitionToPhase5(currentPhase);
+        phaseMoves = 0;
+        attackCounter = 0;
+      }
+      enemy.phaseFiveAttack(phaseMoves);
 
-    hasTransitionedToPhase5 = true;
+      hasTransitionedToPhase5 = true;
+    }
+  } else {
+    // Svår svårhetsgrad
+    if (enemy.health > (enemyMaxHealth / 5) * 4) {
+      enemy.phaseOneAttackHardMode(phaseMoves);
+    }
   }
   // console.log(currentPhase);
 
@@ -256,6 +264,8 @@ setInterval(() => {
       // console.log(object.destroy);
     });
   });
+
+  // console.log(enemy.health, enemyMaxHealth);
 
   // console.log(units);
 
@@ -312,6 +322,14 @@ setInterval(() => {
         checkRectangleCollison(unit, obstacle);
       }
     });
+    if (obstacle.vel !== undefined) {
+      obstacle.startPos.x += obstacle.vel.x;
+      obstacle.startPos.y += obstacle.vel.y;
+
+      obstacle.endPos.x += obstacle.vel.x;
+      obstacle.endPos.y += obstacle.vel.y;
+      // console.log(obstacle);
+    }
   });
 
   ctx.beginPath();
@@ -361,5 +379,12 @@ document.addEventListener("keydown", (event) => {
     }
 
     // createObstacle(0, 0, 400, 800, "black", true);
+  }
+  if (event.code === "KeyP") {
+    if (enemy.health === enemyMaxHealth) {
+      enemy.hardMode = true;
+      enemy.color = "purple";
+      // enemy.radius += 100;
+    }
   }
 });
