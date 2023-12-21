@@ -1,5 +1,8 @@
 import { makeDirection } from "./makeDirection.js";
 import { bullets, mousePos, worldObjects } from "./main.js";
+import { world } from "./world.js";
+
+const bulletSpeed = 40;
 
 export const shoot = (shooter) => {
   const direction = makeDirection(shooter, mousePos);
@@ -7,10 +10,10 @@ export const shoot = (shooter) => {
   const playerBullet = {
     xPos: shooter.xPos,
     yPos: shooter.yPos,
-    radius: 15,
+    radius: world.width / 80,
     vel: {
-      x: -direction.x * 40,
-      y: -direction.y * 40,
+      x: -direction.x * (world.width / (1200 / bulletSpeed)),
+      y: -direction.y * (world.width / (1200 / bulletSpeed)),
     },
     acc: 20,
     color: "blue",
@@ -20,6 +23,8 @@ export const shoot = (shooter) => {
     team: "player",
     destroy: false,
   };
+
+  // console.log(world.width / (world.width / bulletSpeed));
 
   bullets.push(playerBullet);
   worldObjects.push(playerBullet);

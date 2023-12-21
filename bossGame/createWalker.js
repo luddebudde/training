@@ -1,5 +1,6 @@
 import { player, units, worldObjects } from "./main.js";
 import { makeDirection } from "./makeDirection.js";
+import { world } from "./world.js";
 
 export const createWalker = (xPos, yPos, velX, velY) => {
   const walker = {
@@ -9,7 +10,7 @@ export const createWalker = (xPos, yPos, velX, velY) => {
       x: velX,
       y: velY,
     },
-    radius: Math.random() * 20 + 20,
+    radius: world.width / ((world.width / Math.random()) * 20) + 20,
     damage: 10,
     health: 40,
     color: "red",

@@ -29,8 +29,8 @@ export const transitionToPhase2 = (currentPhase) => {
 
   createObstacle(
     0,
-    enemy.radius * 2 + 100,
-    500,
+    enemy.radius * 2 + enemy.radius,
+    world.width / 2 - enemy.radius,
 
     world.height - enemy.radius * 3,
     "red",
@@ -39,14 +39,21 @@ export const transitionToPhase2 = (currentPhase) => {
 
   createObstacle(
     world.width / 2 + enemy.radius,
-    enemy.radius * 2 + 100,
+    enemy.radius * 2 + enemy.radius,
     world.width,
     world.height - enemy.radius * 3,
     "red",
     false
   );
 
-  createObstacle(0, 0, 500, enemy.radius * 2, "red", false);
+  createObstacle(
+    0,
+    0,
+    world.width / 2 - enemy.radius,
+    enemy.radius * 2,
+    "red",
+    false
+  );
 
   createObstacle(
     world.width / 2 + enemy.radius,
@@ -75,6 +82,6 @@ export const transitionToPhase2 = (currentPhase) => {
     "red",
     false
   );
-  //
+
   // return (currentPhase = secondPhase);
 };

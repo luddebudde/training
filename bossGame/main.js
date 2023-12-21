@@ -59,7 +59,7 @@ export const obstacles = [];
 export let player = {
   xPos: world.width * 0.5,
   yPos: world.height * 0.9,
-  radius: 20,
+  radius: world.width / 60,
   acc: {
     x: 2,
     y: 2,

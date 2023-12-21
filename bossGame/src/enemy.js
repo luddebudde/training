@@ -20,28 +20,28 @@ let goingDown = true;
 let shouldStop = false;
 
 export const firstPhase = {
-  // cooldown: 200,
-  cooldown: 400,
+  cooldown: 200,
+  // cooldown: 400,
   shouldPreCharge: true,
 };
 
 export const secondPhase = {
-  // cooldown: 75,
-  cooldown: 150,
+  cooldown: 90,
+  // cooldown: 150,
 };
 export const thirdPhase = {
-  // cooldown: 6,
-  cooldown: 12,
+  cooldown: 6,
+  // cooldown: 12,
   hasTurned: false,
 };
 export const fourthPhase = {
-  // cooldown: 1,
-  cooldown: 2,
+  cooldown: 1,
+  // cooldown: 2,
   // hasSpawnedHole: false,
 };
 export let fifthPhase = {
-  // cooldown: 100,
-  cooldown: 200,
+  cooldown: 100,
+  // cooldown: 200,
 
   bulletSpread: 0.3,
 
@@ -75,7 +75,8 @@ let randomNumber = 0;
 
 // Enemy stats
 let contactDamage = 30;
-let speed = 25;
+let speed = world.width / 48;
+// let speed = 25;
 let hasDecreasedRainDelay = true;
 
 // Increase blackhole stats
@@ -85,7 +86,7 @@ let hasIncreasedBlackhole = 0;
 
 export let enemy = {
   hardMode: false,
-  radius: 100,
+  radius: world.width / 12,
   xPos: world.width / 2,
   yPos: world.height / 2,
   vel: {
