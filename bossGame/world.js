@@ -8,4 +8,9 @@ export const world = {
 
   startX: 0,
   startY: 0,
+
+  original: {
+    width: canvas.width,
+    height: canvas.height,
+  },
 };

@@ -1,12 +1,12 @@
 import { createObstacle } from "./createObstacle.js";
 import { bullets, obstacles, player, units, worldObjects } from "./main.js";
-import { enemy } from "./src/enemy.js";
+import { enemy, enemySpeed } from "./src/enemy.js";
 import { world } from "./world.js";
 
 export const transitionToPhase4 = () => {
   enemy.xPos = world.width / 2;
   enemy.yPos = enemy.radius;
-  enemy.vel.x = -20;
+  enemy.vel.x = -enemySpeed;
   enemy.vel.y = 0;
 
   player.xPos = world.width / 2;

@@ -75,7 +75,7 @@ let randomNumber = 0;
 
 // Enemy stats
 let contactDamage = 30;
-let speed = world.width / 48;
+export let enemySpeed = world.width / 48;
 // let speed = 25;
 let hasDecreasedRainDelay = true;
 
@@ -106,7 +106,7 @@ export let enemy = {
   phaseOneAttack: () => {
     if (phaseMoves % 3) {
       if (!hasDecidedDirection) {
-        charge(speed);
+        charge(enemySpeed);
         hasDecidedDirection = true;
       }
     } else {
@@ -123,7 +123,7 @@ export let enemy = {
     // Charge
     if (phaseMoves % 2 && enemy.yPos === enemy.radius && !shouldStop) {
       enemy.yPos += 1;
-      enemy.vel.y = speed;
+      enemy.vel.y = enemySpeed;
 
       // Shoot bullets
       shootEnemyBullet(
@@ -152,7 +152,7 @@ export let enemy = {
       !shouldStop
     ) {
       enemy.yPos -= 1;
-      enemy.vel.y = -speed;
+      enemy.vel.y = -enemySpeed;
 
       // Shoot bullets
       shootEnemyBullet(
@@ -233,24 +233,24 @@ export let enemy = {
 
     if (enemy.xPos <= enemy.radius && enemy.yPos <= enemy.radius) {
       enemy.vel.x = 0;
-      enemy.vel.y = -speed;
+      enemy.vel.y = -enemySpeed;
     } else if (
       enemy.xPos <= enemy.radius &&
       enemy.yPos >= world.height - enemy.radius
     ) {
-      enemy.vel.x = -speed;
+      enemy.vel.x = -enemySpeed;
       enemy.vel.y = 0;
     } else if (
       enemy.xPos >= world.width - enemy.radius &&
       enemy.yPos >= world.height - enemy.radius
     ) {
       enemy.vel.x = 0;
-      enemy.vel.y = speed;
+      enemy.vel.y = enemySpeed;
     } else if (
       enemy.xPos >= world.width - enemy.radius &&
       enemy.yPos <= enemy.radius
     ) {
-      enemy.vel.x = speed;
+      enemy.vel.x = enemySpeed;
       enemy.vel.y = 0;
     }
   },
@@ -324,7 +324,7 @@ export let enemy = {
       // oldPlayerPos.y = player.yPos;
       preCharge();
     } else {
-      charge(speed * 0.9);
+      charge(enemySpeed * 0.9);
       // hasIncreasedBlackhole = false;
     }
 
@@ -391,8 +391,9 @@ export let enemy = {
     // }
     // console.log(fifthPhase.hasPushed);
 
-    if (phaseMoves >= 16) {
-      if (world.width >= 1000) {
+    if (phaseMoves >= 4) {
+      const stopAt = world.original.width - world.original.width / 6;
+      if (world.width >= stopAt) {
         // createObstacle(
         // world.width, 0, canvas.width, world.height, "black", false;
         // );
@@ -406,8 +407,9 @@ export let enemy = {
         //   "black",
         //   false
         // );
-        world.width -= 1;
-        world.startX += 1;
+        world.width -= stopAt / 1000;
+        world.startX += stopAt / 1000;
+        console.log("shrink");
       }
     }
 
@@ -448,7 +450,7 @@ export let enemy = {
   phaseOneAttackHardMode: (phaseMoves) => {
     if (phaseMoves % 3) {
       if (!hasDecidedDirection) {
-        charge(speed);
+        charge(enemySpeed);
         hasDecidedDirection = true;
       }
     } else {

@@ -28,7 +28,7 @@ export const shootEnemyBullet = (
     team: "enemy",
     destroy: false,
   };
-  console.log(enemyBullet.vel);
+  // console.log(enemyBullet.vel);
 
   bullets.push(enemyBullet);
   worldObjects.push(enemyBullet);

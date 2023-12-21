@@ -94,6 +94,8 @@ ctx.arc(player.xPos, player.yPos, player.radius, 0, 2 * Math.PI);
 ctx.fillStyle = player.color;
 ctx.fill();
 
+const update = () => {};
+
 setInterval(() => {
   ctx.beginPath();
   ctx.globalAlpha = 1;

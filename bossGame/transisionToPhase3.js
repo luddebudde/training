@@ -1,5 +1,5 @@
 import { bullets, obstacles, player, units, worldObjects } from "./main.js";
-import { enemy, thirdPhase } from "./src/enemy.js";
+import { enemy, enemySpeed, thirdPhase } from "./src/enemy.js";
 import { world } from "./world.js";
 
 export let playerCopy1 = {
@@ -38,7 +38,7 @@ export const transitionToPhase3 = (currentPhase) => {
 
   enemy.xPos = world.width / 2;
   enemy.yPos = enemy.radius;
-  enemy.vel.x = -20;
+  enemy.vel.x = -enemySpeed;
   enemy.vel.y = 0;
 
   player.xPos = world.width / 2;
