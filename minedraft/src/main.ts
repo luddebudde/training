@@ -13,10 +13,11 @@ import {
   Vector,
 } from 'matter-js'
 import { keyDownTracker } from './keyDownTracker.ts'
-import { applyForce, applyImpulse, applyTorque } from './physics'
-import { angle, degrees, left, projectOnVector, right, up, zeros } from './math'
+import { applyAngularImpulse, applyForce, applyImpulse } from './physics'
+import { left, projectOnVector, right, up, zeros } from './math'
 import { throttle } from 'throttle-debounce'
 import { moveCameraTo } from './moveCameraTo.ts'
+import { Sprite, sprites } from './sprites.ts'
 
 const engine = Engine.create()
 
@@ -46,6 +47,7 @@ const render1 = Render.create({
     height: canvas1Height,
     showAngleIndicator: true,
     wireframes: false,
+    showDebug: true,
   },
 })
 const render2 = Render.create({
@@ -59,28 +61,57 @@ const render2 = Render.create({
   },
 })
 
-const createPlayer = () => {
+const matterJsSprite = (radius: number, sprite: Sprite) => {
+  return {
+    texture: sprite.texture,
+    xScale: (2 * radius) / sprite.width,
+    yScale: (2 * radius) / sprite.height,
+  }
+}
+
+const createPlayer = (headSprite: Sprite) => {
   const headRadius = 40
   const pickaxeRadius = 20
   const group = Body.nextGroup(true)
   const pickaxe = Bodies.circle(100, 100, pickaxeRadius, {
     mass: 0.3,
     collisionFilter: { group: group },
+    // friction: 1,
+    restitution: 0,
   })
   const head = Bodies.circle(100, 20, headRadius, {
     // collisionFilter: { group: group },
     mass: 5,
     collisionFilter: { group: group },
+    friction: 0,
+    render: {
+      sprite: matterJsSprite(headRadius, headSprite),
+    },
   })
 
-  const rope = Composites.stack(100, 50, 8, 1, 10, 10, (x, y) =>
-    Bodies.rectangle(x, y, 10, 5, { collisionFilter: { group: group } }),
+  const ropeMass = 0.5
+  const ropeJoints = 8
+
+  const rope = Composites.stack(
+    100,
+    50,
+    ropeJoints,
+    1,
+    0,
+    0,
+    (x: number, y: number) =>
+      Bodies.rectangle(x, y, 10, 5, {
+        mass: ropeMass / ropeJoints,
+        collisionFilter: { group: group },
+      }),
   )
 
+  const chainStiffness = 0.99
+
   Composites.chain(rope, 0.5, 0, -0.5, 0, {
-    stiffness: 0.8,
-    length: 2,
+    stiffness: chainStiffness,
     render: { type: 'line' },
+    length: 0,
   })
   const armLenght = headRadius * 0.5
   Composite.add(
@@ -90,7 +121,7 @@ const createPlayer = () => {
       bodyB: rope.bodies[0],
       pointB: { x: 0, y: 0 },
       pointA: { x: headRadius + armLenght, y: 0 },
-      stiffness: 0.3,
+      stiffness: chainStiffness,
       length: 0,
     }),
   )
@@ -101,7 +132,7 @@ const createPlayer = () => {
       bodyB: rope.bodies[rope.bodies.length - 1],
       pointB: { x: 0, y: 0 },
       pointA: { x: 0, y: 0 },
-      stiffness: 0.3,
+      stiffness: chainStiffness,
       length: 0,
     }),
   )
@@ -111,11 +142,12 @@ const createPlayer = () => {
     constraints: [],
     composites: [rope],
   })
-  const walkForce = 0.02
+  const walkForce = 0.002
   const jumpImpulse = 4
-  const swingTorque = 5
+  const swingAngularImpulse = 100
   return {
     tag: 'player',
+    health: 100,
     body,
     head,
     pickaxe,
@@ -137,7 +169,7 @@ const createPlayer = () => {
     swingLeft: throttle(
       1000,
       () => {
-        applyTorque(head, swingTorque)
+        applyAngularImpulse(head, swingAngularImpulse, dt)
       },
       {
         noTrailing: true,
@@ -147,7 +179,7 @@ const createPlayer = () => {
     swingRight: throttle(
       1000,
       () => {
-        applyTorque(head, -swingTorque)
+        applyAngularImpulse(head, -swingAngularImpulse, dt)
       },
       {
         noTrailing: true,
@@ -156,8 +188,8 @@ const createPlayer = () => {
   }
 }
 
-const player1 = createPlayer()
-const player2 = createPlayer()
+const player1 = createPlayer(sprites.playerBlue)
+const player2 = createPlayer(sprites.playerRed)
 
 const boxSize = 40
 
@@ -168,7 +200,7 @@ const boxSize = 40
 
 const boxes = zeros(100)
   .map(() => {
-    return zeros(100)
+    return zeros(5)
   })
   .map((arr, rowCount) => {
     return arr.map((__, columnCount) => {
@@ -184,7 +216,7 @@ const boxes = zeros(100)
   .map((coord) => {
     return {
       tag: 'box',
-      body: Bodies.rectangle(coord.x, coord.y + 200, boxSize, boxSize, {
+      body: Bodies.rectangle(coord.x - 1000, coord.y + 200, boxSize, boxSize, {
         isStatic: true,
         render: {
           fillStyle: '#3b3333',
@@ -320,7 +352,7 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
 
-const dt = 1000 / 60
+const dt = 1000 / 30
 
 const run = () => {
   window.requestAnimationFrame(run)

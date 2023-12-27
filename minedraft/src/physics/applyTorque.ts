@@ -13,3 +13,7 @@ export const applyTorque = (body: Body, torque: number) => {
     Vector.mult(right, torque),
   )
 }
+
+export const applyAngularImpulse = (body: Body, torque: number, dt: number) => {
+  applyTorque(body, torque / dt)
+}
