@@ -18,6 +18,8 @@ import { left, projectOnVector, right, up, zeros } from './math'
 import { throttle } from 'throttle-debounce'
 import { moveCameraTo } from './moveCameraTo.ts'
 import { Sprite, sprites } from './sprites.ts'
+import { drawHealthBar } from './drawHealthBar.ts'
+import { canvasCoordinate } from './canvasCoordinate.ts'
 
 const engine = Engine.create()
 
@@ -78,6 +80,8 @@ const createPlayer = (headSprite: Sprite) => {
     collisionFilter: { group: group },
     // friction: 1,
     restitution: 0,
+    isSensor: true,
+    // type:
   })
   const head = Bodies.circle(100, 20, headRadius, {
     // collisionFilter: { group: group },
@@ -90,7 +94,9 @@ const createPlayer = (headSprite: Sprite) => {
   })
 
   const ropeMass = 0.5
-  const ropeJoints = 8
+  const ropeJoints = 2
+
+  const jointLenght = 50
 
   const rope = Composites.stack(
     100,
@@ -100,7 +106,7 @@ const createPlayer = (headSprite: Sprite) => {
     0,
     0,
     (x: number, y: number) =>
-      Bodies.rectangle(x, y, 10, 5, {
+      Bodies.rectangle(x, y, jointLenght, 5, {
         mass: ropeMass / ropeJoints,
         collisionFilter: { group: group },
       }),
@@ -119,7 +125,7 @@ const createPlayer = (headSprite: Sprite) => {
     Constraint.create({
       bodyA: head,
       bodyB: rope.bodies[0],
-      pointB: { x: 0, y: 0 },
+      pointB: { x: -jointLenght / 2, y: 0 },
       pointA: { x: headRadius + armLenght, y: 0 },
       stiffness: chainStiffness,
       length: 0,
@@ -130,7 +136,7 @@ const createPlayer = (headSprite: Sprite) => {
     Constraint.create({
       bodyA: pickaxe,
       bodyB: rope.bodies[rope.bodies.length - 1],
-      pointB: { x: 0, y: 0 },
+      pointB: { x: jointLenght / 2, y: 0 },
       pointA: { x: 0, y: 0 },
       stiffness: chainStiffness,
       length: 0,
@@ -145,9 +151,11 @@ const createPlayer = (headSprite: Sprite) => {
   const walkForce = 0.002
   const jumpImpulse = 4
   const swingAngularImpulse = 100
+  const maxHealth = 100
   return {
     tag: 'player',
-    health: 100,
+    maxHealth: maxHealth,
+    health: maxHealth,
     body,
     head,
     pickaxe,
@@ -191,7 +199,14 @@ const createPlayer = (headSprite: Sprite) => {
 const player1 = createPlayer(sprites.playerBlue)
 const player2 = createPlayer(sprites.playerRed)
 
-const boxSize = 40
+const players = [player1, player2]
+
+const canvases = [
+  [canvas1, player1],
+  [canvas2, player2],
+]
+
+const boxSize = 20
 
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
@@ -216,6 +231,7 @@ const boxes = zeros(100)
   .map((coord) => {
     return {
       tag: 'box',
+      health: 0,
       body: Bodies.rectangle(coord.x - 1000, coord.y + 200, boxSize, boxSize, {
         isStatic: true,
         render: {
@@ -235,7 +251,7 @@ const boxes = zeros(100)
 //   return { body, tag: 'box' }
 // })
 
-const gameObjects = [player1, player2, ...boxes]
+const gameObjects = [...players, ...boxes]
 
 // create two boxes and a ground
 // const ground = Bodies.rectangle(400, 610, 1810, 60, { isStatic: true })
@@ -293,23 +309,31 @@ const update = () => {
   } else if (isKeyDown('ArrowDown') && isKeyDown('ArrowRight')) {
     player2.swingRight()
   }
-
-  moveCameraTo(player1.head.position, render1, canvas1Width, canvas1Height)
-  moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
 }
 
-const testCollision = (box, pickaxe: Body, collision: Collision) => {
+const testCollision = (
+  targetObj: GameObject,
+  pickaxe: Body,
+  collision: Collision,
+) => {
   // const energy =
+
   const energy = pickaxe.mass * pickaxe.speed * pickaxe.speed
   const contactNormal = Vector.normalise(
-    Vector.sub(pickaxe.position, box.body.position),
+    Vector.sub(collision.bodyA.position, collision.bodyB.position),
   )
   const relSpeed = projectOnVector(pickaxe.velocity, contactNormal)
   const relEnergy = pickaxe.mass * Vector.dot(relSpeed, relSpeed)
 
-  if (relEnergy >= 15) {
+  if (relEnergy >= 50) {
+    // console.log(relEnergy)
     // npulse(pickaxe, Vector.mult(left, 100), dt)
-    Composite.remove(engine.world, box.body)
+
+    targetObj.health -= relEnergy / 10
+
+    if (targetObj.health <= 0) {
+      Composite.remove(engine.world, targetObj.body)
+    }
   }
   // if (objA.speed !== undefined) {
   //   const energy = objA.body.mass * objA.speed() * objA.speed()
@@ -319,23 +343,33 @@ const testCollision = (box, pickaxe: Body, collision: Collision) => {
 }
 
 const handleCollisionStart = (event: IEventCollision<Engine>) => {
-  // TODO loop through pairs
-  const { bodyA, bodyB } = event.pairs[0]
+  event.pairs.forEach((pair) => {
+    const { bodyA, bodyB } = pair
 
-  const objA = gameObjects.find((obj) => obj.body === bodyA)
-  const objB = gameObjects.find((obj) => obj.body === bodyB)
+    const objA =
+      gameObjects.find((obj) => obj.body === bodyA) ??
+      players.find((obj) => obj.head === bodyA)
+    const objB =
+      gameObjects.find((obj) => obj.body === bodyB) ??
+      players.find((obj) => obj.head === bodyB)
 
-  const pickaxes = [player1.pickaxe, player2.pickaxe]
+    const pickaxes = [player1.pickaxe, player2.pickaxe]
 
-  pickaxes.forEach((pickaxe) => {
-    if (objA !== undefined && objA.tag === 'box' && bodyB === pickaxe) {
-      testCollision(objA, pickaxe, event.pairs[0].collision)
-    }
+    pickaxes.forEach((pickaxe) => {
+      if (objA !== undefined && 'health' in objA && bodyB === pickaxe) {
+        testCollision(objA, pickaxe, pair.collision)
+      } else if (objB !== undefined && 'health' in objB && bodyA === pickaxe) {
+        testCollision(objB, pickaxe, pair.collision)
+      }
+    })
 
-    if (objB !== undefined && objB.tag === 'box' && bodyA === pickaxe) {
-      testCollision(objB, pickaxe, event.pairs[0].collision)
-    }
+    // if (bodyA === player1.head && bodyB === player2.pickaxe) {
+    //   testCollision(player1.body, player2.pickaxe, pair.collision)
+    // } else if (bodyB === player1.head && bodyA === player2.pickaxe) {
+    //   testCollision(player1.body, player2.pickaxe, pair.collision)
+    // }
   })
+  // TODO loop through pairs
 
   // if (objA && objB) {
   //   testCollision(objA, objB)
@@ -354,9 +388,35 @@ Events.on(engine, 'collisionStart', handleCollisionStart)
 
 const dt = 1000 / 30
 
+const draw = () => {
+  canvases.forEach(([canvas, canvasPlayer]) => {
+    const ctx = canvas.getContext('2d')
+    players.forEach((player) => {
+      const canvasPos = canvasCoordinate(
+        player.head.position,
+        canvasPlayer.head.position,
+        canvas,
+      )
+
+      drawHealthBar(
+        ctx,
+        canvasPos.x - player.head.circleRadius,
+        canvasPos.y + player.head.circleRadius * 1.5,
+        player.head.circleRadius * 2,
+        15,
+        player.health,
+        player.maxHealth,
+      )
+    })
+  })
+  moveCameraTo(player1.head.position, render1, canvas1Width, canvas1Height)
+  moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
+}
+
 const run = () => {
   window.requestAnimationFrame(run)
   update()
+  draw()
   Engine.update(engine, dt)
 }
 
