@@ -9,7 +9,7 @@ import { blackholes, createBlackhole } from "../createBlackhole.js";
 import { createWalker } from "../createWalker.js";
 import { getRandomInRange } from "../getRandomInRange.js";
 
-export const enemyMaxHealth = 3000;
+export let enemyMaxHealth = 2000;
 
 let enemyLoadPhase = true;
 
@@ -26,8 +26,8 @@ export const firstPhase = {
 };
 
 export const secondPhase = {
-  cooldown: 90,
-  // cooldown: 150,
+  // cooldown: 90,
+  cooldown: 100,
 };
 export const thirdPhase = {
   cooldown: 6,
@@ -258,7 +258,7 @@ export let enemy = {
     currentPhase = fifthPhase;
     if (enemy.health <= enemyMaxHealth / 20 && !fifthPhase.hasRegainedHealth) {
       enemy.health += 1000;
-      enemy.enemyMaxHealth += 1000;
+      enemyMaxHealth += 1000;
       fifthPhase.hasRegainedHealth = true;
     }
     // if (phaseMoves !== oldVel) {
@@ -391,7 +391,7 @@ export let enemy = {
     // }
     // console.log(fifthPhase.hasPushed);
 
-    if (phaseMoves >= 4) {
+    if (phaseMoves >= 16) {
       const stopAt = world.original.width - world.original.width / 6;
       if (world.width >= stopAt) {
         // createObstacle(
@@ -447,8 +447,8 @@ export let enemy = {
     //   currentPhase.hasSpawnedHole = false;
     // }
   },
-  phaseOneAttackHardMode: (phaseMoves) => {
-    if (phaseMoves % 3) {
+  phaseOneAttackHardMode: (phaseMoves, attackCounter) => {
+    if (phaseMoves % 2) {
       if (!hasDecidedDirection) {
         charge(enemySpeed);
         hasDecidedDirection = true;
@@ -456,7 +456,7 @@ export let enemy = {
     } else {
       preCharge();
     }
-    if (phaseMoves % 2 && !firstPhaseHard.hasSpawnedObstacle) {
+    if (attackCounter % 150 === 0) {
       // const amountOfObstacles = Math.round(Math.random() * 5);
       // for (let i = 0; i < 6; i++) {
       //   const randomNumber = Math.floor(Math.random() * 6) * (world.width / 6);
@@ -484,7 +484,7 @@ export let enemy = {
         randomNumber + 200,
         0,
         "black",
-        false,
+        true,
         0,
         5
       );
