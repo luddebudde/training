@@ -1,0 +1,22 @@
+{
+  "name": "minedraft",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "matter-js": "0.19.0",
+    "throttle-debounce": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/throttle-debounce": "^5.0.0",
+    "@types/matter-js": "0.19.5",
+    "prettier": "3.1.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}

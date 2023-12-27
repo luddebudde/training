@@ -25,8 +25,13 @@ import {
   upDir,
 } from './bodyVectorMath.ts'
 import { cube } from './scalarMath.ts'
+import { Game } from './Game.ts'
 
-export const createDrone = (position: Vec3, mesh: Group): GameObject => {
+export const createDrone = (
+  position: Vec3,
+  mesh: Group,
+  game: Game,
+): GameObject => {
   const scale = 0.5
   const shapeBody = new Box(new Vec3(0.3, 0.5, 1.5).scale(scale))
   const shapeWings = new Box(new Vec3(2.4, 0.3, 0.9).scale(scale))
@@ -81,13 +86,14 @@ export const createDrone = (position: Vec3, mesh: Group): GameObject => {
   const group = new Group()
   group.position.set(0 * scale, -0.5 * scale, 0 * scale)
   group.scale.multiplyScalar(scale)
-  group.add(mesh)
+  group.add(mesh.clone())
   meshGroup.add(group)
 
   return {
     body,
     gravitational: true,
-    mesh: meshGroup,
+    // mesh: meshGroup,
+    instancedMesh: 'spaceship',
     // debugMesh: debugMeshGroup,
     // arrowHelper,
     indices: {
