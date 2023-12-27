@@ -16,10 +16,12 @@ import {
   Color,
   DirectionalLight,
   Group,
+  Mesh,
   MeshBasicMaterial,
   MeshPhongMaterial,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
+  Object3D,
   OrthographicCamera,
   PerspectiveCamera,
   Scene,
@@ -57,6 +59,7 @@ import { zeros } from './zeros.ts'
 import Stats from 'stats.js'
 import { Player } from './Player.ts'
 import { GameQueries } from './gameQueries.ts'
+import { Game } from './Game.ts'
 
 const createTrajectoryLine = () => {
   const lineGeometry = new THREE.BufferGeometry()
@@ -69,6 +72,19 @@ const createTrajectoryLine = () => {
 const spaceshipMesh = await modelLoader()
   .load('3d-models/low_poly_space_ship.glb')
   .then((gltf) => gltf.scene)
+  .then((group) => {
+    // group.traverse((obj) => {
+    //   obj.receiveShadow = true
+    //   obj.castShadow = true
+    //   if ('material' in obj && obj.material instanceof MeshBasicMaterial) {
+    //     obj.material.reflectivity = 0
+    //   }
+    // })
+    const mesh = group.getObjectByName('ship_1') as Mesh
+    mesh.geometry.rotateX(-Math.PI / 2)
+    mesh.castShadow = true
+    return mesh
+  })
 const asteriodGltf = await modelLoader().load(
   '3d-models/stylized_lowpoly_rock.glb',
 )
@@ -118,8 +134,7 @@ const helperArrow = new ArrowHelper()
 helperArrow.setLength(10)
 let camera1: PerspectiveCamera
 let camera2: PerspectiveCamera
-let scene
-
+let scene: Scene
 let shape,
   timeStep = 1 / 60,
   geometry,
@@ -139,7 +154,7 @@ const createWorld = (): World => {
   return world
 }
 
-const initThree = () => {
+const initThree = (): Game => {
   scene = new THREE.Scene()
 
   camera1 = new PerspectiveCamera(
@@ -176,6 +191,29 @@ const initThree = () => {
 
   scene.add(line)
 
+  const spaceShip = spaceshipMesh
+  const spaceShipInstancedMesh = new THREE.InstancedMesh(
+    spaceShip.geometry.clone(),
+    spaceShip.material,
+    120,
+  )
+  // spaceShipInstancedMesh.rotateZ(Math.PI)
+  // spaceShipInstancedMesh.instanceMatrix
+
+  const dummy = new Object3D()
+  dummy.rotateX(Math.PI)
+  dummy.updateMatrix()
+
+  // spaceShipInstancedMesh.applyMatrix4(dummy.matrix)
+  spaceShipInstancedMesh.instanceMatrix.applyMatrix4(dummy.matrix)
+  const instancedMeshes = {
+    spaceship: spaceShipInstancedMesh,
+  }
+  Object.values(instancedMeshes).forEach((it) => {
+    it.instanceMatrix.setUsage(THREE.DynamicDrawUsage) // will be updated every frame
+    scene.add(it)
+  })
+
   renderer1 = new WebGLRenderer({ antialias: true })
   renderer1.shadowMap.enabled = true
   renderer1.autoClear = false
@@ -192,6 +230,7 @@ const initThree = () => {
   scene.add(skyScene)
   // new OrbitControls(camera, renderer.domElement)
 
+  // Stats
   const stats = document.createElement('div')
   stats.style.position = 'fixed'
   stats.style.left = '0px'
@@ -202,8 +241,14 @@ const initThree = () => {
   stats0.dom.style.position = 'relative'
   stats2.dom.style.position = 'relative'
   document.body.appendChild(stats)
+
+  // Split screen
   document.body.appendChild(renderer1.domElement)
   document.body.appendChild(renderer2.domElement)
+
+  return {
+    instancedMeshes,
+  }
 }
 
 const stats0 = new Stats()
@@ -216,14 +261,34 @@ const loop = (then: number) => (now: number) => {
   stats0.begin()
   stats2.begin()
 
-  updatePhysics(timeSinceLastCalled)
-  render()
+  updatePhysics(timeSinceLastCalled, game)
+  render(game)
   stats0.end()
   stats2.end()
   requestAnimationFrame(loop(now))
 }
 
-const render = () => {
+const render = (game: Game) => {
+  // Update world
+  const a = {
+    spaceship: 0,
+  }
+  const dummy = new Object3D()
+  gameObjectIndex.all.forEach((it) => {
+    const key = it.instancedMesh
+    if (key) {
+      dummy.position.copy(it.body.position)
+      dummy.quaternion.copy(it.body.quaternion)
+      dummy.scale.setScalar(0.5)
+      dummy.updateMatrix()
+      game.instancedMeshes[key].setMatrixAt(a[key], dummy.matrix)
+      a[key]++
+    }
+  })
+  Object.values(game.instancedMeshes).forEach((it) => {
+    it.instanceMatrix.needsUpdate = true
+  })
+
   waterNormalMap.offset.copy(
     waterNormalMap.offset.add(new Vector2(0.0, 0.0001)),
   )
@@ -256,7 +321,7 @@ const cannonBallMass = 0.1
 //   },
 // )
 
-const updatePhysics = (timeSinceLastCalled: number) => {
+const updatePhysics = (timeSinceLastCalled: number, game: Game) => {
   const jumpStrength = 1
 
   // Player 1
@@ -302,14 +367,7 @@ const updatePhysics = (timeSinceLastCalled: number) => {
   // Step the physics world
   world.step(timeStep, timeSinceLastCalled, 5)
 
-  // const [axis, angle] = player.body.quaternion.toAxisAngle() as [Vec3, number]
-  // player.body.quaternion.toEuler(dir)
-
-  // helperArrow.position.copy(player.body.position)
-  // helperArrow.quaternion.copy(player.body.quaternion)
-
   // Follow camera
-  // const cameraPos = player.body.vectorToWorldFrame()
   const players = [player1, player2]
 
   players.forEach((player) => {
@@ -368,12 +426,6 @@ const updatePhysics = (timeSinceLastCalled: number) => {
   // line.geometry.setFromPoints(trajectory)
 
   gameObjectIndex.all.forEach((obj) => {
-    // Hover above xy
-    // obj.body.applyLocalForce(
-    //   new Vec3(0, -forceFieldStrength * obj.body.position.y, 0),
-    //   origo,
-    // )
-
     // Surface spring
     if (obj.gravitational) {
       const sphereNorm = obj.body.position.vsub(origo)
@@ -404,8 +456,8 @@ const updatePhysics = (timeSinceLastCalled: number) => {
     // new Quaternion().setFromVectors(obj.body.quaternion, new Vec3(0, 1, 0))
 
     // Copy coordinates from Cannon.js to Three.js
-    obj.mesh.position.copy(obj.body.position)
-    obj.mesh.quaternion.copy(obj.body.quaternion)
+    obj.mesh?.position?.copy?.(obj.body.position)
+    obj.mesh?.quaternion?.copy?.(obj.body.quaternion)
     obj.debugMesh?.position?.copy?.(obj.body.position)
     obj.debugMesh?.quaternion?.copy?.(obj.body.quaternion)
     obj.arrowHelper?.position?.copy?.(obj.body.position)
@@ -591,13 +643,13 @@ const createPlayer = (position: Vec3, camera: OrthographicCamera): Player => {
   meshGroup.add(bodyMesh, wingMesh)
 
   const mesh = spaceshipMesh.clone()
-  mesh.traverse((obj) => {
-    obj.receiveShadow = true
-    obj.castShadow = true
-    if ('material' in obj && obj.material instanceof MeshBasicMaterial) {
-      obj.material.reflectivity = 0
-    }
-  })
+  // mesh.traverse((obj) => {
+  //   obj.receiveShadow = true
+  //   obj.castShadow = true
+  //   if ('material' in obj && obj.material instanceof MeshBasicMaterial) {
+  //     obj.material.reflectivity = 0
+  //   }
+  // })
 
   const engineBackwardStrength = 25
   const engineForwardStrength = 50
@@ -647,7 +699,7 @@ const createPlanet = (): GameObject => {
     linearDamping: 0,
     angularDamping: 0,
     position: origo,
-    angularVelocity: up.scale(0.01),
+    angularVelocity: up.scale(0.001),
     collisionFilterMask: 0,
   })
   body.addShape(shape)
@@ -766,7 +818,7 @@ const gameObjectIndex: GameObjectIndex = {
   players: [],
   enemies: [],
 }
-initThree()
+const game = initThree()
 const playerSpawnPosition = randomPointOnSphere(
   origo,
   planetRadius + atmosphereHeight,
@@ -777,15 +829,13 @@ const player1 = createPlayer(playerSpawnPosition, camera1)
 const player2 = createPlayer(playerSpawnPosition, camera2)
 addGameObject(player1)
 addGameObject(player2)
-// for (let i = 0; i < 100; i++) {
-//   addGameObject(createAsteroid())
-// }
-zeros(100).forEach(() =>
+zeros(100).forEach(() => addGameObject(createAsteroid()))
+zeros(10).forEach(() =>
   addGameObject(
     createDrone(
-      // randomPointOnSphere(origo, planetRadius + atmosphereHeight),
-      playerSpawnPosition,
+      randomPointOnSphere(origo, planetRadius + atmosphereHeight),
       spaceshipMesh,
+      game,
     ),
   ),
 )
