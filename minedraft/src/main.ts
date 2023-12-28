@@ -94,9 +94,9 @@ const createPlayer = (headSprite: Sprite) => {
   })
 
   const ropeMass = 0.5
-  const ropeJoints = 2
+  const ropeJoints = 10
 
-  const jointLenght = 50
+  const jointLenght = 10
 
   const rope = Composites.stack(
     100,
@@ -112,12 +112,17 @@ const createPlayer = (headSprite: Sprite) => {
       }),
   )
 
+  // TODO create mixin
   const chainStiffness = 0.99
+  const chainDamping = 0.9
 
   Composites.chain(rope, 0.5, 0, -0.5, 0, {
-    stiffness: chainStiffness,
     render: { type: 'line' },
     length: 0,
+    angularStiffness: 0.2,
+    angularDamping: 0.2,
+    stiffness: chainStiffness,
+    damping: chainDamping,
   })
   const armLenght = headRadius * 0.5
   Composite.add(
@@ -127,8 +132,9 @@ const createPlayer = (headSprite: Sprite) => {
       bodyB: rope.bodies[0],
       pointB: { x: -jointLenght / 2, y: 0 },
       pointA: { x: headRadius + armLenght, y: 0 },
-      stiffness: chainStiffness,
       length: 0,
+      stiffness: chainStiffness,
+      damping: chainDamping,
     }),
   )
   Composite.add(
@@ -138,8 +144,9 @@ const createPlayer = (headSprite: Sprite) => {
       bodyB: rope.bodies[rope.bodies.length - 1],
       pointB: { x: jointLenght / 2, y: 0 },
       pointA: { x: 0, y: 0 },
-      stiffness: chainStiffness,
       length: 0,
+      stiffness: chainStiffness,
+      damping: chainDamping,
     }),
   )
 
@@ -386,7 +393,8 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
 
-const dt = 1000 / 30
+// TODO get rid of
+const dt = 1000 / 120
 
 const draw = () => {
   canvases.forEach(([canvas, canvasPlayer]) => {
