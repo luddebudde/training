@@ -21,7 +21,11 @@ import { Sprite, sprites } from './sprites.ts'
 import { drawHealthBar } from './drawHealthBar.ts'
 import { canvasCoordinate } from './canvasCoordinate.ts'
 
-const engine = Engine.create()
+const engine = Engine.create({
+  gravity: {
+    scale: 0.002,
+  },
+})
 
 const canvas1 = document.createElement('canvas')
 const canvas2 = document.createElement('canvas')
@@ -76,7 +80,7 @@ const createPlayer = (headSprite: Sprite) => {
   const pickaxeRadius = 20
   const group = Body.nextGroup(true)
   const pickaxe = Bodies.circle(100, 100, pickaxeRadius, {
-    mass: 0.3,
+    mass: 0.1,
     collisionFilter: { group: group },
     // friction: 1,
     restitution: 0,
@@ -87,16 +91,16 @@ const createPlayer = (headSprite: Sprite) => {
     // collisionFilter: { group: group },
     mass: 5,
     collisionFilter: { group: group },
-    friction: 0,
+    friction: -0,
     render: {
       sprite: matterJsSprite(headRadius, headSprite),
     },
   })
 
-  const ropeMass = 0.5
+  const ropeMass = 0.1
   const ropeJoints = 10
 
-  const jointLenght = 10
+  const jointLenght = 5
 
   const rope = Composites.stack(
     100,
@@ -112,17 +116,17 @@ const createPlayer = (headSprite: Sprite) => {
       }),
   )
 
-  // TODO create mixin
-  const chainStiffness = 0.99
-  const chainDamping = 0.9
+  const jointOptions = {
+    stiffness: 0.9,
+    damping: 0.9,
+    angularStiffness: 0.2,
+    angularDamping: 0.2,
+  }
 
   Composites.chain(rope, 0.5, 0, -0.5, 0, {
     render: { type: 'line' },
     length: 0,
-    angularStiffness: 0.2,
-    angularDamping: 0.2,
-    stiffness: chainStiffness,
-    damping: chainDamping,
+    ...jointOptions,
   })
   const armLenght = headRadius * 0.5
   Composite.add(
@@ -133,8 +137,7 @@ const createPlayer = (headSprite: Sprite) => {
       pointB: { x: -jointLenght / 2, y: 0 },
       pointA: { x: headRadius + armLenght, y: 0 },
       length: 0,
-      stiffness: chainStiffness,
-      damping: chainDamping,
+      ...jointOptions,
     }),
   )
   Composite.add(
@@ -145,8 +148,7 @@ const createPlayer = (headSprite: Sprite) => {
       pointB: { x: jointLenght / 2, y: 0 },
       pointA: { x: 0, y: 0 },
       length: 0,
-      stiffness: chainStiffness,
-      damping: chainDamping,
+      ...jointOptions,
     }),
   )
 
@@ -156,7 +158,7 @@ const createPlayer = (headSprite: Sprite) => {
     composites: [rope],
   })
   const walkForce = 0.002
-  const jumpImpulse = 4
+  const jumpImpulse = 6
   const swingAngularImpulse = 100
   const maxHealth = 100
   return {
@@ -174,7 +176,7 @@ const createPlayer = (headSprite: Sprite) => {
     },
     jump: throttle(
       750,
-      () => {
+      (dt) => {
         applyImpulse(head, Vector.mult(up, jumpImpulse), dt)
       },
       {
@@ -183,7 +185,7 @@ const createPlayer = (headSprite: Sprite) => {
     ),
     swingLeft: throttle(
       1000,
-      () => {
+      (dt) => {
         applyAngularImpulse(head, swingAngularImpulse, dt)
       },
       {
@@ -193,7 +195,7 @@ const createPlayer = (headSprite: Sprite) => {
 
     swingRight: throttle(
       1000,
-      () => {
+      (dt) => {
         applyAngularImpulse(head, -swingAngularImpulse, dt)
       },
       {
@@ -282,9 +284,9 @@ Render.run(render2)
 // run the engine
 // Runner.run(runner, engine);
 
-const update = () => {
+const update = (dt: number) => {
   if (isKeyDown('KeyW')) {
-    player1.jump()
+    player1.jump(dt)
   }
   if (isKeyDown('KeyA')) {
     player1.moveLeft()
@@ -297,13 +299,13 @@ const update = () => {
   // }
 
   if (isKeyDown('KeyS') && isKeyDown('KeyA')) {
-    player1.swingLeft()
+    player1.swingLeft(dt)
   } else if (isKeyDown('KeyS') && isKeyDown('KeyD')) {
-    player1.swingRight()
+    player1.swingRight(dt)
   }
 
   if (isKeyDown('ArrowUp')) {
-    player2.jump()
+    player2.jump(dt)
   }
   if (isKeyDown('ArrowLeft')) {
     player2.moveLeft()
@@ -312,9 +314,9 @@ const update = () => {
     player2.moveRight()
   }
   if (isKeyDown('ArrowDown') && isKeyDown('ArrowLeft')) {
-    player2.swingLeft()
+    player2.swingLeft(dt)
   } else if (isKeyDown('ArrowDown') && isKeyDown('ArrowRight')) {
-    player2.swingRight()
+    player2.swingRight(dt)
   }
 }
 
@@ -332,11 +334,11 @@ const testCollision = (
   const relSpeed = projectOnVector(pickaxe.velocity, contactNormal)
   const relEnergy = pickaxe.mass * Vector.dot(relSpeed, relSpeed)
 
-  if (relEnergy >= 50) {
+  if (energy >= 50) {
     // console.log(relEnergy)
     // npulse(pickaxe, Vector.mult(left, 100), dt)
 
-    targetObj.health -= relEnergy / 10
+    targetObj.health -= relEnergy / 3
 
     if (targetObj.health <= 0) {
       Composite.remove(engine.world, targetObj.body)
@@ -393,10 +395,7 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
 
-// TODO get rid of
-const dt = 1000 / 120
-
-const draw = () => {
+const draw = (dt: number) => {
   canvases.forEach(([canvas, canvasPlayer]) => {
     const ctx = canvas.getContext('2d')
     players.forEach((player) => {
@@ -424,8 +423,8 @@ const draw = () => {
 const loop = (then: DOMHighResTimeStamp) => (now: DOMHighResTimeStamp) => {
   const dt = now - then
   window.requestAnimationFrame(loop(now))
-  update()
-  draw()
+  update(dt)
+  draw(dt)
   Engine.update(engine, dt)
 }
 
