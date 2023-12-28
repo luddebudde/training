@@ -413,11 +413,12 @@ const draw = () => {
   moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
 }
 
-const run = () => {
-  window.requestAnimationFrame(run)
+const loop = (then: DOMHighResTimeStamp) => (now: DOMHighResTimeStamp) => {
+  const dt = now - then
+  window.requestAnimationFrame(loop(now))
   update()
   draw()
   Engine.update(engine, dt)
 }
 
-run()
+window.requestAnimationFrame(loop(0))
