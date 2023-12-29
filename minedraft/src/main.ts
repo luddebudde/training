@@ -14,13 +14,22 @@ import {
 } from 'matter-js'
 import { keyDownTracker } from './keyDownTracker.ts'
 import { applyAngularImpulse, applyForce, applyImpulse } from './physics'
-import { left, mapMat, projectOnVector, right, up } from './math'
+import {
+  addMat,
+  left,
+  mapMat,
+  projectOnVector,
+  right,
+  scaleMat,
+  up,
+} from './math'
 import { throttle } from 'throttle-debounce'
 import { moveCameraTo } from './moveCameraTo.ts'
 import { Sprite, sprites } from './sprites.ts'
 import { drawHealthBar } from './drawHealthBar.ts'
 import { canvasCoordinate } from './canvasCoordinate.ts'
 import { perlin } from './math/perlin.ts'
+import { rgb } from './color.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -123,8 +132,8 @@ const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
   const jointOptions = {
     stiffness: 0.9,
     damping: 0.9,
-    angularStiffness: 0.2,
-    angularDamping: 0.2,
+    angularStiffness: 0.5,
+    angularDamping: 0.5,
   }
 
   Composites.chain(rope, 0.5, 0, -0.5, 0, {
@@ -163,8 +172,9 @@ const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
   })
   const walkForce = 0.002
   const jumpImpulse = 6
-  const swingAngularImpulse = 100
+  const swingAngularImpulse = 200
   const maxHealth = 100
+  const swingDelay = 2000
   return {
     tag: 'player',
     maxHealth: maxHealth,
@@ -188,7 +198,7 @@ const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
       },
     ),
     swingLeft: throttle(
-      1000,
+      swingDelay,
       (dt) => {
         applyAngularImpulse(head, swingAngularImpulse, dt)
       },
@@ -198,7 +208,7 @@ const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
     ),
 
     swingRight: throttle(
-      1000,
+      swingDelay,
       (dt) => {
         applyAngularImpulse(head, -swingAngularImpulse, dt)
       },
@@ -219,31 +229,37 @@ const canvases = [
   [canvas2, player2],
 ]
 
-const boxSize = 100
+const boxSize = 30
 const horizontalBoxes = 100
-const verticalBoxes = 100
+const verticalBoxes = 30
+
+const thresHold = 0
 
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
+const p1 = perlin(horizontalBoxes, verticalBoxes, 10, 3)
+const p2 = perlin(horizontalBoxes, verticalBoxes, 30, 9)
+
 const boxes = mapMat(
-  perlin(horizontalBoxes, verticalBoxes, 20, 20),
+  addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)),
   (val, column, row) => {
     const coord = Vector.create(column * boxSize, row * boxSize)
+    return [val, coord] as const
+  },
+)
+  .flat()
+  .filter(([val]) => {
+    return val > thresHold
+  })
+  .map(([val, coord]) => {
     // -1 to 1 to hex
-    const normalizedValue = (val + 1) / 2
-    // console.log(normalizedValue)
-    if (normalizedValue < 0) {
-      console.log('err: less than 0', normalizedValue)
-    }
-    if (normalizedValue > 1) {
-      console.log('err: greater than or equal to 1', normalizedValue)
-    }
-    const hexColor = Math.floor(((val + 1) / 2) * 256)
-      .toString(16)
-      .padStart(2, '0')
+    // const hexColor = Math.floor(((val + 1) / 2) * 256)
+    //   .toString(16)
+    //   .padStart(2, '0')
+
     // console.log(val, hexColor)
     return {
       tag: 'box',
@@ -256,14 +272,18 @@ const boxes = mapMat(
         {
           isStatic: true,
           render: {
-            fillStyle: `#${hexColor}${hexColor}${hexColor}`,
+            fillStyle: rgb(
+              (val + 1) / 2,
+              ((val + 1) / 2) * 0.64,
+              ((val + 1) / 2) * 0,
+            ),
+
             // lineWidth: 0,
           },
         },
       ),
     }
-  },
-).flat()
+  })
 // .map((arr, row) => {
 //
 //   return Bodies.rectangle((row + 1) * boxSize, 200, boxSize, boxSize, {
@@ -433,8 +453,8 @@ const draw = (dt: number) => {
   moveCameraTo(
     player1.head.position,
     render1,
-    canvas1Width * 20,
-    canvas1Height * 20,
+    canvas1Width * 5,
+    canvas1Height * 5,
   )
   moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
 }

@@ -16,3 +16,12 @@ export const addMat = (matA: number[][], matB: number[][]): number[][] =>
   mapMat2(matA, matB, (a, b) => a + b)
 export const subMat = (matA: number[][], matB: number[][]): number[][] =>
   mapMat2(matA, matB, (a, b) => a - b)
+
+export const multMat = (matA: number[][], matB: number[][]): number[][] =>
+  mapMat2(matA, matB, (a, b) => a * b)
+
+export const divMat = (matA: number[][], matB: number[][]): number[][] =>
+  mapMat2(matA, matB, (a, b) => a / b)
+
+export const scaleMat = (matA: number[][], scalar: number): number[][] =>
+  mapMat(matA, (a) => a * scalar)
