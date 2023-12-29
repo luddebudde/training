@@ -15,4 +15,14 @@ export const sprites = {
     height: 665,
     width: 665,
   },
+  pickaxeRed: {
+    texture: 'sprites/red-wreckingball.png',
+    height: 594,
+    width: 594,
+  },
+  pickaxeBlue: {
+    texture: 'sprites/blue-wreckingball.png',
+    height: 637,
+    width: 637,
+  },
 } as const

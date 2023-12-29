@@ -75,7 +75,7 @@ const matterJsSprite = (radius: number, sprite: Sprite) => {
   }
 }
 
-const createPlayer = (headSprite: Sprite) => {
+const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
   const headRadius = 40
   const pickaxeRadius = 20
   const group = Body.nextGroup(true)
@@ -86,12 +86,15 @@ const createPlayer = (headSprite: Sprite) => {
     restitution: 0,
     isSensor: true,
     // type:
+    render: {
+      sprite: matterJsSprite(pickaxeRadius, pickaxeSprite),
+    },
   })
   const head = Bodies.circle(100, 20, headRadius, {
     // collisionFilter: { group: group },
     mass: 5,
     collisionFilter: { group: group },
-    friction: -0,
+    friction: 0,
     render: {
       sprite: matterJsSprite(headRadius, headSprite),
     },
@@ -205,8 +208,8 @@ const createPlayer = (headSprite: Sprite) => {
   }
 }
 
-const player1 = createPlayer(sprites.playerBlue)
-const player2 = createPlayer(sprites.playerRed)
+const player1 = createPlayer(sprites.playerBlue, sprites.pickaxeBlue)
+const player2 = createPlayer(sprites.playerRed, sprites.pickaxeRed)
 
 const players = [player1, player2]
 
@@ -224,7 +227,7 @@ const boxSize = 20
 
 const boxes = zeros(100)
   .map(() => {
-    return zeros(5)
+    return zeros(100)
   })
   .map((arr, rowCount) => {
     return arr.map((__, columnCount) => {
