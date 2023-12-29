@@ -14,12 +14,13 @@ import {
 } from 'matter-js'
 import { keyDownTracker } from './keyDownTracker.ts'
 import { applyAngularImpulse, applyForce, applyImpulse } from './physics'
-import { left, projectOnVector, right, up, zeros } from './math'
+import { left, mapMat, projectOnVector, right, up } from './math'
 import { throttle } from 'throttle-debounce'
 import { moveCameraTo } from './moveCameraTo.ts'
 import { Sprite, sprites } from './sprites.ts'
 import { drawHealthBar } from './drawHealthBar.ts'
 import { canvasCoordinate } from './canvasCoordinate.ts'
+import { perlin } from './math/perlin.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -51,7 +52,7 @@ const render1 = Render.create({
   options: {
     width: canvas1Width,
     height: canvas1Height,
-    showAngleIndicator: true,
+    showAngleIndicator: false,
     wireframes: false,
     showDebug: true,
   },
@@ -62,7 +63,7 @@ const render2 = Render.create({
   options: {
     width: canvas2Width,
     height: canvas2Height,
-    showAngleIndicator: true,
+    showAngleIndicator: false,
     wireframes: false,
   },
 })
@@ -218,41 +219,51 @@ const canvases = [
   [canvas2, player2],
 ]
 
-const boxSize = 20
+const boxSize = 100
+const horizontalBoxes = 100
+const verticalBoxes = 100
 
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
-const boxes = zeros(100)
-  .map(() => {
-    return zeros(100)
-  })
-  .map((arr, rowCount) => {
-    return arr.map((__, columnCount) => {
-      return [rowCount, columnCount]
-    })
-  })
-  .flat()
-  .map((coord) => {
-    const row = coord[0]
-    const column = coord[1]
-    return Vector.create(row * boxSize, column * boxSize)
-  })
-  .map((coord) => {
+const boxes = mapMat(
+  perlin(horizontalBoxes, verticalBoxes, 20, 20),
+  (val, column, row) => {
+    const coord = Vector.create(column * boxSize, row * boxSize)
+    // -1 to 1 to hex
+    const normalizedValue = (val + 1) / 2
+    // console.log(normalizedValue)
+    if (normalizedValue < 0) {
+      console.log('err: less than 0', normalizedValue)
+    }
+    if (normalizedValue > 1) {
+      console.log('err: greater than or equal to 1', normalizedValue)
+    }
+    const hexColor = Math.floor(((val + 1) / 2) * 256)
+      .toString(16)
+      .padStart(2, '0')
+    // console.log(val, hexColor)
     return {
       tag: 'box',
       health: 0,
-      body: Bodies.rectangle(coord.x - 1000, coord.y + 200, boxSize, boxSize, {
-        isStatic: true,
-        render: {
-          fillStyle: '#3b3333',
-          // lineWidth: 0,
+      body: Bodies.rectangle(
+        coord.x - (horizontalBoxes * boxSize) / 2,
+        coord.y + 200,
+        boxSize,
+        boxSize,
+        {
+          isStatic: true,
+          render: {
+            fillStyle: `#${hexColor}${hexColor}${hexColor}`,
+            // lineWidth: 0,
+          },
         },
-      }),
+      ),
     }
-  })
+  },
+).flat()
 // .map((arr, row) => {
 //
 //   return Bodies.rectangle((row + 1) * boxSize, 200, boxSize, boxSize, {
@@ -419,7 +430,12 @@ const draw = (dt: number) => {
       )
     })
   })
-  moveCameraTo(player1.head.position, render1, canvas1Width, canvas1Height)
+  moveCameraTo(
+    player1.head.position,
+    render1,
+    canvas1Width * 20,
+    canvas1Height * 20,
+  )
   moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
 }
 
