@@ -19,6 +19,7 @@ import {
   left,
   mapMat,
   projectOnVector,
+  random,
   right,
   scaleMat,
   up,
@@ -172,7 +173,7 @@ const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
   })
   const walkForce = 0.002
   const jumpImpulse = 6
-  const swingAngularImpulse = 200
+  const swingAngularImpulse = 100
   const maxHealth = 100
   const swingDelay = 2000
   return {
@@ -233,7 +234,7 @@ const boxSize = 30
 const horizontalBoxes = 100
 const verticalBoxes = 30
 
-const thresHold = 0
+const thresHold = random(0.4, 0.6)
 
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
@@ -247,7 +248,7 @@ const boxes = mapMat(
   addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)),
   (val, column, row) => {
     const coord = Vector.create(column * boxSize, row * boxSize)
-    return [val, coord] as const
+    return [(val + 1) / 2, coord] as const
   },
 )
   .flat()
@@ -259,6 +260,8 @@ const boxes = mapMat(
     // const hexColor = Math.floor(((val + 1) / 2) * 256)
     //   .toString(16)
     //   .padStart(2, '0')
+
+    const red = val / 2
 
     // console.log(val, hexColor)
     return {
@@ -272,11 +275,7 @@ const boxes = mapMat(
         {
           isStatic: true,
           render: {
-            fillStyle: rgb(
-              (val + 1) / 2,
-              ((val + 1) / 2) * 0.64,
-              ((val + 1) / 2) * 0,
-            ),
+            fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
 
             // lineWidth: 0,
           },
