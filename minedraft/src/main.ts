@@ -249,12 +249,16 @@ const testPickCollision = (
 
 const testExplosionCollision = (
   targetBody: Body,
+  targetGameObject: GameObject | undefined,
   explosion: GameObject,
   collision: Collision,
 ) => {
+  if (targetBody === explosion.source) {
+    Composite.remove(engine.world, targetBody)
+  }
   const diff = Vector.sub(targetBody.position, explosion.body.position)
   const dir = Vector.normalise(diff)
-  const impulseFactor = 100000
+  const impulseFactor = 500000
   const impulse = Vector.mult(
     dir,
     impulseFactor / (Vector.magnitude(diff) + 50) ** 2,
@@ -289,9 +293,9 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
     })
 
     if (objA !== undefined && objA.tag === 'explosion') {
-      testExplosionCollision(bodyB, objA, pair.collision)
+      testExplosionCollision(bodyB, objB, objA, pair.collision)
     } else if (objB !== undefined && objB.tag === 'explosion') {
-      testExplosionCollision(bodyA, objB, pair.collision)
+      testExplosionCollision(bodyA, objA, objB, pair.collision)
     }
   })
 }
@@ -319,13 +323,24 @@ const draw = (dt: number) => {
       )
     })
   })
+  // moveCameraTo(
+  //   player1.head.position,
+  //   render1,
+  //   canvas1Width * 5,
+  //   canvas1Height * 5,
+  // )
   moveCameraTo(
     player1.head.position,
     render1,
-    canvas1Width * 5,
-    canvas1Height * 5,
+    canvas1Width * 1.5,
+    canvas1Height * 1.5,
   )
-  moveCameraTo(player2.head.position, render2, canvas2Width, canvas2Height)
+  moveCameraTo(
+    player2.head.position,
+    render2,
+    canvas2Width * 1.5,
+    canvas2Height * 1.5,
+  )
 }
 
 const loop = (then: DOMHighResTimeStamp) => (now: DOMHighResTimeStamp) => {

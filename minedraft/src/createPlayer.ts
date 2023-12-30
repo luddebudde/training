@@ -38,7 +38,7 @@ export const createPlayer = (
     // collisionFilter: { group: group },
     mass: 5,
     collisionFilter: { group: group },
-    friction: 0,
+    friction: 0.1,
     render: {
       sprite: matterJsSprite(headRadius, headSprite),
     },
@@ -104,7 +104,7 @@ export const createPlayer = (
     constraints: [],
     composites: [rope],
   })
-  const walkForce = 0.002
+  const walkForce = 0.005
   const jumpImpulse = 6
   const swingAngularImpulse = 100
   const maxHealth = 100
@@ -151,7 +151,7 @@ export const createPlayer = (
       },
     ),
     throwGrenade: throttle(
-      1000,
+      3000,
       () => {
         const velDir = Vector.normalise(head.velocity)
         addGameObject(

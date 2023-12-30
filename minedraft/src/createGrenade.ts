@@ -1,14 +1,21 @@
 import { Bodies, Body, Vector } from 'matter-js'
 import { vectorFromAngle } from './math'
+import { matterJsSprite } from './main'
+import { sprites } from './sprites'
+import { playBang } from './sounds'
 
 export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
-  const grenadeRadius = 10
+  const grenadeRadius = 15
   const realSpawnPos = Vector.add(
     spawnPos,
     Vector.mult(direction, grenadeRadius),
   )
 
-  const body = Bodies.circle(spawnPos.x, spawnPos.y, grenadeRadius, {})
+  const body = Bodies.circle(spawnPos.x, spawnPos.y, grenadeRadius, {
+    render: {
+      sprite: matterJsSprite(grenadeRadius, sprites.grenadeRed),
+    },
+  })
   Body.setVelocity(body, Vector.mult(direction, 30))
 
   let isExploded = false
@@ -26,7 +33,7 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
         const explosionDetector = Bodies.circle(
           body.position.x,
           body.position.y,
-          100,
+          500,
           {
             isSensor: true,
             // isStatic: true,
@@ -36,9 +43,14 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
           },
         )
 
-        addGameObject({ tag: 'explosion', body: explosionDetector })
+        addGameObject({
+          tag: 'explosion',
+          body: explosionDetector,
+          source: body,
+        })
 
         isExploded = true
+        playBang()
       }
     },
   }

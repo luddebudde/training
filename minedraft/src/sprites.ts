@@ -25,4 +25,14 @@ export const sprites = {
     height: 637,
     width: 637,
   },
+  grenadeRed: {
+    texture: 'sprites/red-grenade.png',
+    width: 802,
+    height: 638,
+  },
+  hand: {
+    texture: 'sprites/hand.png',
+    width: 541,
+    height: 734,
+  },
 } as const
