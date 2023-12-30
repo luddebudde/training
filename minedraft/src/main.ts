@@ -4,8 +4,6 @@ import {
   Body,
   Collision,
   Composite,
-  Composites,
-  Constraint,
   Engine,
   Events,
   IEventCollision,
@@ -13,24 +11,21 @@ import {
   Vector,
 } from 'matter-js'
 import { keyDownTracker } from './keyDownTracker.ts'
-import { applyAngularImpulse, applyForce, applyImpulse } from './physics'
 import {
   addMat,
-  left,
   mapMat,
   projectOnVector,
   random,
-  right,
+  scale,
   scaleMat,
-  up,
 } from './math'
-import { throttle } from 'throttle-debounce'
 import { moveCameraTo } from './moveCameraTo.ts'
 import { Sprite, sprites } from './sprites.ts'
 import { drawHealthBar } from './drawHealthBar.ts'
 import { canvasCoordinate } from './canvasCoordinate.ts'
 import { perlin } from './math/perlin.ts'
 import { rgb } from './color.ts'
+import { createPlayer } from './createPlayer.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -78,7 +73,7 @@ const render2 = Render.create({
   },
 })
 
-const matterJsSprite = (radius: number, sprite: Sprite) => {
+export const matterJsSprite = (radius: number, sprite: Sprite) => {
   return {
     texture: sprite.texture,
     xScale: (2 * radius) / sprite.width,
@@ -86,153 +81,38 @@ const matterJsSprite = (radius: number, sprite: Sprite) => {
   }
 }
 
-const createPlayer = (headSprite: Sprite, pickaxeSprite: Sprite) => {
-  const headRadius = 40
-  const pickaxeRadius = 20
-  const group = Body.nextGroup(true)
-  const pickaxe = Bodies.circle(100, 100, pickaxeRadius, {
-    mass: 0.1,
-    collisionFilter: { group: group },
-    // friction: 1,
-    restitution: 0,
-    isSensor: true,
-    // type:
-    render: {
-      sprite: matterJsSprite(pickaxeRadius, pickaxeSprite),
-    },
-  })
-  const head = Bodies.circle(100, 20, headRadius, {
-    // collisionFilter: { group: group },
-    mass: 5,
-    collisionFilter: { group: group },
-    friction: 0,
-    render: {
-      sprite: matterJsSprite(headRadius, headSprite),
-    },
-  })
+const players = []
+const gameObjects = []
 
-  const ropeMass = 0.1
-  const ropeJoints = 10
-
-  const jointLenght = 5
-
-  const rope = Composites.stack(
-    100,
-    50,
-    ropeJoints,
-    1,
-    0,
-    0,
-    (x: number, y: number) =>
-      Bodies.rectangle(x, y, jointLenght, 5, {
-        mass: ropeMass / ropeJoints,
-        collisionFilter: { group: group },
-      }),
-  )
-
-  const jointOptions = {
-    stiffness: 0.9,
-    damping: 0.9,
-    angularStiffness: 0.5,
-    angularDamping: 0.5,
-  }
-
-  Composites.chain(rope, 0.5, 0, -0.5, 0, {
-    render: { type: 'line' },
-    length: 0,
-    ...jointOptions,
-  })
-  const armLenght = headRadius * 0.5
-  Composite.add(
-    rope,
-    Constraint.create({
-      bodyA: head,
-      bodyB: rope.bodies[0],
-      pointB: { x: -jointLenght / 2, y: 0 },
-      pointA: { x: headRadius + armLenght, y: 0 },
-      length: 0,
-      ...jointOptions,
-    }),
-  )
-  Composite.add(
-    rope,
-    Constraint.create({
-      bodyA: pickaxe,
-      bodyB: rope.bodies[rope.bodies.length - 1],
-      pointB: { x: jointLenght / 2, y: 0 },
-      pointA: { x: 0, y: 0 },
-      length: 0,
-      ...jointOptions,
-    }),
-  )
-
-  const body = Composite.create({
-    bodies: [pickaxe, head],
-    constraints: [],
-    composites: [rope],
-  })
-  const walkForce = 0.002
-  const jumpImpulse = 6
-  const swingAngularImpulse = 100
-  const maxHealth = 100
-  const swingDelay = 2000
-  return {
-    tag: 'player',
-    maxHealth: maxHealth,
-    health: maxHealth,
-    body,
-    head,
-    pickaxe,
-    moveRight: () => {
-      applyForce(head, Vector.mult(right, walkForce))
-    },
-    moveLeft: () => {
-      applyForce(head, Vector.mult(left, walkForce))
-    },
-    jump: throttle(
-      750,
-      (dt) => {
-        applyImpulse(head, Vector.mult(up, jumpImpulse), dt)
-      },
-      {
-        noTrailing: true,
-      },
-    ),
-    swingLeft: throttle(
-      swingDelay,
-      (dt) => {
-        applyAngularImpulse(head, swingAngularImpulse, dt)
-      },
-      {
-        noTrailing: true,
-      },
-    ),
-
-    swingRight: throttle(
-      swingDelay,
-      (dt) => {
-        applyAngularImpulse(head, -swingAngularImpulse, dt)
-      },
-      {
-        noTrailing: true,
-      },
-    ),
+const addGameObject = (obj: GameObject) => {
+  Composite.add(engine.world, obj.body)
+  gameObjects.push(obj)
+  if (obj.tag === 'player') {
+    players.push(obj)
   }
 }
 
-const player1 = createPlayer(sprites.playerBlue, sprites.pickaxeBlue)
-const player2 = createPlayer(sprites.playerRed, sprites.pickaxeRed)
-
-const players = [player1, player2]
+const player1 = createPlayer(
+  sprites.playerBlue,
+  sprites.pickaxeBlue,
+  addGameObject,
+)
+const player2 = createPlayer(
+  sprites.playerRed,
+  sprites.pickaxeRed,
+  addGameObject,
+)
 
 const canvases = [
   [canvas1, player1],
   [canvas2, player2],
 ]
 
+const vhRatio = 3 / 1
+
 const boxSize = 30
-const horizontalBoxes = 100
-const verticalBoxes = 30
+const horizontalBoxes = vhRatio * 60
+const verticalBoxes = 60
 
 const thresHold = random(0.4, 0.6)
 
@@ -241,11 +121,12 @@ const thresHold = random(0.4, 0.6)
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
-const p1 = perlin(horizontalBoxes, verticalBoxes, 10, 3)
-const p2 = perlin(horizontalBoxes, verticalBoxes, 30, 9)
+const p1 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 2, 2)
+const p2 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 10, 10)
+const p3 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 30, 30)
 
 const boxes = mapMat(
-  addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)),
+  addMat(addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)), scaleMat(p3, 0.1)),
   (val, column, row) => {
     const coord = Vector.create(column * boxSize, row * boxSize)
     return [(val + 1) / 2, coord] as const
@@ -283,39 +164,19 @@ const boxes = mapMat(
       ),
     }
   })
-// .map((arr, row) => {
-//
-//   return Bodies.rectangle((row + 1) * boxSize, 200, boxSize, boxSize, {
-//     isStatic: true,
-//   })
-// })
-// .map((body) => {
-//   return { body, tag: 'box' }
-// })
 
-const gameObjects = [...players, ...boxes]
+addGameObject(player1)
+addGameObject(player2)
 
-// create two boxes and a ground
-// const ground = Bodies.rectangle(400, 610, 1810, 60, { isStatic: true })
-
-// add all of the bodies to the world
-Composite.add(engine.world, [
-  ...boxes.map((box) => box.body),
-  player1.body,
-  player2.body,
-])
+boxes.forEach((box) => {
+  addGameObject(box)
+})
 
 const isKeyDown = keyDownTracker()
 
 // run the renderer
 Render.run(render1)
 Render.run(render2)
-
-// create runner
-// var runner = Runner.create();
-
-// run the engine
-// Runner.run(runner, engine);
 
 const update = (dt: number) => {
   if (isKeyDown('KeyW')) {
@@ -326,6 +187,10 @@ const update = (dt: number) => {
   }
   if (isKeyDown('KeyD')) {
     player1.moveRight()
+  }
+
+  if (isKeyDown('KeyQ')) {
+    // player1.throwGrenade()
   }
   // if (isKeyDown('KeyQ')) {
   //   player1.swingLeft()
@@ -351,15 +216,20 @@ const update = (dt: number) => {
   } else if (isKeyDown('ArrowDown') && isKeyDown('ArrowRight')) {
     player2.swingRight(dt)
   }
+  if (isKeyDown('Enter')) {
+    player2.throwGrenade()
+  }
+
+  gameObjects.forEach((object) => {
+    object.update?.(dt)
+  })
 }
 
-const testCollision = (
+const testPickCollision = (
   targetObj: GameObject,
   pickaxe: Body,
   collision: Collision,
 ) => {
-  // const energy =
-
   const energy = pickaxe.mass * pickaxe.speed * pickaxe.speed
   const contactNormal = Vector.normalise(
     Vector.sub(collision.bodyA.position, collision.bodyB.position),
@@ -368,20 +238,21 @@ const testCollision = (
   const relEnergy = pickaxe.mass * Vector.dot(relSpeed, relSpeed)
 
   if (energy >= 50) {
-    // console.log(relEnergy)
-    // npulse(pickaxe, Vector.mult(left, 100), dt)
-
     targetObj.health -= relEnergy / 3
 
     if (targetObj.health <= 0) {
-      Composite.remove(engine.world, targetObj.body)
+      Body.setStatic(targetObj.body, false)
     }
   }
-  // if (objA.speed !== undefined) {
-  //   const energy = objA.body.mass * objA.speed() * objA.speed()
-  //   const collisionDamage = energy * 0.0005
-  //   damage(objB, collisionDamage)
-  // }
+}
+
+const testExplosionCollision = (
+  targetBody: Body,
+  explosion: GameObject,
+  collision: Collision,
+) => {
+  Body.setStatic(targetBody, false)
+  console.log(targetBody)
 }
 
 const handleCollisionStart = (event: IEventCollision<Engine>) => {
@@ -399,31 +270,18 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
 
     pickaxes.forEach((pickaxe) => {
       if (objA !== undefined && 'health' in objA && bodyB === pickaxe) {
-        testCollision(objA, pickaxe, pair.collision)
+        testPickCollision(objA, pickaxe, pair.collision)
       } else if (objB !== undefined && 'health' in objB && bodyA === pickaxe) {
-        testCollision(objB, pickaxe, pair.collision)
+        testPickCollision(objB, pickaxe, pair.collision)
       }
     })
 
-    // if (bodyA === player1.head && bodyB === player2.pickaxe) {
-    //   testCollision(player1.body, player2.pickaxe, pair.collision)
-    // } else if (bodyB === player1.head && bodyA === player2.pickaxe) {
-    //   testCollision(player1.body, player2.pickaxe, pair.collision)
-    // }
+    if (objA !== undefined && objA.tag === 'explosion') {
+      testExplosionCollision(bodyB, objA, pair.collision)
+    } else if (objB !== undefined && objB.tag === 'explosion') {
+      testExplosionCollision(bodyA, objB, pair.collision)
+    }
   })
-  // TODO loop through pairs
-
-  // if (objA && objB) {
-  //   testCollision(objA, objB)
-  //   testCollision(objB, objA)
-  // }
-  //
-  // if (bodyA.label === 'OuterBoundary') {
-  //   removeObject(game, objB)
-  // }
-  // if (bodyB.label === 'OuterBoundary') {
-  //   removeObject(game, objA)
-  // }
 }
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
