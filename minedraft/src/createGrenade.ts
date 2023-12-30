@@ -1,10 +1,20 @@
-import { Bodies } from 'matter-js'
+import { Bodies, Body, Vector } from 'matter-js'
+import { vectorFromAngle } from './math'
 
-export const createGrenade = (addGameObject) => {
-  const body = Bodies.circle(0, 0, 10, {})
+export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
+  const grenadeRadius = 10
+  const realSpawnPos = Vector.add(
+    spawnPos,
+    Vector.mult(direction, grenadeRadius),
+  )
+
+  const body = Bodies.circle(spawnPos.x, spawnPos.y, grenadeRadius, {})
+  Body.setVelocity(body, Vector.mult(direction, 30))
 
   let isExploded = false
   let timeSinceCreation = 0
+
+  const explosionDelay = 3000
 
   return {
     tag: 'grenade',
@@ -12,9 +22,7 @@ export const createGrenade = (addGameObject) => {
 
     update: (dt: number) => {
       timeSinceCreation += dt
-      if (timeSinceCreation >= 2000 && !isExploded) {
-        console.log('GRENADE!')
-
+      if (timeSinceCreation >= explosionDelay && !isExploded) {
         const explosionDetector = Bodies.circle(
           body.position.x,
           body.position.y,

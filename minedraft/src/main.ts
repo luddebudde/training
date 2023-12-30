@@ -9,13 +9,16 @@ import {
   IEventCollision,
   Render,
   Vector,
+  World,
 } from 'matter-js'
 import { keyDownTracker } from './keyDownTracker.ts'
 import {
   addMat,
+  left,
   mapMat,
   projectOnVector,
   random,
+  right,
   scale,
   scaleMat,
 } from './math'
@@ -26,6 +29,7 @@ import { canvasCoordinate } from './canvasCoordinate.ts'
 import { perlin } from './math/perlin.ts'
 import { rgb } from './color.ts'
 import { createPlayer } from './createPlayer.ts'
+import { applyImpulse2 } from './physics/applyForce.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -190,11 +194,8 @@ const update = (dt: number) => {
   }
 
   if (isKeyDown('KeyQ')) {
-    // player1.throwGrenade()
+    player1.throwGrenade()
   }
-  // if (isKeyDown('KeyQ')) {
-  //   player1.swingLeft()
-  // }
 
   if (isKeyDown('KeyS') && isKeyDown('KeyA')) {
     player1.swingLeft(dt)
@@ -251,7 +252,18 @@ const testExplosionCollision = (
   explosion: GameObject,
   collision: Collision,
 ) => {
+  const diff = Vector.sub(targetBody.position, explosion.body.position)
+  const dir = Vector.normalise(diff)
+  const impulseFactor = 100000
+  const impulse = Vector.mult(
+    dir,
+    impulseFactor / (Vector.magnitude(diff) + 50) ** 2,
+  )
+
   Body.setStatic(targetBody, false)
+  applyImpulse2(targetBody, impulse)
+
+  Composite.remove(engine.world, explosion.body)
   console.log(targetBody)
 }
 

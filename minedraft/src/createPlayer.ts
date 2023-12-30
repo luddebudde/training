@@ -9,7 +9,7 @@ import {
   Vector,
 } from 'matter-js'
 import { throttle } from 'throttle-debounce'
-import { right, left, up } from './math'
+import { right, left, up, direction } from './math'
 import { applyForce, applyImpulse, applyAngularImpulse } from './physics'
 import { Sprite } from './sprites'
 import { createGrenade } from './createGrenade'
@@ -153,7 +153,14 @@ export const createPlayer = (
     throwGrenade: throttle(
       1000,
       () => {
-        addGameObject(createGrenade(addGameObject))
+        const velDir = Vector.normalise(head.velocity)
+        addGameObject(
+          createGrenade(
+            Vector.add(head.position, Vector.mult(velDir, headRadius)),
+            velDir,
+            addGameObject,
+          ),
+        )
       },
       {
         noTrailing: true,
