@@ -9,8 +9,8 @@ import {
   Vector,
 } from 'matter-js'
 import { throttle } from 'throttle-debounce'
-import { right, left, up, direction } from './math'
-import { applyForce, applyImpulse, applyAngularImpulse } from './physics'
+import { right, left, up } from './math'
+import { applyForce, applyAngularImpulse, applyImpulse2 } from './physics'
 import { Sprite } from './sprites'
 import { createGrenade } from './createGrenade'
 
@@ -105,7 +105,7 @@ export const createPlayer = (
     composites: [rope],
   })
   const walkForce = 0.005
-  const jumpImpulse = 6
+  const jumpImpulse = 60
   const swingAngularImpulse = 100
   const maxHealth = 100
   const swingDelay = 2000
@@ -124,8 +124,8 @@ export const createPlayer = (
     },
     jump: throttle(
       750,
-      (dt) => {
-        applyImpulse(head, Vector.mult(up, jumpImpulse), dt)
+      () => {
+        applyImpulse2(head, Vector.mult(up, jumpImpulse))
       },
       {
         noTrailing: true,

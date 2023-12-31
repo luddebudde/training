@@ -184,7 +184,7 @@ Render.run(render2)
 
 const update = (dt: number) => {
   if (isKeyDown('KeyW')) {
-    player1.jump(dt)
+    player1.jump()
   }
   if (isKeyDown('KeyA')) {
     player1.moveLeft()
@@ -204,7 +204,7 @@ const update = (dt: number) => {
   }
 
   if (isKeyDown('ArrowUp')) {
-    player2.jump(dt)
+    player2.jump()
   }
   if (isKeyDown('ArrowLeft')) {
     player2.moveLeft()
@@ -258,14 +258,14 @@ const testExplosionCollision = (
   }
   const diff = Vector.sub(targetBody.position, explosion.body.position)
   const dir = Vector.normalise(diff)
-  const impulseFactor = 500000
+  const impulseFactor = 2000000
   const impulse = Vector.mult(
     dir,
     impulseFactor / (Vector.magnitude(diff) + 50) ** 2,
   )
 
   Body.setStatic(targetBody, false)
-  applyImpulse2(targetBody, impulse)
+  Body.setVelocity(targetBody, Vector.add(targetBody.velocity, impulse))
 
   Composite.remove(engine.world, explosion.body)
   console.log(targetBody)
@@ -329,17 +329,18 @@ const draw = (dt: number) => {
   //   canvas1Width * 5,
   //   canvas1Height * 5,
   // )
+  const zoom = 1.5
   moveCameraTo(
     player1.head.position,
     render1,
-    canvas1Width * 1.5,
-    canvas1Height * 1.5,
+    canvas1Width / zoom,
+    canvas1Height / zoom,
   )
   moveCameraTo(
     player2.head.position,
     render2,
-    canvas2Width * 1.5,
-    canvas2Height * 1.5,
+    canvas2Width / zoom,
+    canvas2Height / zoom,
   )
 }
 
