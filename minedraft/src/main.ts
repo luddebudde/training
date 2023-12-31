@@ -30,6 +30,8 @@ import { perlin } from './math/perlin.ts'
 import { rgb } from './color.ts'
 import { createPlayer } from './createPlayer.ts'
 import { applyImpulse2 } from './physics/applyForce.ts'
+import { loadImage } from './image.ts'
+import { animation } from './animation.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -110,7 +112,7 @@ const player2 = createPlayer(
 const canvases = [
   [canvas1, player1],
   [canvas2, player2],
-]
+] as const
 
 const vhRatio = 3 / 1
 
@@ -302,9 +304,29 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
 
-const draw = (dt: number) => {
+const render = (dt: number) => {
+  const zoom = 0.5
   canvases.forEach(([canvas, canvasPlayer]) => {
     const ctx = canvas.getContext('2d')
+
+    ctx.translate(
+      zoom * -canvasPlayer.head.position.x,
+      zoom * -canvasPlayer.head.position.y,
+    )
+    ctx.translate(
+      (zoom * canvas.getBoundingClientRect().width) / 2,
+      (zoom * canvas.getBoundingClientRect().height) / 2,
+    )
+    ctx.scale(zoom, zoom)
+    gameObjects.forEach((gameObject) => {
+      if (gameObject.render === undefined) {
+        return
+      }
+      gameObject.render(ctx, dt)
+    })
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+
+    // Health bar
     players.forEach((player) => {
       const canvasPos = canvasCoordinate(
         player.head.position,
@@ -329,7 +351,6 @@ const draw = (dt: number) => {
   //   canvas1Width * 5,
   //   canvas1Height * 5,
   // )
-  const zoom = 1.5
   moveCameraTo(
     player1.head.position,
     render1,
@@ -348,7 +369,7 @@ const loop = (then: DOMHighResTimeStamp) => (now: DOMHighResTimeStamp) => {
   const dt = now - then
   window.requestAnimationFrame(loop(now))
   update(dt)
-  draw(dt)
+  render(dt)
   Engine.update(engine, dt)
 }
 

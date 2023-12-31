@@ -105,7 +105,7 @@ export const createPlayer = (
     composites: [rope],
   })
   const walkForce = 0.005
-  const jumpImpulse = 60
+  const jumpImpulse = 80
   const swingAngularImpulse = 100
   const maxHealth = 100
   const swingDelay = 2000

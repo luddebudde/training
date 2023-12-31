@@ -3,6 +3,8 @@ import { vectorFromAngle } from './math'
 import { matterJsSprite } from './main'
 import { sprites } from './sprites'
 import { playBang } from './sounds'
+import { animation } from './animation'
+import { assets } from './assets'
 
 export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
   const grenadeRadius = 15
@@ -10,6 +12,7 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
     spawnPos,
     Vector.mult(direction, grenadeRadius),
   )
+  const explosionRadius = 100
 
   const body = Bodies.circle(spawnPos.x, spawnPos.y, grenadeRadius, {
     render: {
@@ -23,9 +26,27 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
 
   const explosionDelay = 3000
 
+  const explosionAnimation = animation({
+    imageCount: 7,
+    slowDown: 10,
+    repeat: true,
+    reverse: false,
+  })
   return {
     tag: 'grenade',
     body,
+
+    render: (ctx: CanvasRenderingContext2D, dt: number) => {
+      explosionAnimation.step()
+      explosionAnimation.draw(
+        ctx,
+        assets.explosion,
+        body.position.x - explosionRadius / 2,
+        body.position.y - explosionRadius / 2,
+        explosionRadius,
+        explosionRadius,
+      )
+    },
 
     update: (dt: number) => {
       timeSinceCreation += dt
@@ -33,7 +54,7 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
         const explosionDetector = Bodies.circle(
           body.position.x,
           body.position.y,
-          500,
+          explosionRadius,
           {
             isSensor: true,
             // isStatic: true,
@@ -43,6 +64,12 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
           },
         )
 
+        // const explosionAnimation = animation({
+        //   imageCount: 7,
+        //   slowDown: 10,
+        //   repeat: false,
+        //   reverse: false,
+        // })
         addGameObject({
           tag: 'explosion',
           body: explosionDetector,
