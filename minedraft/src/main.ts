@@ -269,7 +269,10 @@ const testExplosionCollision = (
   Body.setStatic(targetBody, false)
   Body.setVelocity(targetBody, Vector.add(targetBody.velocity, impulse))
 
-  Composite.remove(engine.world, explosion.body)
+  const b = explosion.body as Body
+  b.collisionFilter.mask = 0
+  Body.setStatic(explosion.body, true)
+  // Composite.remove(engine.world, explosion.body)
   console.log(targetBody)
 }
 
@@ -306,17 +309,26 @@ Events.on(engine, 'collisionStart', handleCollisionStart)
 
 const render = (dt: number) => {
   const zoom = 0.5
+
   canvases.forEach(([canvas, canvasPlayer]) => {
     const ctx = canvas.getContext('2d')
 
     ctx.translate(
-      zoom * -canvasPlayer.head.position.x,
-      zoom * -canvasPlayer.head.position.y,
+      zoom *
+        -(
+          canvasPlayer.head.position.x -
+          canvas.getBoundingClientRect().width / 1
+        ),
+      zoom *
+        -(
+          canvasPlayer.head.position.y -
+          canvas.getBoundingClientRect().height / 1
+        ),
     )
-    ctx.translate(
-      (zoom * canvas.getBoundingClientRect().width) / 2,
-      (zoom * canvas.getBoundingClientRect().height) / 2,
-    )
+    // ctx.translate(
+    //   (zoom * canvas.getBoundingClientRect().width) / 2,
+    //   (zoom * canvas.getBoundingClientRect().height) / 2,
+    // )
     ctx.scale(zoom, zoom)
     gameObjects.forEach((gameObject) => {
       if (gameObject.render === undefined) {

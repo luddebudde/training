@@ -12,7 +12,6 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
     spawnPos,
     Vector.mult(direction, grenadeRadius),
   )
-  const explosionRadius = 100
 
   const body = Bodies.circle(spawnPos.x, spawnPos.y, grenadeRadius, {
     render: {
@@ -26,59 +25,60 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
 
   const explosionDelay = 3000
 
-  const explosionAnimation = animation({
-    imageCount: 7,
-    slowDown: 10,
-    repeat: true,
-    reverse: false,
-  })
   return {
     tag: 'grenade',
     body,
 
-    render: (ctx: CanvasRenderingContext2D, dt: number) => {
-      explosionAnimation.step()
-      explosionAnimation.draw(
-        ctx,
-        assets.explosion,
-        body.position.x - explosionRadius / 2,
-        body.position.y - explosionRadius / 2,
-        explosionRadius,
-        explosionRadius,
-      )
-    },
-
     update: (dt: number) => {
       timeSinceCreation += dt
       if (timeSinceCreation >= explosionDelay && !isExploded) {
-        const explosionDetector = Bodies.circle(
-          body.position.x,
-          body.position.y,
-          explosionRadius,
-          {
-            isSensor: true,
-            // isStatic: true,
-            render: {
-              opacity: 0.5,
-            },
-          },
-        )
-
         // const explosionAnimation = animation({
         //   imageCount: 7,
         //   slowDown: 10,
         //   repeat: false,
         //   reverse: false,
         // })
-        addGameObject({
-          tag: 'explosion',
-          body: explosionDetector,
-          source: body,
-        })
+        addGameObject(createExplosion(body.position, body))
 
         isExploded = true
         playBang()
       }
+    },
+  }
+}
+
+const createExplosion = (pos: Vector, source: Body) => {
+  const explosionAnimation = animation({
+    imageCount: 7,
+    slowDown: 8,
+    repeat: false,
+    reverse: false,
+  })
+  const explosionRadius = 100
+
+  const explosionDetector = Bodies.circle(pos.x, pos.y, explosionRadius, {
+    isSensor: true,
+    // isStatic: true,
+    render: {
+      visible: false,
+    },
+  })
+
+  return {
+    tag: 'explosion',
+    body: explosionDetector,
+    source: source,
+
+    render: (ctx: CanvasRenderingContext2D, dt: number) => {
+      explosionAnimation.step()
+      explosionAnimation.draw(
+        ctx,
+        assets.explosion,
+        explosionDetector.position.x - explosionRadius,
+        explosionDetector.position.y - explosionRadius,
+        explosionRadius * 2,
+        explosionRadius * 2,
+      )
     },
   }
 }
