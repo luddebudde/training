@@ -206,8 +206,6 @@ const update = (dt: number) => {
   }
 
   if (isKeyDown('ArrowUp')) {
-    console.log(Collision.collides(player1.jumpSensor, boxes))
-
     player2.jump()
   }
   if (isKeyDown('ArrowLeft')) {
@@ -305,15 +303,28 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
       testExplosionCollision(bodyA, objA, objB, pair.collision)
     }
 
-    // players.forEach(player => {
-    //   if (player.jumpSensor === bodyA){
+    players.forEach((player) => {
+      if (bodyA === player.jumpSensor || bodyB === player.jumpSensor) {
+        player.onTouchGround()
+      }
+    })
+  })
+}
 
-    //   }
-    // });
+const handleCollisionEnd = (event: IEventCollision<Engine>) => {
+  event.pairs.forEach((pair) => {
+    const { bodyA, bodyB } = pair
+
+    players.forEach((player) => {
+      if (bodyA === player.jumpSensor || bodyB === player.jumpSensor) {
+        player.onLeaveGround()
+      }
+    })
   })
 }
 
 Events.on(engine, 'collisionStart', handleCollisionStart)
+Events.on(engine, 'collisionEnd', handleCollisionEnd)
 
 const render = (dt: number) => {
   const zoom = 0.5

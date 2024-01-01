@@ -120,6 +120,11 @@ export const createPlayer = (
   const swingAngularImpulse = 100
   const maxHealth = 100
   const swingDelay = 2000
+
+  // The number of blocks that the touch sensor is currently touching
+  let bodiesTouchingCount = 0
+  const isTouchingGround = () => bodiesTouchingCount > 0
+
   return {
     tag: 'player',
     maxHealth: maxHealth,
@@ -128,6 +133,12 @@ export const createPlayer = (
     jumpSensor: jumpSensor,
     head,
     pickaxe,
+    onLeaveGround: () => {
+      bodiesTouchingCount = Math.max(0, bodiesTouchingCount - 1)
+    },
+    onTouchGround: () => {
+      bodiesTouchingCount = Math.max(0, bodiesTouchingCount + 1)
+    },
     moveRight: () => {
       applyForce(body, Vector.mult(right, walkForce))
     },
@@ -137,8 +148,9 @@ export const createPlayer = (
     jump: throttle(
       750,
       () => {
-        // jumpDetector.is
-        applyImpulse2(body, Vector.mult(up, jumpImpulse))
+        if (isTouchingGround()) {
+          applyImpulse2(body, Vector.mult(up, jumpImpulse))
+        }
       },
       {
         noTrailing: true,
