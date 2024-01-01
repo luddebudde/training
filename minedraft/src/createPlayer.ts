@@ -43,6 +43,18 @@ export const createPlayer = (
       sprite: matterJsSprite(headRadius, headSprite),
     },
   })
+  const jumpSensor = Bodies.circle(0, 0, headRadius * 1.3, {
+    isSensor: true,
+    // mass: 0.1,
+    density: 0,
+    render: {
+      opacity: 0.5,
+    },
+  })
+
+  const body = Body.create({
+    parts: [jumpSensor, head],
+  })
 
   const ropeMass = 0.1
   const ropeJoints = 10
@@ -79,7 +91,7 @@ export const createPlayer = (
   Composite.add(
     rope,
     Constraint.create({
-      bodyA: head,
+      bodyA: body,
       bodyB: rope.bodies[0],
       pointB: { x: -jointLenght / 2, y: 0 },
       pointA: { x: headRadius + armLenght, y: 0 },
@@ -98,22 +110,10 @@ export const createPlayer = (
       ...jointOptions,
     }),
   )
-  const jumpSensor = Bodies.circle(0, 0, headRadius * 1.3, {
-    isSensor: true,
-    // mass: 0.1,
-    density: 0,
-    render: {
-      opacity: 0.5,
-    },
-  })
-
-  const body = Body.create({
-    parts: [jumpSensor, head],
-  })
   const playerBody = Composite.create({
-    bodies: [body],
+    bodies: [body, pickaxe],
     constraints: [],
-    composites: [],
+    composites: [rope],
   })
   const walkForce = 0.005
   const jumpImpulse = 80
