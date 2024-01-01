@@ -116,7 +116,7 @@ export const createPlayer = (
     composites: [rope],
   })
   const walkForce = 0.005
-  const jumpImpulse = 80
+  const jumpImpulse = 120
   const swingAngularImpulse = 100
   const maxHealth = 100
   const swingDelay = 2000
@@ -148,6 +148,7 @@ export const createPlayer = (
     jump: throttle(
       750,
       () => {
+        console.log(bodiesTouchingCount)
         if (isTouchingGround()) {
           applyImpulse2(body, Vector.mult(up, jumpImpulse))
         }
