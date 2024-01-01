@@ -206,6 +206,8 @@ const update = (dt: number) => {
   }
 
   if (isKeyDown('ArrowUp')) {
+    console.log(Collision.collides(player1.jumpSensor, boxes))
+
     player2.jump()
   }
   if (isKeyDown('ArrowLeft')) {
@@ -273,7 +275,7 @@ const testExplosionCollision = (
   b.collisionFilter.mask = 0
   Body.setStatic(explosion.body, true)
   // Composite.remove(engine.world, explosion.body)
-  console.log(targetBody)
+  // console.log(targetBody)
 }
 
 const handleCollisionStart = (event: IEventCollision<Engine>) => {
@@ -302,6 +304,12 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
     } else if (objB !== undefined && objB.tag === 'explosion') {
       testExplosionCollision(bodyA, objA, objB, pair.collision)
     }
+
+    // players.forEach(player => {
+    //   if (player.jumpSensor === bodyA){
+
+    //   }
+    // });
   })
 }
 

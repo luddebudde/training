@@ -54,7 +54,7 @@ const createExplosion = (pos: Vector, source: Body) => {
     repeat: false,
     reverse: false,
   })
-  const explosionRadius = 100
+  const explosionRadius = 300
 
   const explosionDetector = Bodies.circle(pos.x, pos.y, explosionRadius, {
     isSensor: true,

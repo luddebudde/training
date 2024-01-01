@@ -256,11 +256,11 @@ export let enemy = {
   },
   phaseFiveAttack: (phaseMoves) => {
     currentPhase = fifthPhase;
-    if (enemy.health <= enemyMaxHealth / 20 && !fifthPhase.hasRegainedHealth) {
-      enemy.health += 1000;
-      enemyMaxHealth += 1000;
-      fifthPhase.hasRegainedHealth = true;
-    }
+    // if (enemy.health <= enemyMaxHealth / 20 && !fifthPhase.hasRegainedHealth) {
+    //   enemy.health += 1000;
+    //   enemyMaxHealth += 1000;
+    //   fifthPhase.hasRegainedHealth = true;
+    // }
     // if (phaseMoves !== oldVel) {
     //   randomNumber = Math.random();
     // }

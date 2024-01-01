@@ -34,7 +34,7 @@ export const createPlayer = (
     },
   })
 
-  const head = Bodies.circle(100, 20, headRadius, {
+  const head = Bodies.circle(0, 0, headRadius, {
     // collisionFilter: { group: group },
     mass: 5,
     collisionFilter: { group: group },
@@ -98,11 +98,22 @@ export const createPlayer = (
       ...jointOptions,
     }),
   )
+  const jumpSensor = Bodies.circle(0, 0, headRadius * 1.3, {
+    isSensor: true,
+    // mass: 0.1,
+    density: 0,
+    render: {
+      opacity: 0.5,
+    },
+  })
 
-  const body = Composite.create({
-    bodies: [pickaxe, head],
+  const body = Body.create({
+    parts: [jumpSensor, head],
+  })
+  const playerBody = Composite.create({
+    bodies: [body],
     constraints: [],
-    composites: [rope],
+    composites: [],
   })
   const walkForce = 0.005
   const jumpImpulse = 80
@@ -113,19 +124,21 @@ export const createPlayer = (
     tag: 'player',
     maxHealth: maxHealth,
     health: maxHealth,
-    body,
+    body: playerBody,
+    jumpSensor: jumpSensor,
     head,
     pickaxe,
     moveRight: () => {
-      applyForce(head, Vector.mult(right, walkForce))
+      applyForce(body, Vector.mult(right, walkForce))
     },
     moveLeft: () => {
-      applyForce(head, Vector.mult(left, walkForce))
+      applyForce(body, Vector.mult(left, walkForce))
     },
     jump: throttle(
       750,
       () => {
-        applyImpulse2(head, Vector.mult(up, jumpImpulse))
+        // jumpDetector.is
+        applyImpulse2(body, Vector.mult(up, jumpImpulse))
       },
       {
         noTrailing: true,
@@ -134,7 +147,7 @@ export const createPlayer = (
     swingLeft: throttle(
       swingDelay,
       (dt) => {
-        applyAngularImpulse(head, swingAngularImpulse, dt)
+        applyAngularImpulse(body, swingAngularImpulse, dt)
       },
       {
         noTrailing: true,
@@ -144,7 +157,7 @@ export const createPlayer = (
     swingRight: throttle(
       swingDelay,
       (dt) => {
-        applyAngularImpulse(head, -swingAngularImpulse, dt)
+        applyAngularImpulse(body, -swingAngularImpulse, dt)
       },
       {
         noTrailing: true,
@@ -153,10 +166,10 @@ export const createPlayer = (
     throwGrenade: throttle(
       3000,
       () => {
-        const velDir = Vector.normalise(head.velocity)
+        const velDir = Vector.normalise(body.velocity)
         addGameObject(
           createGrenade(
-            Vector.add(head.position, Vector.mult(velDir, headRadius)),
+            Vector.add(body.position, Vector.mult(velDir, headRadius)),
             velDir,
             addGameObject,
           ),
