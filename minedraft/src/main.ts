@@ -179,6 +179,19 @@ boxes.forEach((box) => {
   addGameObject(box)
 })
 
+const boundary = {
+  body: Bodies.rectangle(
+    (-boxSize * horizontalBoxes * 10) / 2,
+    boxSize * verticalBoxes * 2,
+    boxSize * horizontalBoxes * 10,
+    1000,
+
+    { isSensor: true, isStatic: true },
+  ),
+}
+
+addGameObject(boundary)
+
 const isKeyDown = keyDownTracker()
 
 // run the renderer
@@ -267,7 +280,9 @@ const testExplosionCollision = (
     impulseFactor / (Vector.magnitude(diff) + 50) ** 2,
   )
 
-  Body.setStatic(targetBody, false)
+  if (targetGameObject?.tag === 'box') {
+    Body.setStatic(targetBody, false)
+  }
   Body.setVelocity(targetBody, Vector.add(targetBody.velocity, impulse))
 
   const b = explosion.body as Body
@@ -309,6 +324,13 @@ const handleCollisionStart = (event: IEventCollision<Engine>) => {
         player.onTouchGround()
       }
     })
+    // Boundary
+    if (objA === boundary) {
+      Composite.remove(engine.world, bodyB)
+    }
+    if (objB === boundary) {
+      Composite.remove(engine.world, bodyA)
+    }
   })
 }
 
