@@ -8,7 +8,7 @@ body {
 
 #app {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   align-items: stretch;
 
   width: 100vw;
@@ -18,5 +18,5 @@ body {
 }
 
 #app > canvas {
-  height: 50vh;
+  width: 50vw;
 }

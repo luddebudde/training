@@ -48,7 +48,8 @@ export const createPlayer = (
     // mass: 0.1,
     density: 0,
     render: {
-      opacity: 0.5,
+      // opacity: 0.5,
+      visible: false,
     },
   })
 
@@ -178,7 +179,7 @@ export const createPlayer = (
       },
     ),
     throwGrenade: throttle(
-      3000,
+      2500,
       () => {
         const velDir = Vector.normalise(body.velocity)
         addGameObject(

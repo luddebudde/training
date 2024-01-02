@@ -388,15 +388,15 @@ const render = (dt: number) => {
         canvas,
       )
 
-      drawHealthBar(
-        ctx,
-        canvasPos.x - player.head.circleRadius,
-        canvasPos.y + player.head.circleRadius * 1.5,
-        player.head.circleRadius * 2,
-        15,
-        player.health,
-        player.maxHealth,
-      )
+      // drawHealthBar(
+      //   ctx,
+      //   canvasPos.x - player.head.circleRadius,
+      //   canvasPos.y + player.head.circleRadius * 1.5,
+      //   player.head.circleRadius * 2,
+      //   15,
+      //   player.health,
+      //   player.maxHealth,
+      // )
     })
   })
   // moveCameraTo(

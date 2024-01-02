@@ -18,12 +18,12 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
       sprite: matterJsSprite(grenadeRadius, sprites.grenadeRed),
     },
   })
-  Body.setVelocity(body, Vector.mult(direction, 30))
+  Body.setVelocity(body, Vector.mult(direction, 35))
 
   let isExploded = false
   let timeSinceCreation = 0
 
-  const explosionDelay = 3000
+  const explosionDelay = 2500
 
   return {
     tag: 'grenade',
@@ -54,7 +54,7 @@ const createExplosion = (pos: Vector, source: Body) => {
     repeat: false,
     reverse: false,
   })
-  const explosionRadius = 300
+  const explosionRadius = 350
 
   const explosionDetector = Bodies.circle(pos.x, pos.y, explosionRadius, {
     isSensor: true,
