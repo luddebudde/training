@@ -54,6 +54,7 @@ export const createPlayer = (
 
   const body = Body.create({
     parts: [jumpSensor, head],
+    collisionFilter: { group: group },
   })
 
   const ropeMass = 0.1

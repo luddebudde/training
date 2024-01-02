@@ -21,6 +21,7 @@ import {
   right,
   scale,
   scaleMat,
+  zeros,
 } from './math'
 import { moveCameraTo } from './moveCameraTo.ts'
 import { Sprite, sprites } from './sprites.ts'
@@ -131,10 +132,23 @@ const p1 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 2, 2)
 const p2 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 10, 10)
 const p3 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 30, 30)
 
-const boxes = mapMat(
+const worldYOffset = 500
+const platform = zeros(10).map(
+  (_, index) =>
+    [
+      1,
+      Vector.create(index * boxSize - boxSize * 5, worldYOffset - boxSize * 10),
+    ] as const,
+)
+
+const generatedTerrain = mapMat(
   addMat(addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)), scaleMat(p3, 0.1)),
   (val, column, row) => {
-    const coord = Vector.create(column * boxSize, row * boxSize)
+    const coord = Vector.create(
+      column * boxSize - (horizontalBoxes * boxSize) / 2,
+      row * boxSize + worldYOffset,
+    )
+
     return [(val + 1) / 2, coord] as const
   },
 )
@@ -142,34 +156,21 @@ const boxes = mapMat(
   .filter(([val]) => {
     return val > thresHold
   })
-  .map(([val, coord]) => {
-    // -1 to 1 to hex
-    // const hexColor = Math.floor(((val + 1) / 2) * 256)
-    //   .toString(16)
-    //   .padStart(2, '0')
 
-    const red = val / 2
+const boxes = [...generatedTerrain, ...platform].map(([val, coord]) => {
+  const red = val / 2
 
-    // console.log(val, hexColor)
-    return {
-      tag: 'box',
-      health: 0,
-      body: Bodies.rectangle(
-        coord.x - (horizontalBoxes * boxSize) / 2,
-        coord.y + 200,
-        boxSize,
-        boxSize,
-        {
-          isStatic: true,
-          render: {
-            fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
-
-            // lineWidth: 0,
-          },
-        },
-      ),
-    }
-  })
+  return {
+    tag: 'box',
+    health: 0,
+    body: Bodies.rectangle(coord.x, coord.y, boxSize, boxSize, {
+      isStatic: true,
+      render: {
+        fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
+      },
+    }),
+  }
+})
 
 addGameObject(player1)
 addGameObject(player2)
