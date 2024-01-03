@@ -17,8 +17,10 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
     render: {
       sprite: matterJsSprite(grenadeRadius, sprites.grenadeRed),
     },
+    restitution: 0.5,
   })
   Body.setVelocity(body, Vector.mult(direction, 35))
+  Body.setAngularVelocity(body, (Math.PI * 2) / 15)
 
   let isExploded = false
   let timeSinceCreation = 0

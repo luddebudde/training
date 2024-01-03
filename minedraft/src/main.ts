@@ -7,6 +7,8 @@ import {
   Engine,
   Events,
   IEventCollision,
+  IRendererOptions,
+  Pair,
   Render,
   Vector,
   World,
@@ -21,6 +23,7 @@ import {
   right,
   scale,
   scaleMat,
+  up,
   zeros,
 } from './math'
 import { moveCameraTo } from './moveCameraTo.ts'
@@ -57,27 +60,26 @@ const canvas1Height = canvas1.getBoundingClientRect().height
 const canvas2Width = canvas2.getBoundingClientRect().width
 const canvas2Height = canvas2.getBoundingClientRect().height
 
+const renderOptions: IRendererOptions = {
+  width: canvas1Width,
+  height: canvas1Height,
+  showAngleIndicator: false,
+  wireframes: false,
+  showVelocity: false,
+  showDebug: true,
+  showCollisions: false,
+}
+
 // create a renderer
 const render1 = Render.create({
   canvas: canvas1,
   engine: engine,
-  options: {
-    width: canvas1Width,
-    height: canvas1Height,
-    showAngleIndicator: false,
-    wireframes: false,
-    showDebug: true,
-  },
+  options: renderOptions,
 })
 const render2 = Render.create({
   canvas: canvas2,
   engine: engine,
-  options: {
-    width: canvas2Width,
-    height: canvas2Height,
-    showAngleIndicator: false,
-    wireframes: false,
-  },
+  options: renderOptions,
 })
 
 export const matterJsSprite = (radius: number, sprite: Sprite) => {
@@ -121,16 +123,14 @@ const boxSize = 40
 const horizontalBoxes = vhRatio * 60
 const verticalBoxes = 60
 
-const thresHold = random(0.4, 0.6)
-
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
 const p1 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 2, 2)
-const p2 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 10, 10)
-const p3 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 30, 30)
+const p2 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 6, 6)
+const p3 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 18, 18)
 
 const worldYOffset = 500
 const platform = zeros(10).map(
@@ -141,8 +141,18 @@ const platform = zeros(10).map(
     ] as const,
 )
 
+const a1 = 7
+const a2 = 3
+const a3 = 1
+const thresHold = random(0.5, 0.7)
+
+const a = a1 + a2 + a3
+
 const generatedTerrain = mapMat(
-  addMat(addMat(scaleMat(p1, 0.7), scaleMat(p2, 0.3)), scaleMat(p3, 0.1)),
+  addMat(
+    addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
+    scaleMat(p3, a3 / a),
+  ),
   (val, column, row) => {
     const coord = Vector.create(
       column * boxSize - (horizontalBoxes * boxSize) / 2,
@@ -168,6 +178,7 @@ const boxes = [...generatedTerrain, ...platform].map(([val, coord]) => {
       render: {
         fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
       },
+      friction: 0.02,
     }),
   }
 })
@@ -179,16 +190,24 @@ boxes.forEach((box) => {
   addGameObject(box)
 })
 
-const boundary = {
-  body: Bodies.rectangle(
-    (-boxSize * horizontalBoxes * 10) / 2,
-    boxSize * verticalBoxes * 2,
-    boxSize * horizontalBoxes * 10,
-    1000,
+const createBoundary = () => {
+  const worldWidth = boxSize * horizontalBoxes
+  const worldHeight = boxSize * verticalBoxes
+  const width = worldWidth * 10
 
-    { isSensor: true, isStatic: true },
-  ),
+  return {
+    body: Bodies.rectangle(
+      0,
+      worldHeight * 2,
+      width,
+      1000,
+
+      { isSensor: true, isStatic: true },
+    ),
+  }
 }
+
+const boundary = createBoundary()
 
 addGameObject(boundary)
 
@@ -248,18 +267,14 @@ const testPickCollision = (
   collision: Collision,
 ) => {
   const energy = pickaxe.mass * pickaxe.speed * pickaxe.speed
-  const contactNormal = Vector.normalise(
-    Vector.sub(collision.bodyA.position, collision.bodyB.position),
-  )
-  const relSpeed = projectOnVector(pickaxe.velocity, contactNormal)
-  const relEnergy = pickaxe.mass * Vector.dot(relSpeed, relSpeed)
+  // const contactNormal = Vector.normalise(
+  //   Vector.sub(collision.bodyA.position, collision.bodyB.position),
+  // )
+  // const relSpeed = projectOnVector(pickaxe.velocity, contactNormal)
+  // const relEnergy = pickaxe.mass * Vector.dot(relSpeed, relSpeed)
 
   if (energy >= 50) {
-    targetObj.health -= relEnergy / 3
-
-    if (targetObj.health <= 0) {
-      Body.setStatic(targetObj.body, false)
-    }
+    Body.setStatic(targetObj.body, false)
   }
 }
 
@@ -269,15 +284,16 @@ const testExplosionCollision = (
   explosion: GameObject,
   collision: Collision,
 ) => {
+  console.log(c++)
   if (targetBody === explosion.source) {
     Composite.remove(engine.world, targetBody)
   }
   const diff = Vector.sub(targetBody.position, explosion.body.position)
-  const dir = Vector.normalise(diff)
-  const impulseFactor = 2000000
+  const dir = Vector.add(Vector.normalise(diff), up)
+  const impulseFactor = 200000
   const impulse = Vector.mult(
     dir,
-    impulseFactor / (Vector.magnitude(diff) + 50) ** 2,
+    impulseFactor / (Vector.magnitudeSquared(diff) + 2500),
   )
 
   if (targetGameObject?.tag === 'box') {
@@ -289,48 +305,48 @@ const testExplosionCollision = (
   b.collisionFilter.mask = 0
   Body.setStatic(explosion.body, true)
   // Composite.remove(engine.world, explosion.body)
-  // console.log(targetBody)
+}
+
+let c = 0
+
+const testCollision = (bodyA: Body, bodyB: Body, collision: Collision) => {
+  const objA =
+    gameObjects.find((obj) => obj.body === bodyA) ??
+    players.find((obj) => obj.head === bodyA)
+  const objB =
+    gameObjects.find((obj) => obj.body === bodyB) ??
+    players.find((obj) => obj.head === bodyB)
+
+  const pickaxes = [player1.pickaxe, player2.pickaxe]
+
+  pickaxes.forEach((pickaxe) => {
+    if (objA !== undefined && bodyB === pickaxe) {
+      testPickCollision(objA, pickaxe, collision)
+    }
+  })
+
+  if (objA !== undefined && objA.tag === 'explosion') {
+    testExplosionCollision(bodyB, objB, objA, collision)
+  }
+
+  if (objA?.tag === 'box' && objB?.tag === 'box') {
+  }
+
+  players.forEach((player) => {
+    if (bodyA === player.jumpSensor) {
+      player.onTouchGround()
+    }
+  })
+  // Boundary
+  if (objA === boundary) {
+    Composite.remove(engine.world, bodyB)
+  }
 }
 
 const handleCollisionStart = (event: IEventCollision<Engine>) => {
   event.pairs.forEach((pair) => {
-    const { bodyA, bodyB } = pair
-
-    const objA =
-      gameObjects.find((obj) => obj.body === bodyA) ??
-      players.find((obj) => obj.head === bodyA)
-    const objB =
-      gameObjects.find((obj) => obj.body === bodyB) ??
-      players.find((obj) => obj.head === bodyB)
-
-    const pickaxes = [player1.pickaxe, player2.pickaxe]
-
-    pickaxes.forEach((pickaxe) => {
-      if (objA !== undefined && 'health' in objA && bodyB === pickaxe) {
-        testPickCollision(objA, pickaxe, pair.collision)
-      } else if (objB !== undefined && 'health' in objB && bodyA === pickaxe) {
-        testPickCollision(objB, pickaxe, pair.collision)
-      }
-    })
-
-    if (objA !== undefined && objA.tag === 'explosion') {
-      testExplosionCollision(bodyB, objB, objA, pair.collision)
-    } else if (objB !== undefined && objB.tag === 'explosion') {
-      testExplosionCollision(bodyA, objA, objB, pair.collision)
-    }
-
-    players.forEach((player) => {
-      if (bodyA === player.jumpSensor || bodyB === player.jumpSensor) {
-        player.onTouchGround()
-      }
-    })
-    // Boundary
-    if (objA === boundary) {
-      Composite.remove(engine.world, bodyB)
-    }
-    if (objB === boundary) {
-      Composite.remove(engine.world, bodyA)
-    }
+    testCollision(pair.bodyA, pair.bodyB, pair.collision)
+    testCollision(pair.bodyB, pair.bodyA, pair.collision)
   })
 }
 
@@ -359,12 +375,12 @@ const render = (dt: number) => {
       zoom *
         -(
           canvasPlayer.head.position.x -
-          canvas.getBoundingClientRect().width / 1
+          canvas.getBoundingClientRect().width / (zoom * 2)
         ),
       zoom *
         -(
           canvasPlayer.head.position.y -
-          canvas.getBoundingClientRect().height / 1
+          canvas.getBoundingClientRect().height / (zoom * 2)
         ),
     )
     // ctx.translate(
@@ -419,8 +435,10 @@ const render = (dt: number) => {
   )
 }
 
+const maxDt = 1000 / 20
+
 const loop = (then: DOMHighResTimeStamp) => (now: DOMHighResTimeStamp) => {
-  const dt = now - then
+  const dt = Math.min(maxDt, now - then)
   window.requestAnimationFrame(loop(now))
   update(dt)
   render(dt)

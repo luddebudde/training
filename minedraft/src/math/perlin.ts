@@ -1,15 +1,7 @@
 import { zeros2 } from './zeros.ts'
-import { random, randomUnitVector } from './random.ts'
+import { randomUnitVector } from './random.ts'
 import { Vector } from 'matter-js'
 import { mapMat } from './matrix.ts'
-
-const vecs = [
-  Vector.normalise(Vector.create(1, 1)),
-  Vector.normalise(Vector.create(-1, 1)),
-  Vector.normalise(Vector.create(1, -1)),
-  Vector.normalise(Vector.create(-1, -1)),
-]
-const randomVectorOf4 = () => vecs[Math.floor(random(0, vecs.length))]
 
 export const perlin = (
   width: number,

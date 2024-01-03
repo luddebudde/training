@@ -113,9 +113,12 @@ export const createPlayer = (
     }),
   )
   const playerBody = Composite.create({
-    bodies: [body, pickaxe],
+    bodies: [
+      body,
+      // pickaxe
+    ],
     constraints: [],
-    composites: [rope],
+    // composites: [rope],
   })
   const walkForce = 0.005
   const jumpImpulse = 120
@@ -150,7 +153,6 @@ export const createPlayer = (
     jump: throttle(
       750,
       () => {
-        console.log(bodiesTouchingCount)
         if (isTouchingGround()) {
           applyImpulse2(body, Vector.mult(up, jumpImpulse))
         }
