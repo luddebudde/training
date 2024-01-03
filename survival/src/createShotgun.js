@@ -6,6 +6,7 @@ import { makeDirection } from "./makeDirection.js";
 const bulletSpeed = 10;
 const cooldown = 100;
 const bulletSpread = 0.3;
+// const bulletSpread = 0;
 
 let previusPosDifference = {
   pos: {
@@ -22,19 +23,26 @@ let direction = {
 export const createShotgun = () => {
   enemies.forEach((enemy) => {
     const posDifferance = {
-      x: Math.abs(player.pos.x + enemy.pos.x),
-      y: Math.abs(player.pos.y + enemy.pos.y),
+      x: Math.abs(player.pos.x - enemy.pos.x),
+      y: Math.abs(player.pos.y - enemy.pos.y),
     };
 
     if (
       previusPosDifference.pos.x + previusPosDifference.pos.y <
-      posDifferance.x + posDifferance.y
+        posDifferance.x + posDifferance.y &&
+      enemy.health > 0 &&
+      enemy.health !== undefined
     ) {
       direction = makeDirection(player, enemy);
       previusPosDifference.pos.x = posDifferance.x;
       previusPosDifference.pos.y = posDifferance.y;
     }
   });
+
+  console.log("fiende");
+  console.log(enemy.pos);
+  console.log("spelare");
+  console.log(player.pos);
 
   for (let i = 0; i < 10; i++) {
     const spreadX = getRandomInRange(-bulletSpread, bulletSpread);
@@ -61,13 +69,15 @@ export const createShotgun = () => {
       color: "black",
       team: "player",
     };
-    // console.log(direction);
+
+    // console.log(previusPosDifference);
+
     bullets.push(bullet);
     worldObjects.push(bullet);
   }
 
-  previusPosDifference.pos.x = 0;
-  previusPosDifference.pos.y = 0;
+  // previusPosDifference.pos.x = 0;
+  // previusPosDifference.pos.y = 0;
 };
 
 export const shotgun = {

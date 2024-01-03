@@ -59,10 +59,11 @@ const spawnRate = 100;
 let spawnCooldown = spawnRate;
 
 const currentWave = () => {
-  const spawnPos = getRandomSpawnPos();
+  // const spawnPos = getRandomSpawnPos();
   // const spawnPos = 0;
   for (let i = 0; i < 5; i++) {
-    createWalker(spawnPos.x + i * 50, spawnPos.y);
+    // createWalker(spawnPos.x + i * 50, spawnPos.y);
+    createWalker(Math.random() * world.width + i * 50, 100);
   }
 };
 
@@ -111,7 +112,7 @@ setInterval(() => {
     // console.log(weapon.attack);
   });
 
-  console.log(spawnCooldown);
+  // console.log(spawnCooldown);
   spawnCooldown -= 1;
   if (spawnCooldown <= 0) {
     currentWave();
