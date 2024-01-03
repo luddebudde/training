@@ -117,7 +117,7 @@ const canvases = [
 
 const vhRatio = 3 / 1
 
-const boxSize = 30
+const boxSize = 40
 const horizontalBoxes = vhRatio * 60
 const verticalBoxes = 60
 
