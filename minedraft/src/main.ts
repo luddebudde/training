@@ -396,7 +396,7 @@ Events.on(engine, 'collisionStart', handleCollisionStart)
 Events.on(engine, 'collisionEnd', handleCollisionEnd)
 
 const render = (dt: number) => {
-  const zoom = 0.1
+  const zoom = 0.5
 
   canvases.forEach(([renderer, canvasPlayer]) => {
     const canvas = renderer.canvas
