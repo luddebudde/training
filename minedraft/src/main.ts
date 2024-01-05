@@ -36,6 +36,7 @@ import { createPlayer } from './createPlayer.ts'
 import { applyImpulse2 } from './physics/applyForce.ts'
 import { loadImage } from './image.ts'
 import { animation } from './animation.ts'
+import { drawArrow } from './drawArrow.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -113,53 +114,78 @@ const player2 = createPlayer(
 )
 
 const canvases = [
-  [canvas1, player1],
-  [canvas2, player2],
+  [render1, player1],
+  [render2, player2],
 ] as const
 
-const vhRatio = 3 / 1
+const hvRatio = 2 / 1
 
 const boxSize = 40
-const horizontalBoxes = vhRatio * 60
-const verticalBoxes = 60
+const horizontalBoxes = 80
+const verticalBoxes = hvRatio * horizontalBoxes
+
+const worldWidth = boxSize * horizontalBoxes
+const worldHeight = boxSize * verticalBoxes
 
 // 1. [[0, 0,0 ], [0,0,0], [0,0,0]]
 // 2. [[[0,0], [0,1], [0, 2]], [[1,0], [1,1], [1, 2]]]
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
-const p1 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 2, 2)
-const p2 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 6, 6)
-const p3 = perlin(horizontalBoxes, verticalBoxes, vhRatio * 18, 18)
+const p1 = perlin(horizontalBoxes, verticalBoxes, 4, hvRatio * 4)
+const p2 = perlin(horizontalBoxes, verticalBoxes, 8, hvRatio * 8)
+const p3 = perlin(horizontalBoxes, verticalBoxes, 16, hvRatio * 16)
+
+const rockness = perlin(horizontalBoxes, verticalBoxes, 2, hvRatio * 2)
+const rockEarthRatio = 0.14
 
 const worldYOffset = 500
 const platform = zeros(10).map(
   (_, index) =>
     [
       1,
-      Vector.create(index * boxSize - boxSize * 5, worldYOffset - boxSize * 10),
+      'rock',
+      Vector.create(index * boxSize - boxSize * 5, boxSize * 25),
     ] as const,
 )
 
-const a1 = 7
+const a1 = 4
 const a2 = 3
 const a3 = 1
-const thresHold = random(0.5, 0.7)
+const thresHold = random(0.4, 0.5)
 
 const a = a1 + a2 + a3
 
 const generatedTerrain = mapMat(
-  addMat(
-    addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
-    scaleMat(p3, a3 / a),
-  ),
-  (val, column, row) => {
-    const coord = Vector.create(
-      column * boxSize - (horizontalBoxes * boxSize) / 2,
-      row * boxSize + worldYOffset,
-    )
+  mapMat(
+    addMat(
+      addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
+      scaleMat(p3, a3 / a),
+    ),
+    (val, column, row) => {
+      const coord = Vector.create(
+        column * boxSize - (horizontalBoxes * boxSize) / 2,
+        row * boxSize,
+      )
 
-    return [(val + 1) / 2, coord] as const
+      return [(val + 1) / 2, coord] as const
+    },
+  ),
+  ([value, pos], row, column) => {
+    const fadeBorder =
+      16 *
+      ((1 - pos.y / worldHeight) *
+        (pos.y / worldHeight) *
+        (1 - (pos.x + worldWidth / 2) / worldWidth) *
+        ((pos.x + worldWidth / 2) / worldWidth))
+
+    const relY = pos.y / worldHeight
+    const material =
+      (relY * relY * (rockness[row][column] + 1)) / 2 > rockEarthRatio
+        ? 'rock'
+        : 'earth'
+
+    return [fadeBorder * value, material, pos] as const
   },
 )
   .flat()
@@ -167,21 +193,27 @@ const generatedTerrain = mapMat(
     return val > thresHold
   })
 
-const boxes = [...generatedTerrain, ...platform].map(([val, coord]) => {
-  const red = val / 2
+const boxes = [...generatedTerrain, ...platform].map(
+  ([val, material, coord]) => {
+    const color =
+      material === 'earth'
+        ? rgb(val * 0.6, val * 0.64 * 0.6, val * 0 * 0.6)
+        : rgb(val * 0.5, val * 0.5, val * 0.5)
 
-  return {
-    tag: 'box',
-    health: 0,
-    body: Bodies.rectangle(coord.x, coord.y, boxSize, boxSize, {
-      isStatic: true,
-      render: {
-        fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
-      },
-      friction: 0.02,
-    }),
-  }
-})
+    return {
+      tag: 'box',
+      health: 0,
+      body: Bodies.rectangle(coord.x, coord.y, boxSize, boxSize, {
+        isStatic: true,
+        render: {
+          // fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
+          fillStyle: color,
+        },
+        friction: 0.02,
+      }),
+    }
+  },
+)
 
 addGameObject(player1)
 addGameObject(player2)
@@ -191,8 +223,6 @@ boxes.forEach((box) => {
 })
 
 const createBoundary = () => {
-  const worldWidth = boxSize * horizontalBoxes
-  const worldHeight = boxSize * verticalBoxes
   const width = worldWidth * 10
 
   return {
@@ -366,22 +396,23 @@ Events.on(engine, 'collisionStart', handleCollisionStart)
 Events.on(engine, 'collisionEnd', handleCollisionEnd)
 
 const render = (dt: number) => {
-  const zoom = 0.5
+  const zoom = 0.1
 
-  canvases.forEach(([canvas, canvasPlayer]) => {
-    const ctx = canvas.getContext('2d')
+  canvases.forEach(([renderer, canvasPlayer]) => {
+    const canvas = renderer.canvas
+    const ctx = canvas.getContext('2d')!
+
+    const cameraPos = Vector.div(
+      Vector.add(renderer.bounds.min, renderer.bounds.max),
+      2,
+    )
+
+    // const cameraPos = canvasPlayer.head.position
 
     ctx.translate(
+      zoom * -(cameraPos.x - canvas.getBoundingClientRect().width / (zoom * 2)),
       zoom *
-        -(
-          canvasPlayer.head.position.x -
-          canvas.getBoundingClientRect().width / (zoom * 2)
-        ),
-      zoom *
-        -(
-          canvasPlayer.head.position.y -
-          canvas.getBoundingClientRect().height / (zoom * 2)
-        ),
+        -(cameraPos.y - canvas.getBoundingClientRect().height / (zoom * 2)),
     )
     // ctx.translate(
     //   (zoom * canvas.getBoundingClientRect().width) / 2,
@@ -394,26 +425,31 @@ const render = (dt: number) => {
       }
       gameObject.render(ctx, dt)
     })
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
 
     // Health bar
-    players.forEach((player) => {
-      const canvasPos = canvasCoordinate(
-        player.head.position,
-        canvasPlayer.head.position,
-        canvas,
-      )
 
-      // drawHealthBar(
-      //   ctx,
-      //   canvasPos.x - player.head.circleRadius,
-      //   canvasPos.y + player.head.circleRadius * 1.5,
-      //   player.head.circleRadius * 2,
-      //   15,
-      //   player.health,
-      //   player.maxHealth,
-      // )
-    })
+    // console.log(render1.bounds.min)
+
+    // players.forEach((player) => {
+    const endPos = Vector.add(
+      canvasPlayer.head.position,
+      Vector.mult(Vector.normalise(canvasPlayer.head.velocity), 100),
+    )
+    drawArrow(
+      ctx,
+      canvasPlayer.head.position.x,
+      canvasPlayer.head.position.y,
+      endPos.x,
+      endPos.y,
+    )
+    // })
+    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    moveCameraTo(
+      canvasPlayer.head.position,
+      renderer,
+      canvas1Width / zoom,
+      canvas1Height / zoom,
+    )
   })
   // moveCameraTo(
   //   player1.head.position,
@@ -421,18 +457,6 @@ const render = (dt: number) => {
   //   canvas1Width * 5,
   //   canvas1Height * 5,
   // )
-  moveCameraTo(
-    player1.head.position,
-    render1,
-    canvas1Width / zoom,
-    canvas1Height / zoom,
-  )
-  moveCameraTo(
-    player2.head.position,
-    render2,
-    canvas2Width / zoom,
-    canvas2Height / zoom,
-  )
 }
 
 const maxDt = 1000 / 20

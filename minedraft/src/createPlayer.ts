@@ -56,6 +56,7 @@ export const createPlayer = (
   const body = Body.create({
     parts: [jumpSensor, head],
     collisionFilter: { group: group },
+    restitution: 0,
   })
 
   const ropeMass = 0.1
@@ -136,7 +137,7 @@ export const createPlayer = (
     health: maxHealth,
     body: playerBody,
     jumpSensor: jumpSensor,
-    head,
+    head: body,
     pickaxe,
     onLeaveGround: () => {
       bodiesTouchingCount = Math.max(0, bodiesTouchingCount - 1)
