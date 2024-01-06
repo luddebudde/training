@@ -19,4 +19,6 @@ body {
 
 #app > canvas {
   width: 50vw;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
 }

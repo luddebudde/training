@@ -25,7 +25,7 @@ export const createGrenade = (spawnPos: Vector, direction, addGameObject) => {
   let isExploded = false
   let timeSinceCreation = 0
 
-  const explosionDelay = 2500
+  const explosionDelay = 2000
 
   return {
     tag: 'grenade',

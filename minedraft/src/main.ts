@@ -37,6 +37,7 @@ import { applyImpulse2 } from './physics/applyForce.ts'
 import { loadImage } from './image.ts'
 import { animation } from './animation.ts'
 import { drawArrow } from './drawArrow.ts'
+import { assets } from './assets.ts'
 
 const engine = Engine.create({
   gravity: {
@@ -45,6 +46,9 @@ const engine = Engine.create({
 })
 
 const canvas1 = document.createElement('canvas')
+// canvas1.style.backgroundImage = 'url(/sprites/sky.jpg)'
+// 'url(/sprites/sky.jpg)'
+
 const canvas2 = document.createElement('canvas')
 
 const appEl = document.getElementById('app')
@@ -69,6 +73,7 @@ const renderOptions: IRendererOptions = {
   showVelocity: false,
   showDebug: true,
   showCollisions: false,
+  background: 'url(/sprites/sky.jpg)',
 }
 
 // create a renderer
@@ -82,6 +87,8 @@ const render2 = Render.create({
   engine: engine,
   options: renderOptions,
 })
+
+// canvas1.style.backgroundSize = 'cover'
 
 export const matterJsSprite = (radius: number, sprite: Sprite) => {
   return {
@@ -121,7 +128,7 @@ const canvases = [
 const hvRatio = 2 / 1
 
 const boxSize = 40
-const horizontalBoxes = 80
+const horizontalBoxes = 100
 const verticalBoxes = hvRatio * horizontalBoxes
 
 const worldWidth = boxSize * horizontalBoxes
@@ -132,19 +139,21 @@ const worldHeight = boxSize * verticalBoxes
 // 2. [[0,0], [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 // 2. [Vector.create(), [0,1], [0, 2], [1,0], [1,1], [1, 2]] // flat
 
-const p1 = perlin(horizontalBoxes, verticalBoxes, 4, hvRatio * 4)
+const p1 = perlin(horizontalBoxes, verticalBoxes, 6, hvRatio * 6)
 const p2 = perlin(horizontalBoxes, verticalBoxes, 8, hvRatio * 8)
 const p3 = perlin(horizontalBoxes, verticalBoxes, 16, hvRatio * 16)
 
 const rockness = perlin(horizontalBoxes, verticalBoxes, 2, hvRatio * 2)
 const rockEarthRatio = 0.14
 
+const isWinter = Math.random() * 2 < 1
+
 const worldYOffset = 500
 const platform = zeros(10).map(
   (_, index) =>
     [
       1,
-      'rock',
+      'rubber',
       Vector.create(index * boxSize - boxSize * 5, boxSize * 25),
     ] as const,
 )
@@ -152,68 +161,173 @@ const platform = zeros(10).map(
 const a1 = 4
 const a2 = 3
 const a3 = 1
-const thresHold = random(0.4, 0.5)
+const cavesThresHold = random(0.4, 0.5)
+const ridgesType = Math.random() < 0.5 ? 'islands' : 'ridges'
 
 const a = a1 + a2 + a3
 
-const generatedTerrain = mapMat(
+const caves = () =>
   mapMat(
-    addMat(
-      addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
-      scaleMat(p3, a3 / a),
+    mapMat(
+      addMat(
+        addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
+        scaleMat(p3, a3 / a),
+      ),
+      (val, column, row) => {
+        const coord = Vector.create(
+          column * boxSize - (horizontalBoxes * boxSize) / 2,
+          row * boxSize,
+        )
+
+        return [(val + 1) / 2, coord] as const
+      },
     ),
-    (val, column, row) => {
-      const coord = Vector.create(
-        column * boxSize - (horizontalBoxes * boxSize) / 2,
-        row * boxSize,
-      )
+    ([value, pos], row, column) => {
+      const fadeBorder =
+        16 *
+        ((1 - pos.y / worldHeight) *
+          (pos.y / worldHeight) *
+          (1 - (pos.x + worldWidth / 2) / worldWidth) *
+          ((pos.x + worldWidth / 2) / worldWidth))
 
-      return [(val + 1) / 2, coord] as const
+      const newValue = fadeBorder * value
+
+      const relY = pos.y / worldHeight
+      const material =
+        newValue < cavesThresHold
+          ? 'air'
+          : (relY * relY * (rockness[row][column] + 1)) / 2 > rockEarthRatio
+            ? isWinter
+              ? 'ice'
+              : 'rock'
+            : 'earth'
+
+      return [newValue, material, pos] as const
     },
-  ),
-  ([value, pos], row, column) => {
-    const fadeBorder =
-      16 *
-      ((1 - pos.y / worldHeight) *
-        (pos.y / worldHeight) *
-        (1 - (pos.x + worldWidth / 2) / worldWidth) *
-        ((pos.x + worldWidth / 2) / worldWidth))
+  )
 
-    const relY = pos.y / worldHeight
-    const material =
-      (relY * relY * (rockness[row][column] + 1)) / 2 > rockEarthRatio
-        ? 'rock'
-        : 'earth'
+const ridges = () =>
+  mapMat(
+    mapMat(
+      addMat(
+        addMat(scaleMat(p1, a1 / a), scaleMat(p2, a2 / a)),
+        scaleMat(p3, a3 / a),
+      ),
+      (val, column, row) => {
+        const coord = Vector.create(
+          column * boxSize - (horizontalBoxes * boxSize) / 2,
+          row * boxSize,
+        )
 
-    return [fadeBorder * value, material, pos] as const
+        return [
+          ridgesType === 'islands' ? Math.abs(val) : 1 - Math.abs(val),
+          coord,
+        ] as const
+      },
+    ),
+    ([value, pos], row, column) => {
+      const fadeBorder =
+        16 *
+        ((1 - pos.y / worldHeight) *
+          (pos.y / worldHeight) *
+          (1 - (pos.x + worldWidth / 2) / worldWidth) *
+          ((pos.x + worldWidth / 2) / worldWidth))
+
+      const newValue = fadeBorder * value
+
+      const ridgesThresHold = ridgesType === 'islands' ? 0.4 : 0.8
+      const relY = pos.y / worldHeight
+      const material =
+        newValue < ridgesThresHold
+          ? 'air'
+          : (relY * relY * (rockness[row][column] + 1)) / 2 > rockEarthRatio
+            ? isWinter
+              ? 'ice'
+              : 'rock'
+            : 'earth'
+
+      return [newValue, material, pos] as const
+    },
+  )
+
+const terrainWithoutGrass = Math.random() > 0.5 ? ridges() : caves()
+
+const materials = {
+  earth: {
+    color: (val: number) => rgb(val * 0.6, val * 0.64 * 0.6, val * 0 * 0.6),
+    density: 0.001,
+    resitution: 0.2,
+  },
+  grass: {
+    color: (val: number) => rgb(val * 0, val * 1, val * 0),
+    density: 0.0005,
+    resitution: 0.2,
+  },
+  snow: {
+    color: (val: number) => rgb(0.9, 0.9, 0.9),
+    density: 0.0005,
+    resitution: 0.2,
+  },
+  rock: {
+    color: (val: number) => rgb(val * 0.5, val * 0.5, val * 0.5),
+    density: 0.002,
+    resitution: 0.2,
+  },
+
+  ice: {
+    color: (val: number) => rgb(val * 0.5, val * 0.7, val * 1),
+    density: 0.001,
+    resitution: 0.2,
+    opacity: 0.8,
+  },
+  rubber: {
+    color: (val: number) => rgb(val * 0.8, val * 0.3, val * 0.3),
+    density: 0.0002,
+    resitution: 1,
+  },
+} as const
+
+const generatedTerrain = mapMat(
+  terrainWithoutGrass,
+  ([value, material, pos], row, column) => {
+    const isEarth = material === 'earth'
+    const isBelowAir = terrainWithoutGrass[row][column - 1]?.[1] === 'air'
+    return [
+      value,
+      isEarth && isBelowAir ? (isWinter ? 'snow' : 'grass') : material,
+      pos,
+    ]
   },
 )
   .flat()
-  .filter(([val]) => {
-    return val > thresHold
+  .filter(([_, material]) => {
+    return material !== 'air'
   })
 
-const boxes = [...generatedTerrain, ...platform].map(
-  ([val, material, coord]) => {
-    const color =
-      material === 'earth'
-        ? rgb(val * 0.6, val * 0.64 * 0.6, val * 0 * 0.6)
-        : rgb(val * 0.5, val * 0.5, val * 0.5)
+const boxes = [
+  ...generatedTerrain,
+  //  ...platform
+].map(([val, materialKey, coord]) => {
+  const material = materials[materialKey]
+  const color = material.color(val)
 
-    return {
-      tag: 'box',
-      health: 0,
-      body: Bodies.rectangle(coord.x, coord.y, boxSize, boxSize, {
-        isStatic: true,
-        render: {
-          // fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
-          fillStyle: color,
-        },
-        friction: 0.02,
-      }),
-    }
-  },
-)
+  return {
+    tag: 'box',
+    material,
+    health: 0,
+    body: Bodies.rectangle(coord.x, coord.y, boxSize, boxSize, {
+      isStatic: true,
+      render: {
+        // fillStyle: rgb(red, red * 0.64 - coord.y / 20000, red * 0),
+        fillStyle: color,
+        opacity: material.opacity,
+      },
+      friction: 0.02,
+      density: material.density,
+      restitution: material.resitution,
+    }),
+  }
+})
 
 addGameObject(player1)
 addGameObject(player2)
@@ -258,15 +372,15 @@ const update = (dt: number) => {
     player1.moveRight()
   }
 
-  if (isKeyDown('KeyQ')) {
+  if (isKeyDown('KeyS')) {
     player1.throwGrenade()
   }
 
-  if (isKeyDown('KeyS') && isKeyDown('KeyA')) {
-    player1.swingLeft(dt)
-  } else if (isKeyDown('KeyS') && isKeyDown('KeyD')) {
-    player1.swingRight(dt)
-  }
+  // if (isKeyDown('KeyS') && isKeyDown('KeyA')) {
+  //   player1.swingLeft(dt)
+  // } else if (isKeyDown('KeyS') && isKeyDown('KeyD')) {
+  //   player1.swingRight(dt)
+  // }
 
   if (isKeyDown('ArrowUp')) {
     player2.jump()
@@ -277,12 +391,12 @@ const update = (dt: number) => {
   if (isKeyDown('ArrowRight')) {
     player2.moveRight()
   }
-  if (isKeyDown('ArrowDown') && isKeyDown('ArrowLeft')) {
-    player2.swingLeft(dt)
-  } else if (isKeyDown('ArrowDown') && isKeyDown('ArrowRight')) {
-    player2.swingRight(dt)
-  }
-  if (isKeyDown('Enter')) {
+  // if (isKeyDown('ArrowDown') && isKeyDown('ArrowLeft')) {
+  //   player2.swingLeft(dt)
+  // } else if (isKeyDown('ArrowDown') && isKeyDown('ArrowRight')) {
+  //   player2.swingRight(dt)
+  // }
+  if (isKeyDown('ArrowDown')) {
     player2.throwGrenade()
   }
 
@@ -308,36 +422,50 @@ const testPickCollision = (
   }
 }
 
+const testIceCollision = (
+  ice: GameObject,
+  body: Body,
+  collision: Collision,
+) => {
+  const energy = body.mass * body.speed * body.speed
+
+  if (energy >= 50) {
+    Body.setStatic(ice.body, false)
+    // Composite.remove(engine.world, ice.body)
+  }
+}
+
 const testExplosionCollision = (
   targetBody: Body,
   targetGameObject: GameObject | undefined,
   explosion: GameObject,
   collision: Collision,
 ) => {
-  console.log(c++)
   if (targetBody === explosion.source) {
     Composite.remove(engine.world, targetBody)
   }
   const diff = Vector.sub(targetBody.position, explosion.body.position)
   const dir = Vector.add(Vector.normalise(diff), up)
+  const density = targetBody._original?.density ?? targetBody.density
   const impulseFactor = 200000
-  const impulse = Vector.mult(
-    dir,
-    impulseFactor / (Vector.magnitudeSquared(diff) + 2500),
-  )
+  const speedDiff =
+    impulseFactor / (Vector.magnitudeSquared(diff) + 2500) / (density * 1000)
 
-  if (targetGameObject?.tag === 'box') {
+  const velDiff = Vector.mult(dir, speedDiff)
+
+  console.log(1, density, speedDiff)
+
+  if (targetGameObject?.tag === 'box' && speedDiff > 2) {
     Body.setStatic(targetBody, false)
   }
-  Body.setVelocity(targetBody, Vector.add(targetBody.velocity, impulse))
-
+  if (!targetBody.isStatic) {
+    Body.setVelocity(targetBody, Vector.add(targetBody.velocity, velDiff))
+  }
   const b = explosion.body as Body
   b.collisionFilter.mask = 0
   Body.setStatic(explosion.body, true)
   // Composite.remove(engine.world, explosion.body)
 }
-
-let c = 0
 
 const testCollision = (bodyA: Body, bodyB: Body, collision: Collision) => {
   const objA =
@@ -357,6 +485,14 @@ const testCollision = (bodyA: Body, bodyB: Body, collision: Collision) => {
 
   if (objA !== undefined && objA.tag === 'explosion') {
     testExplosionCollision(bodyB, objB, objA, collision)
+  }
+
+  if (
+    objA !== undefined &&
+    objA.tag === 'box' &&
+    objA.material === materials.ice
+  ) {
+    testIceCollision(objA, bodyB, collision)
   }
 
   if (objA?.tag === 'box' && objB?.tag === 'box') {
@@ -402,6 +538,8 @@ const render = (dt: number) => {
     const canvas = renderer.canvas
     const ctx = canvas.getContext('2d')!
 
+    const bounds = canvas.getBoundingClientRect()
+
     const cameraPos = Vector.div(
       Vector.add(renderer.bounds.min, renderer.bounds.max),
       2,
@@ -410,9 +548,8 @@ const render = (dt: number) => {
     // const cameraPos = canvasPlayer.head.position
 
     ctx.translate(
-      zoom * -(cameraPos.x - canvas.getBoundingClientRect().width / (zoom * 2)),
-      zoom *
-        -(cameraPos.y - canvas.getBoundingClientRect().height / (zoom * 2)),
+      zoom * -(cameraPos.x - bounds.width / (zoom * 2)),
+      zoom * -(cameraPos.y - bounds.height / (zoom * 2)),
     )
     // ctx.translate(
     //   (zoom * canvas.getBoundingClientRect().width) / 2,
@@ -442,6 +579,12 @@ const render = (dt: number) => {
       endPos.x,
       endPos.y,
     )
+
+    // ctx.beginPath()
+    // context.moveTo(fromx, fromy)
+    // context.lineTo(tox, toy)
+    // ctx.stroke()
+
     // })
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     moveCameraTo(

@@ -182,7 +182,7 @@ export const createPlayer = (
       },
     ),
     throwGrenade: throttle(
-      2500,
+      2000,
       () => {
         const velDir = Vector.normalise(body.velocity)
         addGameObject(
