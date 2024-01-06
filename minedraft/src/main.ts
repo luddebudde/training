@@ -581,8 +581,17 @@ const render = (dt: number) => {
     )
 
     // ctx.beginPath()
-    // context.moveTo(fromx, fromy)
-    // context.lineTo(tox, toy)
+    // ctx.strokeStyle = '#FFFF44FF'
+    // ctx.lineWidth = 3
+    // ctx.moveTo(-worldWidth, worldHeight / 3)
+    // ctx.lineTo(worldWidth, worldHeight / 3)
+    // ctx.stroke()
+
+    // ctx.beginPath()
+    // ctx.strokeStyle = '#FF444480'
+    // ctx.lineWidth = 3
+    // ctx.moveTo(-worldWidth, (worldHeight * 2) / 3)
+    // ctx.lineTo(worldWidth, (worldHeight * 2) / 3)
     // ctx.stroke()
 
     // })
