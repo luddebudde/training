@@ -10,8 +10,8 @@ const bulletSpread = 0.3;
 
 let previusPosDifference = {
   pos: {
-    x: 0,
-    y: 0,
+    x: 100000000,
+    y: 100000000,
   },
 };
 let direction = {
@@ -22,27 +22,34 @@ let direction = {
 
 export const createShotgun = () => {
   enemies.forEach((enemy) => {
-    const posDifferance = {
-      x: Math.abs(player.pos.x - enemy.pos.x),
-      y: Math.abs(player.pos.y - enemy.pos.y),
+    const posDifference = {
+      x: player.pos.x - enemy.pos.x,
+      y: player.pos.y - enemy.pos.y,
+    };
+
+    const previusPosDifferenceRoot = {
+      x: previusPosDifference.pos.x * previusPosDifference.pos.x,
+      y: previusPosDifference.pos.y * previusPosDifference.pos.y,
+    };
+
+    const currentPosDifferenceRoot = {
+      x: posDifference.x * posDifference.x,
+      y: posDifference.y * posDifference.y,
     };
 
     if (
-      previusPosDifference.pos.x + previusPosDifference.pos.y <
-        posDifferance.x + posDifferance.y &&
-      enemy.health > 0 &&
-      enemy.health !== undefined
+      previusPosDifferenceRoot.x + previusPosDifferenceRoot.y >
+      currentPosDifferenceRoot.x + currentPosDifferenceRoot.y
     ) {
       direction = makeDirection(player, enemy);
-      previusPosDifference.pos.x = posDifferance.x;
-      previusPosDifference.pos.y = posDifferance.y;
+      previusPosDifference.pos.x = posDifference.x;
+      previusPosDifference.pos.y = posDifference.y;
+      // previusEnemy = enemy;
     }
   });
 
-  console.log("fiende");
-  console.log(enemy.pos);
-  console.log("spelare");
-  console.log(player.pos);
+  previusPosDifference.pos.x = 100000000;
+  previusPosDifference.pos.y = 100000000;
 
   for (let i = 0; i < 10; i++) {
     const spreadX = getRandomInRange(-bulletSpread, bulletSpread);
@@ -75,9 +82,6 @@ export const createShotgun = () => {
     bullets.push(bullet);
     worldObjects.push(bullet);
   }
-
-  // previusPosDifference.pos.x = 0;
-  // previusPosDifference.pos.y = 0;
 };
 
 export const shotgun = {

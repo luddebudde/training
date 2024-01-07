@@ -11,6 +11,7 @@ import { createShotgun, shotgun } from "./createShotgun.js";
 import { keyDownTracker } from "./keyDownTracker.js";
 import { createPlayer } from "./createPlayer.js";
 import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
+import { createXp } from "./createXP.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -25,6 +26,7 @@ export const createEnemies = [createWalker];
 // export let bullets = [];
 // export let bullets = [];
 export let worldObjects = [];
+export let xps = [];
 
 export let bullets = [];
 export const weapons = [aimBullet, shotgun];
@@ -61,7 +63,7 @@ let spawnCooldown = spawnRate;
 const currentWave = () => {
   // const spawnPos = getRandomSpawnPos();
   // const spawnPos = 0;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 1; i++) {
     // createWalker(spawnPos.x + i * 50, spawnPos.y);
     createWalker(Math.random() * world.width + i * 50, 100);
   }
@@ -123,9 +125,21 @@ setInterval(() => {
 
   entities.forEach((entity) => {
     entity.update?.();
+
+    if (entity.health <= 0) {
+      createXp(entity.pos.x, entity.pos.y, entity.xp);
+    }
+  });
+
+  xps.forEach((xp) => {
+    if (doCirclesOverlap(xp, player)) {
+      player.radius += 1;
+      indexOf;
+    }
   });
 
   entities = entities.filter((entity) => entity.health >= 0);
+  enemies = enemies.filter((enemy) => enemy.health >= 0);
   bullets = bullets.filter((bullet) => !bullet.destroy);
 
   worldObjects = worldObjects.filter(
@@ -169,8 +183,10 @@ setInterval(() => {
   ctx.fill();
 
   worldObjects.forEach((object) => {
-    object.pos.x += object.vel.x;
-    object.pos.y += object.vel.y;
+    if (object.vel !== undefined) {
+      object.pos.x += object.vel.x;
+      object.pos.y += object.vel.y;
+    }
 
     ctx.beginPath();
     ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);

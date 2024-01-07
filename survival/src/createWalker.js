@@ -17,6 +17,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     damage: 20,
     color: "red",
     team: "enemy",
+    xp: 100,
 
     update: () => {
       const newVel = makeDirection(walker, player);
