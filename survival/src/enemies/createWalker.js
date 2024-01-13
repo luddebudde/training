@@ -21,7 +21,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     color: "red",
     team: "enemy",
     xp: Math.random() * 50 * stats.growth,
-    priority: 2,
+    priority: 10,
 
     update: () => {
       const newVel = makeDirection(walker.pos, player.pos);
