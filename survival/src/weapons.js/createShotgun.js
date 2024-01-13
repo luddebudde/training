@@ -2,10 +2,11 @@ import { getRandomInRange } from "../getRandomInRange.js";
 import { bullets, enemies, player, worldObjects } from "../main.js";
 import { entities } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { stats } from "../stats.js";
 
-const bulletSpeed = 10;
+const bulletSpeed = 10 * stats.speed;
 const cooldown = 100;
-const bulletSpread = 0.3;
+const bulletSpread = 0.5;
 // const bulletSpread = 0;
 
 let previusPosDifference = {
@@ -61,7 +62,7 @@ export const createShotgun = () => {
     };
 
     const bullet = {
-      radius: 15,
+      radius: 15 * stats.area,
       attackIntervall: cooldown,
       cooldown: cooldown,
       pos: {
@@ -72,10 +73,11 @@ export const createShotgun = () => {
         x: finalDirection.x * bulletSpeed,
         y: finalDirection.y * bulletSpeed,
       },
-      damage: 40,
+      damage: 40 * stats.damage,
       // damage: 0,
       color: "black",
       team: "player",
+      priority: 5,
     };
 
     // console.log(previusPosDifference);
@@ -86,7 +88,7 @@ export const createShotgun = () => {
 };
 
 export const shotgun = {
-  attackIntervall: cooldown,
-  cooldown: cooldown,
+  attackIntervall: cooldown * stats.cooldown,
+  cooldown: cooldown * stats.cooldown,
   attack: createShotgun,
 };

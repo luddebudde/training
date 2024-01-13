@@ -15,6 +15,7 @@ import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
 import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
 import { vector } from "./vectors.js";
+import { stats } from "./stats.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -57,14 +58,14 @@ document.addEventListener("mousemove", (event) => {
   };
 });
 
-const spawnRate = 100;
+const spawnRate = 100 / stats.curse;
 
 let spawnCooldown = spawnRate;
 
 const currentWave = () => {
   // const spawnPos = getRandomSpawnPos();
   // const spawnPos = 0;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 5 * stats.curse; i++) {
     // createWalker(spawnPos.x + i * 50, spawnPos.y);
     createWalker(Math.random() * world.width + i * 50, 100);
     createCharger(Math.random() * world.width + i * 50, 100);
@@ -159,15 +160,13 @@ const update = () => {
 
   xps.forEach((xp) => {
     if (doCirclesOverlap(xp, player)) {
-      player.radius += 10;
+      player.radius += xp.amount;
       // indexOf;
       console.log("hej");
+
+      xp.destroy = true;
     }
   });
-
-  function checkXp(age) {
-    return age > 18;
-  }
 
   // console.log(enemies);
 
@@ -216,6 +215,8 @@ const update = () => {
   ctx.arc(mousePos.x - 10, mousePos.y - 30, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
   ctx.fill();
+
+  worldObjects.sort((a, b) => a.priority - b.priority);
 
   worldObjects.forEach((object) => {
     if (object.vel !== undefined) {

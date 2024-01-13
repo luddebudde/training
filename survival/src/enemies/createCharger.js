@@ -1,6 +1,7 @@
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
 export const createCharger = (spawnWidth, spawnHeight) => {
@@ -16,10 +17,11 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     speed: 5,
-    damage: 100,
+    damage: 30,
     color: "black",
     team: "enemy",
-    xp: Math.random() * 25,
+    xp: Math.random() * 25 * stats.growth,
+    priority: 10,
 
     update: () => {
       if (doCirclesOverlap(charger, player)) {

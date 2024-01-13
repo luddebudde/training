@@ -1,10 +1,9 @@
+import { stats } from "./stats.js";
 import { world } from "./world.js";
-
-const maxHealth = 100;
 
 export const createPlayer = () => {
   return {
-    health: maxHealth,
+    health: stats.maxHealth,
     pos: {
       x: world.width / 2,
       y: world.height / 2,
@@ -13,10 +12,11 @@ export const createPlayer = () => {
       x: 0,
       y: 0,
     },
-    speed: 5,
+    speed: stats.movementSpeed,
     radius: 40,
     health: 100,
     color: "blue",
     team: "player",
+    priority: 100,
   };
 };

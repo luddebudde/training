@@ -1,5 +1,6 @@
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, player, worldObjects } from "../main.js";
+import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
 const bulletSpeed = 20;
@@ -7,7 +8,7 @@ const cooldown = 25;
 
 export const createHolyArea = () => {
   const holyAreaBody = {
-    radius: 300,
+    radius: 300 * stats.area,
     bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
@@ -22,6 +23,7 @@ export const createHolyArea = () => {
     damage: 20,
     color: "green",
     team: "player",
+    priority: 1,
   };
 
   return holyAreaBody;

@@ -1,8 +1,9 @@
 import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
-const bulletSpeed = 20;
+const bulletSpeed = 20 * stats.speed;
 const cooldown = 25;
 
 export const createAimBullet = () => {
@@ -15,8 +16,8 @@ export const createAimBullet = () => {
   );
   // console.log(direction);
   const bullet = {
-    radius: 20,
-    bulletHealth: 10,
+    radius: 20 * stats.area,
+    // bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
     destroy: false,
@@ -28,9 +29,10 @@ export const createAimBullet = () => {
       x: direction.x * bulletSpeed,
       y: direction.y * bulletSpeed,
     },
-    damage: 20,
+    damage: 20 * stats.damage,
     color: "blue",
     team: "player",
+    priority: 5,
 
     attack: () => {
       bullets.push(bullet);
@@ -42,7 +44,7 @@ export const createAimBullet = () => {
 };
 
 export const aimBullet = {
-  attackIntervall: cooldown,
-  cooldown: cooldown,
+  attackIntervall: cooldown * stats.cooldown,
+  cooldown: cooldown * stats.cooldown,
   attack: createAimBullet,
 };

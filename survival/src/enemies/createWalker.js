@@ -1,6 +1,7 @@
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
 export const createWalker = (spawnWidth, spawnHeight) => {
@@ -19,7 +20,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     damage: 20,
     color: "red",
     team: "enemy",
-    xp: Math.random() * 50,
+    xp: Math.random() * 50 * stats.growth,
+    priority: 2,
 
     update: () => {
       const newVel = makeDirection(walker.pos, player.pos);
