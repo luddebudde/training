@@ -1,7 +1,7 @@
-import { getRandomInRange } from "./getRandomInRange.js";
-import { bullets, enemies, player, worldObjects } from "./main.js";
-import { entities } from "./main.js";
-import { makeDirection } from "./makeDirection.js";
+import { getRandomInRange } from "../getRandomInRange.js";
+import { bullets, enemies, player, worldObjects } from "../main.js";
+import { entities } from "../main.js";
+import { makeDirection } from "../makeDirection.js";
 
 const bulletSpeed = 10;
 const cooldown = 100;
@@ -41,7 +41,7 @@ export const createShotgun = () => {
       previusPosDifferenceRoot.x + previusPosDifferenceRoot.y >
       currentPosDifferenceRoot.x + currentPosDifferenceRoot.y
     ) {
-      direction = makeDirection(player, enemy);
+      direction = makeDirection(player.pos, enemy.pos);
       previusPosDifference.pos.x = posDifference.x;
       previusPosDifference.pos.y = posDifference.y;
       // previusEnemy = enemy;
@@ -73,6 +73,7 @@ export const createShotgun = () => {
         y: finalDirection.y * bulletSpeed,
       },
       damage: 40,
+      // damage: 0,
       color: "black",
       team: "player",
     };

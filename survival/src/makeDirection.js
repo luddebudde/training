@@ -1,7 +1,7 @@
 export const makeDirection = (secondObject, mainObject) => {
   const diff = {
-    x: mainObject.pos.x - secondObject.pos.x,
-    y: mainObject.pos.y - secondObject.pos.y,
+    x: mainObject.x - secondObject.x,
+    y: mainObject.y - secondObject.y,
   };
   const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
   const direction = {

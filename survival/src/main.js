@@ -1,17 +1,20 @@
 import { makeDirection } from "./makeDirection.js";
-import { aimBullet, createAimBullet } from "./createAimBullet.js";
+import { aimBullet, createAimBullet } from "./weapons.js/createAimBullet.js";
 import { world } from "./world.js";
 
-import { createWalker } from "./createWalker.js";
+import { createWalker } from "./enemies/createWalker.js";
 import { doCirclesOverlap } from "./doCirlceOverlap.js";
 import { spawnEnemy } from "./spawnEnemy.js";
 import { loopPerSecond } from "./basic.js";
 import { shootWeapons } from "./shootWeapons.js";
-import { createShotgun, shotgun } from "./createShotgun.js";
+import { createShotgun, shotgun } from "./weapons.js/createShotgun.js";
 import { keyDownTracker } from "./keyDownTracker.js";
 import { createPlayer } from "./createPlayer.js";
 import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { createXp } from "./createXP.js";
+import { createCharger } from "./enemies/createCharger.js";
+import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
+import { vector } from "./vectors.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -29,7 +32,7 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export const weapons = [aimBullet, shotgun];
+export const weapons = [aimBullet, shotgun, holyArea];
 
 const worldArrays = [entities, worldObjects, bullets];
 
@@ -38,21 +41,19 @@ export const player = createPlayer();
 entities.push(player);
 worldObjects.push(player);
 
+worldObjects.push(holyAreaBody);
+
 export let mousePos = {
-  pos: {
-    x: 0,
-    y: 0,
-  },
+  x: 0,
+  y: 0,
 };
 
 createWalker(100, 100);
 
 document.addEventListener("mousemove", (event) => {
   mousePos = {
-    pos: {
-      x: event.clientX,
-      y: event.clientY,
-    },
+    x: event.clientX,
+    y: event.clientY,
   };
 });
 
@@ -63,13 +64,21 @@ let spawnCooldown = spawnRate;
 const currentWave = () => {
   // const spawnPos = getRandomSpawnPos();
   // const spawnPos = 0;
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 5; i++) {
     // createWalker(spawnPos.x + i * 50, spawnPos.y);
     createWalker(Math.random() * world.width + i * 50, 100);
+    createCharger(Math.random() * world.width + i * 50, 100);
   }
 };
 
-setInterval(() => {
+export let moveCtx = {
+  x: 0,
+  y: 0,
+};
+
+let isPause = false;
+
+const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
   ctx.clearRect(0, 0, world.width, world.height);
@@ -80,15 +89,22 @@ setInterval(() => {
 
   if (isKeyDown("KeyW")) {
     player.pos.y -= player.speed;
+    moveCtx.y += player.speed;
   }
   if (isKeyDown("KeyS")) {
     player.pos.y += player.speed;
+    moveCtx.y -= player.speed;
   }
   if (isKeyDown("KeyA")) {
     player.pos.x -= player.speed;
+    moveCtx.x += player.speed;
   }
   if (isKeyDown("KeyD")) {
     player.pos.x += player.speed;
+    moveCtx.x -= player.speed;
+  }
+  if (isKeyDown("Escape")) {
+    isPause = !isPause;
   }
 
   if (isKeyDown("Space")) {
@@ -106,6 +122,7 @@ setInterval(() => {
 
   weapons.forEach((weapon) => {
     weapon.cooldown -= 1;
+    weapon.update?.();
 
     if (weapon.cooldown <= 0) {
       weapon.cooldown = weapon.attackIntervall;
@@ -129,56 +146,74 @@ setInterval(() => {
     if (entity.health <= 0) {
       createXp(entity.pos.x, entity.pos.y, entity.xp);
     }
+
+    if (
+      doCirclesOverlap(holyAreaBody, entity) &&
+      holyAreaBody.team !== entity.team
+    ) {
+      // const aVel = entity.vel;
+      // console.log(entity.vel);
+      entity.vel = vector.alone.div(entity.vel, 4);
+    }
   });
 
   xps.forEach((xp) => {
     if (doCirclesOverlap(xp, player)) {
-      player.radius += 1;
-      indexOf;
+      player.radius += 10;
+      // indexOf;
+      console.log("hej");
     }
   });
 
-  entities = entities.filter((entity) => entity.health >= 0);
-  enemies = enemies.filter((enemy) => enemy.health >= 0);
+  function checkXp(age) {
+    return age > 18;
+  }
+
+  // console.log(enemies);
+
+  entities = entities.filter((entity) => entity.health > 0);
+  enemies = enemies.filter((enemy) => enemy.health > 0);
   bullets = bullets.filter((bullet) => !bullet.destroy);
 
   worldObjects = worldObjects.filter(
-    (entity) => entity.health === undefined || entity.health >= 0
+    (entity) => entity.health === undefined || entity.health > 0
   );
   worldObjects = worldObjects.filter(
     (bullet) => bullet.destroy === undefined || !bullet.destroy
   );
 
-  worldObjects = worldObjects;
+  xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
+  // worldObjects = worldObjects.filter((xp) => doCirclesOverlap(player, xp));
+
+  // worldObjects = worldObjects;
 
   bullets.forEach((bullet) => {
     entities.forEach((entity) => {
-      if (
-        doCirclesOverlap(entity, bullet) === true &&
-        bullet.team !== entity.team
-      ) {
+      if (doCirclesOverlap(entity, bullet) && bullet.team !== entity.team) {
         // console.log("obi ladai");
         entity.health -= bullet.damage;
 
         bullet.destroy = true;
       }
     });
-    if (bullet.pos.x + bullet.radius >= world.width + 400) {
+    if (bullet.pos.x + bullet.radius >= player.pos.x + world.width + 400) {
       bullet.destroy = true;
     }
-    if (bullet.pos.x - bullet.radius <= -400) {
+    if (bullet.pos.x - bullet.radius <= -world.width + player.pos.x) {
       bullet.destroy = true;
     }
-    if (bullet.pos.y - bullet.radius <= -400) {
+    if (bullet.pos.y - bullet.radius <= -world.height + player.pos.y) {
       bullet.destroy = true;
     }
-    if (bullet.pos.y + bullet.radius >= world.height + 50) {
+    if (bullet.pos.y + bullet.radius >= player.pos.y + world.height + 50) {
       bullet.destroy = true;
     }
   });
 
+  // console.log(player.pos);
+
   ctx.beginPath();
-  ctx.arc(mousePos.pos.x - 10, mousePos.pos.y, 15, 0, 2 * Math.PI);
+  ctx.arc(mousePos.x - 10, mousePos.y - 30, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
   ctx.fill();
 
@@ -189,10 +224,22 @@ setInterval(() => {
     }
 
     ctx.beginPath();
-    ctx.arc(object.pos.x, object.pos.y, object.radius, 0, 2 * Math.PI);
+    ctx.arc(
+      object.pos.x + moveCtx.x,
+      object.pos.y + moveCtx.y,
+      object.radius,
+      0,
+      2 * Math.PI
+    );
     ctx.fillStyle = object.color;
     ctx.fill();
   });
+};
+
+setInterval(() => {
+  if (player.health > 0 || isPause) {
+    update();
+  }
 }, 1000 / loopPerSecond);
 
 const isKeyDown = keyDownTracker();

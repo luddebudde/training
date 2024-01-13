@@ -3,7 +3,8 @@ import { worldObjects, xps } from "./main.js";
 export const createXp = (xPos, yPos, xpAmount) => {
   const xp = {
     amount: xpAmount,
-    radius: xpAmount * 1 + 20,
+
+    radius: xpAmount * 0.5 + 5,
     color: "#aaffff",
     pos: {
       x: xPos,

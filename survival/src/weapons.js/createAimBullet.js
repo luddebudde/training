@@ -1,11 +1,19 @@
-import { bullets, mousePos, player, worldObjects } from "./main.js";
-import { makeDirection } from "./makeDirection.js";
+import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
+import { makeDirection } from "../makeDirection.js";
+import { vector } from "../vectors.js";
 
 const bulletSpeed = 20;
-const cooldown = 100;
+const cooldown = 25;
 
 export const createAimBullet = () => {
-  const direction = makeDirection(player, mousePos);
+  const realMousPos = vector.eachOther.sub(mousePos, moveCtx);
+
+  const direction = makeDirection(
+    player.pos,
+    // vector.add(mousePos, realMousPos)
+    realMousPos
+  );
+  // console.log(direction);
   const bullet = {
     radius: 20,
     bulletHealth: 10,
