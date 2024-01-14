@@ -46,4 +46,5 @@ export const holyArea = {
   update: () => {
     holyAreaBody.pos = player.pos;
   },
+  body: holyAreaBody,
 };

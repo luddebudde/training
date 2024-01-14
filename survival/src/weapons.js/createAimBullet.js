@@ -44,6 +44,7 @@ export const createAimBullet = () => {
 };
 
 export const aimBullet = {
+  newCooldown: cooldown * stats.cooldown,
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,
   attack: createAimBullet,

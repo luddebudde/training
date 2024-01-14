@@ -63,7 +63,7 @@ export const createShotgun = () => {
 
     const bullet = {
       radius: 15 * stats.area,
-      attackIntervall: cooldown,
+      // attackIntervall: cooldown,
       cooldown: cooldown,
       pos: {
         x: player.pos.x,
@@ -88,6 +88,7 @@ export const createShotgun = () => {
 };
 
 export const shotgun = {
+  newCooldown: cooldown * stats.cooldown,
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,
   attack: createShotgun,

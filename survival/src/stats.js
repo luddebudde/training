@@ -1,17 +1,19 @@
+import { currentCharacter } from "./createPlayer.js";
+
 export const stats = {
-  growth: 1,
+  growth: currentCharacter.stats.growth,
 
-  movementSpeed: 5,
+  movementSpeed: currentCharacter.stats.movementSpeed,
 
-  maxHealth: 100,
-  regen: 1,
-  armor: 1,
-  shield: 1,
+  maxHealth: currentCharacter.stats.maxHealth,
+  regen: currentCharacter.stats.regen,
+  armor: currentCharacter.stats.armor,
+  shield: currentCharacter.stats.shield,
 
-  damage: 1,
-  area: 1,
-  speed: 1,
+  damage: currentCharacter.stats.damage,
+  area: currentCharacter.stats.area,
+  speed: currentCharacter.stats.speed,
 
-  curse: 2,
-  cooldown: 0.5,
+  curse: currentCharacter.stats.curse,
+  cooldown: currentCharacter.stats.cooldown,
 };

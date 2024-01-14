@@ -1,4 +1,3 @@
-import { makeDirection } from "./makeDirection.js";
 import { aimBullet, createAimBullet } from "./weapons.js/createAimBullet.js";
 import { world } from "./world.js";
 
@@ -16,6 +15,12 @@ import { createCharger } from "./enemies/createCharger.js";
 import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
 import { vector } from "./vectors.js";
 import { stats } from "./stats.js";
+import { drawHealthBar } from "./draw/drawHealthbar.js";
+import { drawXpBar } from "./draw/drawXpBar.js";
+import { playBang } from "./sounds.js";
+import { drawText } from "./draw/drawText.js";
+
+let oldStats = stats;
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -33,7 +38,7 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export const weapons = [aimBullet, shotgun, holyArea];
+export let weapons = [aimBullet, shotgun, holyArea];
 
 const worldArrays = [entities, worldObjects, bullets];
 
@@ -160,13 +165,39 @@ const update = () => {
 
   xps.forEach((xp) => {
     if (doCirclesOverlap(xp, player)) {
-      player.radius += xp.amount;
+      player.xp.amount += xp.amount;
       // indexOf;
-      console.log("hej");
+      // console.log("hej");
 
       xp.destroy = true;
+      // playBang();
+
+      if (player.xp.amount >= player.xp.nextLevel) {
+        player.xp.level++;
+        player.xp.amount -= player.xp.nextLevel;
+        player.xp.nextLevel += player.xp.levelIncrease;
+        // stats.cooldown *= 0.5;
+        // stats.curse *= 1.1;
+        // stats.growth *= 10;
+        // console.log(player.xp.nextLevel);
+
+        weapons.forEach((weapon) => {
+          (weapon.attackIntervall = weapon.newCooldown * stats.cooldown),
+            (weapon.cooldown = weapon.newCooldown * stats.cooldown);
+
+          weapon.body = weapon.body;
+        });
+        // weapons.forEach((weapon) => {
+        //   weapon.attackIntervall = cooldown * stats.cooldown;
+        //   weapon.cooldown = cooldown * stats.cooldown;
+        // });
+      }
     }
   });
+
+  // if (stats !== oldStats) {
+  // }
+  // console.log(weapons);
 
   // console.log(enemies);
 
@@ -209,8 +240,6 @@ const update = () => {
     }
   });
 
-  // console.log(player.pos);
-
   ctx.beginPath();
   ctx.arc(mousePos.x - 10, mousePos.y - 30, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
@@ -235,6 +264,20 @@ const update = () => {
     ctx.fillStyle = object.color;
     ctx.fill();
   });
+
+  drawXpBar(ctx, 0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
+  drawText(ctx);
+
+  drawHealthBar(
+    ctx,
+    player.pos.x - player.radius * 1.25 + moveCtx.x,
+    player.pos.y + player.radius * 1.25 + moveCtx.y,
+    player.radius * 2.5,
+    15,
+    player.health,
+    stats.maxHealth
+  );
+  oldStats = stats;
 };
 
 setInterval(() => {

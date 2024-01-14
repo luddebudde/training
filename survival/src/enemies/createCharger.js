@@ -16,7 +16,7 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    speed: 5,
+    speed: 5 * stats.curse,
     damage: 30,
     color: "black",
     team: "enemy",
