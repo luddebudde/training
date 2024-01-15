@@ -17,8 +17,15 @@ import { vector } from "./vectors.js";
 import { stats } from "./stats.js";
 import { drawHealthBar } from "./draw/drawHealthbar.js";
 import { drawXpBar } from "./draw/drawXpBar.js";
-import { playBang } from "./sounds.js";
+import {
+  playLevelUp as playLevelUp,
+  playLevelUpSpecial,
+  universalVolume,
+} from "./sounds.js";
 import { drawText } from "./draw/drawText.js";
+import { drawObject } from "./draw/drawObject.js";
+import { levelUpSelection } from "./levelUpSelection.js";
+import { checkButtonPress } from "./checkButtonPress.js";
 
 let oldStats = stats;
 
@@ -38,7 +45,12 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export let weapons = [aimBullet, shotgun, holyArea];
+export let weapons = [
+  aimBullet,
+  // shotgun, holyArea
+];
+
+export const buttons = [];
 
 const worldArrays = [entities, worldObjects, bullets];
 
@@ -63,6 +75,20 @@ document.addEventListener("mousemove", (event) => {
   };
 });
 
+const myButton = document.getElementById("myButton");
+
+// Lägg till en händelsedetektor för musklick
+document.addEventListener("click", function (event) {
+  const mouseX = event.clientX;
+  const mouseY = event.clientY;
+
+  const x = checkButtonPress(mouseX, mouseY);
+  // console.log(x);
+  // console.log(buttons);
+  // console.log(click);
+  // xps.push(createXp(1000, 1000, 100));
+});
+
 const spawnRate = 100 / stats.curse;
 
 let spawnCooldown = spawnRate;
@@ -72,8 +98,8 @@ const currentWave = () => {
   // const spawnPos = 0;
   for (let i = 0; i < 5 * stats.curse; i++) {
     // createWalker(spawnPos.x + i * 50, spawnPos.y);
-    createWalker(Math.random() * world.width + i * 50, 100);
-    createCharger(Math.random() * world.width + i * 50, 100);
+    // createWalker(Math.random() * world.width + i * 50, 100);
+    // createCharger(Math.random() * world.width + i * 50, 100);
   }
 };
 
@@ -83,6 +109,24 @@ export let moveCtx = {
 };
 
 let isPause = false;
+const shouldPlayMusic = true;
+
+const musicAudio = new Audio("/public/sounds/gameMusic.mp3");
+musicAudio.loop = true;
+musicAudio.volume = 0.7 * universalVolume;
+const playMusic = () => {
+  if (!shouldPlayMusic) {
+    return;
+  }
+  const response = musicAudio.play();
+  response
+    .then((e) => {
+      document.body.removeEventListener("mousemove", playMusic);
+    })
+    .catch((e) => {});
+};
+
+document.body.addEventListener("mousemove", playMusic);
 
 const update = () => {
   ctx.beginPath();
@@ -109,15 +153,13 @@ const update = () => {
     player.pos.x += player.speed;
     moveCtx.x -= player.speed;
   }
+
   if (isKeyDown("Escape")) {
     isPause = !isPause;
   }
 
   if (isKeyDown("Space")) {
-    // if ()
-    createAimBullet();
-    // createAimBullet(makeDirection(player.pos, mousePos));
-    // console.log(makeDirection(player, mousePos));
+    isPause = !isPause;
   }
   if (isKeyDown("KeyQ")) {
     createWalker(100, 100);
@@ -179,6 +221,7 @@ const update = () => {
         // stats.cooldown *= 0.5;
         // stats.curse *= 1.1;
         // stats.growth *= 10;
+        // stats.damage *= 1.1;
         // console.log(player.xp.nextLevel);
 
         weapons.forEach((weapon) => {
@@ -187,10 +230,16 @@ const update = () => {
 
           weapon.body = weapon.body;
         });
-        // weapons.forEach((weapon) => {
-        //   weapon.attackIntervall = cooldown * stats.cooldown;
-        //   weapon.cooldown = cooldown * stats.cooldown;
-        // });
+
+        if (Math.random() <= 0.9995) {
+          playLevelUp();
+        } else {
+          playLevelUpSpecial();
+          console.log("levelUp");
+        }
+
+        levelUpSelection();
+        isPause = true;
       }
     }
   });
@@ -253,20 +302,11 @@ const update = () => {
       object.pos.y += object.vel.y;
     }
 
-    ctx.beginPath();
-    ctx.arc(
-      object.pos.x + moveCtx.x,
-      object.pos.y + moveCtx.y,
-      object.radius,
-      0,
-      2 * Math.PI
-    );
-    ctx.fillStyle = object.color;
-    ctx.fill();
+    drawObject(ctx, moveCtx, object);
   });
 
-  drawXpBar(ctx, 0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
-  drawText(ctx);
+  drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
+  drawText(player.xp.level, world.width - 80, 40, "green");
 
   drawHealthBar(
     ctx,
@@ -281,7 +321,7 @@ const update = () => {
 };
 
 setInterval(() => {
-  if (player.health > 0 || isPause) {
+  if (!(player.health > 0) || !isPause) {
     update();
   }
 }, 1000 / loopPerSecond);

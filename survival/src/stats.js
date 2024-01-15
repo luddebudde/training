@@ -17,3 +17,7 @@ export const stats = {
   curse: currentCharacter.stats.curse,
   cooldown: currentCharacter.stats.cooldown,
 };
+
+export const upgradeStats = (weapon, statType, amount) => {
+  weapon.stats.statType += amount;
+};

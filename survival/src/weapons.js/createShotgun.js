@@ -2,6 +2,7 @@ import { getRandomInRange } from "../getRandomInRange.js";
 import { bullets, enemies, player, worldObjects } from "../main.js";
 import { entities } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { playShotgun } from "../sounds.js";
 import { stats } from "../stats.js";
 
 const bulletSpeed = 10 * stats.speed;
@@ -85,9 +86,11 @@ export const createShotgun = () => {
     bullets.push(bullet);
     worldObjects.push(bullet);
   }
+  playShotgun();
 };
 
 export const shotgun = {
+  name: "shotgun",
   newCooldown: cooldown * stats.cooldown,
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,

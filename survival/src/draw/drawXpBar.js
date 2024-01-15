@@ -1,4 +1,6 @@
-export const drawXpBar = (ctx, x, y, width, height, health, maxHealth) => {
+import { ctx } from "../main.js";
+
+export const drawXpBar = (x, y, width, height, health, maxHealth) => {
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   ctx.fillStyle = "red";

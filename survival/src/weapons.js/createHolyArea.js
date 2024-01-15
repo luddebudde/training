@@ -32,6 +32,7 @@ export const createHolyArea = () => {
 export const holyAreaBody = createHolyArea();
 
 export const holyArea = {
+  name: "holyArea",
   attackIntervall: cooldown,
   cooldown: cooldown,
   attack: () => {

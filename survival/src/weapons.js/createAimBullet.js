@@ -1,6 +1,6 @@
 import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
-import { stats } from "../stats.js";
+import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
 
 const bulletSpeed = 20 * stats.speed;
@@ -44,8 +44,20 @@ export const createAimBullet = () => {
 };
 
 export const aimBullet = {
+  name: "aimBullet",
   newCooldown: cooldown * stats.cooldown,
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,
   attack: createAimBullet,
+
+  stats: {
+    area: 1,
+    damage: 1,
+  },
+
+  upgrades: {
+    level: 0,
+    statsOrder: ["area"],
+    amountOrder: [10],
+  },
 };
