@@ -5,7 +5,7 @@ import { makeDirection } from "../makeDirection.js";
 import { playShotgun } from "../sounds.js";
 import { stats } from "../stats.js";
 
-const bulletSpeed = 10 * stats.speed;
+// const bulletSpeed = 10 * stats.speed;
 const cooldown = 100;
 const bulletSpread = 0.5;
 // const bulletSpread = 0;
@@ -20,9 +20,23 @@ let direction = {
   x: 0,
   y: 0,
 };
-// array.forEach((element) => {});
+
+const shotgunBulletStats = {
+  area: 15,
+  speed: 10,
+  damage: 40,
+  cooldown: 100,
+  spread: 0.5,
+};
 
 export const createShotgun = () => {
+  const area = stats.area * shotgunBulletStats.area;
+  const speed = stats.speed * shotgunBulletStats.speed;
+  const damage = stats.damage * shotgunBulletStats.damage;
+  const cooldown = stats.cooldown - shotgunBulletStats.cooldown;
+
+  const spread = shotgunBulletStats.spread;
+
   enemies.forEach((enemy) => {
     const posDifference = {
       x: player.pos.x - enemy.pos.x,
@@ -54,8 +68,8 @@ export const createShotgun = () => {
   previusPosDifference.pos.y = 100000000;
 
   for (let i = 0; i < 10; i++) {
-    const spreadX = getRandomInRange(-bulletSpread, bulletSpread);
-    const spreadY = getRandomInRange(-bulletSpread, bulletSpread);
+    const spreadX = getRandomInRange(-spread, spread);
+    const spreadY = getRandomInRange(-spread, spread);
 
     const finalDirection = {
       x: direction.x + spreadX,
@@ -63,7 +77,7 @@ export const createShotgun = () => {
     };
 
     const bullet = {
-      radius: 15 * stats.area,
+      radius: area,
       // attackIntervall: cooldown,
       cooldown: cooldown,
       pos: {
@@ -71,10 +85,10 @@ export const createShotgun = () => {
         y: player.pos.y,
       },
       vel: {
-        x: finalDirection.x * bulletSpeed,
-        y: finalDirection.y * bulletSpeed,
+        x: finalDirection.x * speed,
+        y: finalDirection.y * speed,
       },
-      damage: 40 * stats.damage,
+      damage: damage,
       // damage: 0,
       color: "black",
       team: "player",
@@ -95,4 +109,16 @@ export const shotgun = {
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,
   attack: createShotgun,
+
+  update: () => {
+    shotgun.attackIntervall = shotgunBulletStats.cooldown * stats.cooldown;
+  },
+
+  stats: shotgunBulletStats,
+
+  upgrades: {
+    level: 0,
+    statsOrder: ["spread", "speed", "damage", "area", "speed", "damage"],
+    amountOrder: [-0.4, 1, 1, 5, 5, 5],
+  },
 };

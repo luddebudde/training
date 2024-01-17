@@ -6,9 +6,19 @@ import { vector } from "../vectors.js";
 const bulletSpeed = 20;
 const cooldown = 25;
 
+const holyAreaStats = {
+  area: 0,
+  speed: 0,
+  damage: 0,
+};
+
 export const createHolyArea = () => {
+  const area = stats.area * holyAreaStats.area;
+  // const speed = stats.speed + holyAreaStats.speed;
+  // const damage = stats.damage + holyAreaStats.damage;
+
   const holyAreaBody = {
-    radius: 300 * stats.area,
+    radius: 300 * area,
     bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
@@ -36,16 +46,26 @@ export const holyArea = {
   attackIntervall: cooldown,
   cooldown: cooldown,
   attack: () => {
-    enemies.forEach((enemy) => {
-      //   if (doCirclesOverlap(holyAreaBody, enemy)) {
-      //     const aVel = enemy.vel;
-      //     enemy.vel = vector.alone.div(enemy.vel, 2);
-      //     console.log(aVel, enemy.vel);
-      //   }
-    });
+    // enemies.forEach((enemy) => {
+    //   if (doCirclesOverlap(holyAreaBody, enemy)) {
+    //     const aVel = enemy.vel;
+    //     enemy.vel = vector.alone.div(enemy.vel, 2);
+    //     console.log(aVel, enemy.vel);
+    //   }
+    // });
   },
   update: () => {
     holyAreaBody.pos = player.pos;
+    holyAreaBody.radius = 300 * (holyAreaStats.area + stats.area);
   },
+
+  stats: holyAreaStats,
+
+  upgrades: {
+    level: 0,
+    statsOrder: ["area", "area", "area", "area", "area", "area"],
+    amountOrder: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+  },
+
   body: holyAreaBody,
 };

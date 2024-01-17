@@ -26,6 +26,7 @@ import { drawText } from "./draw/drawText.js";
 import { drawObject } from "./draw/drawObject.js";
 import { levelUpSelection } from "./levelUpSelection.js";
 import { checkButtonPress } from "./checkButtonPress.js";
+import { minigun } from "./weapons.js/createMinigun.js";
 
 let oldStats = stats;
 
@@ -45,10 +46,9 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export let weapons = [
-  aimBullet,
-  // shotgun, holyArea
-];
+export let weapons = [aimBullet, shotgun, holyArea, minigun];
+
+let levelUp = false;
 
 export const buttons = [];
 
@@ -94,12 +94,13 @@ const spawnRate = 100 / stats.curse;
 let spawnCooldown = spawnRate;
 
 const currentWave = () => {
-  // const spawnPos = getRandomSpawnPos();
+  const spawnPos = getRandomSpawnPos();
   // const spawnPos = 0;
   for (let i = 0; i < 5 * stats.curse; i++) {
-    // createWalker(spawnPos.x + i * 50, spawnPos.y);
+    createWalker(spawnPos.x, spawnPos.y);
     // createWalker(Math.random() * world.width + i * 50, 100);
     // createCharger(Math.random() * world.width + i * 50, 100);
+    createCharger(spawnPos.x, spawnPos.y);
   }
 };
 
@@ -109,6 +110,17 @@ export let moveCtx = {
 };
 
 let isPause = false;
+
+export const pause = () => {
+  isPause = true;
+};
+export const start = () => {
+  isPause = false;
+};
+export const reverse = () => {
+  isPause = !isPause;
+};
+
 const shouldPlayMusic = true;
 
 const musicAudio = new Audio("/public/sounds/gameMusic.mp3");
@@ -159,7 +171,7 @@ const update = () => {
   }
 
   if (isKeyDown("Space")) {
-    isPause = !isPause;
+    isPause = true;
   }
   if (isKeyDown("KeyQ")) {
     createWalker(100, 100);
@@ -218,18 +230,6 @@ const update = () => {
         player.xp.level++;
         player.xp.amount -= player.xp.nextLevel;
         player.xp.nextLevel += player.xp.levelIncrease;
-        // stats.cooldown *= 0.5;
-        // stats.curse *= 1.1;
-        // stats.growth *= 10;
-        // stats.damage *= 1.1;
-        // console.log(player.xp.nextLevel);
-
-        weapons.forEach((weapon) => {
-          (weapon.attackIntervall = weapon.newCooldown * stats.cooldown),
-            (weapon.cooldown = weapon.newCooldown * stats.cooldown);
-
-          weapon.body = weapon.body;
-        });
 
         if (Math.random() <= 0.9995) {
           playLevelUp();
@@ -239,6 +239,7 @@ const update = () => {
         }
 
         levelUpSelection();
+
         isPause = true;
       }
     }
@@ -321,8 +322,10 @@ const update = () => {
 };
 
 setInterval(() => {
-  if (!(player.health > 0) || !isPause) {
-    update();
+  if (player.health >= 0) {
+    if (!isPause) {
+      update();
+    }
   }
 }, 1000 / loopPerSecond);
 

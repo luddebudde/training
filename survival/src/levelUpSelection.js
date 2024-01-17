@@ -1,7 +1,7 @@
 import { checkButtonPress } from "./checkButtonPress.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { drawText } from "./draw/drawText.js";
-import { buttons, ctx, moveCtx, weapons } from "./main.js";
+import { buttons, ctx, moveCtx, pause, start, weapons } from "./main.js";
 import { upgradeStats } from "./stats.js";
 import { world } from "./world.js";
 
@@ -30,28 +30,39 @@ export const levelUpSelection = () => {
 
   for (let i = 0; i < 4; i++) {
     const randomIndex = Math.floor(Math.random() * weaponPool.length);
+    if (weaponPool.length === 0) {
+      return;
+    }
     chosenWeapon = weaponPool[randomIndex];
+    weaponPool.splice(randomIndex, 1);
 
     const button = {
+      weapon: chosenWeapon,
       x: square.x + 20,
       y: (i * square.height) / 4 + 120,
       width: square.width - 40,
       height: square.height / 4 - 40,
       upgradeWeapon: () => {
-        const level = chosenWeapon.upgrades.level;
+        const level = button.weapon.upgrades.level;
 
-        const statType = chosenWeapon.upgrades.statsOrder[level];
-        const amount = chosenWeapon.upgrades.amountOrder[level];
+        const statType = button.weapon.upgrades.statsOrder[level];
+        const amount = button.weapon.upgrades.amountOrder[level];
 
-        chosenWeapon.stats[statType] +=
-          // upgradeStats(
-          //   chosenWeapon,
-          //   statType,
-          amount;
-        // );
-        console.log(chosenWeapon.stats[statType]);
+        // if (button.weapon.upgrades.statsOrder.length > level) {
+        button.weapon.stats[statType] += amount;
 
-        chosenWeapon.upgrades.level += 1;
+        console.log(button.weapon.stats);
+
+        button.weapon.upgrades.level += 1;
+
+        start();
+        // } else {
+        //   weaponPool.splice(randomIndex);
+        //   const randomIndex = Math.floor(Math.random() * weaponPool.length);
+
+        //   chosenWeapon = weaponPool[randomIndex];
+        //   button.upgradeWeapon();
+        // }
       },
     };
 
@@ -61,7 +72,7 @@ export const levelUpSelection = () => {
     ctx.fill();
 
     drawText(
-      chosenWeapon.name,
+      button.weapon.name,
       square.x + 40,
       (i * square.height) / 4 + 180,
       "green"

@@ -2,7 +2,7 @@ export const Blugo = {
   fullname: "Blugo McPlommon",
 
   stats: {
-    growth: 100,
+    growth: 1,
 
     movementSpeed: 5,
 

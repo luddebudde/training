@@ -20,4 +20,5 @@ export const stats = {
 
 export const upgradeStats = (weapon, statType, amount) => {
   weapon.stats.statType += amount;
+  // stats
 };

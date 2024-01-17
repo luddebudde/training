@@ -16,3 +16,15 @@ export const playShotgun = () => {
   audio.volume = 0.3 * universalVolume;
   audio.play();
 };
+
+export const playMinigun = () => {
+  const audio = new Audio("/public/sounds/minigunFire.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playMinigunOverheat = () => {
+  const audio = new Audio("/public/sounds/minigunOverheat.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
