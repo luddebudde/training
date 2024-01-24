@@ -27,6 +27,9 @@ import { drawObject } from "./draw/drawObject.js";
 import { levelUpSelection } from "./levelUpSelection.js";
 import { checkButtonPress } from "./checkButtonPress.js";
 import { minigun } from "./weapons.js/createMinigun.js";
+import { loadImage } from "./image.js";
+import { drawSquare } from "./draw/drawSquare.js";
+// import { assets } from "./assets.js";
 
 let oldStats = stats;
 
@@ -46,7 +49,11 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export let weapons = [aimBullet, shotgun, holyArea, minigun];
+export let weapons = [
+  aimBullet,
+  // shotgun, holyArea,
+  minigun,
+];
 
 let levelUp = false;
 
@@ -67,6 +74,16 @@ export let mousePos = {
 };
 
 createWalker(100, 100);
+
+const assets = {
+  // astronaut: loadImage("/ships/player/astronaut.png"),
+  // assault: loadImage(`/ships/player/large/assault.png`),
+  // fighter: loadImage(`/ships/player/large/green.png`),
+  rhino: await loadImage(`/public/ships/player/large/green-rhino.png`),
+  jet: await loadImage("/public/animations/jet-even.png"),
+  explosion: await loadImage("/public/animations/explosion.png"),
+  comet: await loadImage("/public/animations/comet.png"),
+};
 
 document.addEventListener("mousemove", (event) => {
   mousePos = {
@@ -146,6 +163,10 @@ const update = () => {
   ctx.clearRect(0, 0, world.width, world.height);
   ctx.fillStyle = "white";
   ctx.fill();
+
+  const img = new Image();
+  img.src = "/public/sprites/blue.png";
+  ctx.drawImage(img, 0, 0, 1000, 1000);
 
   // console.log(enemies);
 
@@ -303,7 +324,12 @@ const update = () => {
       object.pos.y += object.vel.y;
     }
 
-    drawObject(ctx, moveCtx, object);
+    if (object.draw === undefined) {
+      drawObject(ctx, moveCtx, object);
+    } else {
+      object.draw?.(ctx, assets, object);
+      drawText("helkl", object.x, object.y, "red");
+    }
   });
 
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);

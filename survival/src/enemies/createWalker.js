@@ -1,8 +1,16 @@
+import { animation } from "../animation.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+
+const walkerAnimations = animation({
+  imageCount: 9,
+  slowDown: 4,
+  reverse: false,
+  repeat: true,
+});
 
 export const createWalker = (spawnWidth, spawnHeight) => {
   const walker = {
@@ -32,6 +40,36 @@ export const createWalker = (spawnWidth, spawnHeight) => {
         walker.health = 0;
         player.health -= walker.damage;
       }
+    },
+    draw: (ctx, assets, gameObject) => {
+      walkerAnimations.step();
+      walkerAnimations.draw(
+        ctx,
+        assets.jet,
+        -walker.radius * 2.6,
+        -walker.radius / 2,
+        walker.radius * 2,
+        walker.radius
+      );
+      // console.log(assets.rhino);
+      if (gameObject.health > 0) {
+        ctx.drawImage(
+          assets.rhino,
+          -walker.circleRadius,
+          -walker.circleRadius,
+          walker.circleRadius * 2,
+          walker.circleRadius * 2
+        );
+      }
+      //  else {
+      //   ctx.drawImage(
+      //     assets.astronaut,
+      //     -body.circleRadius * 0.5,
+      //     -body.circleRadius * 1.5 * 0.5,
+      //     body.circleRadius,
+      //     body.circleRadius * 1.5
+      //   );
+      // }
     },
   };
 
