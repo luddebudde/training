@@ -1,17 +1,18 @@
 import { Blugo } from "./characters.js/Blugo.js";
 import { Ludwigo } from "./characters.js/Ludwigo.js";
+import { Pelin } from "./characters.js/Pelin.js";
 import { stats } from "./stats.js";
 import { world } from "./world.js";
 
-export const currentCharacter = Blugo;
+export const currentCharacter = Pelin;
 
 export const createPlayer = () => {
   return {
     character: currentCharacter,
     health: stats.maxHealth,
     pos: {
-      x: world.width / 2,
-      y: world.height / 2,
+      x: 0,
+      y: 0,
     },
     vel: {
       x: 0,

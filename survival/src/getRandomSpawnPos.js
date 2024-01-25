@@ -24,10 +24,10 @@ const spawnMargin = 100;
 //   return pos;
 // };
 
-export const getRandomSpawnPos = () => {
+export const getRandomSpawnPos = (moveCtx) => {
   let pos = {
-    x: 0,
-    y: 0,
+    x: Math.random() * world.width + moveCtx.x,
+    y: Math.random() * world.height + moveCtx.y,
   };
 
   const randomSpawnSide = Math.floor(Math.random() * 4);

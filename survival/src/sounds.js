@@ -1,4 +1,4 @@
-export const universalVolume = 0;
+export const universalVolume = 0.5;
 
 export const playLevelUp = () => {
   const audio = new Audio("/public/sounds/levelUp.mp3");

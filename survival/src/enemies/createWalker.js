@@ -25,7 +25,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     speed: 1 * stats.curse,
-    damage: 20,
+    damage: 10,
+    // damage: 0,
     color: "red",
     team: "enemy",
     xp: Math.random() * 50 * stats.growth,
@@ -42,25 +43,27 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       }
     },
     draw: (ctx, assets, gameObject) => {
-      walkerAnimations.step();
-      walkerAnimations.draw(
-        ctx,
-        assets.jet,
-        -walker.radius * 2.6,
-        -walker.radius / 2,
+      // walkerAnimations.step();
+      // walkerAnimations.draw(
+      //   ctx,
+      //   assets.jet,
+      //   walker.pos.x,
+      //   walker.pos.y,
+      //   walker.radius * 2,
+      //   walker.radius
+      // );
+
+      ctx.drawImage(
+        assets.blue,
+        walker.pos.x,
+        walker.pos.y,
+        // 100,
+        // 100,
         walker.radius * 2,
-        walker.radius
+        walker.radius * 2
       );
-      // console.log(assets.rhino);
-      if (gameObject.health > 0) {
-        ctx.drawImage(
-          assets.rhino,
-          -walker.circleRadius,
-          -walker.circleRadius,
-          walker.circleRadius * 2,
-          walker.circleRadius * 2
-        );
-      }
+      // console.log("bild", assets.rhino, "walker pos", walker.pos);
+      // }
       //  else {
       //   ctx.drawImage(
       //     assets.astronaut,

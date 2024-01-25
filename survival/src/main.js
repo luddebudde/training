@@ -49,11 +49,7 @@ export let worldObjects = [];
 export let xps = [];
 
 export let bullets = [];
-export let weapons = [
-  aimBullet,
-  // shotgun, holyArea,
-  minigun,
-];
+export let weapons = [aimBullet, shotgun, holyArea, minigun];
 
 let levelUp = false;
 
@@ -77,6 +73,7 @@ createWalker(100, 100);
 
 const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
+  blue: await loadImage("/public/sprites/blue.png"),
   // assault: loadImage(`/ships/player/large/assault.png`),
   // fighter: loadImage(`/ships/player/large/green.png`),
   rhino: await loadImage(`/public/ships/player/large/green-rhino.png`),
@@ -85,10 +82,10 @@ const assets = {
   comet: await loadImage("/public/animations/comet.png"),
 };
 
-document.addEventListener("mousemove", (event) => {
+canvas.addEventListener("mousemove", (event) => {
   mousePos = {
-    x: event.clientX,
-    y: event.clientY,
+    x: event.offsetX,
+    y: event.offsetY,
   };
 });
 
@@ -106,12 +103,12 @@ document.addEventListener("click", function (event) {
   // xps.push(createXp(1000, 1000, 100));
 });
 
-const spawnRate = 100 / stats.curse;
+const spawnRate = 50 / stats.curse;
 
 let spawnCooldown = spawnRate;
 
 const currentWave = () => {
-  const spawnPos = getRandomSpawnPos();
+  const spawnPos = getRandomSpawnPos(moveCtx);
   // const spawnPos = 0;
   for (let i = 0; i < 5 * stats.curse; i++) {
     createWalker(spawnPos.x, spawnPos.y);
@@ -164,27 +161,23 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  const img = new Image();
-  img.src = "/public/sprites/blue.png";
-  ctx.drawImage(img, 0, 0, 1000, 1000);
-
   // console.log(enemies);
 
   if (isKeyDown("KeyW")) {
     player.pos.y -= player.speed;
-    moveCtx.y += player.speed;
+    // moveCtx.y += player.speed;
   }
   if (isKeyDown("KeyS")) {
     player.pos.y += player.speed;
-    moveCtx.y -= player.speed;
+    // moveCtx.y -= player.speed;
   }
   if (isKeyDown("KeyA")) {
     player.pos.x -= player.speed;
-    moveCtx.x += player.speed;
+    // moveCtx.x += player.speed;
   }
   if (isKeyDown("KeyD")) {
     player.pos.x += player.speed;
-    moveCtx.x -= player.speed;
+    // moveCtx.x -= player.speed;
   }
 
   if (isKeyDown("Escape")) {
@@ -311,10 +304,14 @@ const update = () => {
     }
   });
 
+  // Sikte
   ctx.beginPath();
-  ctx.arc(mousePos.x - 10, mousePos.y - 30, 15, 0, 2 * Math.PI);
+  ctx.arc(mousePos.x, mousePos.y, 15, 0, 2 * Math.PI);
   ctx.fillStyle = player.color;
   ctx.fill();
+
+  ctx.translate(-player.pos.x, -player.pos.y);
+  ctx.translate(world.width / 2, world.height / 2);
 
   worldObjects.sort((a, b) => a.priority - b.priority);
 
@@ -325,20 +322,22 @@ const update = () => {
     }
 
     if (object.draw === undefined) {
-      drawObject(ctx, moveCtx, object);
+      drawObject(ctx, vector.alone.neg(player.pos), object);
     } else {
       object.draw?.(ctx, assets, object);
       drawText("helkl", object.x, object.y, "red");
     }
   });
 
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
   drawText(player.xp.level, world.width - 80, 40, "green");
 
   drawHealthBar(
     ctx,
-    player.pos.x - player.radius * 1.25 + moveCtx.x,
-    player.pos.y + player.radius * 1.25 + moveCtx.y,
+    world.width / 2 - player.radius * 1.25,
+    world.height / 2 + player.radius * 1.25,
     player.radius * 2.5,
     15,
     player.health,

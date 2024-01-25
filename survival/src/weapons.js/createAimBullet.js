@@ -2,6 +2,7 @@ import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { world } from "../world.js";
 
 const bulletSpeed = 20 * stats.speed;
 // const cooldown = 25;
@@ -20,12 +21,15 @@ export const createAimBullet = () => {
   const damage = stats.damage * aimBulletStats.damage;
   const cooldown = stats.cooldown * aimBulletStats.cooldown;
 
-  const realMousPos = vector.eachOther.sub(mousePos, moveCtx);
+  // console.log(mousePos);
 
   const direction = makeDirection(
-    player.pos,
+    mousePos,
     // vector.add(mousePos, realMousPos)
-    realMousPos
+    {
+      x: world.width / 2,
+      y: world.height / 2,
+    }
   );
   // console.log(direction);
   const bullet = {
@@ -39,8 +43,8 @@ export const createAimBullet = () => {
       y: player.pos.y,
     },
     vel: {
-      x: direction.x * speed,
-      y: direction.y * speed,
+      x: -direction.x * speed,
+      y: -direction.y * speed,
     },
     damage: damage,
     color: "blue",

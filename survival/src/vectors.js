@@ -24,6 +24,12 @@ export const vector = {
     },
   },
   alone: {
+    neg: (firstObj) => {
+      return {
+        x: -firstObj.x,
+        y: -firstObj.y,
+      };
+    },
     add: (firstObj, amount) => {
       const finalObj = {
         x: firstObj.x + amount,
