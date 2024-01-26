@@ -98,7 +98,7 @@ export const createShotgun = () => {
     // console.log(previusPosDifference);
 
     bullets.push(bullet);
-    worldObjects.push(bullet);
+    // worldObjects.push(bullet);
   }
   playShotgun();
 };

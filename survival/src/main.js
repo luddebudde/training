@@ -29,9 +29,8 @@ import { checkButtonPress } from "./checkButtonPress.js";
 import { minigun } from "./weapons.js/createMinigun.js";
 import { loadImage } from "./image.js";
 import { drawSquare } from "./draw/drawSquare.js";
+import { isPointInsideArea } from "./isInsideRectangle.js";
 // import { assets } from "./assets.js";
-
-let oldStats = stats;
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -45,7 +44,7 @@ export const createEnemies = [createWalker];
 
 // export let bullets = [];
 // export let bullets = [];
-export let worldObjects = [];
+
 export let xps = [];
 
 export let bullets = [];
@@ -55,14 +54,25 @@ let levelUp = false;
 
 export const buttons = [];
 
-const worldArrays = [entities, worldObjects, bullets];
-
 export const player = createPlayer();
 
-entities.push(player);
-worldObjects.push(player);
+// export const worldObjects = [[], [], []];
+export const worldObjects = [entities, bullets, xps];
 
-worldObjects.push(holyAreaBody);
+// worldObjects[0].push(entities);
+// worldObjects[1].push(bullets);
+// worldObjects[2].push(xps);
+
+// worldObjects.push(entities);
+// worldObjects.push(bullets);
+// worldObjects.push(xps);
+
+const worldArrays = [entities, worldObjects, bullets];
+
+entities.push(player);
+// worldObjects.push(player);
+
+// worldObjects.push(holyAreaBody);
 
 export let mousePos = {
   x: 0,
@@ -104,11 +114,12 @@ document.addEventListener("click", function (event) {
 });
 
 const spawnRate = 50 / stats.curse;
+const maxEnemyCount = 250;
 
 let spawnCooldown = spawnRate;
 
 const currentWave = () => {
-  const spawnPos = getRandomSpawnPos(moveCtx);
+  const spawnPos = getRandomSpawnPos(player);
   // const spawnPos = 0;
   for (let i = 0; i < 5 * stats.curse; i++) {
     createWalker(spawnPos.x, spawnPos.y);
@@ -188,7 +199,7 @@ const update = () => {
     isPause = true;
   }
   if (isKeyDown("KeyQ")) {
-    createWalker(100, 100);
+    xps.length = 0;
   }
   if (isKeyDown("KeyZ")) {
     shootWeapons();
@@ -206,11 +217,13 @@ const update = () => {
   });
 
   // console.log(spawnCooldown);
-  spawnCooldown -= 1;
-  if (spawnCooldown <= 0) {
+  // spawnCooldown -= 1;
+  if (enemies.length <= maxEnemyCount) {
     currentWave();
-    spawnCooldown = spawnRate;
+    // spawnCooldown = spawnRate;
   }
+
+  // console.log(enemies.length);
 
   // console.log(bullets);
 
@@ -265,16 +278,44 @@ const update = () => {
 
   // console.log(enemies);
 
+  enemies.forEach((enemy) => {
+    if (
+      !isPointInsideArea(
+        enemy.pos.x,
+        enemy.pos.y,
+        player.pos.x - world.width / 1.5,
+        player.pos.y - world.height / 1.5,
+
+        // -player.pos.x,
+        // -player.pos.x,
+        world.width * 1.2,
+        world.height * 1.2
+      )
+    ) {
+      enemy.health = 0;
+    }
+  });
+
+  ctx.beginPath();
+  ctx.rect(
+    player.pos.x - world.width / 1.5,
+    player.pos.y - world.height / 1.5,
+    player.pos.x + world.width * 1.2,
+    player.pos.y + world.height * 1.2
+  );
+  ctx.fillStyle = "green";
+  ctx.fill();
+
   entities = entities.filter((entity) => entity.health > 0);
   enemies = enemies.filter((enemy) => enemy.health > 0);
   bullets = bullets.filter((bullet) => !bullet.destroy);
 
-  worldObjects = worldObjects.filter(
-    (entity) => entity.health === undefined || entity.health > 0
-  );
-  worldObjects = worldObjects.filter(
-    (bullet) => bullet.destroy === undefined || !bullet.destroy
-  );
+  // worldObjects = worldObjects.filter(
+  //   (entity) => entity.health === undefined || entity.health > 0
+  // );
+  // worldObjects = worldObjects.filter(
+  //   (bullet) => bullet.destroy === undefined || !bullet.destroy
+  // );
 
   xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
   // worldObjects = worldObjects.filter((xp) => doCirclesOverlap(player, xp));
@@ -290,7 +331,7 @@ const update = () => {
         bullet.destroy = true;
       }
     });
-    if (bullet.pos.x + bullet.radius >= player.pos.x + world.width + 400) {
+    if (bullet.pos.x + bullet.radius >= player.pos.x + world.width) {
       bullet.destroy = true;
     }
     if (bullet.pos.x - bullet.radius <= -world.width + player.pos.x) {
@@ -299,7 +340,7 @@ const update = () => {
     if (bullet.pos.y - bullet.radius <= -world.height + player.pos.y) {
       bullet.destroy = true;
     }
-    if (bullet.pos.y + bullet.radius >= player.pos.y + world.height + 50) {
+    if (bullet.pos.y + bullet.radius >= player.pos.y + world.height) {
       bullet.destroy = true;
     }
   });
@@ -313,20 +354,28 @@ const update = () => {
   ctx.translate(-player.pos.x, -player.pos.y);
   ctx.translate(world.width / 2, world.height / 2);
 
-  worldObjects.sort((a, b) => a.priority - b.priority);
+  worldObjects.length = 3;
 
-  worldObjects.forEach((object) => {
-    if (object.vel !== undefined) {
-      object.pos.x += object.vel.x;
-      object.pos.y += object.vel.y;
-    }
+  // console.log(worldObjects);
+  // console.log(worldObjects);
+  worldObjects.forEach((gameObjects) => {
+    // gameObject.sort((a, b) => a.priority - b.priority);
 
-    if (object.draw === undefined) {
-      drawObject(ctx, vector.alone.neg(player.pos), object);
-    } else {
-      object.draw?.(ctx, assets, object);
-      drawText("helkl", object.x, object.y, "red");
-    }
+    gameObjects.forEach((object) => {
+      if (object.vel !== undefined) {
+        object.pos.x += object.vel.x;
+        object.pos.y += object.vel.y;
+      }
+
+      if (object.draw === undefined) {
+        // console.log(worldObjects);
+
+        drawObject(ctx, vector.alone.neg(player.pos), object);
+      } else {
+        object.draw?.(ctx, assets, object);
+        // drawText("helkl", object.x, object.y, "red");
+      }
+    });
   });
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -343,7 +392,7 @@ const update = () => {
     player.health,
     stats.maxHealth
   );
-  oldStats = stats;
+  // oldStats = stats;
 };
 
 setInterval(() => {

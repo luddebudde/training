@@ -54,12 +54,12 @@ export const createMinigun = () => {
 
         attack: () => {
           bullets.push(bullet);
-          worldObjects.push(bullet);
+          // worldObjects.push(bullet);
         },
       };
 
       bullets.push(bullet);
-      worldObjects.push(bullet);
+      // worldObjects.push(bullet);
     }, i * 10);
   }
   playMinigunOverheat();

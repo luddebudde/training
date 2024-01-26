@@ -78,5 +78,5 @@ export const createWalker = (spawnWidth, spawnHeight) => {
 
   entities.push(walker);
   enemies.push(walker);
-  worldObjects.push(walker);
+  // worldObjects.push(walker);
 };

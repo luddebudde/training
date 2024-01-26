@@ -18,6 +18,6 @@ export const createXp = (xPos, yPos, xpAmount) => {
     // },
   };
 
-  worldObjects.push(xp);
+  // worldObjects.push(xp);
   xps.push(xp);
 };

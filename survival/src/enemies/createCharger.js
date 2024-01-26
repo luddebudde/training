@@ -39,5 +39,5 @@ export const createCharger = (spawnWidth, spawnHeight) => {
 
   entities.push(charger);
   enemies.push(charger);
-  worldObjects.push(charger);
+  // worldObjects.push(charger);
 };
