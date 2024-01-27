@@ -1,6 +1,8 @@
+import { loopPerSecond } from "../basic.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -17,7 +19,8 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     speed: 5 * stats.curse,
-    damage: 10,
+    // speed: 0,
+    damage: 0.5,
     // damage: 0,
     color: "black",
     team: "enemy",
@@ -26,12 +29,13 @@ export const createCharger = (spawnWidth, spawnHeight) => {
 
     update: () => {
       if (doCirclesOverlap(charger, player)) {
-        charger.health = 0;
-        player.health -= charger.damage;
+        // charger.health = 0;
+        playHurt();
+        player.health -= charger.damage / (1000 / loopPerSecond);
       }
 
       const newVel = makeDirection(charger.pos, player.pos);
-      // console.log(makeDirection(walker, player));
+      // console.log(charger.vel.x);
       charger.vel.x = newVel.x * charger.speed;
       charger.vel.y = newVel.y * charger.speed;
     },

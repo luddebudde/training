@@ -4,7 +4,7 @@ export const createXp = (xPos, yPos, xpAmount) => {
   const xp = {
     amount: xpAmount,
 
-    radius: xpAmount * 0.5 + 5,
+    radius: Math.sqrt(xpAmount) * 5,
     color: "#aaffff",
     pos: {
       x: xPos,

@@ -27,6 +27,10 @@ export const createMinigun = () => {
     setTimeout(() => {
       if (i % 10 == 0) {
         playMinigun();
+        // playMinigunOverheat();
+      }
+      if (i === bulletCount - 1) {
+        playMinigunOverheat();
       }
       const angle =
         (i / (bulletCount / Math.floor(bulletCount / 50))) * 2 * Math.PI;
@@ -62,7 +66,7 @@ export const createMinigun = () => {
       // worldObjects.push(bullet);
     }, i * 10);
   }
-  playMinigunOverheat();
+
   //   return cooldown;
 };
 

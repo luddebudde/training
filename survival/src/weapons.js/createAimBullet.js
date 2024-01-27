@@ -53,11 +53,11 @@ export const createAimBullet = () => {
 
     attack: () => {
       bullets.push(bullet);
-      worldObjects.push(bullet);
+      // worldObjects.push(bullet);
     },
   };
   bullets.push(bullet);
-  worldObjects.push(bullet);
+  // worldObjects.push(bullet);
 
   // return cooldown;
 };

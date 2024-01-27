@@ -23,7 +23,8 @@ export const levelUpSelection = () => {
 
   weapons.forEach((weapon) => {
     amountOfWeapons += 1;
-    weaponPool.push(weapon);
+    if (weapon.upgrades.level !== weapon.upgrades.amountOrder.length)
+      weaponPool.push(weapon);
 
     // Get the random element
   });
@@ -51,7 +52,8 @@ export const levelUpSelection = () => {
         // if (button.weapon.upgrades.statsOrder.length > level) {
         button.weapon.stats[statType] += amount;
 
-        console.log(button.weapon.stats);
+        console.log(button.weapon);
+        console.log(button.weapon.upgrades.level);
 
         button.weapon.upgrades.level += 1;
 

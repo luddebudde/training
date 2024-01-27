@@ -1,4 +1,4 @@
-export const universalVolume = 0;
+export const universalVolume = 0.5;
 
 export const playLevelUp = () => {
   const audio = new Audio("/public/sounds/levelUp.mp3");
@@ -25,6 +25,32 @@ export const playMinigun = () => {
 
 export const playMinigunOverheat = () => {
   const audio = new Audio("/public/sounds/minigunOverheat.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 1.5 * universalVolume;
   audio.play();
+};
+
+export const playWiper = () => {
+  const audio = new Audio("/public/sounds/wiperEffect.mp3");
+  audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
+let isHurtSoundPlaying = false;
+
+export const playHurt = () => {
+  // Kontrollera om ljudet redan spelas
+  if (!isHurtSoundPlaying) {
+    isHurtSoundPlaying = true;
+
+    const audio = new Audio("/public/sounds/hurt.mp3");
+
+    audio.volume = 2 * universalVolume;
+
+    // Lyssna på 'ended'-händelse för att återställa flaggan när ljudet är klart
+    audio.addEventListener("ended", () => {
+      isHurtSoundPlaying = false;
+    });
+
+    audio.play();
+  }
 };

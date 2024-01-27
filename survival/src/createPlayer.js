@@ -4,7 +4,7 @@ import { Pelin } from "./characters.js/Pelin.js";
 import { stats } from "./stats.js";
 import { world } from "./world.js";
 
-export const currentCharacter = Pelin;
+export const currentCharacter = Blugo;
 
 export const createPlayer = () => {
   return {
