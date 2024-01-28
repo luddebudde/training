@@ -49,10 +49,13 @@ export const createEnemies = [createWalker];
 export let xps = [];
 
 export let bullets = [];
-export let weapons = [aimBullet, shotgun, holyArea, minigun, wiper];
+
+export let weapons = [aimBullet, holyArea, minigun, wiper];
 export let printWeapons = [
   // holyArea.body
 ];
+
+export const maximumAmountOfWeapons = 6;
 
 let levelUp = false;
 
@@ -246,6 +249,8 @@ const update = () => {
 
   // console.log(bullets);
 
+  // console.log(wiper.upgrades);
+
   entities.forEach((entity) => {
     entity.update?.();
 
@@ -271,23 +276,6 @@ const update = () => {
 
       xp.destroy = true;
       // playBang();
-
-      if (player.xp.amount >= player.xp.nextLevel) {
-        player.xp.level++;
-        player.xp.amount -= player.xp.nextLevel;
-        player.xp.nextLevel += player.xp.levelIncrease;
-
-        if (Math.random() <= 0.9995) {
-          playLevelUp();
-        } else {
-          playLevelUpSpecial();
-          console.log("levelUp");
-        }
-
-        levelUpSelection();
-
-        isPause = true;
-      }
     }
   });
 
@@ -306,14 +294,32 @@ const update = () => {
     };
 
     xps.length = 1;
+    createXp(300, 300, totalAmount);
     // xps[0] = chosenXp;
-    xps.push(chosenXp);
+    // xps.push(chosenXp);
   }
   // if (stats !== oldStats) {
   // }
   // console.log(weapons);
 
   // console.log(enemies);
+
+  if (player.xp.amount >= player.xp.nextLevel) {
+    player.xp.level++;
+    player.xp.amount -= player.xp.nextLevel;
+    player.xp.nextLevel += player.xp.levelIncrease;
+
+    if (Math.random() <= 0.9995) {
+      playLevelUp();
+    } else {
+      playLevelUpSpecial();
+      console.log("levelUp");
+    }
+
+    levelUpSelection();
+
+    isPause = true;
+  }
 
   enemies.forEach((enemy) => {
     // if (

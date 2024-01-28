@@ -16,6 +16,7 @@ export const checkButtonPress = (mouseX, mouseY) => {
       //   console.log("loga true");
       //   console.log("");
       //   button.upgradeWeapon();
+      buttons.length = 0;
       return button.upgradeWeapon();
     }
     // else {
