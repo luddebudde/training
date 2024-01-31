@@ -3,6 +3,7 @@ export const Pelin = {
 
   stats: {
     growth: 0.3,
+    greed: 1,
 
     movementSpeed: 5,
 

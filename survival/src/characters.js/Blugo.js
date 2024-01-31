@@ -3,6 +3,7 @@ export const Blugo = {
 
   stats: {
     growth: 10,
+    greed: 1,
 
     movementSpeed: 5,
 

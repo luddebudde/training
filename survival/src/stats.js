@@ -2,6 +2,7 @@ import { currentCharacter } from "./createPlayer.js";
 
 export const stats = {
   growth: currentCharacter.stats.growth,
+  greed: currentCharacter.stats.growth,
 
   movementSpeed: currentCharacter.stats.movementSpeed,
 

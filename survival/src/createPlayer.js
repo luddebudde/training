@@ -19,13 +19,12 @@ export const createPlayer = () => {
       y: 0,
     },
     xp: {
-      amount: 0,
-
+      amount: 1000,
       level: 1,
       nextLevel: 100,
       levelIncrease: 100,
     },
-
+    gold: 0,
     speed: stats.movementSpeed,
     radius: 40,
     health: 100,

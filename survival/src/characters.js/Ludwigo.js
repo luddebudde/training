@@ -3,6 +3,7 @@ export const Ludwigo = {
 
   stats: {
     growth: 0.7,
+    greed: 1,
 
     movementSpeed: 7,
 

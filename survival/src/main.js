@@ -92,7 +92,7 @@ export let mousePos = {
 
 // createWalker(100, 100);
 
-const assets = {
+export const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
   blue: await loadImage("/public/sprites/blue.png"),
   // assault: loadImage(`/ships/player/large/assault.png`),
@@ -284,14 +284,14 @@ const update = () => {
 
     // const chosenXp = xps[0]
 
-    const chosenXp = {
-      amount: totalAmount,
-      color: "red",
-      pos: {
-        x: xps[0].pos.x,
-        y: xps[0].pos.y,
-      },
-    };
+    // const chosenXp = {
+    //   amount: totalAmount,
+    //   color: "red",
+    //   pos: {
+    //     x: xps[0].pos.x,
+    //     y: xps[0].pos.y,
+    //   },
+    // };
 
     xps.length = 1;
     createXp(300, 300, totalAmount);
@@ -439,6 +439,8 @@ const update = () => {
 
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
   drawText(player.xp.level, world.width - 80, 40, "green");
+
+  drawText(player.gold, world.width - 80, 100, "#ECF500");
 
   drawHealthBar(
     ctx,

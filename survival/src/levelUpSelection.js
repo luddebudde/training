@@ -2,15 +2,17 @@ import { checkButtonPress } from "./checkButtonPress.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { drawText } from "./draw/drawText.js";
 import {
+  assets,
   buttons,
   ctx,
   maximumAmountOfWeapons,
   moveCtx,
   pause,
+  player,
   start,
   weapons,
 } from "./main.js";
-import { upgradeStats } from "./stats.js";
+import { stats, upgradeStats } from "./stats.js";
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { holyArea } from "./weapons.js/createHolyArea.js";
 import { minigun } from "./weapons.js/createMinigun.js";
@@ -35,6 +37,8 @@ const totalWeapons = [
   buba,
 ];
 
+let undefinedButtons = 0;
+
 let newRandomIndex = 0;
 
 let weaponPool = [];
@@ -45,7 +49,7 @@ export const levelUpSelection = () => {
     y: 100,
     width: 1060,
     height: 1000,
-    color: "grey",
+    color: "green",
   };
   drawSquare(square);
 
@@ -67,7 +71,7 @@ export const levelUpSelection = () => {
 
   for (let i = 0; i < 4; i++) {
     if (
-      upgradeWeaponPool.length > 0 &&
+      upgradeWeaponPool.length > 0 ||
       weapons.length >= maximumAmountOfWeapons
     ) {
       if (
@@ -98,43 +102,65 @@ export const levelUpSelection = () => {
       }
     } else {
       chosenWeapon = wiper;
+      // console.log(weapons, upgradeWeaponPool);
+      // console.log();
     }
     const button = {
+      number: i,
+      image: chosenWeapon?.image,
+      // image: assets.rhino,
       weapon: chosenWeapon,
       x: square.x + 20,
       y: (i * square.height) / 4 + 120,
       width: square.width - 40,
       height: square.height / 4 - 40,
       upgradeWeapon: () => {
-        const level = button.weapon.upgrades.level;
+        if (button.weapon !== undefined) {
+          const level = button.weapon.upgrades.level;
 
-        const statType = button.weapon.upgrades.statsOrder[level];
-        const amount = button.weapon.upgrades.amountOrder[level];
+          const statType = button.weapon.upgrades.statsOrder[level];
+          const amount = button.weapon.upgrades.amountOrder[level];
 
-        button.weapon.stats[statType] += amount;
+          button.weapon.stats[statType] += amount;
 
-        // weaponPool.splice(chosenWeapon.index, 1);
+          // weaponPool.splice(chosenWeapon.index, 1);
 
-        if (!weapons.includes(button.weapon)) {
-          weapons.push(button.weapon);
+          if (!weapons.includes(button.weapon)) {
+            weapons.push(button.weapon);
+          }
+
+          // console.log();
+          // console.log(button.weapon, button.weapon.upgrades.level);
+
+          // console.log(newRandomIndex);
+          // console.log(weapons);
+
+          button.weapon.upgrades.level += 1;
+
+          // const weapons = weapons.filter((value, index, self) => {
+          //   self.indexOf(value) === index;
+          // });
+
+          // const weapons = [...new Set(weapons)];
+
+          console.log(
+            button.weapon.name,
+            button.weapon.upgrades.level,
+            undefinedButtons
+          );
+        } else {
+          if (button.number === 0) {
+            if (player.health <= stats.maxHealth) player.health += 15;
+            // button.image = assets.rhino;
+          } else if (button.number === 1) {
+            player.gold += 30;
+          } else if (button.number === 2) {
+            stats.maxHealth += 2;
+          } else if (button.number === 3) {
+            stats.movementSpeed += 1;
+          }
+          // console.log("undefined");
         }
-
-        console.log(button.weapon);
-        console.log(button.weapon.upgrades.level);
-
-        // console.log(newRandomIndex);
-        // console.log(weapons);
-
-        button.weapon.upgrades.level += 1;
-
-        // const weapons = weapons.filter((value, index, self) => {
-        //   self.indexOf(value) === index;
-        // });
-
-        // const weapons = [...new Set(weapons)];
-
-        console.log(weapons);
-
         start();
       },
     };
@@ -152,6 +178,19 @@ export const levelUpSelection = () => {
         "green"
       );
     }
+
+    if (button.image !== undefined) {
+      ctx.drawImage(
+        button.image,
+        button.x + 20,
+        button.y + 90,
+        100,
+        100
+        // walker.radius * 2,
+        // walker.radius * 2
+      );
+    }
+
     buttons.push(button);
   }
   upgradeWeaponPool.length = 0;

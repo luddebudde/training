@@ -11,8 +11,9 @@ const aimBulletStats = {
   area: 5,
   speed: 10,
   damage: 20,
-  cooldown: 750,
+  cooldown: 300,
   bulletCount: 100,
+  fireRate: 10,
 };
 
 export const createMinigun = () => {
@@ -22,6 +23,7 @@ export const createMinigun = () => {
   const damage = stats.damage * aimBulletStats.damage;
   const cooldown = stats.cooldown * aimBulletStats.cooldown;
   const bulletCount = aimBulletStats.bulletCount;
+  const fireRate = aimBulletStats.fireRate;
 
   for (let i = 0; i < bulletCount; i++) {
     setTimeout(() => {
@@ -64,7 +66,7 @@ export const createMinigun = () => {
 
       bullets.push(bullet);
       // worldObjects.push(bullet);
-    }, i * 10);
+    }, i * fireRate);
   }
 
   //   return cooldown;
@@ -79,7 +81,7 @@ export const minigun = {
 
   update: () => {
     minigun.attackIntervall = aimBulletStats.cooldown * stats.cooldown;
-    // console.log(minigun.stats);
+    // console.log(minigun.stats.fireRate);
   },
 
   stats: aimBulletStats,
@@ -88,12 +90,12 @@ export const minigun = {
     level: 0,
     statsOrder: [
       "bulletCount",
-      "bulletCount",
-      "bulletCount",
       "area",
-      "speed",
+      "cooldown",
+      "fireRate",
       "damage",
+      "bulletCount",
     ],
-    amountOrder: [100, 100, 100, 5, 5, 5],
+    amountOrder: [100, 5, 250, -5, 10, 200],
   },
 };

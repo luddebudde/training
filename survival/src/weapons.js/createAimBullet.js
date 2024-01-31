@@ -1,4 +1,12 @@
-import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
+import { loadImage } from "../image.js";
+import {
+  assets,
+  bullets,
+  mousePos,
+  moveCtx,
+  player,
+  worldObjects,
+} from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
@@ -64,6 +72,8 @@ export const createAimBullet = () => {
 
 export const aimBullet = {
   name: "aimBullet",
+  // image: assets.rhino,
+  image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
   attackIntervall: aimBulletStats.cooldown * stats.cooldown,
   cooldown: aimBulletStats.cooldown * stats.cooldown,
