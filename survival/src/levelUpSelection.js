@@ -143,11 +143,7 @@ export const levelUpSelection = () => {
 
           // const weapons = [...new Set(weapons)];
 
-          console.log(
-            button.weapon.name,
-            button.weapon.upgrades.level,
-            undefinedButtons
-          );
+          console.log(button.weapon.name, button.weapon.upgrades.level);
         } else {
           if (button.number === 0) {
             if (player.health <= stats.maxHealth) player.health += 15;
@@ -170,13 +166,107 @@ export const levelUpSelection = () => {
     ctx.fillStyle = "black";
     ctx.fill();
 
+    // if (button.weapon !== undefined) {
+    //   drawText(
+    //     button.weapon.name,
+    //     square.x + 40,
+    //     (i * square.height) / 4 + 180,
+    //     "green"
+    //   );
+    //   drawText(
+    //     button.weapon.upgrades.level,
+    //     square.x,
+    //     (i * square.height) / 4 + 180,
+    //     "yellow"
+    //   );
+    // }
+
     if (button.weapon !== undefined) {
+      const level = button.weapon.upgrades.level;
+      // Rita vapennamnet
       drawText(
         button.weapon.name,
         square.x + 40,
         (i * square.height) / 4 + 180,
         "green"
       );
+
+      // Rita uppgraderingsnivån
+      const levelText = `level ${button.weapon.upgrades.level + 1}`;
+
+      // Mät bredden på vapennamnet för att justera placeringen av uppgraderingsnivån
+      const weaponNameWidth = ctx.measureText(button.weapon.name).width;
+
+      drawText(
+        levelText,
+        square.x + 40 + weaponNameWidth + 20, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + 180,
+        "yellow"
+      );
+
+      drawText(
+        `${button.weapon.upgrades.statsOrder[level]}:`,
+        square.x + 40 + weaponNameWidth + 20, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + 300,
+        "yellow"
+      );
+
+      const weaponStatsWidth = ctx.measureText(
+        button.weapon.upgrades.statsOrder[level]
+      ).width;
+
+      drawText(
+        button.weapon.upgrades.amountOrder[level],
+        square.x + 40 + weaponNameWidth + weaponStatsWidth + 50, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + 300,
+        "yellow"
+      );
+
+      // if (button.weapon.upgrades.description !== undefined) {
+      //   const formattedDescription =
+      //     button.weapon.upgrades.description.join("\n");
+
+      //   drawText(
+      //     formattedDescription,
+      //     square.x + 40 + weaponNameWidth + weaponStatsWidth + 300, // Placera texten 100 enheter åt höger från vapennamnet
+      //     (i * square.height) / 4 + 180,
+      //     "yellow"
+      //   );
+      // }
+      if (button.weapon.upgrades.description !== undefined) {
+        const description = button.weapon.upgrades.description[level];
+
+        const maxWidth = 500; // Bredden där du vill bryta raden
+        const lineHeight = 40; // Önskat mellanrum mellan raderna
+
+        let words = description.split(" ");
+        let line = "";
+        let y = (i * square.height) / 4 + 180;
+
+        for (let word of words) {
+          const testLine = line + word + " ";
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+
+          if (testWidth > maxWidth && line !== "") {
+            ctx.fillText(
+              line,
+              square.x + 40 + weaponNameWidth + weaponStatsWidth + 150,
+              y
+            );
+            line = word + " ";
+            y += lineHeight; // Höjningen för nästa rad
+          } else {
+            line = testLine;
+          }
+        }
+
+        ctx.fillText(
+          line,
+          square.x + 40 + weaponNameWidth + weaponStatsWidth + 150,
+          y
+        );
+      }
     }
 
     if (button.image !== undefined) {

@@ -1,5 +1,5 @@
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { enemies, player, worldObjects } from "../main.js";
+import { enemies, player, worldObjects, xps } from "../main.js";
 import { playWiper } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
@@ -12,6 +12,9 @@ const wiperStats = {
   speed: 0,
   damage: 0,
   finalLevel: 0,
+
+  keepXpChance: 10,
+  killAmount: 25,
 };
 
 export const createWiper = () => {
@@ -55,7 +58,10 @@ export const wiper = {
     setTimeout(() => {
       enemies.forEach((enemy) => {
         amountOfEnemies += 1;
-        enemy.health = 0;
+        if (Math.random() * 100 < wiperStats.killAmount) {
+          enemy.health = 0;
+          // console.log(wiperStats.killAmount);
+        }
       });
       player.xp.amount +=
         amountOfEnemies *
@@ -68,13 +74,9 @@ export const wiper = {
         //  * stats.greed
         wiper.stats.finalLevel;
       // amountOfEnemies = 0
-      console.log(player.xp.amount);
-    }, 1500); // 1000 millisekunder motsvarar 1 sekund
-    // player.xp.amount +=
-    //   amountOfEnemies * 25 * stats.growth * wiper.stats.finalLevel;
-    // player.gold += amountOfEnemies * 25 * stats.greed * wiper.stats.finalLevel;
-    // // amountOfEnemies = 0
-    // console.log(amountOfEnemies);
+      console.log(wiperStats);
+      if (Math.random() * 100 < wiperStats.keepXpChance) xps.lenght = 0;
+    }, 1500);
   },
 
   update: () => {
@@ -84,16 +86,24 @@ export const wiper = {
   stats: wiperStats,
 
   upgrades: {
-    level: 5,
+    level: 0,
     statsOrder: [
       "cooldown",
+      "killAmount",
       "cooldown",
-      "cooldown",
-      "damage",
-      "damage",
+      "keepXpChance",
+      "killAmount",
       "finalLevel",
     ],
-    amountOrder: [50, 50, 100, 0, 0, 1],
+    amountOrder: [-50, 25, -100, 100, 50, 1],
+    description: [
+      "Decreases the cooldown",
+      "Kill",
+      "Decreases the cooldown even more",
+      "Xp",
+      "Kill",
+      "Adds special ability",
+    ],
   },
 
   body: wiperBody,

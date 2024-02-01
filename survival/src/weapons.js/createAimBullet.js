@@ -20,6 +20,7 @@ const aimBulletStats = {
   speed: 20,
   damage: 20,
   cooldown: 25,
+  special: 0,
 };
 
 export const createAimBullet = () => {
@@ -87,7 +88,15 @@ export const aimBullet = {
 
   upgrades: {
     level: 0,
-    statsOrder: ["cooldown", "speed", "damage", "area", "speed", "damage"],
-    amountOrder: [-10, 1, 1, 5, 5, 5],
+    statsOrder: ["cooldown", "speed", "damage", "area", "speed", "special"],
+    amountOrder: [-10, 1, 1, 5, 5, 1],
+    description: [
+      "Decreases the cooldown between each shot",
+      "Increases the speed",
+      "Increases the damage",
+      "Increases the area",
+      "Increases the speed even further",
+      "Adds special ability",
+    ],
   },
 };

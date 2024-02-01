@@ -26,7 +26,8 @@ const shotgunBulletStats = {
   speed: 10,
   damage: 40,
   cooldown: 100,
-  spread: 0.5,
+  spread: 0.7,
+  pellets: 10,
 };
 
 export const createShotgun = () => {
@@ -67,7 +68,7 @@ export const createShotgun = () => {
   previusPosDifference.pos.x = 100000000;
   previusPosDifference.pos.y = 100000000;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < shotgunBulletStats.pellets; i++) {
     const spreadX = getRandomInRange(-spread, spread);
     const spreadY = getRandomInRange(-spread, spread);
 
@@ -118,7 +119,15 @@ export const shotgun = {
 
   upgrades: {
     level: 0,
-    statsOrder: ["spread", "speed", "damage", "area", "speed", "damage"],
-    amountOrder: [-0.4, 1, 1, 5, 5, 5],
+    statsOrder: ["spread", "speed", "damage", "area", "spread", "pellets"],
+    amountOrder: [-0.2, 1, 1, 5, -0.3, 10],
+    description: [
+      "Decreases the spread of the weapon",
+      "Increases the speed",
+      "Increases the damage",
+      "Increases the area",
+      "Decreases the spread even more",
+      "Increases the amount of pellets",
+    ],
   },
 };
