@@ -31,6 +31,8 @@ import { loadImage } from "./image.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { isPointInsideArea } from "./isInsideRectangle.js";
 import { wiper } from "./weapons.js/wiper.js";
+import { randomAimBullet } from "./weapons.js/createRandomAimBullet.js";
+import { axe } from "./weapons.js/createAxe.js";
 // import { assets } from "./assets.js";
 
 export const canvas = document.getElementById("theCanvas");
@@ -50,7 +52,7 @@ export let xps = [];
 
 export let bullets = [];
 
-export let weapons = [aimBullet, holyArea, minigun, wiper];
+export let weapons = [holyArea, minigun, wiper, randomAimBullet, axe];
 export let printWeapons = [
   // holyArea.body
 ];
@@ -125,7 +127,8 @@ document.addEventListener("click", function (event) {
 });
 
 const spawnRate = 50 / stats.curse;
-const maxEnemyCount = 250;
+// const maxEnemyCount = 250;
+const maxEnemyCount = 0;
 
 let spawnCooldown = spawnRate;
 
