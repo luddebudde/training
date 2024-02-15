@@ -34,6 +34,7 @@ export const createHolyArea = () => {
     color: "green",
     team: "player",
     priority: 1,
+    // enemiesHit: [],
   };
 
   return holyAreaBody;
@@ -57,8 +58,8 @@ export const holyArea = {
 
   upgrades: {
     level: 0,
-    statsOrder: ["area", "area", "area", "area", "area", "area"],
-    amountOrder: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+    statsOrder: [["area"], ["area"], ["area"], ["area"], ["area"], ["area"]],
+    amountOrder: [[0.1], [0.1], [0.1], [0.1], [0.1], [0.1]],
   },
 
   body: holyAreaBody,

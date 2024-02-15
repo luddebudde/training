@@ -116,12 +116,26 @@ export const levelUpSelection = () => {
       height: square.height / 4 - 40,
       upgradeWeapon: () => {
         if (button.weapon !== undefined) {
-          const level = button.weapon.upgrades.level;
+          const weaponUpgrades = button.weapon.upgrades;
+          const level = weaponUpgrades.level;
 
-          const statType = button.weapon.upgrades.statsOrder[level];
-          const amount = button.weapon.upgrades.amountOrder[level];
+          const statTypes = weaponUpgrades.statsOrder[level];
+          const upgradeAmounts = weaponUpgrades.amountOrder[level];
 
-          button.weapon.stats[statType] += amount;
+          // const statType = button.weapon.upgrades.statsOrder[level];
+          // const amount = button.weapon.upgrades.amountOrder[level];
+
+          statTypes.forEach((statType, index) => {
+            const amount = upgradeAmounts[index];
+
+            button.weapon.stats[statType] += amount;
+            // button.weapon.stats.area += amount;
+
+            // console.log(button.weapon.stats[statType]);
+            console.log(button.weapon.stats);
+            // console.log(statType);
+            // console.log(amount);
+          });
 
           // weaponPool.splice(chosenWeapon.index, 1);
 

@@ -19,7 +19,8 @@ export const createPlayer = () => {
       y: 0,
     },
     xp: {
-      amount: 1000,
+      // amount: 1000,
+      amount: 0,
       level: 1,
       nextLevel: 100,
       levelIncrease: 100,

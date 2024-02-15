@@ -28,6 +28,7 @@ const shotgunBulletStats = {
   cooldown: 100,
   spread: 0.7,
   pellets: 10,
+  pierce: 0,
 };
 
 export const createShotgun = () => {
@@ -94,6 +95,8 @@ export const createShotgun = () => {
       color: "black",
       team: "player",
       priority: 5,
+      enemiesHit: [],
+      pierce: 0,
     };
 
     // console.log(previusPosDifference);
@@ -119,8 +122,15 @@ export const shotgun = {
 
   upgrades: {
     level: 0,
-    statsOrder: ["spread", "speed", "damage", "area", "spread", "pellets"],
-    amountOrder: [-0.2, 1, 1, 5, -0.3, 10],
+    statsOrder: [
+      ["spread"],
+      ["speed"],
+      ["damage"],
+      ["area"],
+      ["spread"],
+      ["pellets"],
+    ],
+    amountOrder: [[-0.2], [1], [1], [5], [-0.3], [10]],
     description: [
       "Decreases the spread of the weapon",
       "Increases the speed",

@@ -18,18 +18,18 @@ const bulletSpeed = 20 * stats.speed;
 
 const axeStats = {
   area: 80,
-  speed: 20,
-  damage: 20,
-  cooldown: 100,
+  speed: 10,
+  damage: 160,
+  cooldown: 300,
   special: 0,
 };
 
 let axeBullet = {};
 
 export const createAxe = () => {
-  const area = 25 + stats.area * axeStats.area;
+  const area = axeStats.area + stats.area;
   // const speed = stats.speed * axeStats.speed;
-  const speed = 10;
+  const speed = 5;
   const damage = stats.damage * axeStats.damage;
   const cooldown = stats.cooldown * axeStats.cooldown;
 
@@ -43,7 +43,7 @@ export const createAxe = () => {
   // const direction = makeDirection(stopPos, player.pos);
 
   axeBullet = {
-    angle: 10,
+    angle: 4,
     radius: area,
     attackIntervall: cooldown,
     cooldown: cooldown,
@@ -61,12 +61,17 @@ export const createAxe = () => {
     color: "green",
     team: "player",
     priority: 5,
+    laps: 0,
+    enemiesHit: [],
+    pierce: 10000,
 
-    attack: () => {
-      bullets.push(axeBullet);
-    },
+    // attack: () => {
+    //   bullets.push(axeBullet);
+    // },
   };
+
   bullets.push(axeBullet);
+  // console.log("axe");
 
   // console.log(axeBullet);
   // console.log(player.pos.y - player.radius * 4 + area);
@@ -74,34 +79,24 @@ export const createAxe = () => {
 };
 
 function moveAroundCircle(circle) {
-  const distance = player.radius * 4 + circle.radius;
-  const stopPos = {
-    x:
-      circle.radius +
-      distance * Math.cos((circle.angle * Math.PI) / 180) +
-      player.pos.x,
-    y:
-      circle.radius +
-      distance * Math.sin((circle.angle * Math.PI) / 180) +
-      player.pos.y,
-  };
+  circle.angle += circle.speed * 0.01;
+  // if () {
+  if (circle.angle * 36 > 360) {
+    if (axeStats.special === 1) {
+      circle.laps += 1;
+    }
+    if (circle.laps % 2 === 0) {
+      circle.destroy = true;
+    } else if (axeStats.special) {
+      circle.radius = axeStats.area * 1.5;
+      circle.speed = axeStats.speed * 1.3;
 
-  if (circle.angle <= 360) {
-    circle.angle += 1;
+      circle.angle = circle.angle - 6;
+    }
   }
 
-  // Beräkna ny position baserat på vinkeln
-  if (circle.pos.x !== undefined) {
-    circle.pos.x = world.width / 2 + circle.radius * Math.cos(circle.angle);
-    circle.pos.y = world.height / 2 + circle.radius * Math.sin(circle.angle);
-  }
-  // Uppdatera vinkeln för nästa position
-  // circle.angle += (circle.speed * Math.PI) / 180; // Konvertera hastighet till radianer
-
-  // Rita cirkeln på den nya positionen
-
-  // Uppdatera animationen
-  requestAnimationFrame(moveAroundCircle);
+  circle.pos.x = player.pos.x + circle.radius * Math.cos(circle.angle);
+  circle.pos.y = player.pos.y + circle.radius * Math.sin(circle.angle);
 }
 
 export const axe = {
@@ -116,8 +111,9 @@ export const axe = {
 
     if (axeBullet.pos !== undefined) {
       // console.log(axeBullet.pos, 1);
+      // console.log(axeBullet.pos);
       moveAroundCircle(axeBullet);
-      console.log(axeBullet.pos);
+
       // console.log(
       //   world.width / 2 + axeBullet.radius * Math.cos(axeBullet.angle)
       // );
@@ -128,9 +124,16 @@ export const axe = {
   stats: axeStats,
 
   upgrades: {
-    level: 0,
-    statsOrder: ["cooldown", "speed", "damage", "area", "speed", "special"],
-    amountOrder: [-10, 1, 1, 5, 5, 1],
+    level: 5,
+    statsOrder: [
+      ["cooldown"],
+      ["speed"],
+      ["damage"],
+      ["area"],
+      ["speed"],
+      ["special"],
+    ],
+    amountOrder: [[-10], [1], [1], [5], [5], [1]],
     description: [
       "Decreases the cooldown between each shot",
       "Increases the speed",

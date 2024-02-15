@@ -13,11 +13,12 @@ import { stats } from "../stats.js";
 const bulletSpeed = 20 * stats.speed;
 // const cooldown = 25;
 
-const aimBulletStats = {
+const ramdomAimBulletStats = {
   area: 20,
   speed: 20,
   damage: 20,
   cooldown: 12,
+  pierce: 0,
   special: 0,
 };
 
@@ -32,10 +33,10 @@ function getRandomDistance(radius) {
 
 export const createRandomAimBullet = () => {
   // console.log(aimBullet.area);
-  const area = stats.area * aimBulletStats.area;
-  const speed = stats.speed * aimBulletStats.speed;
-  const damage = stats.damage * aimBulletStats.damage;
-  const cooldown = stats.cooldown * aimBulletStats.cooldown;
+  const area = stats.area * ramdomAimBulletStats.area;
+  const speed = stats.speed * ramdomAimBulletStats.speed;
+  const damage = stats.damage * ramdomAimBulletStats.damage;
+  const cooldown = stats.cooldown * ramdomAimBulletStats.cooldown;
 
   // Ange cirkelns radie
   const circleRadius = 50;
@@ -84,6 +85,8 @@ export const createRandomAimBullet = () => {
     color: "green",
     team: "player",
     priority: 5,
+    enemiesHit: [],
+    pierce: ramdomAimBulletStats.pierce,
 
     attack: () => {
       bullets.push(bullet);
@@ -101,20 +104,28 @@ export const randomAimBullet = {
   // image: assets.rhino,
   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
-  attackIntervall: aimBulletStats.cooldown * stats.cooldown,
-  cooldown: aimBulletStats.cooldown * stats.cooldown,
+  attackIntervall: ramdomAimBulletStats.cooldown * stats.cooldown,
+  cooldown: ramdomAimBulletStats.cooldown * stats.cooldown,
   attack: createRandomAimBullet,
 
   update: () => {
-    randomAimBullet.attackIntervall = aimBulletStats.cooldown * stats.cooldown;
+    randomAimBullet.attackIntervall =
+      ramdomAimBulletStats.cooldown * stats.cooldown;
   },
 
-  stats: aimBulletStats,
+  stats: ramdomAimBulletStats,
 
   upgrades: {
     level: 0,
-    statsOrder: ["cooldown", "speed", "damage", "area", "speed", "special"],
-    amountOrder: [-10, 1, 1, 5, 5, 1],
+    statsOrder: [
+      ["cooldown"],
+      ["speed"],
+      ["damage"],
+      ["area"],
+      ["speed"],
+      ["special"],
+    ],
+    amountOrder: [[-6], [1], [1], [5], [5], [1]],
     description: [
       "Decreases the cooldown between each shot",
       "Increases the speed",

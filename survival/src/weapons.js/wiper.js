@@ -53,7 +53,7 @@ export const wiper = {
   attack: () => {
     let amountOfEnemies = 0;
     playWiper();
-    console.log("wiperAtatck");
+    // console.log("wiperAtatck");
     // Vänta en sekund
     setTimeout(() => {
       enemies.forEach((enemy) => {
@@ -74,7 +74,7 @@ export const wiper = {
         //  * stats.greed
         wiper.stats.finalLevel;
       // amountOfEnemies = 0
-      console.log(wiperStats);
+      // console.log(wiperStats);
       if (Math.random() * 100 < wiperStats.keepXpChance) xps.lenght = 0;
     }, 1500);
   },
@@ -88,14 +88,14 @@ export const wiper = {
   upgrades: {
     level: 0,
     statsOrder: [
-      "cooldown",
-      "killAmount",
-      "cooldown",
-      "keepXpChance",
-      "killAmount",
-      "finalLevel",
+      ["cooldown"],
+      ["killAmount"],
+      ["cooldown"],
+      ["keepXpChance"],
+      ["killAmount"],
+      ["finalLevel"],
     ],
-    amountOrder: [-50, 25, -100, 100, 50, 1],
+    amountOrder: [[-50], [25], [-100], [100], [50], [1]],
     description: [
       "Decreases the cooldown",
       "Kill",

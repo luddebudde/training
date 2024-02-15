@@ -2,6 +2,7 @@ import { loadImage } from "../image.js";
 import {
   assets,
   bullets,
+  enemies,
   mousePos,
   moveCtx,
   player,
@@ -20,6 +21,7 @@ const aimBulletStats = {
   speed: 20,
   damage: 20,
   cooldown: 25,
+  pierce: 1,
   special: 0,
 };
 
@@ -64,6 +66,8 @@ export const createAimBullet = () => {
       bullets.push(bullet);
       // worldObjects.push(bullet);
     },
+    enemiesHit: [],
+    pierce: aimBulletStats.pierce,
   };
   bullets.push(bullet);
   // worldObjects.push(bullet);
@@ -88,8 +92,16 @@ export const aimBullet = {
 
   upgrades: {
     level: 0,
-    statsOrder: ["cooldown", "speed", "damage", "area", "speed", "special"],
-    amountOrder: [-10, 1, 1, 5, 5, 1],
+    statsOrder: [
+      ["cooldown", "speed"],
+      ["speed"],
+      ["damage"],
+      ["area"],
+      ["speed"],
+      ["special"],
+    ],
+    amountOrder: [[-10, 5], [1], [1], [5], [5], [1]],
+
     description: [
       "Decreases the cooldown between each shot",
       "Increases the speed",

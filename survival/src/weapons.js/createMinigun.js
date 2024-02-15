@@ -14,6 +14,7 @@ const aimBulletStats = {
   cooldown: 300,
   bulletCount: 100,
   fireRate: 10,
+  pierce: 0,
 };
 
 export const createMinigun = () => {
@@ -57,6 +58,8 @@ export const createMinigun = () => {
         color: "red",
         team: "player",
         priority: 5,
+        enemiesHit: [],
+        pierce: 0,
 
         attack: () => {
           bullets.push(bullet);
@@ -89,13 +92,13 @@ export const minigun = {
   upgrades: {
     level: 0,
     statsOrder: [
-      "bulletCount",
-      "area",
-      "cooldown",
-      "fireRate",
-      "damage",
-      "bulletCount",
+      ["bulletCount"],
+      ["area"],
+      ["cooldown"],
+      ["fireRate"],
+      ["damage"],
+      ["bulletCount"],
     ],
-    amountOrder: [100, 5, 250, -5, 10, 200],
+    amountOrder: [[100], [5], [250], [-5], [10], [200]],
   },
 };
