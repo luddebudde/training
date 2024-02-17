@@ -39,7 +39,7 @@ const normalMusic = {
 
 const funnyMusic = {
   fileName: "/public/sounds/alternativeMusic.mp3",
-  volume: 0.7,
+  volume: 1,
 };
 
 const battleMusic = {

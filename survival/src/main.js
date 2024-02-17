@@ -144,8 +144,8 @@ document.addEventListener("click", function (event) {
 });
 
 const spawnRate = 50 / stats.curse;
-// const maxEnemyCount = 250;
-const maxEnemyCount = 20;
+const maxEnemyCount = 250;
+// const maxEnemyCount = 20;
 
 let spawnCooldown = spawnRate;
 
@@ -196,13 +196,13 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  createExplosion(
-    Math.random() * world.width - world.width / 2 + player.pos.x,
-    Math.random() * world.height - world.height / 2 + player.pos.y,
-    100,
-    16,
-    100
-  );
+  // createExplosion(
+  //   Math.random() * world.width - world.width / 2 + player.pos.x,
+  //   Math.random() * world.height - world.height / 2 + player.pos.y,
+  //   100,
+  //   16,
+  //   100
+  // );
   const currentTime = Date.now();
   timer = (currentTime - oldTime) / 1000;
 
