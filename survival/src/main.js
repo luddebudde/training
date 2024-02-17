@@ -41,6 +41,9 @@ import {
   playMusic,
   stopMusic,
 } from "./changeMusic.js";
+import { createSumXp } from "./createSumXP.js";
+import { airstrike } from "./weapons.js/createAirstrike.js";
+import { selfImpaler } from "./weapons.js/selfImpaler.js";
 // import { assets } from "./assets.js";
 
 export const canvas = document.getElementById("theCanvas");
@@ -63,11 +66,13 @@ export let explosions = [];
 
 export let weapons = [
   aimBullet,
-  holyArea,
-  minigun,
-  wiper,
-  randomAimBullet,
-  axe,
+  // holyArea,
+  // minigun,
+  // wiper,
+  // randomAimBullet,
+  // axe,
+  // airstrike,
+  selfImpaler,
 ];
 export let printWeapons = [
   // holyArea.body
@@ -143,13 +148,10 @@ document.addEventListener("click", function (event) {
   // xps.push(createXp(1000, 1000, 100));
 });
 
-const spawnRate = 50 / stats.curse;
-const maxEnemyCount = 250;
-// const maxEnemyCount = 20;
-
-let spawnCooldown = spawnRate;
-
 let currentMusicIndex = 0;
+
+let spawnRate = 50 / stats.curse;
+let spawnCooldown = spawnRate;
 
 const currentWave = () => {
   // const spawnPos = 0;
@@ -189,6 +191,8 @@ let timer = 0;
 
 // }, 500);
 
+let canChangeMusic = true;
+
 const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
@@ -196,12 +200,16 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
+  spawnRate = 50 / stats.curse;
+  // const maxEnemyCount = (250 * stats.curse) / s3;
+  const maxEnemyCount = (20 * stats.curse) / 3;
+
   // createExplosion(
   //   Math.random() * world.width - world.width / 2 + player.pos.x,
   //   Math.random() * world.height - world.height / 2 + player.pos.y,
-  //   100,
-  //   16,
-  //   100
+  // 100,
+  // 16,
+  // 100
   // );
   const currentTime = Date.now();
   timer = (currentTime - oldTime) / 1000;
@@ -243,7 +251,7 @@ const update = () => {
     stopMusic();
   }
 
-  if (isKeyDown("KeyX")) {
+  if (isKeyDown("KeyX") && canChangeMusic) {
     currentMusicIndex += 1;
 
     const listIndex = currentMusicIndex % musicList.length;
@@ -253,9 +261,23 @@ const update = () => {
 
     changeMusic(nextElement.fileName);
     changeVolume(nextElement.volume);
+
+    // Sätt flaggan till false och använd setTimeout för att återställa den efter 1000 ms (1 sekund)
+    canChangeMusic = false;
+    setTimeout(() => {
+      canChangeMusic = true;
+    }, 1000);
   }
 
-  weapons.forEach((weapon) => {
+  if (isKeyDown("ArrowUp")) {
+    const totalAmount = xps.reduce((sum, xp) => sum + xp.amount, 0);
+
+    xps.length = 0;
+
+    player.xp.amount += totalAmount;
+  }
+
+  weapons.forEach((weapon, index) => {
     weapon.cooldown -= 1;
     weapon.update?.();
 
@@ -263,7 +285,8 @@ const update = () => {
       weapon.cooldown = weapon.attackIntervall;
       weapon.attack?.();
     }
-    // console.log(weapon.attack);
+
+    drawText(weapon.name, 20, 50 * (index + 2), "green");
   });
 
   // console.log(spawnCooldown);
@@ -307,24 +330,36 @@ const update = () => {
     }
   });
 
-  if (xps.length >= 100) {
-    const totalAmount = xps.reduce((sum, xp) => sum + xp.amount, 0);
+  const amountOfXp = 100; // Ange ditt tröskelvärde här
 
-    // const chosenXp = xps[0]
+  if (xps.length > amountOfXp + 1) {
+    // const totalAmount = xps.reduce((sum, xp) => sum + xp.amount, 0);
 
-    // const chosenXp = {
-    //   amount: totalAmount,
-    //   color: "red",
-    //   pos: {
-    //     x: xps[0].pos.x,
-    //     y: xps[0].pos.y,
-    //   },
-    // };
+    let totalAmount = 0;
 
-    xps.length = 1;
-    createXp(300, 300, totalAmount);
+    xps.forEach((xp, index) => {
+      if (index > amountOfXp) {
+        totalAmount += xp.amount;
+      }
+    });
+
+    // const chosenXp = xps[amountOfXp]
+
+    const chosenXp = {
+      radius: xps[0].radius,
+      amount: totalAmount,
+      // color: "red",
+      pos: {
+        x: xps[0].pos.x,
+        y: xps[0].pos.y,
+      },
+    };
+
+    xps.length = amountOfXp;
+    createSumXp(chosenXp.pos.x, chosenXp.pos.y, totalAmount, chosenXp.radius);
     // xps[0] = chosenXp;
     // xps.push(chosenXp);
+    // console.log(totalAmount);
   }
 
   if (player.xp.amount >= player.xp.nextLevel) {
@@ -366,6 +401,16 @@ const update = () => {
   explosions = explosions.filter((explosion) => !explosion.hasExpired);
 
   xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
+
+  explosions.forEach((explosion) => {
+    enemies.forEach((enemy) => {
+      if (doCirclesOverlap(explosion, enemy)) {
+        enemy.health -= explosion.damage;
+      }
+    });
+  });
+
+  // console.log(explosions);
 
   bullets.forEach((bullet) => {
     entities.forEach((entity) => {

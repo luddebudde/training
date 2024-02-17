@@ -124,7 +124,7 @@ export const axe = {
   stats: axeStats,
 
   upgrades: {
-    level: 5,
+    level: 0,
     statsOrder: [
       ["cooldown"],
       ["speed"],

@@ -124,13 +124,13 @@ export const shotgun = {
     level: 0,
     statsOrder: [
       ["spread"],
-      ["speed"],
+      ["speed", "pierce"],
       ["damage"],
       ["area"],
-      ["spread"],
+      ["spread", "pierce"],
       ["pellets"],
     ],
-    amountOrder: [[-0.2], [1], [1], [5], [-0.3], [10]],
+    amountOrder: [[-0.2], [1, 1], [1], [5], [-0.3, 2], [10]],
     description: [
       "Decreases the spread of the weapon",
       "Increases the speed",

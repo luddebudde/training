@@ -1,11 +1,11 @@
 import { worldObjects, xps } from "./main.js";
 
-export const createXp = (xPos, yPos, xpAmount) => {
+export const createSumXp = (xPos, yPos, xpAmount, radius) => {
   const xp = {
     amount: xpAmount,
 
-    radius: Math.sqrt(xpAmount) / 2 + 10,
-    color: "#aaffff",
+    radius: radius,
+    color: "red",
     pos: {
       x: xPos,
       y: yPos,

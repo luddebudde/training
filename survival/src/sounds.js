@@ -1,4 +1,4 @@
-export const universalVolume = 0;
+export const universalVolume = 0.5;
 
 export const playLevelUp = () => {
   const audio = new Audio("/public/sounds/levelUp.mp3");
@@ -32,6 +32,17 @@ export const playMinigunOverheat = () => {
 export const playWiper = () => {
   const audio = new Audio("/public/sounds/wiperEffect.mp3");
   audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
+export const playAirstrikeCall = () => {
+  const audio = new Audio("/public/sounds/airstrike_call.mp3");
+  audio.volume = 2 * universalVolume;
+  audio.play();
+};
+export const playAirstrikeExplosion = () => {
+  const audio = new Audio("/public/sounds/airstrike_explosion.mp3");
+  audio.volume = 1 * universalVolume;
   audio.play();
 };
 

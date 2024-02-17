@@ -14,10 +14,14 @@ import {
 } from "./main.js";
 import { stats, upgradeStats } from "./stats.js";
 import { aimBullet } from "./weapons.js/createAimBullet.js";
+import { airstrike } from "./weapons.js/createAirstrike.js";
+import { axe } from "./weapons.js/createAxe.js";
 import { holyArea } from "./weapons.js/createHolyArea.js";
 import { minigun } from "./weapons.js/createMinigun.js";
+import { randomAimBullet } from "./weapons.js/createRandomAimBullet.js";
 import { shotgun } from "./weapons.js/createShotgun.js";
 import { buba, colin, jedå, uluk } from "./weapons.js/randomWeapons.js";
+import { selfImpaler } from "./weapons.js/selfImpaler.js";
 import { wiper } from "./weapons.js/wiper.js";
 import { world } from "./world.js";
 
@@ -31,6 +35,10 @@ const totalWeapons = [
   minigun,
   shotgun,
   wiper,
+  randomAimBullet,
+  axe,
+  airstrike,
+  selfImpaler,
   jedå,
   colin,
   uluk,
@@ -102,6 +110,7 @@ export const levelUpSelection = () => {
       }
     } else {
       chosenWeapon = wiper;
+      // return;
       // console.log(weapons, upgradeWeaponPool);
       // console.log();
     }
