@@ -46,6 +46,12 @@ export const playAirstrikeExplosion = () => {
   audio.play();
 };
 
+export const playSlice = () => {
+  const audio = new Audio("/public/sounds/slice.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
 let isHurtSoundPlaying = false;
 
 export const playHurt = () => {
@@ -62,6 +68,6 @@ export const playHurt = () => {
       isHurtSoundPlaying = false;
     });
 
-    audio.play();
+    // audio.play();
   }
 };

@@ -1,6 +1,7 @@
+import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, player, worldObjects } from "../main.js";
-import { playAirstrikeCall, playLevelUpSpecial } from "../sounds.js";
+import { playAirstrikeCall, playLevelUpSpecial, playSlice } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -11,10 +12,12 @@ const selfImpalerStats = {
   growth: 0,
   greed: 0,
 
-  damage: 10,
+  damage: 20,
   curse: 0,
   speed: 0,
   area: 0,
+
+  effects: 1,
 };
 
 export const createSelfImpaler = () => {
@@ -59,19 +62,21 @@ export const selfImpaler = {
   update: () => {
     attackCounter += 1;
     if (attackCounter % selfImpaler.attackIntervall === 0) {
-      player.health -= selfImpalerStats.damage;
+      const effects = selfImpalerStats.effects;
+
+      dealDamage(player, "masochism", selfImpalerStats.damage * effects);
 
       // Messes with stats
-      stats.growth -= selfImpalerStats.growth;
-      stats.greed -= selfImpalerStats.greed;
+      stats.growth -= selfImpalerStats.growth * effects;
+      stats.greed -= selfImpalerStats.greed * effects;
 
-      stats.speed -= selfImpalerStats.speed;
-      stats.area -= selfImpalerStats.area;
+      stats.speed -= selfImpalerStats.speed * effects;
+      stats.area -= selfImpalerStats.area * effects;
 
-      stats.curse += selfImpalerStats.curse;
-      playAirstrikeCall();
+      stats.curse += selfImpalerStats.curse * effects;
+      playSlice();
 
-      console.log(stats.curse);
+      // console.log(stats.curse);
     }
   },
 
@@ -85,15 +90,15 @@ export const selfImpaler = {
       ["curse"],
       ["damage", "movementSpeed"],
       ["speed", "area", "greed"],
-      ["special"],
+      ["effects"],
     ],
     amountOrder: [
       [0.05, 0.05],
       [-0.05, -0.05],
-      [0.5],
+      [0.05],
       [10, 0.5],
       [0.05, 0.05, 0.1],
-      [1],
+      [-1],
     ],
     description: [
       "Decreases the growth and increases the curse for each attack",

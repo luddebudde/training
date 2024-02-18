@@ -44,20 +44,18 @@ import {
 import { createSumXp } from "./createSumXP.js";
 import { airstrike } from "./weapons.js/createAirstrike.js";
 import { selfImpaler } from "./weapons.js/selfImpaler.js";
-// import { assets } from "./assets.js";
+import { checkRegen } from "./checkRegen.js";
+import { drawShieldbar } from "./draw/drawShieldbar.js";
+import { dealDamage } from "./dealDamage.js";
+import { levelUp } from "./levelUp.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
 
-// export let entities = [player];
-// export let entities = [];
 export let enemies = [];
 export let entities = [];
 
 export const createEnemies = [createWalker];
-
-// export let bullets = [];
-// export let bullets = [];
 
 export let xps = [];
 
@@ -80,41 +78,24 @@ export let printWeapons = [
 
 export const maximumAmountOfWeapons = 6;
 
-let levelUp = false;
-
 export const buttons = [];
 
 export const player = createPlayer();
 
 entities.push(player);
 
-// export const worldObjects = [[], [], []];
 export let worldObjects = [printWeapons, entities, bullets, xps, explosions];
 const worldObjectsLenght = worldObjects.length;
-
-// worldObjects[0].push(entities);
-// worldObjects[1].push(bullets);
-// worldObjects[2].push(xps);
 
 let oldHealth = player.health;
 let oldTime = Date.now();
 
-// worldObjects.push(entities);
-// worldObjects.push(bullets);
-// worldObjects.push(xps);
-
 const worldArrays = [entities, worldObjects, bullets];
-
-// worldObjects.push(player);
-
-// worldObjects.push(holyAreaBody);
 
 export let mousePos = {
   x: 0,
   y: 0,
 };
-
-// createWalker(100, 100);
 
 export const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
@@ -142,10 +123,6 @@ document.addEventListener("click", function (event) {
   const mouseY = event.clientY;
 
   const x = checkButtonPress(mouseX, mouseY);
-  // console.log(x);
-  // console.log(buttons);
-  // console.log(click);
-  // xps.push(createXp(1000, 1000, 100));
 });
 
 let currentMusicIndex = 0;
@@ -159,11 +136,7 @@ const currentWave = () => {
     const spawnPos = getRandomSpawnPos(player);
     createWalker(spawnPos.x, spawnPos.y);
     createCharger(spawnPos.x, spawnPos.y);
-
-    // console.log(enemies.length);
-    // console.log("Fiende");
   }
-  // console.log(enemies);
 };
 
 export let moveCtx = {
@@ -187,10 +160,6 @@ document.body.addEventListener("mousemove", playMusic);
 
 let timer = 0;
 
-// setInterval(() => {
-
-// }, 500);
-
 let canChangeMusic = true;
 
 const update = () => {
@@ -203,6 +172,8 @@ const update = () => {
   spawnRate = 50 / stats.curse;
   // const maxEnemyCount = (250 * stats.curse) / s3;
   const maxEnemyCount = (20 * stats.curse) / 3;
+
+  checkRegen();
 
   // createExplosion(
   //   Math.random() * world.width - world.width / 2 + player.pos.x,
@@ -363,19 +334,7 @@ const update = () => {
   }
 
   if (player.xp.amount >= player.xp.nextLevel) {
-    player.xp.level++;
-    player.xp.amount -= player.xp.nextLevel;
-    player.xp.nextLevel += player.xp.levelIncrease;
-
-    if (Math.random() <= 0.9995) {
-      playLevelUp();
-    } else {
-      playLevelUpSpecial();
-      console.log("levelUp");
-    }
-
-    levelUpSelection();
-
+    levelUp();
     isPause = true;
   }
 
@@ -423,7 +382,8 @@ const update = () => {
         // });
 
         if (!bullet.enemiesHit.includes(entity)) {
-          entity.health -= bullet.damage;
+          // entity.health -= bullet.damage;
+          dealDamage(entity, "contact", bullet.damage);
           bullet.enemiesHit.push(entity);
           // console.log(entity.health);
         }
@@ -495,6 +455,18 @@ const update = () => {
     player.health,
     stats.maxHealth
   );
+
+  if (player.shield > 0) {
+    drawShieldbar(
+      ctx,
+      world.width / 2 - player.radius * 1.25,
+      world.height / 2 + player.radius * 1.25,
+      player.radius * 2.5,
+      7,
+      player.shield,
+      player.maxShield
+    );
+  }
 
   oldHealth = player.health;
 

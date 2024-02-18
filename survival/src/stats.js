@@ -7,9 +7,8 @@ export const stats = {
   movementSpeed: currentCharacter.stats.movementSpeed,
 
   maxHealth: currentCharacter.stats.maxHealth,
-  regen: currentCharacter.stats.regen,
+  regeneration: currentCharacter.stats.regen,
   armor: currentCharacter.stats.armor,
-  shield: currentCharacter.stats.shield,
 
   damage: currentCharacter.stats.damage,
   area: currentCharacter.stats.area,

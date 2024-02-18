@@ -1,4 +1,5 @@
 import { loopPerSecond } from "../basic.js";
+import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -31,7 +32,8 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       if (doCirclesOverlap(charger, player)) {
         // charger.health = 0;
         playHurt();
-        player.health -= charger.damage / (1000 / loopPerSecond);
+        // player.health -= charger.damage / (1000 / loopPerSecond);
+        dealDamage(player, "contact", charger.damage);
       }
 
       const newVel = makeDirection(charger.pos, player.pos);

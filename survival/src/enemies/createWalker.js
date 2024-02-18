@@ -1,5 +1,6 @@
 import { animation } from "../animation.js";
 import { loopPerSecond } from "../basic.js";
+import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, entities, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -28,7 +29,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     },
     speed: 1 * stats.curse,
     // speed: 0,
-    damage: 10,
+    damage: 0.3,
     // damage: 0,
     color: "red",
     team: "enemy",
@@ -43,7 +44,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       if (doCirclesOverlap(walker, player)) {
         // walker.health = 0;
         playHurt();
-        player.health -= walker.damage / loopPerSecond;
+        // player.health -= walker.damage / loopPerSecond;
+        dealDamage(player, "contact", walker.damage);
       }
     },
     draw: (ctx, assets, gameObject) => {

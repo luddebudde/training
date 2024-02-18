@@ -1,3 +1,5 @@
+import { stats } from "../stats.js";
+
 export const Blugo = {
   fullname: "Blugo McPlommon",
 
@@ -10,7 +12,8 @@ export const Blugo = {
     maxHealth: 100,
     regen: 1,
     armor: 1,
-    shield: 1,
+    maxShield: 50,
+    shield: 50,
 
     damage: 1,
     area: 1,
@@ -18,5 +21,8 @@ export const Blugo = {
 
     curse: 1,
     cooldown: 1,
+  },
+  levelUpIncrease: () => {
+    stats.curse += 0.1;
   },
 };

@@ -10,6 +10,7 @@ export const Ludwigo = {
     maxHealth: 200,
     regen: 1,
     armor: 1,
+    maxShield: 50,
     shield: 1,
 
     damage: 1.2,

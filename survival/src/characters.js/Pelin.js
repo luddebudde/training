@@ -10,6 +10,7 @@ export const Pelin = {
     maxHealth: 150,
     regen: 1.5,
     armor: 1,
+    maxShield: 50,
     shield: 1,
 
     damage: 0.8,

@@ -10,6 +10,8 @@ export const createPlayer = () => {
   return {
     character: currentCharacter,
     health: stats.maxHealth,
+    maxShield: currentCharacter.stats.maxShield,
+    shield: currentCharacter.stats.shield,
     pos: {
       x: 0,
       y: 0,
@@ -25,6 +27,8 @@ export const createPlayer = () => {
       nextLevel: 100,
       levelIncrease: 100,
     },
+    levelUpIncrease: currentCharacter.levelUpIncrease,
+
     gold: 0,
     speed: stats.movementSpeed,
     radius: 40,
