@@ -6,7 +6,6 @@ import {
   enemies,
   explosions,
   mousePos,
-  moveCtx,
   player,
   worldObjects,
 } from "../main.js";

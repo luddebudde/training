@@ -49,16 +49,6 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       }
     },
     draw: (ctx, assets, gameObject) => {
-      // walkerAnimations.step();
-      // walkerAnimations.draw(
-      //   ctx,
-      //   assets.jet,
-      //   walker.pos.x,
-      //   walker.pos.y,
-      //   walker.radius * 2,
-      //   walker.radius
-      // );
-
       ctx.drawImage(
         assets.blue,
         walker.pos.x,

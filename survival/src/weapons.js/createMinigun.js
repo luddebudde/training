@@ -1,4 +1,4 @@
-import { bullets, mousePos, moveCtx, player, worldObjects } from "../main.js";
+import { bullets, mousePos, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { playMinigun, playMinigunOverheat } from "../sounds.js";
 import { stats, upgradeStats } from "../stats.js";

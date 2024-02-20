@@ -32,7 +32,7 @@ export const createPlayer = () => {
     gold: 0,
     speed: stats.movementSpeed,
     radius: 40,
-    health: 100,
+    // health: 100,
     color: "blue",
     team: "player",
     priority: 100,

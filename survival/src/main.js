@@ -8,7 +8,7 @@ import { loopPerSecond } from "./basic.js";
 import { shootWeapons } from "./shootWeapons.js";
 import { createShotgun, shotgun } from "./weapons.js/createShotgun.js";
 import { keyDownTracker, oneTimeKeyPress } from "./keyDownTracker.js";
-import { createPlayer } from "./createPlayer.js";
+import { createPlayer, currentCharacter } from "./createPlayer.js";
 import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
@@ -48,6 +48,8 @@ import { checkRegen } from "./checkRegen.js";
 import { drawShieldbar } from "./draw/drawShieldbar.js";
 import { dealDamage } from "./dealDamage.js";
 import { levelUp } from "./levelUp.js";
+import { deathMenu } from "./deathMenu.js";
+import { getNextElement } from "./getNextElement.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -63,32 +65,32 @@ export let bullets = [];
 export let explosions = [];
 
 export let weapons = [
-  aimBullet,
+  // aimBullet,
   // holyArea,
   // minigun,
   // wiper,
   // randomAimBullet,
   // axe,
   // airstrike,
-  selfImpaler,
+  // selfImpaler,
 ];
 export let printWeapons = [
   // holyArea.body
 ];
 
-export const maximumAmountOfWeapons = 6;
+export let maximumAmountOfWeapons = 6;
 
 export const buttons = [];
 
-export const player = createPlayer();
+export let player = 0;
 
-entities.push(player);
+// entities.push(player);
 
 export let worldObjects = [printWeapons, entities, bullets, xps, explosions];
 const worldObjectsLenght = worldObjects.length;
 
 let oldHealth = player.health;
-let oldTime = Date.now();
+// let oldTime = Date.now();
 
 const worldArrays = [entities, worldObjects, bullets];
 
@@ -130,7 +132,7 @@ let currentMusicIndex = 0;
 let spawnRate = 50 / stats.curse;
 let spawnCooldown = spawnRate;
 
-const currentWave = () => {
+let currentWave = () => {
   // const spawnPos = 0;
   for (let i = 0; i < 5 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos(player);
@@ -139,10 +141,15 @@ const currentWave = () => {
   }
 };
 
-export let moveCtx = {
-  x: 0,
-  y: 0,
-};
+// const waveOne = () => {
+//   for (let i = 0; i < 5 * stats.curse; i++) {
+//     const spawnPos = getRandomSpawnPos(player);
+//     createWalker(spawnPos.x, spawnPos.y);
+//     createCharger(spawnPos.x, spawnPos.y);
+//   }
+// };
+
+// let currentWave = () => {};
 
 let isPause = false;
 
@@ -162,6 +169,60 @@ let timer = 0;
 
 let canChangeMusic = true;
 
+let oldTime = Date.now();
+
+let maxEnemyCount = (20 * stats.curse) / 3;
+
+export const startGame = () => {
+  // stats = currentCharacter.stats;
+  (stats.growth = currentCharacter.stats.growth),
+    (stats.greed = currentCharacter.stats.growth),
+    (stats.movementSpeed = currentCharacter.stats.movementSpeed),
+    (stats.maxHealth = currentCharacter.stats.maxHealth),
+    (stats.regeneration = currentCharacter.stats.regen),
+    (stats.armor = currentCharacter.stats.armor),
+    (stats.damage = currentCharacter.stats.damage),
+    (stats.area = currentCharacter.stats.area),
+    (stats.speed = currentCharacter.stats.speed),
+    (stats.curse = currentCharacter.stats.curse),
+    (stats.cooldown = currentCharacter.stats.cooldown),
+    (oldTime = Date.now());
+
+  player = createPlayer();
+  // entities.splice(0, entities.length);
+  entities.length = 0;
+  entities.push(player);
+
+  // createCharger(1000, 1000);
+
+  console.log();
+  // isPause = false;
+  maximumAmountOfWeapons = 6;
+  // start();
+  // spawnRate = 50 / stats.curse;
+  // spawnCooldown = spawnRate;
+  currentWave = () => {
+    // const spawnPos = 0;
+    for (let i = 0; i < 5 * stats.curse; i++) {
+      const spawnPos = getRandomSpawnPos(player);
+      createWalker(spawnPos.x, spawnPos.y);
+      createCharger(spawnPos.x, spawnPos.y);
+    }
+  };
+  weapons = [
+    // aimBullet,
+    // holyArea,
+    // minigun,
+    // wiper,
+    // randomAimBullet,
+    // axe,
+    // airstrike,
+    selfImpaler,
+  ];
+};
+
+startGame();
+
 const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
@@ -171,7 +232,7 @@ const update = () => {
 
   spawnRate = 50 / stats.curse;
   // const maxEnemyCount = (250 * stats.curse) / s3;
-  const maxEnemyCount = (20 * stats.curse) / 3;
+  maxEnemyCount = (20 * stats.curse) / 3;
 
   checkRegen();
 
@@ -223,12 +284,8 @@ const update = () => {
   }
 
   if (isKeyDown("KeyX") && canChangeMusic) {
+    const nextElement = getNextElement(musicList, currentMusicIndex);
     currentMusicIndex += 1;
-
-    const listIndex = currentMusicIndex % musicList.length;
-
-    const nextElement = musicList[listIndex];
-    console.log(nextElement);
 
     changeMusic(nextElement.fileName);
     changeVolume(nextElement.volume);
@@ -468,16 +525,19 @@ const update = () => {
     );
   }
 
+  if (player.health <= 0) {
+    isPause = true;
+    deathMenu();
+  }
+
   oldHealth = player.health;
 
   worldObjects = [entities, bullets, xps, printWeapons, explosions];
 };
 
 setInterval(() => {
-  if (!(player.health <= 0)) {
-    if (!isPause) {
-      update();
-    }
+  if (!isPause) {
+    update();
   }
 }, 1000 / loopPerSecond);
 

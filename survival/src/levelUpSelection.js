@@ -6,7 +6,6 @@ import {
   buttons,
   ctx,
   maximumAmountOfWeapons,
-  moveCtx,
   pause,
   player,
   start,
@@ -75,7 +74,6 @@ export const levelUpSelection = () => {
     if (!(weapon.upgrades.level >= weapon.upgrades.amountOrder.length))
       upgradeWeaponPool.push(weapon);
   });
-  // console.log(weaponPool);
 
   for (let i = 0; i < 4; i++) {
     if (
@@ -86,18 +84,12 @@ export const levelUpSelection = () => {
         (Math.floor(Math.random() * 2) === 0 && upgradeWeaponPool.length > 0) ||
         weapons.length >= maximumAmountOfWeapons
       ) {
-        // if (upgradeWeaponPool.length > 0) {
         const randomIndex = Math.floor(
           Math.random() * upgradeWeaponPool.length
         );
 
         chosenWeapon = upgradeWeaponPool[randomIndex];
         upgradeWeaponPool.splice(randomIndex, 1);
-
-        // } else {
-        // chosenWeapon = undefined;
-        // return;
-        // }
       } else {
         if (weaponPool.length > 0) {
           newRandomIndex = Math.floor(Math.random() * weaponPool.length);
@@ -105,25 +97,21 @@ export const levelUpSelection = () => {
           weaponPool.splice(newRandomIndex, 1);
         } else {
           chosenWeapon = undefined;
-          // console.log(weaponPool);
         }
       }
     } else {
       chosenWeapon = wiper;
-      // return;
-      // console.log(weapons, upgradeWeaponPool);
-      // console.log();
     }
     const button = {
       number: i,
       image: chosenWeapon?.image,
-      // image: assets.rhino,
+
       weapon: chosenWeapon,
       x: square.x + 20,
       y: (i * square.height) / 4 + 120,
       width: square.width - 40,
       height: square.height / 4 - 40,
-      upgradeWeapon: () => {
+      function: () => {
         if (button.weapon !== undefined) {
           const weaponUpgrades = button.weapon.upgrades;
           const level = weaponUpgrades.level;
@@ -131,40 +119,19 @@ export const levelUpSelection = () => {
           const statTypes = weaponUpgrades.statsOrder[level];
           const upgradeAmounts = weaponUpgrades.amountOrder[level];
 
-          // const statType = button.weapon.upgrades.statsOrder[level];
-          // const amount = button.weapon.upgrades.amountOrder[level];
-
           statTypes.forEach((statType, index) => {
             const amount = upgradeAmounts[index];
 
             button.weapon.stats[statType] += amount;
-            // button.weapon.stats.area += amount;
 
-            // console.log(button.weapon.stats[statType]);
             console.log(button.weapon.stats);
-            // console.log(statType);
-            // console.log(amount);
           });
-
-          // weaponPool.splice(chosenWeapon.index, 1);
 
           if (!weapons.includes(button.weapon)) {
             weapons.push(button.weapon);
           }
 
-          // console.log();
-          // console.log(button.weapon, button.weapon.upgrades.level);
-
-          // console.log(newRandomIndex);
-          // console.log(weapons);
-
           button.weapon.upgrades.level += 1;
-
-          // const weapons = weapons.filter((value, index, self) => {
-          //   self.indexOf(value) === index;
-          // });
-
-          // const weapons = [...new Set(weapons)];
 
           console.log(button.weapon.name, button.weapon.upgrades.level);
         } else {
@@ -178,7 +145,6 @@ export const levelUpSelection = () => {
           } else if (button.number === 3) {
             stats.movementSpeed += 1;
           }
-          // console.log("undefined");
         }
         start();
       },
@@ -188,21 +154,6 @@ export const levelUpSelection = () => {
     ctx.rect(button.x, button.y, button.width, button.height);
     ctx.fillStyle = "black";
     ctx.fill();
-
-    // if (button.weapon !== undefined) {
-    //   drawText(
-    //     button.weapon.name,
-    //     square.x + 40,
-    //     (i * square.height) / 4 + 180,
-    //     "green"
-    //   );
-    //   drawText(
-    //     button.weapon.upgrades.level,
-    //     square.x,
-    //     (i * square.height) / 4 + 180,
-    //     "yellow"
-    //   );
-    // }
 
     if (button.weapon !== undefined) {
       const level = button.weapon.upgrades.level;
@@ -245,17 +196,6 @@ export const levelUpSelection = () => {
         "yellow"
       );
 
-      // if (button.weapon.upgrades.description !== undefined) {
-      //   const formattedDescription =
-      //     button.weapon.upgrades.description.join("\n");
-
-      //   drawText(
-      //     formattedDescription,
-      //     square.x + 40 + weaponNameWidth + weaponStatsWidth + 300, // Placera texten 100 enheter åt höger från vapennamnet
-      //     (i * square.height) / 4 + 180,
-      //     "yellow"
-      //   );
-      // }
       if (button.weapon.upgrades.description !== undefined) {
         const description = button.weapon.upgrades.description[level];
 
@@ -293,15 +233,7 @@ export const levelUpSelection = () => {
     }
 
     if (button.image !== undefined) {
-      ctx.drawImage(
-        button.image,
-        button.x + 20,
-        button.y + 90,
-        100,
-        100
-        // walker.radius * 2,
-        // walker.radius * 2
-      );
+      ctx.drawImage(button.image, button.x + 20, button.y + 90, 100, 100);
     }
 
     buttons.push(button);

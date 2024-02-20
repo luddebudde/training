@@ -5,7 +5,6 @@ import {
   bullets,
   ctx,
   mousePos,
-  moveCtx,
   player,
   worldObjects,
 } from "../main.js";

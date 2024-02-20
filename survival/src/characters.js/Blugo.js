@@ -9,11 +9,13 @@ export const Blugo = {
 
     movementSpeed: 5,
 
-    maxHealth: 100,
+    // maxHealth: 100,
+    maxHealth: 1,
     regen: 1,
     armor: 1,
     maxShield: 50,
-    shield: 50,
+    // shield: 50,
+    shield: 0,
 
     damage: 1,
     area: 1,

@@ -1,12 +1,5 @@
 import { loadImage } from "../image.js";
-import {
-  assets,
-  bullets,
-  mousePos,
-  moveCtx,
-  player,
-  worldObjects,
-} from "../main.js";
+import { assets, bullets, mousePos, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats } from "../stats.js";
 
