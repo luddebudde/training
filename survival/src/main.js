@@ -1,3 +1,5 @@
+// Must fix bug where weapons gets infinitly stronger when restarting the game
+
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { world } from "./world.js";
 
@@ -24,7 +26,7 @@ import {
 } from "./sounds.js";
 import { drawText } from "./draw/drawText.js";
 import { drawObject } from "./draw/drawObject.js";
-import { levelUpSelection } from "./levelUpSelection.js";
+import { levelUpSelection, totalWeapons } from "./levelUpSelection.js";
 import { checkButtonPress } from "./checkButtonPress.js";
 import { minigun } from "./weapons.js/createMinigun.js";
 import { loadImage } from "./image.js";
@@ -190,6 +192,7 @@ export const startGame = () => {
 
   player = createPlayer();
   // entities.splice(0, entities.length);
+  enemies.length = 0;
   entities.length = 0;
   entities.push(player);
 
@@ -209,16 +212,21 @@ export const startGame = () => {
       createCharger(spawnPos.x, spawnPos.y);
     }
   };
+  maxEnemyCount = (20 * stats.curse) / 3;
   weapons = [
-    // aimBullet,
+    aimBullet,
     // holyArea,
     // minigun,
     // wiper,
     // randomAimBullet,
     // axe,
-    // airstrike,
+    airstrike,
     selfImpaler,
   ];
+
+  totalWeapons.forEach((weapon) => {
+    weapon.upgrades.level = 0;
+  });
 };
 
 startGame();
@@ -230,8 +238,10 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
+  // currentWave();
+
   spawnRate = 50 / stats.curse;
-  // const maxEnemyCount = (250 * stats.curse) / s3;
+  // maxEnemyCount = (250 * stats.curse) / 3;
   maxEnemyCount = (20 * stats.curse) / 3;
 
   checkRegen();
@@ -321,6 +331,7 @@ const update = () => {
   // spawnCooldown -= 1;
   if (enemies.length <= maxEnemyCount) {
     currentWave();
+    // console.log("wave");
     // spawnCooldown = spawnRate;
   }
 
@@ -524,6 +535,8 @@ const update = () => {
       player.maxShield
     );
   }
+
+  // console.log(buttons);
 
   if (player.health <= 0) {
     isPause = true;

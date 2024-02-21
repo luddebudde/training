@@ -28,7 +28,7 @@ let upgradeWeaponPool = [];
 let amountOfWeapons = 0;
 let chosenWeapon = 0;
 
-const totalWeapons = [
+export const totalWeapons = [
   aimBullet,
   holyArea,
   minigun,
