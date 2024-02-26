@@ -52,6 +52,8 @@ import { dealDamage } from "./dealDamage.js";
 import { levelUp } from "./levelUp.js";
 import { deathMenu } from "./deathMenu.js";
 import { getNextElement } from "./getNextElement.js";
+import { statistics } from "./statistics.js";
+import { showStatistics } from "./showStatistics.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -80,7 +82,7 @@ export let printWeapons = [
   // holyArea.body
 ];
 
-export let maximumAmountOfWeapons = 6;
+export let maxAmountOfWeapons = 6;
 
 export const buttons = [];
 
@@ -200,7 +202,7 @@ export const startGame = () => {
 
   console.log();
   // isPause = false;
-  maximumAmountOfWeapons = 6;
+  maxAmountOfWeapons = 6;
   // start();
   // spawnRate = 50 / stats.curse;
   // spawnCooldown = spawnRate;
@@ -216,10 +218,10 @@ export const startGame = () => {
   weapons = [
     aimBullet,
     // holyArea,
-    // minigun,
+    minigun,
     // wiper,
-    // randomAimBullet,
-    // axe,
+    randomAimBullet,
+    axe,
     airstrike,
     selfImpaler,
   ];
@@ -227,9 +229,14 @@ export const startGame = () => {
   totalWeapons.forEach((weapon) => {
     weapon.upgrades.level = 0;
   });
+
+  start();
 };
 
 startGame();
+
+// showStatistics();
+// pause();
 
 const update = () => {
   ctx.beginPath();
@@ -238,29 +245,15 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  // currentWave();
-
   spawnRate = 50 / stats.curse;
-  // maxEnemyCount = (250 * stats.curse) / 3;
   maxEnemyCount = (20 * stats.curse) / 3;
 
   checkRegen();
 
-  // createExplosion(
-  //   Math.random() * world.width - world.width / 2 + player.pos.x,
-  //   Math.random() * world.height - world.height / 2 + player.pos.y,
-  // 100,
-  // 16,
-  // 100
-  // );
   const currentTime = Date.now();
   timer = (currentTime - oldTime) / 1000;
 
   drawText(Math.floor(timer), world.width / 2, 100, "red");
-
-  // oldTime = Date.now();
-
-  // console.log(enemies);
 
   if (isKeyDown("KeyW")) {
     player.pos.y -= player.speed;
@@ -300,7 +293,6 @@ const update = () => {
     changeMusic(nextElement.fileName);
     changeVolume(nextElement.volume);
 
-    // Sätt flaggan till false och använd setTimeout för att återställa den efter 1000 ms (1 sekund)
     canChangeMusic = false;
     setTimeout(() => {
       canChangeMusic = true;
@@ -327,19 +319,9 @@ const update = () => {
     drawText(weapon.name, 20, 50 * (index + 2), "green");
   });
 
-  // console.log(spawnCooldown);
-  // spawnCooldown -= 1;
   if (enemies.length <= maxEnemyCount) {
     currentWave();
-    // console.log("wave");
-    // spawnCooldown = spawnRate;
   }
-
-  // console.log(enemies.length);
-
-  // console.log(bullets);
-
-  // console.log(wiper.upgrades);
 
   entities.forEach((entity) => {
     entity.update?.();
@@ -352,8 +334,6 @@ const update = () => {
       doCirclesOverlap(holyAreaBody, entity) &&
       holyAreaBody.team !== entity.team
     ) {
-      // const aVel = entity.vel;
-      // console.log(entity.vel);
       entity.vel = vector.alone.div(entity.vel, 4);
     }
   });
@@ -361,19 +341,14 @@ const update = () => {
   xps.forEach((xp) => {
     if (doCirclesOverlap(xp, player)) {
       player.xp.amount += xp.amount;
-      // indexOf;
-      // console.log("hej");
 
       xp.destroy = true;
-      // playBang();
     }
   });
 
-  const amountOfXp = 100; // Ange ditt tröskelvärde här
+  const amountOfXp = 100;
 
   if (xps.length > amountOfXp + 1) {
-    // const totalAmount = xps.reduce((sum, xp) => sum + xp.amount, 0);
-
     let totalAmount = 0;
 
     xps.forEach((xp, index) => {
@@ -381,8 +356,6 @@ const update = () => {
         totalAmount += xp.amount;
       }
     });
-
-    // const chosenXp = xps[amountOfXp]
 
     const chosenXp = {
       radius: xps[0].radius,
@@ -442,18 +415,10 @@ const update = () => {
   bullets.forEach((bullet) => {
     entities.forEach((entity) => {
       if (doCirclesOverlap(entity, bullet) && bullet.team !== entity.team) {
-        // bullet.enemiesHit.forEach((enemyHit) => {
-        //   if (enemyHit !== entity) {
-
-        //     console.log(bullet);
-        //   }
-        // });
-
         if (!bullet.enemiesHit.includes(entity)) {
-          // entity.health -= bullet.damage;
           dealDamage(entity, "contact", bullet.damage);
+          statistics.damageDealt += bullet.damage;
           bullet.enemiesHit.push(entity);
-          // console.log(entity.health);
         }
 
         if (bullet.enemiesHit?.length >= bullet.pierce + 1) {

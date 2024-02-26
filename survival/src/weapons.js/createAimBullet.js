@@ -89,6 +89,12 @@ export const aimBullet = {
 
   stats: aimBulletStats,
 
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
+  },
+
   upgrades: {
     level: 0,
     statsOrder: [

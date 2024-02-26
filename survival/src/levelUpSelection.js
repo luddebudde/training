@@ -5,7 +5,7 @@ import {
   assets,
   buttons,
   ctx,
-  maximumAmountOfWeapons,
+  maxAmountOfWeapons,
   pause,
   player,
   start,
@@ -76,13 +76,10 @@ export const levelUpSelection = () => {
   });
 
   for (let i = 0; i < 4; i++) {
-    if (
-      upgradeWeaponPool.length > 0 ||
-      weapons.length >= maximumAmountOfWeapons
-    ) {
+    if (upgradeWeaponPool.length > 0 || weapons.length >= maxAmountOfWeapons) {
       if (
         (Math.floor(Math.random() * 2) === 0 && upgradeWeaponPool.length > 0) ||
-        weapons.length >= maximumAmountOfWeapons
+        weapons.length >= maxAmountOfWeapons
       ) {
         const randomIndex = Math.floor(
           Math.random() * upgradeWeaponPool.length
@@ -132,6 +129,7 @@ export const levelUpSelection = () => {
           }
 
           button.weapon.upgrades.level += 1;
+          buttons.length = 0;
 
           console.log(button.weapon.name, button.weapon.upgrades.level);
         } else {

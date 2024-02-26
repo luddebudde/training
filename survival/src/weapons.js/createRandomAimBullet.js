@@ -93,7 +93,7 @@ export const createRandomAimBullet = () => {
 };
 
 export const randomAimBullet = {
-  name: "randomAimBullet",
+  name: "spreader",
   // image: assets.rhino,
   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
