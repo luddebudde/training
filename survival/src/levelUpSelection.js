@@ -6,12 +6,12 @@ import {
   buttons,
   ctx,
   maxAmountOfWeapons,
-  pause,
   player,
   start,
   weapons,
 } from "./main.js";
 import { stats, upgradeStats } from "./stats.js";
+import { cherry } from "./weapons.js/cherry.js";
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { airstrike } from "./weapons.js/createAirstrike.js";
 import { axe } from "./weapons.js/createAxe.js";
@@ -38,6 +38,8 @@ export const totalWeapons = [
   axe,
   airstrike,
   selfImpaler,
+  cherry,
+
   jedå,
   colin,
   uluk,

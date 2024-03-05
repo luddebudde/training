@@ -23,6 +23,7 @@ const airstrikeStats = {
   speed: 20,
   damage: 2000,
   cooldown: 600,
+  // cooldown: 200,
   amount: 20,
   special: 0,
 };
@@ -67,7 +68,6 @@ export const createAirstrike = () => {
     explosion.pos.x - explosion.radius * 4,
     explosion.pos.y - explosion.radius * 2,
     explosion.radius * 4,
-    16,
     explosion.damage
   );
   //   explosions.push(explosion);
@@ -105,6 +105,12 @@ export const airstrike = {
     }
 
     airstrike.attackIntervall = airstrikeStats.cooldown * stats.cooldown;
+  },
+
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
   },
 
   stats: airstrikeStats,

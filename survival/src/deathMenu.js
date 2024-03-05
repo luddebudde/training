@@ -9,7 +9,7 @@ import { world } from "./world.js";
 let chosenWeapon = 0;
 
 const revivePlayer = () => {
-  player.health = 100;
+  player.health = player.maxHealth;
   entities.push(player);
   start();
 };

@@ -62,7 +62,6 @@ export const createShotgun = () => {
       direction = makeDirection(player.pos, enemy.pos);
       previusPosDifference.pos.x = posDifference.x;
       previusPosDifference.pos.y = posDifference.y;
-      // previusEnemy = enemy;
     }
   });
 
@@ -97,6 +96,7 @@ export const createShotgun = () => {
       priority: 5,
       enemiesHit: [],
       pierce: 0,
+      weapon: shotgun,
     };
 
     // console.log(previusPosDifference);
@@ -116,6 +116,12 @@ export const shotgun = {
 
   update: () => {
     shotgun.attackIntervall = shotgunBulletStats.cooldown * stats.cooldown;
+  },
+
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
   },
 
   stats: shotgunBulletStats,

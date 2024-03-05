@@ -11,7 +11,7 @@ export const checkButtonPress = (mouseX, mouseY) => {
       mouseY >= button.y &&
       mouseY <= button.height + button.y
     ) {
-      console.log(button);
+      // console.log(button);
       return button.function();
     }
   }

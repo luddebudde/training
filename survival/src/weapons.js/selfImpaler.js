@@ -65,6 +65,7 @@ export const selfImpaler = {
       const effects = selfImpalerStats.effects;
 
       dealDamage(player, "masochism", selfImpalerStats.damage * effects);
+      selfImpaler.statistics.damage += selfImpalerStats.damage;
 
       // Messes with stats
       stats.growth -= selfImpalerStats.growth * effects;
@@ -78,6 +79,12 @@ export const selfImpaler = {
 
       // console.log(stats.curse);
     }
+  },
+
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
   },
 
   stats: selfImpalerStats,

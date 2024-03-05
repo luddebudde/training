@@ -9,6 +9,7 @@ export const currentCharacter = Blugo;
 export const createPlayer = () => {
   return {
     character: currentCharacter,
+    maxHealth: stats.maxHealth,
     health: stats.maxHealth,
     maxShield: currentCharacter.stats.maxShield,
     shield: currentCharacter.stats.shield,
@@ -25,7 +26,7 @@ export const createPlayer = () => {
       amount: 0,
       level: 1,
       nextLevel: 100,
-      levelIncrease: 100,
+      levelIncrease: 5000,
     },
     levelUpIncrease: currentCharacter.levelUpIncrease,
 
@@ -36,5 +37,6 @@ export const createPlayer = () => {
     color: "blue",
     team: "player",
     priority: 100,
+    pullForceBonus: -500000,
   };
 };

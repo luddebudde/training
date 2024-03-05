@@ -83,6 +83,12 @@ export const wiper = {
     // wiperBody.radius += 10;
   },
 
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
+  },
+
   stats: wiperStats,
 
   upgrades: {

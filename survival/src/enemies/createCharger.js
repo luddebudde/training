@@ -1,7 +1,14 @@
 import { loopPerSecond } from "../basic.js";
+import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { enemies, entities, player, worldObjects } from "../main.js";
+import {
+  enemies,
+  entities,
+  player,
+  targetables,
+  worldObjects,
+} from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
@@ -21,8 +28,8 @@ export const createCharger = (spawnWidth, spawnHeight) => {
     },
     speed: 5 * stats.curse,
     // speed: 0,
-    damage: 0.5,
-    // damage: 0,
+    // damage: 0.5,
+    damage: 0,
     color: "black",
     team: "enemy",
     xp: Math.random() * 25 * stats.growth,
@@ -36,7 +43,17 @@ export const createCharger = (spawnWidth, spawnHeight) => {
         dealDamage(player, "contact", charger.damage);
       }
 
-      const newVel = makeDirection(charger.pos, player.pos);
+      // targetables.forEach((target) => {
+      // const diff = {
+      //   x: target.x - charger.x,
+      //   y: target.y - charger.y,
+      // };
+      // const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
+      // if (dist > pre)
+      // });
+      const target = closestObject(targetables, charger);
+      // console.log(target);
+      const newVel = makeDirection(charger.pos, target.pos);
       // console.log(charger.vel.x);
       charger.vel.x = newVel.x * charger.speed;
       charger.vel.y = newVel.y * charger.speed;

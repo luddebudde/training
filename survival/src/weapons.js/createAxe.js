@@ -63,6 +63,7 @@ export const createAxe = () => {
     laps: 0,
     enemiesHit: [],
     pierce: 10000,
+    weapon: axe,
 
     // attack: () => {
     //   bullets.push(axeBullet);
@@ -118,6 +119,12 @@ export const axe = {
       // );
       // console.log(axeBullet.speed * Math.PI);
     }
+  },
+
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
   },
 
   stats: axeStats,

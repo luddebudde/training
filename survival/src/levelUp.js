@@ -7,6 +7,8 @@ export const levelUp = () => {
   player.xp.amount -= player.xp.nextLevel;
   player.xp.nextLevel += player.xp.levelIncrease;
 
+  // console.log(player.xp.amount, player.xp.nextLevel);
+
   player?.levelUpIncrease();
 
   if (Math.random() <= 0.9995) {

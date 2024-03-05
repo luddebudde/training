@@ -1,18 +1,28 @@
+import { createExplosion } from "../createExplosion.js";
 import { loadImage } from "../image.js";
-import { assets, bullets, mousePos, player, worldObjects } from "../main.js";
+import {
+  assets,
+  bullets,
+  mousePos,
+  player,
+  targetables,
+  worldObjects,
+} from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats } from "../stats.js";
 
 const bulletSpeed = 20 * stats.speed;
 // const cooldown = 25;
 
-const randomAimBulletStats = {
+const cherryStats = {
   area: 20,
-  speed: 20,
+  speed: 1,
   damage: 20,
-  cooldown: 12,
-  pierce: 0,
+  cooldown: 400,
+  pullForceBonus: 0,
+  //   pierce: 0,
   special: 0,
+  lifetime: 500,
 };
 
 function getRandomAngle() {
@@ -24,12 +34,12 @@ function getRandomDistance(radius) {
   return Math.random() * 300; // Slumpat avstånd upp till cirkelns radie
 }
 
-export const createRandomAimBullet = () => {
+export const createCherry = () => {
   // console.log(aimBullet.area);
-  const area = stats.area * randomAimBulletStats.area;
-  const speed = stats.speed * randomAimBulletStats.speed;
-  const damage = stats.damage * randomAimBulletStats.damage;
-  const cooldown = stats.cooldown * randomAimBulletStats.cooldown;
+  const area = stats.area * cherryStats.area;
+  const speed = stats.speed * cherryStats.speed;
+  const damage = stats.damage * cherryStats.damage;
+  const cooldown = stats.cooldown * cherryStats.cooldown;
 
   // Ange cirkelns radie
   const circleRadius = 50;
@@ -59,7 +69,8 @@ export const createRandomAimBullet = () => {
   // console.log(direction);
 
   // console.log(direction);
-  const bullet = {
+  const cherryBullet = {
+    lifetime: cherryStats.lifetime,
     bulletStopPos: stopPos,
     radius: area,
     // bulletHealth: 10,
@@ -79,32 +90,36 @@ export const createRandomAimBullet = () => {
     team: "player",
     priority: 5,
     enemiesHit: [],
-    pierce: randomAimBulletStats.pierce,
-    weapon: randomAimBullet,
+    // pierce: cherryStats.pierce,
+    weapon: cherry,
+    pullForceBonus: cherryStats.pullForceBonus,
+    update: (index) => {
+      cherryBullet.lifetime--;
 
-    attack: () => {
-      bullets.push(bullet);
-      // worldObjects.push(bullet);
+      if (cherryBullet.lifetime <= 0) {
+        createExplosion(cherryBullet.pos.x, cherryBullet.pos.y, 500, 100);
+        targetables.splice(index, 1);
+      }
     },
   };
-  bullets.push(bullet);
+  //   bullets.push(cherryBullet);
+  targetables.push(cherryBullet);
   // worldObjects.push(bullet);
 
   // return cooldown;
 };
 
-export const randomAimBullet = {
-  name: "spreader",
+export const cherry = {
+  name: "cherry",
   // image: assets.rhino,
   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
-  attackIntervall: randomAimBulletStats.cooldown * stats.cooldown,
-  cooldown: randomAimBulletStats.cooldown * stats.cooldown,
-  attack: createRandomAimBullet,
+  attackIntervall: cherryStats.cooldown * stats.cooldown,
+  cooldown: cherryStats.cooldown * stats.cooldown,
+  attack: createCherry,
 
   update: () => {
-    randomAimBullet.attackIntervall =
-      randomAimBulletStats.cooldown * stats.cooldown;
+    cherry.attackIntervall = cherryStats.cooldown * stats.cooldown;
   },
 
   statistics: {
@@ -113,7 +128,7 @@ export const randomAimBullet = {
     timeExisted: 0,
   },
 
-  stats: randomAimBulletStats,
+  stats: cherryStats,
 
   upgrades: {
     level: 0,

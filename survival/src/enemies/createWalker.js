@@ -1,8 +1,15 @@
 import { animation } from "../animation.js";
 import { loopPerSecond } from "../basic.js";
+import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { enemies, entities, player, worldObjects } from "../main.js";
+import {
+  enemies,
+  entities,
+  player,
+  targetables,
+  worldObjects,
+} from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { playHurt, playMinigunOverheat } from "../sounds.js";
 import { stats } from "../stats.js";
@@ -37,7 +44,11 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     priority: 10,
 
     update: () => {
-      const newVel = makeDirection(walker.pos, player.pos);
+      const target = closestObject(targetables, walker);
+      // console.log(target.pos);
+      const newVel = makeDirection(walker.pos, target.pos);
+
+      // const newVel = makeDirection(walker.pos, player.pos);
       // console.log(makeDirection(walker, player));
       walker.vel.x = newVel.x * walker.speed;
       walker.vel.y = newVel.y * walker.speed;
@@ -51,8 +62,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     draw: (ctx, assets, gameObject) => {
       ctx.drawImage(
         assets.blue,
-        walker.pos.x,
-        walker.pos.y,
+        walker.pos.x - walker.radius,
+        walker.pos.y - walker.radius,
         // 100,
         // 100,
         walker.radius * 2,

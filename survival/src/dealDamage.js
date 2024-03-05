@@ -1,3 +1,5 @@
+import { player } from "./main.js";
+import { statistics } from "./statistics.js";
 import { stats } from "./stats.js";
 
 export const dealDamage = (obj, damageType, amount) => {
@@ -12,5 +14,11 @@ export const dealDamage = (obj, damageType, amount) => {
     // console.log(obj.shield);
   } else {
     obj.health -= amount;
+  }
+
+  if (obj === player) {
+    statistics.overall.damageTaken += amount;
+  } else if (obj.team === "enemy") {
+    statistics.overall.damageDealt += amount;
   }
 };

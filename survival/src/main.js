@@ -1,4 +1,5 @@
 // Must fix bug where weapons gets infinitly stronger when restarting the game
+// Make the start and "startgame" function better
 
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { world } from "./world.js";
@@ -54,6 +55,9 @@ import { deathMenu } from "./deathMenu.js";
 import { getNextElement } from "./getNextElement.js";
 import { statistics } from "./statistics.js";
 import { showStatistics } from "./showStatistics.js";
+import { cherry } from "./weapons.js/cherry.js";
+import { createCollector } from "./pickups/collector.js";
+import { createBlank } from "./pickups/blank.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -88,9 +92,24 @@ export const buttons = [];
 
 export let player = 0;
 
+export const players = [];
+
 // entities.push(player);
 
-export let worldObjects = [printWeapons, entities, bullets, xps, explosions];
+export const targetables = [];
+
+export const pickupTypes = [];
+export const pickups = [];
+
+export let worldObjects = [
+  printWeapons,
+  entities,
+  bullets,
+  xps,
+  explosions,
+  targetables,
+  pickups,
+];
 const worldObjectsLenght = worldObjects.length;
 
 let oldHealth = player.health;
@@ -105,6 +124,8 @@ export let mousePos = {
 
 export const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
+  skull: await loadImage("/public/sprites/skull.png"),
+  goldBag: await loadImage("/public/sprites/goldbag.png"),
   blue: await loadImage("/public/sprites/blue.png"),
   // assault: loadImage(`/ships/player/large/assault.png`),
   // fighter: loadImage(`/ships/player/large/green.png`),
@@ -157,11 +178,19 @@ let currentWave = () => {
 
 let isPause = false;
 
+let menuTime = 0;
+let startMenuTime = Date.now();
+let stopMenuTime = 0;
+
 export const pause = () => {
   isPause = true;
+  startMenuTime = Date.now();
 };
+
 export const start = () => {
   isPause = false;
+  stopMenuTime = Date.now();
+  menuTime += stopMenuTime - startMenuTime;
 };
 export const reverse = () => {
   isPause = !isPause;
@@ -176,6 +205,7 @@ let canChangeMusic = true;
 let oldTime = Date.now();
 
 let maxEnemyCount = (20 * stats.curse) / 3;
+const enemyFactor = 200;
 
 export const startGame = () => {
   // stats = currentCharacter.stats;
@@ -193,19 +223,17 @@ export const startGame = () => {
     (oldTime = Date.now());
 
   player = createPlayer();
-  // entities.splice(0, entities.length);
+  targetables.push(player);
+  players.push(player);
+
   enemies.length = 0;
   entities.length = 0;
   entities.push(player);
 
-  // createCharger(1000, 1000);
-
-  console.log();
-  // isPause = false;
   maxAmountOfWeapons = 6;
-  // start();
-  // spawnRate = 50 / stats.curse;
-  // spawnCooldown = spawnRate;
+
+  pickupTypes.push(createCollector, createBlank);
+
   currentWave = () => {
     // const spawnPos = 0;
     for (let i = 0; i < 5 * stats.curse; i++) {
@@ -214,17 +242,21 @@ export const startGame = () => {
       createCharger(spawnPos.x, spawnPos.y);
     }
   };
-  maxEnemyCount = (20 * stats.curse) / 3;
+  // maxEnemyCount = (20 * stats.curse) / 3;
+  maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     aimBullet,
     // holyArea,
-    minigun,
+    // minigun,
     // wiper,
-    randomAimBullet,
-    axe,
+    // randomAimBullet,
+    // axe,
     airstrike,
-    selfImpaler,
+    // selfImpaler,
+    cherry,
   ];
+
+  createCollector(100, 100);
 
   totalWeapons.forEach((weapon) => {
     weapon.upgrades.level = 0;
@@ -246,12 +278,12 @@ const update = () => {
   ctx.fill();
 
   spawnRate = 50 / stats.curse;
-  maxEnemyCount = (20 * stats.curse) / 3;
+  maxEnemyCount = (enemyFactor * stats.curse) / 3;
 
   checkRegen();
 
   const currentTime = Date.now();
-  timer = (currentTime - oldTime) / 1000;
+  timer = (currentTime - oldTime - menuTime) / 1000;
 
   drawText(Math.floor(timer), world.width / 2, 100, "red");
 
@@ -316,7 +348,11 @@ const update = () => {
       weapon.attack?.();
     }
 
-    drawText(weapon.name, 20, 50 * (index + 2), "green");
+    drawText(weapon.name, 80, 52.5 * (index + 2), "green");
+
+    if (weapon.image !== undefined) {
+      ctx.drawImage(weapon.image, 20, 65 + 55 * index, 50, 50);
+    }
   });
 
   if (enemies.length <= maxEnemyCount) {
@@ -348,7 +384,7 @@ const update = () => {
 
   const amountOfXp = 100;
 
-  if (xps.length > amountOfXp + 1) {
+  if (xps.length > amountOfXp) {
     let totalAmount = 0;
 
     xps.forEach((xp, index) => {
@@ -358,6 +394,7 @@ const update = () => {
     });
 
     const chosenXp = {
+      name: "chosenXp",
       radius: xps[0].radius,
       amount: totalAmount,
       // color: "red",
@@ -368,6 +405,7 @@ const update = () => {
     };
 
     xps.length = amountOfXp;
+    xps.splice(amountOfXp, 1);
     createSumXp(chosenXp.pos.x, chosenXp.pos.y, totalAmount, chosenXp.radius);
     // xps[0] = chosenXp;
     // xps.push(chosenXp);
@@ -376,9 +414,10 @@ const update = () => {
 
   if (player.xp.amount >= player.xp.nextLevel) {
     levelUp();
-    isPause = true;
+    pause();
   }
 
+  // Make explosion.foreach more smooth in here
   enemies.forEach((enemy) => {
     if (
       !isPointInsideArea(
@@ -394,6 +433,17 @@ const update = () => {
       // Tar bort fienden
     }
   });
+
+  if (Math.random() * loopPerSecond * 10 < loopPerSecond) {
+    const spawnPos = getRandomSpawnPos(player);
+
+    const chosenPickupType =
+      pickupTypes[Math.round(Math.random() * pickupTypes.length)];
+
+    console.log(pickupTypes);
+
+    chosenPickupType(spawnPos.x, spawnPos.y);
+  }
 
   entities = entities.filter((entity) => entity.health > 0);
   enemies = enemies.filter((enemy) => enemy.health > 0);
@@ -418,6 +468,8 @@ const update = () => {
         if (!bullet.enemiesHit.includes(entity)) {
           dealDamage(entity, "contact", bullet.damage);
           statistics.damageDealt += bullet.damage;
+
+          bullet.weapon.statistics.damage += bullet.damage;
           bullet.enemiesHit.push(entity);
         }
 
@@ -438,6 +490,19 @@ const update = () => {
     if (bullet.pos.y + bullet.radius >= player.pos.y + world.height) {
       bullet.destroy = true;
     }
+  });
+
+  targetables.forEach((targetable, index) => {
+    targetable.update?.(index);
+  });
+  pickups.forEach((pickup, indexU) => {
+    players.forEach((player, indexP) => {
+      // console.log(player);
+      if (doCirclesOverlap(pickup, player)) {
+        pickup.effect(player);
+        pickups.splice(indexU, 1);
+      }
+    });
   });
 
   // Sikte
@@ -477,7 +542,23 @@ const update = () => {
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
   drawText(player.xp.level, world.width - 80, 40, "green");
 
-  drawText(player.gold, world.width - 80, 100, "#ECF500");
+  const goldtextX = world.width - 80;
+
+  ctx.drawImage(assets.goldBag, 0, 0, 211, 239, goldtextX - 60, 60, 50, 50);
+  drawText(player.gold, goldtextX, 100, "#ECF500");
+
+  ctx.drawImage(
+    assets.skull,
+    0,
+    0,
+    136,
+    160,
+    (world.width / 5) * 4 - 50,
+    60,
+    40,
+    50
+  );
+  drawText(statistics.overall.killCount, (world.width / 5) * 4, 100, "black");
 
   drawHealthBar(
     ctx,
@@ -504,13 +585,21 @@ const update = () => {
   // console.log(buttons);
 
   if (player.health <= 0) {
-    isPause = true;
+    pause();
     deathMenu();
   }
 
   oldHealth = player.health;
 
-  worldObjects = [entities, bullets, xps, printWeapons, explosions];
+  worldObjects = [
+    entities,
+    bullets,
+    xps,
+    printWeapons,
+    explosions,
+    targetables,
+    pickups,
+  ];
 };
 
 setInterval(() => {

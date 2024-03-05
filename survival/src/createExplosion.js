@@ -5,8 +5,8 @@ export const createExplosion = (
   locX,
   locY,
   size,
-  speed,
   damage,
+  speed = 16,
   sprite = assets.explosion
 ) => {
   const explosionAnimation = animation({
@@ -31,8 +31,8 @@ export const createExplosion = (
       explosionAnimation.draw(
         ctx,
         sprite,
-        explosion.pos.x,
-        explosion.pos.y,
+        explosion.pos.x - explosion.radius / 1.2,
+        explosion.pos.y - explosion.radius / 2,
         explosion.radius * 2,
         explosion.radius
       );

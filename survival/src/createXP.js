@@ -10,6 +10,10 @@ export const createXp = (xPos, yPos, xpAmount) => {
       x: xPos,
       y: yPos,
     },
+    vel: {
+      x: 0,
+      y: 0,
+    },
     destroy: false,
     priority: 1,
   };

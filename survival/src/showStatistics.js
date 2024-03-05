@@ -10,7 +10,7 @@ import { world } from "./world.js";
 
 let loopAmount = 0;
 let overallStatAmount = 0;
-let weaponStatAmount = 0;
+let weaponStatisticAmount = 0;
 
 const drawStatistics = (type, value, x, y, color = "red") => {
   const margin = x + 10;
@@ -24,15 +24,9 @@ const drawStatistics = (type, value, x, y, color = "red") => {
 };
 
 export const showStatistics = () => {
-  //   const buttonTexts = [];
-
   Object.keys(statistics).forEach((key) => {
-    // buttonTexts.push();
-    // console.log(key);
     loopAmount++;
   });
-
-  //   console.log(loopAmount);
 
   const square = {
     x: 0,
@@ -59,20 +53,26 @@ export const showStatistics = () => {
     overallStatAmount++;
 
     const value = statistics.overall[key];
-    drawStatistics(key, value, 40);
+    drawStatistics(key, Math.floor(value), 40);
   }
 
-  weapons.reverse();
+  // weapons.reverse();
   weapons.forEach((weapon, index) => {
     // weaponStatAmount++;
     const previusWeaponLenght = ctx.measureText(weapons[index - 1]);
     const currentWeaponLenght = ctx.measureText(weapons[index]);
 
+    // drawText(
+    //   weapon.name,
+    //   world.width -
+    //     previusWeaponLenght.width * index -
+    //     currentWeaponLenght.width,
+    //   60,
+    //   "blue"
+    // );
     drawText(
       weapon.name,
-      world.width -
-        previusWeaponLenght.width * index -
-        currentWeaponLenght.width,
+      previusWeaponLenght.width * index - currentWeaponLenght.width + 1100,
       60,
       "blue"
     );
@@ -82,12 +82,20 @@ export const showStatistics = () => {
       const weaponStatistics = Object.keys(weapon.statistics);
 
       for (const key of weaponStatistics) {
-        weaponStatAmount++;
+        weaponStatisticAmount++;
 
         //   const value = statistics.overall[key];
         //   drawStatistics(key, value, 40);
-        drawText(key, 500, 100 * weaponStatAmount + 100, "green");
+        drawText(key, 500, 100 * weaponStatisticAmount + 100, "green");
+        drawText(
+          weapon.statistics[key],
+          300 * index + 900,
+          100 * weaponStatisticAmount + 100,
+          "green"
+        );
+        console.log(weapon.statistics[key]);
       }
+      weaponStatisticAmount = 0;
     }
   });
 };

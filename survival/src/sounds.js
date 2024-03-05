@@ -19,7 +19,7 @@ export const playShotgun = () => {
 
 export const playMinigun = () => {
   const audio = new Audio("/public/sounds/minigunFire.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 0.5 * universalVolume;
   audio.play();
 };
 

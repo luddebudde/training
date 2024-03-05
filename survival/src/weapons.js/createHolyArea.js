@@ -54,6 +54,12 @@ export const holyArea = {
     holyAreaBody.radius = 300 * (holyAreaStats.area + stats.area);
   },
 
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
+  },
+
   stats: holyAreaStats,
 
   upgrades: {

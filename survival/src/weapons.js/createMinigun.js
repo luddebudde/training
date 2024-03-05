@@ -60,6 +60,7 @@ export const createMinigun = () => {
         priority: 5,
         enemiesHit: [],
         pierce: 0,
+        weapon: minigun,
 
         attack: () => {
           bullets.push(bullet);
@@ -85,6 +86,12 @@ export const minigun = {
   update: () => {
     minigun.attackIntervall = aimBulletStats.cooldown * stats.cooldown;
     // console.log(minigun.stats.fireRate);
+  },
+
+  statistics: {
+    kills: 0,
+    damage: 0,
+    timeExisted: 0,
   },
 
   stats: aimBulletStats,

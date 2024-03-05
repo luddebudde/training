@@ -67,6 +67,7 @@ export const createAimBullet = () => {
     },
     enemiesHit: [],
     pierce: aimBulletStats.pierce,
+    weapon: aimBullet,
   };
   bullets.push(bullet);
   // worldObjects.push(bullet);
