@@ -1,7 +1,7 @@
 export const statistics = {
   overall: {
-    killCount: 0,
-    damageDealt: 0,
+    kills: 0,
+    damage: 0,
     damageTaken: 0,
   },
 };

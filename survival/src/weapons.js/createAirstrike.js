@@ -65,6 +65,7 @@ export const createAirstrike = () => {
     pierce: airstrikeStats.pierce,
   };
   createExplosion(
+    airstrike,
     explosion.pos.x - explosion.radius * 4,
     explosion.pos.y - explosion.radius * 2,
     explosion.radius * 4,

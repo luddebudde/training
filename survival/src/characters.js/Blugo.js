@@ -1,7 +1,9 @@
 import { stats } from "../stats.js";
+// import { aimBullet } from "../weapons.js/createAimBullet.js";
 
 export const Blugo = {
   fullname: "Blugo McPlommon",
+  // startingWeapon: aimBullet,
 
   stats: {
     growth: 10,

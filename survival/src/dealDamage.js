@@ -2,7 +2,12 @@ import { player } from "./main.js";
 import { statistics } from "./statistics.js";
 import { stats } from "./stats.js";
 
-export const dealDamage = (obj, damageType, amount) => {
+export const dealDamage = (
+  obj,
+  damageType,
+  amount,
+  creditWeapon = undefined
+) => {
   if (obj.resistance && obj.resistance[damageType] !== undefined) {
     amount = amount / obj.resistance.strength;
   }
@@ -19,6 +24,16 @@ export const dealDamage = (obj, damageType, amount) => {
   if (obj === player) {
     statistics.overall.damageTaken += amount;
   } else if (obj.team === "enemy") {
-    statistics.overall.damageDealt += amount;
+    statistics.overall.damage += amount;
+  }
+
+  if (creditWeapon !== undefined) {
+    statistics.overall.damage += amount;
+    creditWeapon.statistics.damage += amount;
+
+    if (obj.health <= 0) {
+      statistics.overall.kills += 1;
+      creditWeapon.statistics.kills += 1;
+    }
   }
 };

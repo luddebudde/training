@@ -3,13 +3,14 @@ import { drawText } from "./draw/drawText.js";
 import { getNextElement } from "./getNextElement.js";
 import { buttons, ctx, entities, player, start, startGame } from "./main.js";
 import { showStatistics } from "./showStatistics.js";
+import { stats } from "./stats.js";
 
 import { world } from "./world.js";
 
 let chosenWeapon = 0;
 
 const revivePlayer = () => {
-  player.health = player.maxHealth;
+  player.health = stats.maxHealth;
   entities.push(player);
   start();
 };

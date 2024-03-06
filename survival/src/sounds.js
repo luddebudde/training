@@ -52,6 +52,12 @@ export const playSlice = () => {
   audio.play();
 };
 
+export const playBossDefeat = () => {
+  const audio = new Audio("/public/sounds/small_boss_defeat.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
 let isHurtSoundPlaying = false;
 
 export const playHurt = () => {

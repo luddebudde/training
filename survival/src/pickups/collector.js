@@ -18,8 +18,6 @@ export const createCollector = (xPos, yPos) => {
       xps.forEach((xp) => {
         const newDirection = makeDirection(xp.pos, object.pos);
 
-        console.log(xp);
-
         xp.vel.x = newDirection.x * 10;
         xp.vel.y = newDirection.y * 10;
       });

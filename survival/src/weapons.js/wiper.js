@@ -56,25 +56,21 @@ export const wiper = {
     // console.log("wiperAtatck");
     // Vänta en sekund
     setTimeout(() => {
+      const totalEnemyHealth = 0;
       enemies.forEach((enemy) => {
         amountOfEnemies += 1;
         if (Math.random() * 100 < wiperStats.killAmount) {
+          totalEnemyHealth += enemy.health;
           enemy.health = 0;
           // console.log(wiperStats.killAmount);
         }
       });
-      player.xp.amount +=
-        amountOfEnemies *
-        12 *
-        // * stats.growth
-        wiper.stats.finalLevel;
-      player.gold +=
-        amountOfEnemies *
-        12 *
-        //  * stats.greed
-        wiper.stats.finalLevel;
-      // amountOfEnemies = 0
-      // console.log(wiperStats);
+      player.xp.amount += amountOfEnemies * 12 * wiper.stats.finalLevel;
+      player.gold += amountOfEnemies * 12 * wiper.stats.finalLevel;
+
+      wiper.statistics.damage += totalEnemyHealth;
+      wiper.statistics.killCount += amountOfEnemies;
+
       if (Math.random() * 100 < wiperStats.keepXpChance) xps.lenght = 0;
     }, 1500);
   },

@@ -1,6 +1,7 @@
 // Must fix bug where weapons gets infinitly stronger when restarting the game
 // Make the start and "startgame" function better
 
+// Text above defeated bosses, counting down to the final
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { world } from "./world.js";
 
@@ -21,6 +22,7 @@ import { stats } from "./stats.js";
 import { drawHealthBar } from "./draw/drawHealthbar.js";
 import { drawXpBar } from "./draw/drawXpBar.js";
 import {
+  playBossDefeat,
   playLevelUp as playLevelUp,
   playLevelUpSpecial,
   universalVolume,
@@ -58,12 +60,17 @@ import { showStatistics } from "./showStatistics.js";
 import { cherry } from "./weapons.js/cherry.js";
 import { createCollector } from "./pickups/collector.js";
 import { createBlank } from "./pickups/blank.js";
+import { createTank } from "./enemies/createTank.js";
+import { createNerfer } from "./enemies/createNerfer.js";
+import { createPickupWeapon } from "./pickups/pickupWeapon.js";
+import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
 
 export let enemies = [];
 export let entities = [];
+export const bosses = [];
 
 export const createEnemies = [createWalker];
 
@@ -142,6 +149,8 @@ canvas.addEventListener("mousemove", (event) => {
   };
 });
 
+createPickupWeapon(100, 100, randomAimBullet);
+
 const myButton = document.getElementById("myButton");
 
 // Lägg till en händelsedetektor för musklick
@@ -207,6 +216,8 @@ let oldTime = Date.now();
 let maxEnemyCount = (20 * stats.curse) / 3;
 const enemyFactor = 200;
 
+let weaponKills;
+
 export const startGame = () => {
   // stats = currentCharacter.stats;
   (stats.growth = currentCharacter.stats.growth),
@@ -231,6 +242,7 @@ export const startGame = () => {
   entities.push(player);
 
   maxAmountOfWeapons = 6;
+  weaponKills = 0;
 
   pickupTypes.push(createCollector, createBlank);
 
@@ -240,11 +252,14 @@ export const startGame = () => {
       const spawnPos = getRandomSpawnPos(player);
       createWalker(spawnPos.x, spawnPos.y);
       createCharger(spawnPos.x, spawnPos.y);
+      createTank(spawnPos.x, spawnPos.y + 100);
+      // createNerfer(spawnPos.x, spawnPos.y);
     }
   };
-  // maxEnemyCount = (20 * stats.curse) / 3;
+  // maxEnemyCount = 3;
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
+    // currentCharacter.startingWeapon,
     aimBullet,
     // holyArea,
     // minigun,
@@ -268,6 +283,8 @@ export const startGame = () => {
 startGame();
 
 // showStatistics();
+
+createWalkerBoss(400, 400);
 // pause();
 
 const update = () => {
@@ -339,6 +356,7 @@ const update = () => {
     player.xp.amount += totalAmount;
   }
 
+  // weaponKills = 0;
   weapons.forEach((weapon, index) => {
     weapon.cooldown -= 1;
     weapon.update?.();
@@ -353,8 +371,10 @@ const update = () => {
     if (weapon.image !== undefined) {
       ctx.drawImage(weapon.image, 20, 65 + 55 * index, 50, 50);
     }
-  });
 
+    // weaponKills += weapon.statistics.killCount;
+  });
+  // statistics.overall.killCount = weaponKills;
   if (enemies.length <= maxEnemyCount) {
     currentWave();
   }
@@ -434,13 +454,19 @@ const update = () => {
     }
   });
 
+  bosses.forEach((boss, index) => {
+    boss.ability();
+    if (boss.health <= 0) {
+      playBossDefeat();
+      bosses.splice(index, 1);
+    }
+  });
+
   if (Math.random() * loopPerSecond * 10 < loopPerSecond) {
     const spawnPos = getRandomSpawnPos(player);
 
     const chosenPickupType =
-      pickupTypes[Math.round(Math.random() * pickupTypes.length)];
-
-    console.log(pickupTypes);
+      pickupTypes[Math.floor(Math.random() * pickupTypes.length)];
 
     chosenPickupType(spawnPos.x, spawnPos.y);
   }
@@ -455,7 +481,8 @@ const update = () => {
   explosions.forEach((explosion) => {
     enemies.forEach((enemy) => {
       if (doCirclesOverlap(explosion, enemy)) {
-        enemy.health -= explosion.damage;
+        // enemy.health -= explosion.damage;
+        dealDamage(enemy, "explosion", explosion.damage, explosion.weapon);
       }
     });
   });
@@ -466,10 +493,8 @@ const update = () => {
     entities.forEach((entity) => {
       if (doCirclesOverlap(entity, bullet) && bullet.team !== entity.team) {
         if (!bullet.enemiesHit.includes(entity)) {
-          dealDamage(entity, "contact", bullet.damage);
-          statistics.damageDealt += bullet.damage;
+          dealDamage(entity, "contact", bullet.damage, bullet.weapon);
 
-          bullet.weapon.statistics.damage += bullet.damage;
           bullet.enemiesHit.push(entity);
         }
 
@@ -558,7 +583,7 @@ const update = () => {
     40,
     50
   );
-  drawText(statistics.overall.killCount, (world.width / 5) * 4, 100, "black");
+  drawText(statistics.overall.kills, (world.width / 5) * 4, 100, "black");
 
   drawHealthBar(
     ctx,

@@ -64,7 +64,12 @@ export const selfImpaler = {
     if (attackCounter % selfImpaler.attackIntervall === 0) {
       const effects = selfImpalerStats.effects;
 
-      dealDamage(player, "masochism", selfImpalerStats.damage * effects);
+      dealDamage(
+        player,
+        "masochism",
+        selfImpalerStats.damage * effects,
+        selfImpaler
+      );
       selfImpaler.statistics.damage += selfImpalerStats.damage;
 
       // Messes with stats

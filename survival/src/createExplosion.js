@@ -2,6 +2,7 @@ import { animation } from "./animation.js";
 import { assets, explosions, worldObjects } from "./main.js";
 
 export const createExplosion = (
+  weapon,
   locX,
   locY,
   size,
@@ -17,6 +18,7 @@ export const createExplosion = (
   });
 
   const explosion = {
+    weapon: weapon,
     pos: {
       x: locX,
       y: locY,

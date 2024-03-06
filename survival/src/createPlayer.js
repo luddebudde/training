@@ -26,7 +26,8 @@ export const createPlayer = () => {
       amount: 0,
       level: 1,
       nextLevel: 100,
-      levelIncrease: 5000,
+      // levelIncrease: 100,
+      levelIncrease: 50000,
     },
     levelUpIncrease: currentCharacter.levelUpIncrease,
 
