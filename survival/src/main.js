@@ -64,6 +64,9 @@ import { createTank } from "./enemies/createTank.js";
 import { createNerfer } from "./enemies/createNerfer.js";
 import { createPickupWeapon } from "./pickups/pickupWeapon.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
+import { dropChest } from "./dropChest.js";
+import { chestMenu } from "./chestMenu.js";
+import { wave1, wave2, wave3 } from "./waves.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -75,6 +78,7 @@ export const bosses = [];
 export const createEnemies = [createWalker];
 
 export let xps = [];
+export const chests = [];
 
 export let bullets = [];
 export let explosions = [];
@@ -96,6 +100,7 @@ export let printWeapons = [
 export let maxAmountOfWeapons = 6;
 
 export const buttons = [];
+export const drawingSquares = [];
 
 export let player = 0;
 
@@ -104,6 +109,7 @@ export const players = [];
 // entities.push(player);
 
 export const targetables = [];
+export const movable = [];
 
 export const pickupTypes = [];
 export const pickups = [];
@@ -116,13 +122,14 @@ export let worldObjects = [
   explosions,
   targetables,
   pickups,
+  chests,
 ];
 const worldObjectsLenght = worldObjects.length;
 
 let oldHealth = player.health;
 // let oldTime = Date.now();
 
-const worldArrays = [entities, worldObjects, bullets];
+// const worldArrays = [entities, worldObjects, bullets];
 
 export let mousePos = {
   x: 0,
@@ -166,14 +173,7 @@ let currentMusicIndex = 0;
 let spawnRate = 50 / stats.curse;
 let spawnCooldown = spawnRate;
 
-let currentWave = () => {
-  // const spawnPos = 0;
-  for (let i = 0; i < 5 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
-    createWalker(spawnPos.x, spawnPos.y);
-    createCharger(spawnPos.x, spawnPos.y);
-  }
-};
+let currentWave;
 
 // const waveOne = () => {
 //   for (let i = 0; i < 5 * stats.curse; i++) {
@@ -204,6 +204,8 @@ export const start = () => {
 export const reverse = () => {
   isPause = !isPause;
 };
+
+const wavesList = [wave1, wave2, wave3];
 
 document.body.addEventListener("mousemove", playMusic);
 
@@ -244,18 +246,20 @@ export const startGame = () => {
   maxAmountOfWeapons = 6;
   weaponKills = 0;
 
+  currentWave = wavesList[0];
+
   pickupTypes.push(createCollector, createBlank);
 
-  currentWave = () => {
-    // const spawnPos = 0;
-    for (let i = 0; i < 5 * stats.curse; i++) {
-      const spawnPos = getRandomSpawnPos(player);
-      createWalker(spawnPos.x, spawnPos.y);
-      createCharger(spawnPos.x, spawnPos.y);
-      createTank(spawnPos.x, spawnPos.y + 100);
-      // createNerfer(spawnPos.x, spawnPos.y);
-    }
-  };
+  // currentWave = () => {
+  //   // const spawnPos = 0;
+  //   for (let i = 0; i < 5 * stats.curse; i++) {
+  //     const spawnPos = getRandomSpawnPos(player);
+  //     createWalker(spawnPos.x, spawnPos.y);
+  //     createCharger(spawnPos.x, spawnPos.y);
+  //     createTank(spawnPos.x, spawnPos.y + 100);
+  //     // createNerfer(spawnPos.x, spawnPos.y);
+  //   }
+  // };
   // maxEnemyCount = 3;
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
@@ -287,6 +291,9 @@ startGame();
 createWalkerBoss(400, 400);
 // pause();
 
+let canChangeWave = true;
+let waveIndex = -1;
+
 const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
@@ -301,6 +308,20 @@ const update = () => {
 
   const currentTime = Date.now();
   timer = (currentTime - oldTime - menuTime) / 1000;
+
+  if (Math.floor(timer) % 1 === 0 && canChangeWave) {
+    canChangeWave = false;
+    setTimeout(() => {
+      if (wavesList[waveIndex + 1] !== undefined) {
+        canChangeWave = true;
+        waveIndex += 1;
+
+        currentWave = wavesList[waveIndex];
+      }
+
+      // console.log("timer");
+    }, 1000);
+  }
 
   drawText(Math.floor(timer), world.width / 2, 100, "red");
 
@@ -346,6 +367,7 @@ const update = () => {
     setTimeout(() => {
       canChangeMusic = true;
     }, 1000);
+    chestMenu();
   }
 
   if (isKeyDown("ArrowUp")) {
@@ -437,6 +459,17 @@ const update = () => {
     pause();
   }
 
+  chests.forEach((chest, index) => {
+    // console.log(chest.pos.x);
+    if (doCirclesOverlap(player, chest)) {
+      // player.xp.amount *= 100000;
+      chestMenu();
+      // pause();
+      // console.log(chest);
+      chests.splice(index, 1);
+    }
+  });
+
   // Make explosion.foreach more smooth in here
   enemies.forEach((enemy) => {
     if (
@@ -459,6 +492,8 @@ const update = () => {
     if (boss.health <= 0) {
       playBossDefeat();
       bosses.splice(index, 1);
+
+      dropChest(boss.pos.x, boss.pos.y);
     }
   });
 
@@ -495,6 +530,8 @@ const update = () => {
         if (!bullet.enemiesHit.includes(entity)) {
           dealDamage(entity, "contact", bullet.damage, bullet.weapon);
 
+          entity.hit?.();
+
           bullet.enemiesHit.push(entity);
         }
 
@@ -520,6 +557,7 @@ const update = () => {
   targetables.forEach((targetable, index) => {
     targetable.update?.(index);
   });
+
   pickups.forEach((pickup, indexU) => {
     players.forEach((player, indexP) => {
       // console.log(player);
@@ -528,6 +566,10 @@ const update = () => {
         pickups.splice(indexU, 1);
       }
     });
+  });
+
+  drawingSquares.forEach((square) => {
+    drawSquare(square);
   });
 
   // Sikte
@@ -624,6 +666,7 @@ const update = () => {
     explosions,
     targetables,
     pickups,
+    chests,
   ];
 };
 
@@ -631,6 +674,13 @@ setInterval(() => {
   if (!isPause) {
     update();
   }
+  // movable.forEach((object) => {
+  //   object.move();
+  //   console.log("hej");
+  // });
+  buttons.forEach((button) => {
+    button.update?.();
+  });
 }, 1000 / loopPerSecond);
 
 const isKeyDown = keyDownTracker();

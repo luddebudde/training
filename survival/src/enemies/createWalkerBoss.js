@@ -25,7 +25,7 @@ const walkerAnimations = animation({
 
 export const createWalkerBoss = (spawnWidth, spawnHeight) => {
   const walker = {
-    health: 10000,
+    health: 100,
     radius: 100,
     pos: {
       x: spawnWidth,

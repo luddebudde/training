@@ -34,7 +34,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    speed: 1 * stats.curse,
+    speed: 2 * stats.curse,
     // speed: 0,
     damage: 0.3,
     // damage: 0,
