@@ -21,7 +21,7 @@ const bulletSpeed = 20 * stats.speed;
 const airstrikeStats = {
   area: 20,
   speed: 20,
-  damage: 2000,
+  damage: 10,
   cooldown: 600,
   // cooldown: 200,
   amount: 20,

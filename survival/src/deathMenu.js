@@ -12,12 +12,22 @@ let chosenWeapon = 0;
 const revivePlayer = () => {
   player.health = stats.maxHealth;
   entities.push(player);
+  stats.revives -= 1;
   start();
 };
 
 export const deathMenu = () => {
-  const buttonFunctions = [revivePlayer, startGame, showStatistics];
-  const buttonTexts = ["REVIVE", "RESTART", "STATISTIC", "MAIN MENU"];
+  const buttonFunctions = [
+    stats.revives > 0 ? revivePlayer : undefined,
+    startGame,
+    showStatistics,
+  ];
+  const buttonTexts = [
+    stats.revives > 0 ? "REVIVE" : "OUT OF REVIVES",
+    "RESTART",
+    "STATISTIC",
+    "MAIN MENU",
+  ];
 
   const loopAmount = 4;
 

@@ -16,6 +16,7 @@ export const stats = {
 
   curse: currentCharacter.stats.curse,
   cooldown: currentCharacter.stats.cooldown,
+  revives: currentCharacter.stats.revives,
 };
 
 export const upgradeStats = (weapon, statType, amount) => {

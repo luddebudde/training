@@ -35,9 +35,9 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     speed: 2 * stats.curse,
-    // speed: 0,
+
     damage: 0.3,
-    // damage: 0,
+
     color: "red",
     team: "enemy",
     xp: Math.random() * 50 * stats.growth,
@@ -45,17 +45,13 @@ export const createWalker = (spawnWidth, spawnHeight) => {
 
     update: () => {
       const target = closestObject(targetables, walker);
-      // console.log(target.pos);
+
       const newVel = makeDirection(walker.pos, target.pos);
 
-      // const newVel = makeDirection(walker.pos, player.pos);
-      // console.log(makeDirection(walker, player));
       walker.vel.x = newVel.x * walker.speed;
       walker.vel.y = newVel.y * walker.speed;
       if (doCirclesOverlap(walker, player)) {
-        // walker.health = 0;
         playHurt();
-        // player.health -= walker.damage / loopPerSecond;
         dealDamage(player, "contact", walker.damage);
       }
     },
@@ -64,26 +60,13 @@ export const createWalker = (spawnWidth, spawnHeight) => {
         assets.blue,
         walker.pos.x - walker.radius,
         walker.pos.y - walker.radius,
-        // 100,
-        // 100,
+
         walker.radius * 2,
         walker.radius * 2
       );
-      // console.log("bild", assets.rhino, "walker pos", walker.pos);
-      // }
-      //  else {
-      //   ctx.drawImage(
-      //     assets.astronaut,
-      //     -body.circleRadius * 0.5,
-      //     -body.circleRadius * 1.5 * 0.5,
-      //     body.circleRadius,
-      //     body.circleRadius * 1.5
-      //   );
-      // }
     },
   };
 
   entities.push(walker);
   enemies.push(walker);
-  // worldObjects.push(walker);
 };

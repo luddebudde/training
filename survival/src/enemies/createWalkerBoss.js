@@ -3,6 +3,7 @@ import { loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
+import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
 import {
   bosses,
   enemies,
@@ -23,7 +24,10 @@ const walkerAnimations = animation({
   repeat: true,
 });
 
-export const createWalkerBoss = (spawnWidth, spawnHeight) => {
+export const createWalkerBoss = (
+  spawnWidth = getRandomSpawnPos(player).x,
+  spawnHeight = getRandomSpawnPos(player).y
+) => {
   const walker = {
     health: 100,
     radius: 100,
@@ -45,6 +49,7 @@ export const createWalkerBoss = (spawnWidth, spawnHeight) => {
     priority: 10,
 
     update: () => {
+      // console.log(walker.pos);
       const target = closestObject(targetables, walker);
       // console.log(target.pos);
       const newVel = makeDirection(walker.pos, target.pos);
@@ -72,10 +77,9 @@ export const createWalkerBoss = (spawnWidth, spawnHeight) => {
       );
     },
     ability: () => {
-      const direction = makeDirection(walker.pos, player.pos);
-
-      player.pos.x -= direction.x * 1;
-      player.pos.y -= direction.y * 1;
+      // const direction = makeDirection(walker.pos, player.pos);
+      // player.pos.x -= direction.x * 1;
+      // player.pos.y -= direction.y * 1;
     },
   };
 

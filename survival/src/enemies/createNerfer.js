@@ -59,7 +59,7 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
 
     update: () => {
       if (doCirclesOverlap(nerfer, player)) {
-        if (nerfer.nerfType === "maxHealth" && stats[nerfer.nerfType] > 10) {
+        if (nerfer.nerfType === "maxHealth" && stats[nerfer.nerfType] > 20) {
           stats[nerfer.nerfType] -= nerfer.nerfamount;
         }
         if (stats[nerfer.nerfType] > 0.5) {

@@ -37,7 +37,6 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
     priority: 10,
 
     update: () => {
-      drawText(juggernaut.health, juggernaut.pos.x + 10, juggernaut.pos.y + 30);
       if (doCirclesOverlap(juggernaut, player)) {
         // charger.health = 0;
         playHurt();

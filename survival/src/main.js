@@ -66,7 +66,15 @@ import { createPickupWeapon } from "./pickups/pickupWeapon.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
 import { dropChest } from "./dropChest.js";
 import { chestMenu } from "./chestMenu.js";
-import { wave1, wave2, wave3 } from "./waves.js";
+import {
+  bossType,
+  bossWaves,
+  wave1,
+  wave2,
+  wave3,
+  wave4,
+  wave5,
+} from "./waves.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -141,6 +149,7 @@ export const assets = {
   skull: await loadImage("/public/sprites/skull.png"),
   goldBag: await loadImage("/public/sprites/goldbag.png"),
   blue: await loadImage("/public/sprites/blue.png"),
+  marcher: await loadImage("/public/animations/marcher_rotated.png"),
   // assault: loadImage(`/ships/player/large/assault.png`),
   // fighter: loadImage(`/ships/player/large/green.png`),
   rhino: await loadImage(`/public/ships/player/large/green-rhino.png`),
@@ -205,7 +214,7 @@ export const reverse = () => {
   isPause = !isPause;
 };
 
-const wavesList = [wave1, wave2, wave3];
+const wavesList = [wave1, wave2, wave3, wave4, wave5];
 
 document.body.addEventListener("mousemove", playMusic);
 
@@ -213,7 +222,7 @@ let timer = 0;
 
 let canChangeMusic = true;
 
-let oldTime = Date.now();
+let oldTime;
 
 let maxEnemyCount = (20 * stats.curse) / 3;
 const enemyFactor = 200;
@@ -288,7 +297,7 @@ startGame();
 
 // showStatistics();
 
-createWalkerBoss(400, 400);
+// createWalkerBoss(400, 400);
 // pause();
 
 let canChangeWave = true;
@@ -309,7 +318,7 @@ const update = () => {
   const currentTime = Date.now();
   timer = (currentTime - oldTime - menuTime) / 1000;
 
-  if (Math.floor(timer) % 1 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 10 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -317,9 +326,11 @@ const update = () => {
         waveIndex += 1;
 
         currentWave = wavesList[waveIndex];
-      }
 
-      // console.log("timer");
+        if (bossWaves[waveIndex - 1] !== undefined) {
+          bossType[waveIndex - 1]();
+        }
+      }
     }, 1000);
   }
 
@@ -497,7 +508,7 @@ const update = () => {
     }
   });
 
-  if (Math.random() * loopPerSecond * 10 < loopPerSecond) {
+  if (Math.random() * loopPerSecond * 300 < loopPerSecond) {
     const spawnPos = getRandomSpawnPos(player);
 
     const chosenPickupType =
