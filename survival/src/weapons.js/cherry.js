@@ -97,7 +97,13 @@ export const createCherry = () => {
       cherryBullet.lifetime--;
 
       if (cherryBullet.lifetime <= 0) {
-        createExplosion(cherry, cherryBullet.pos.x, cherryBullet.pos.y, 5, 100);
+        createExplosion(
+          cherry,
+          cherryBullet.pos.x,
+          cherryBullet.pos.y,
+          100,
+          100
+        );
         targetables.splice(index, 1);
       }
     },

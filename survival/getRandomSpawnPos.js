@@ -1,5 +1,5 @@
-import { player } from "./main.js";
-import { world } from "./world.js";
+import { player } from "./src/main.js";
+import { world } from "./src/world.js";
 
 const spawnMargin = 100;
 

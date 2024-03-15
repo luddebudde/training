@@ -13,7 +13,7 @@ import { shootWeapons } from "./shootWeapons.js";
 import { createShotgun, shotgun } from "./weapons.js/createShotgun.js";
 import { keyDownTracker, oneTimeKeyPress } from "./keyDownTracker.js";
 import { createPlayer, currentCharacter } from "./createPlayer.js";
-import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
+import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
 import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
 import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
@@ -303,6 +303,8 @@ startGame();
 let canChangeWave = true;
 let waveIndex = -1;
 
+dropChest(200, 200);
+
 const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
@@ -318,7 +320,7 @@ const update = () => {
   const currentTime = Date.now();
   timer = (currentTime - oldTime - menuTime) / 1000;
 
-  if (Math.floor(timer) % 10 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 5 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -377,7 +379,7 @@ const update = () => {
     canChangeMusic = false;
     setTimeout(() => {
       canChangeMusic = true;
-    }, 1000);
+    }, 500);
     chestMenu();
   }
 
@@ -400,6 +402,14 @@ const update = () => {
     }
 
     drawText(weapon.name, 80, 52.5 * (index + 2), "green");
+
+    const buttonTextWidth = ctx.measureText(weapon.name).width;
+    drawText(
+      weapon.upgrades.level,
+      100 + buttonTextWidth,
+      52.5 * (index + 2),
+      "black"
+    );
 
     if (weapon.image !== undefined) {
       ctx.drawImage(weapon.image, 20, 65 + 55 * index, 50, 50);
@@ -487,10 +497,10 @@ const update = () => {
       !isPointInsideArea(
         enemy.pos.x,
         enemy.pos.y,
-        player.pos.x - world.width * 0.7,
-        player.pos.y - world.height * 0.7,
-        world.width * 2,
-        world.height * 2
+        player.pos.x - world.width / 2 - 200,
+        player.pos.y - world.height / 2 - 200,
+        world.width + 400,
+        world.height + 400
       )
     ) {
       enemy.health = 0;
@@ -607,7 +617,7 @@ const update = () => {
 
       // console.log(gameObjects);
       if (object.draw === undefined) {
-        drawObject(ctx, vector.alone.neg(player.pos), object);
+        drawObject(ctx, object);
       } else {
         object.draw?.(ctx, assets, object);
         // drawText("helkl", object.x, object.y, "red");

@@ -3,7 +3,7 @@ import { loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
+import { getRandomSpawnPos } from "../../getRandomSpawnPos.js";
 import {
   bosses,
   enemies,

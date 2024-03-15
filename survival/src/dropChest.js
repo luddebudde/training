@@ -26,7 +26,7 @@ export const dropChest = (locX, locY) => {
     //   }
     // },
   };
-  console.log("chest");
+  // console.log("chest");
 
   chests.push(chest);
 };

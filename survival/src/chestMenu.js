@@ -1,3 +1,4 @@
+import { drawObject } from "./draw/drawObject.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { drawText } from "./draw/drawText.js";
 import { getNextElement } from "./getNextElement.js";
@@ -10,49 +11,61 @@ import {
   drawingSquares,
   start,
   startGame,
+  weapons,
+  pause,
 } from "./main.js";
+import { makeDirection } from "./makeDirection.js";
 import { showStatistics } from "./showStatistics.js";
 import { stats } from "./stats.js";
+import { vector } from "./vectors.js";
+import { selfImpaler } from "./weapons.js/selfImpaler.js";
+import { wiper } from "./weapons.js/wiper.js";
 
 import { world } from "./world.js";
 
-const animationDuration = 50000; // Tid i millisekunder för att röra sig till mitten
+const animationMoveSpeed = 10;
+
+const animationDuration = (world.width / animationMoveSpeed) * 1; // Tid i millisekunder för att röra sig till mitten
+// const animationDuration = 10000;
 
 // const squareWidth = 200;
 // const squareHeight = 240;
 
-const squareWidth = 300;
-const squareHeight = 300;
+const squareWidth = 400;
+const squareHeight = 500;
 
 export const chestMenu = () => {
-  //   const buttonFunctions = [revivePlayer, startGame, showStatistics];
-  //   const buttonTexts = ["REVIVE", "RESTART", "STATISTIC", "MAIN MENU"];
-
   const loopAmount = 4;
-
-  //   for (let i = 0; i < loopAmount; i++) {
-  //     // const buttonName = getNextElement(buttonTexts, i - 1);
-  //     // const act = buttonFunctions[i % buttonFunctions.length];
-
-  //     // const buttonNameInfo = ctx.measureText(buttonName);
-
-  //     const square = {
-  //       x: (i % 2) * (world.width - 480),
-  //       y: (i % 2) * (world.height - 200),
-  //       width: 400 + 80,
-  //       height: 200,
-
-  //       color: "black",
-  //     };
 
   const squares = [];
 
   for (let i = 0; i < loopAmount; i++) {
+    const center = {
+      x: world.width / 2,
+      y: world.height / 2,
+    };
+    const pos = {
+      x: i % 2 === 0 ? 0 : world.width,
+      y: i < 2 ? 0 : world.height,
+    };
+    const posMargin = i % 2 === 0 ? squareWidth * 1.5 : -squareWidth * 1.5;
+
+    const finalPos = {
+      x: center.x + posMargin,
+      y: center.y,
+    };
+    const dir = makeDirection(pos, finalPos);
+    const vel = {
+      x: dir.x * animationMoveSpeed,
+      y: dir.y * animationMoveSpeed,
+    };
+
     const square = {
-      x: i % 2 === 0 ? 20 : world.width - squareWidth,
-      y: i < 2 ? 20 : world.height - squareHeight,
-      width: squareWidth,
-      height: squareHeight,
+      x: pos.x,
+      y: pos.y,
+      vel: vel,
+      width: i % 2 === 0 ? squareWidth : -squareWidth,
+      height: i < 2 ? squareWidth : -squareHeight,
       color: "black",
       startTime: Date.now(),
     };
@@ -78,12 +91,17 @@ export const chestMenu = () => {
         buttons.length = 0;
       },
       update: () => {
-        animateSquares(square);
+        ctx.beginPath();
+        ctx.globalAlpha = 1;
+        ctx.clearRect(0, 0, world.width, world.height);
+        ctx.fillStyle = "white";
+        ctx.fill();
+
+        animateSquares(button.square);
       },
     };
 
     if (button.weapon !== undefined) {
-      // Rita vapennamnet
       drawText(
         buttonName,
         square.x + 40,
@@ -99,68 +117,158 @@ export const chestMenu = () => {
     buttons.push(button);
     drawingSquares.push(square);
   }
+  pause();
 };
-
-// function animateSquares(square) {
-//   const currentTime = Date.now();
-//   const elapsedTime = currentTime - square.startTime;
-
-//   //   console.log("då");
-
-//   if (elapsedTime < animationDuration) {
-//     // Fortsätt animationen
-//     console.log("hej");
-//     drawingSquares.forEach((square) => {
-//       square.x +=
-//         ((world.width / 2 - square.x) / animationDuration) * elapsedTime;
-//       square.y +=
-//         ((world.height / 2 - square.y) / animationDuration) * elapsedTime;
-//       drawSquare(square);
-//     });
-
-//     // Uppdatera animationen
-//     requestAnimationFrame(animateSquares);
-//   }
-// }
 
 const targetX = world.width / 2 - squareWidth / 2;
 const targetY = world.height / 2 - squareHeight / 2;
 
 // let animationStartTime;
 
+// let squareTime =
+// squareTime = square.startTime !== undefined ? square.startTime : squareTime;;
+
 function animateSquares(square) {
+  // squareTime = square.startTime
   const currentTime = Date.now();
   const elapsedTime = currentTime - square.startTime;
 
+  // console.log(elapsedTime, animationDuration);
+  // console.log(currentTime, square.startTime);
+  drawingSquares.forEach((square) => {
+    drawSquare(square);
+    ctx.beginPath();
+    ctx.arc(square.x, square.y, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = "red";
+    ctx.fill();
+  });
   if (elapsedTime < animationDuration) {
-    // Rörelse mot mitten
     drawingSquares.forEach((square) => {
-      const deltaX = targetX - square.x;
-      const deltaY = targetY - square.y;
-      const distance = Math.sqrt(deltaX ** 2 + deltaY ** 2);
-
-      // Kontrollera om fyrkanterna nuddar varandra
-      if (distance > 0) {
-        const movementFactor = Math.min(0.01, distance / animationDuration);
-        square.x += deltaX * movementFactor;
-        square.y += deltaY * movementFactor;
-      }
-
-      drawSquare(square);
+      square.x += square.vel.x;
+      square.y += square.vel.y;
+      // }
     });
 
-    // Uppdatera animationen
     requestAnimationFrame(animateSquares);
   } else {
-    // Animationen har avslutats, utför din funktion här
-    yourCustomFunction();
-
-    // Lägg till eventuella andra logiker eller funktioner som du vill exekvera efter animationen
+    chestReward();
   }
 }
 
-function yourCustomFunction() {
-  console.log("Igenom");
-  // Denna funktion kommer att köras när animationen är klar
-  // Lägg till din egna logik här
-}
+let chosenWeapon;
+const maxLevel = 5;
+
+let hasDecidedWeapon = false;
+let shouldEvolve = false;
+
+const chestReward = () => {
+  const evolutionWeapons = weapons.filter(
+    (weapon) => weapon.upgrades.level >= maxLevel
+  );
+
+  const availableWeapons = weapons.filter(
+    (weapon) => weapon.upgrades.level <= maxLevel
+  );
+
+  // Uppdatera chosenWeapon om det tidigare valda vapnet inte längre är giltigt
+  if (evolutionWeapons.length > 0) {
+    chosenWeapon =
+      evolutionWeapons[Math.floor(Math.random() * evolutionWeapons.length)];
+    hasDecidedWeapon = true;
+    shouldEvolve = true;
+  } else if (!hasDecidedWeapon || !availableWeapons.includes(chosenWeapon)) {
+    chosenWeapon =
+      availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
+    hasDecidedWeapon = true;
+  }
+
+  console.log(evolutionWeapons.length);
+
+  const square = {
+    weapon: chosenWeapon,
+    evolve: shouldEvolve,
+    x: world.width / 2 - 200,
+    y: world.height / 2 - 200,
+    width: 400,
+    height: 400,
+    color: "blue",
+  };
+
+  // console.log(square.weapon);
+
+  const button = {
+    text: "OK",
+    x: square.x + 50,
+    y: square.y + 425,
+    width: 300,
+    height: 100,
+    color: "red",
+
+    function: () => {
+      buttons.length = 0;
+      drawingSquares.length = 0;
+      hasDecidedWeapon = false;
+      console.log("start");
+
+      if (!button.evolve) {
+        const weaponUpgrades = square.weapon.upgrades;
+        const level = weaponUpgrades.level;
+
+        const statTypes = weaponUpgrades.statsOrder[level];
+        const upgradeAmounts = weaponUpgrades.amountOrder[level];
+
+        statTypes.forEach((statType, index) => {
+          const amount = upgradeAmounts[index];
+
+          square.weapon.stats[statType] += amount;
+
+          console.log(square.weapon.stats);
+        });
+
+        if (!weapons.includes(square.weapon)) {
+          weapons.push(square.weapon);
+        }
+
+        square.weapon.upgrades.level += 1;
+
+        console.log(square.weapon.name, square.weapon.upgrades.level, "chest");
+      } else {
+        weapons.splice(weapons.indexOf(square.chosenWeapon));
+        weapons.push(selfImpaler);
+      }
+      start();
+    },
+  };
+
+  buttons.push(button);
+
+  // Draw weapon
+  drawSquare(square);
+  if (square.weapon.image !== undefined) {
+    ctx.drawImage(
+      square.weapon.image,
+      square.x + square.width / 2 - 100,
+      square.y + square.height / 2 - 100,
+      200,
+      200
+    );
+  }
+
+  const weaponTextWidth = ctx.measureText(square.weapon.name).width;
+  const weaponTextX = square.x + (square.width - weaponTextWidth) / 2;
+
+  // Rita texten
+  drawText(
+    square.weapon.name,
+    weaponTextX,
+    square.y + square.height / 2 + 150,
+    "red"
+  );
+
+  // Draw button
+  const buttonTextWidth = ctx.measureText(button.text).width;
+  const buttonTextX = button.x + (button.width - buttonTextWidth) / 2;
+
+  drawSquare(button);
+  drawText(button.text, buttonTextX, button.y + 60, "black");
+};
