@@ -84,6 +84,7 @@ export const airstrike = {
   // image: assets.rhino,
   //   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
+  image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   attackIntervall: airstrikeStats.cooldown * stats.cooldown,
   cooldown: airstrikeStats.cooldown * stats.cooldown,
   //   attack: createAirstrike,

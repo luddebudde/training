@@ -14,6 +14,7 @@ export const stats = {
   area: currentCharacter.stats.area,
   speed: currentCharacter.stats.speed,
 
+  luck: currentCharacter.stats.luck,
   curse: currentCharacter.stats.curse,
   cooldown: currentCharacter.stats.cooldown,
   revives: currentCharacter.stats.revives,

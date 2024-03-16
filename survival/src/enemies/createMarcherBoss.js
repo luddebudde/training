@@ -3,7 +3,7 @@ import { loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { getRandomSpawnPos } from "../../getRandomSpawnPos.js";
+import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
 import {
   bosses,
   enemies,
@@ -44,7 +44,7 @@ export const createMarcherBoss = (
   // const newVel = makeDirection(marcherSpawnPos, player.pos);
 
   const marcher = {
-    health: 100000,
+    health: 1000,
     radius: 100,
     pos: {
       x: spawnWidth,

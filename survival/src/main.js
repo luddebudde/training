@@ -13,7 +13,7 @@ import { shootWeapons } from "./shootWeapons.js";
 import { createShotgun, shotgun } from "./weapons.js/createShotgun.js";
 import { keyDownTracker, oneTimeKeyPress } from "./keyDownTracker.js";
 import { createPlayer, currentCharacter } from "./createPlayer.js";
-import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
+import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
 import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
@@ -695,10 +695,7 @@ setInterval(() => {
   if (!isPause) {
     update();
   }
-  // movable.forEach((object) => {
-  //   object.move();
-  //   console.log("hej");
-  // });
+
   buttons.forEach((button) => {
     button.update?.();
   });

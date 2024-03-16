@@ -138,6 +138,7 @@ export const cherry = {
 
   upgrades: {
     level: 0,
+
     statsOrder: [
       ["cooldown"],
       ["speed"],

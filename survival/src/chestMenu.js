@@ -120,21 +120,10 @@ export const chestMenu = () => {
   pause();
 };
 
-const targetX = world.width / 2 - squareWidth / 2;
-const targetY = world.height / 2 - squareHeight / 2;
-
-// let animationStartTime;
-
-// let squareTime =
-// squareTime = square.startTime !== undefined ? square.startTime : squareTime;;
-
 function animateSquares(square) {
-  // squareTime = square.startTime
   const currentTime = Date.now();
   const elapsedTime = currentTime - square.startTime;
 
-  // console.log(elapsedTime, animationDuration);
-  // console.log(currentTime, square.startTime);
   drawingSquares.forEach((square) => {
     drawSquare(square);
     ctx.beginPath();
@@ -158,31 +147,53 @@ function animateSquares(square) {
 let chosenWeapon;
 const maxLevel = 5;
 
+let lootAmount;
+let setLootAmount;
+
 let hasDecidedWeapon = false;
+const chosenWeapons = [];
 let shouldEvolve = false;
 
 const chestReward = () => {
-  const evolutionWeapons = weapons.filter(
-    (weapon) => weapon.upgrades.level >= maxLevel
-  );
+  const lootValue = Math.floor(Math.random() * 100 * stats.luck);
 
-  const availableWeapons = weapons.filter(
-    (weapon) => weapon.upgrades.level <= maxLevel
-  );
-
-  // Uppdatera chosenWeapon om det tidigare valda vapnet inte längre är giltigt
-  if (evolutionWeapons.length > 0) {
-    chosenWeapon =
-      evolutionWeapons[Math.floor(Math.random() * evolutionWeapons.length)];
-    hasDecidedWeapon = true;
-    shouldEvolve = true;
-  } else if (!hasDecidedWeapon || !availableWeapons.includes(chosenWeapon)) {
-    chosenWeapon =
-      availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
-    hasDecidedWeapon = true;
+  if (lootValue > 90) {
+    lootAmount = 10;
+    // lootAmount = 3;
+  } else if (lootValue > 60) {
+    lootAmount = 5;
+    // lootAmount = 3;
+  } else if (lootValue > 30) {
+    lootAmount = 3;
+  } else {
+    lootAmount = 1;
+    // lootAmount = 3;
   }
 
-  console.log(evolutionWeapons.length);
+  // lootAmount = 5;
+
+  if (!hasDecidedWeapon) {
+    setLootAmount = lootAmount;
+    for (let i = 0; i < lootAmount; i++) {
+      const availableWeapons = weapons.filter(
+        (weapon) =>
+          weapon.upgrades.level <= weapon.upgrades.amountOrder.length - 1
+      );
+
+      if (availableWeapons.length > 0) {
+        chosenWeapon =
+          availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
+
+        // console.log(chosenWeapon);
+        chosenWeapons.push(chosenWeapon);
+      } else {
+        chosenWeapon = wiper;
+      }
+      console.log(availableWeapons);
+
+      hasDecidedWeapon = true;
+    }
+  }
 
   const square = {
     weapon: chosenWeapon,
@@ -193,8 +204,6 @@ const chestReward = () => {
     height: 400,
     color: "blue",
   };
-
-  // console.log(square.weapon);
 
   const button = {
     text: "OK",
@@ -208,10 +217,12 @@ const chestReward = () => {
       buttons.length = 0;
       drawingSquares.length = 0;
       hasDecidedWeapon = false;
-      console.log("start");
+      // console.log("start");
 
-      if (!button.evolve) {
-        const weaponUpgrades = square.weapon.upgrades;
+      // console.log(chosenWeapons);
+
+      chosenWeapons.forEach((chosenWeapon) => {
+        const weaponUpgrades = chosenWeapon.upgrades;
         const level = weaponUpgrades.level;
 
         const statTypes = weaponUpgrades.statsOrder[level];
@@ -220,50 +231,28 @@ const chestReward = () => {
         statTypes.forEach((statType, index) => {
           const amount = upgradeAmounts[index];
 
-          square.weapon.stats[statType] += amount;
+          chosenWeapon.stats[statType] += amount;
 
-          console.log(square.weapon.stats);
+          // console.log(square.weapon.stats);
         });
 
-        if (!weapons.includes(square.weapon)) {
-          weapons.push(square.weapon);
+        if (!weapons.includes(chosenWeapon)) {
+          weapons.push(chosenWeapon);
         }
 
-        square.weapon.upgrades.level += 1;
+        chosenWeapon.upgrades.level += 1;
 
-        console.log(square.weapon.name, square.weapon.upgrades.level, "chest");
-      } else {
-        weapons.splice(weapons.indexOf(square.chosenWeapon));
-        weapons.push(selfImpaler);
-      }
+        // console.log(chosenWeapon.name, chosenWeapon.upgrades.level, "chest");
+      });
+
+      chosenWeapons.length = 0;
       start();
     },
   };
 
   buttons.push(button);
 
-  // Draw weapon
-  drawSquare(square);
-  if (square.weapon.image !== undefined) {
-    ctx.drawImage(
-      square.weapon.image,
-      square.x + square.width / 2 - 100,
-      square.y + square.height / 2 - 100,
-      200,
-      200
-    );
-  }
-
-  const weaponTextWidth = ctx.measureText(square.weapon.name).width;
-  const weaponTextX = square.x + (square.width - weaponTextWidth) / 2;
-
-  // Rita texten
-  drawText(
-    square.weapon.name,
-    weaponTextX,
-    square.y + square.height / 2 + 150,
-    "red"
-  );
+  drawWeapons(square, setLootAmount);
 
   // Draw button
   const buttonTextWidth = ctx.measureText(button.text).width;
@@ -271,4 +260,64 @@ const chestReward = () => {
 
   drawSquare(button);
   drawText(button.text, buttonTextX, button.y + 60, "black");
+};
+
+const drawWeapons = (square, lootAmount) => {
+  const halfLootAmount =
+    lootAmount % 2 === 0 ? lootAmount / 2 : Math.ceil(lootAmount / 2);
+  const otherHalfLootAmount = lootAmount - halfLootAmount;
+
+  const weaponTextWidth = ctx.measureText(square.weapon.name).width;
+  const weaponTextX = square.x + (square.width - weaponTextWidth) / 2;
+  const weaponTextY = square.y + square.height / 2 + 150;
+
+  // Rita ut första vapnet
+  drawSquare(square);
+
+  for (let i = 0; i < lootAmount; i++) {
+    const drawChosenWeapon = chosenWeapons[i];
+
+    if (square.weapon.image !== undefined) {
+      if (i < halfLootAmount) {
+        // Övre delen
+
+        const imageWidth = square.weapon.image.width;
+        const finalImageWidth = (imageWidth / 20) * (2 / halfLootAmount);
+        const startX = halfLootAmount > 1 ? 325 : 0;
+
+        // console.log(i);
+
+        ctx.drawImage(
+          drawChosenWeapon.image,
+          square.x +
+            (square.width / (halfLootAmount + 1)) * (i + 1) -
+            finalImageWidth / 2,
+          // finalImageWidth +
+          // 150 * i,
+          // startX,
+          square.y + square.height / 2 - 125,
+          finalImageWidth,
+          finalImageWidth
+        );
+
+        drawText(square.weapon.name, weaponTextX, weaponTextY, "red");
+      } else {
+        // Undre delen
+        const imageWidth = square.weapon.image.width;
+        const finalImageWidth = (imageWidth / 20) * (2 / halfLootAmount);
+        const startX = halfLootAmount > 1 ? 325 : 0;
+
+        ctx.drawImage(
+          drawChosenWeapon.image,
+          square.x +
+            (square.width / (otherHalfLootAmount + 1)) *
+              (i - halfLootAmount + 1) -
+            finalImageWidth / 2,
+          square.y + square.height / 2 - 25,
+          finalImageWidth,
+          finalImageWidth
+        );
+      }
+    }
+  }
 };

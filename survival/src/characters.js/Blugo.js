@@ -23,6 +23,7 @@ export const Blugo = {
     area: 1,
     speed: 1,
 
+    luck: 1,
     curse: 1,
     cooldown: 1,
     revives: 300,

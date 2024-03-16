@@ -6,7 +6,7 @@ import { createNerfer } from "./enemies/createNerfer.js";
 import { createTank } from "./enemies/createTank.js";
 import { createWalker } from "./enemies/createWalker.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
-import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
+import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { bosses, player } from "./main.js";
 import { stats } from "./stats.js";
 
