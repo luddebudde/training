@@ -78,7 +78,7 @@ export const createAimBullet = () => {
 export const aimBullet = {
   name: "aimBullet",
   // image: assets.rhino,
-  image: await loadImage(`public/sprites/aimBulletSprite.png`),
+  image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
   attackIntervall: aimBulletStats.cooldown * stats.cooldown,
   cooldown: aimBulletStats.cooldown * stats.cooldown,

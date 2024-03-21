@@ -101,7 +101,7 @@ function moveAroundCircle(circle) {
 
 export const axe = {
   name: "Giant Axe",
-  image: await loadImage(`public/sprites/aimBulletSprite.png`),
+  image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   attackIntervall: axeStats.cooldown * stats.cooldown,
   cooldown: axeStats.cooldown * stats.cooldown,
   attack: createAxe,

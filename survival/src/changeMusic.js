@@ -2,7 +2,7 @@ import { universalVolume } from "./sounds.js";
 
 const shouldPlayMusic = true;
 
-const musicAudio = new Audio("public/sounds/gameMusic.mp3");
+const musicAudio = new Audio("/public/sounds/gameMusic.mp3");
 musicAudio.loop = true;
 musicAudio.volume = 0.7 * universalVolume;
 export const playMusic = () => {
@@ -33,17 +33,17 @@ export const changeVolume = (amount) => {
 };
 
 const normalMusic = {
-  fileName: "public/sounds/gameMusic.mp3",
+  fileName: "/public/sounds/gameMusic.mp3",
   volume: 0.7,
 };
 
 const funnyMusic = {
-  fileName: "public/sounds/alternativeMusic.mp3",
+  fileName: "/public/sounds/alternativeMusic.mp3",
   volume: 1,
 };
 
 const battleMusic = {
-  fileName: "public/sounds/battle_music.mp3",
+  fileName: "/public/sounds/battle_music.mp3",
   volume: 1,
 };
 
