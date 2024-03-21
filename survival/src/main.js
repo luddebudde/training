@@ -708,23 +708,32 @@ const update = () => {
 
   drawHealthBar(
     ctx,
-    world.width / 2 - player.radius * 1.25,
-    world.height / 2 + player.radius * 1.25,
-    player.radius * 2.5,
-    15,
+    world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
+    world.height / 2 + player.radius * 1.25 * squareSizeMultipler.y,
+    player.radius * 2.5 * squareSizeMultipler.x,
+    15 * squareSizeMultipler.y,
     player.health,
     stats.maxHealth
   );
 
   if (player.shield > 0) {
+    // drawShieldbar(
+    //   ctx,
+    //   world.width / 2 - player.radius * 1.25,
+    //   world.height / 2 + player.radius * 1.25,
+    //   player.radius * 2.5,
+    //   7,
+    //   player.shield,
+    //   player.maxShield
+    // );
     drawShieldbar(
       ctx,
-      world.width / 2 - player.radius * 1.25,
-      world.height / 2 + player.radius * 1.25,
-      player.radius * 2.5,
-      7,
-      player.shield,
-      player.maxShield
+      world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
+      world.height / 2 + player.radius * 1.25 * squareSizeMultipler.y,
+      player.radius * 2.5 * squareSizeMultipler.x,
+      15 * squareSizeMultipler.y,
+      player.health,
+      stats.maxHealth
     );
   }
 
