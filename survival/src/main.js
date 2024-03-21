@@ -150,16 +150,16 @@ export let mousePos = {
 
 export const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
-  skull: await loadImage("/public/sprites/skull.png"),
-  goldBag: await loadImage("/public/sprites/goldbag.png"),
-  blue: await loadImage("/public/sprites/blue.png"),
-  marcher: await loadImage("/public/animations/marcher_rotated.png"),
-  // assault: loadImage(`/ships/player/large/assault.png`),
-  // fighter: loadImage(`/ships/player/large/green.png`),
-  rhino: await loadImage(`/public/ships/player/large/green-rhino.png`),
-  jet: await loadImage("/public/animations/jet-even.png"),
-  explosion: await loadImage("/public/animations/explosion.png"),
-  comet: await loadImage("/public/animations/comet.png"),
+  skull: await loadImage("public/sprites/skull.png"),
+  goldBag: await loadImage("public/sprites/goldbag.png"),
+  blue: await loadImage("public/sprites/blue.png"),
+  marcher: await loadImage("public/animations/marcher_rotated.png"),
+  // assault: loadImage(`ships/player/large/assault.png`),
+  // fighter: loadImage(`ships/player/large/green.png`),
+  rhino: await loadImage(`public/ships/player/large/green-rhino.png`),
+  jet: await loadImage("public/animations/jet-even.png"),
+  explosion: await loadImage("public/animations/explosion.png"),
+  comet: await loadImage("public/animations/comet.png"),
 };
 
 canvas.addEventListener("mousemove", (event) => {

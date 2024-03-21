@@ -5,7 +5,7 @@ import { buttons, ctx, entities, player, start, startGame } from "./main.js";
 import { showStatistics } from "./showStatistics.js";
 import { stats } from "./stats.js";
 
-import { world } from "./world.js";
+import { squareSizeMultipler, world } from "./world.js";
 
 let chosenWeapon = 0;
 
@@ -38,11 +38,11 @@ export const deathMenu = () => {
     const buttonNameInfo = ctx.measureText(buttonName);
 
     const square = {
-      x: world.width / 2 - buttonNameInfo.width / 2,
-      y: 250 * i + 150,
-      width: buttonNameInfo.width + 80,
+      x: world.width / 2 - (buttonNameInfo.width / 2) * squareSizeMultipler.x,
+      y: 250 * i + 150 * squareSizeMultipler.y,
+      width: buttonNameInfo.width + 80 * squareSizeMultipler.x,
 
-      height: 200,
+      height: 200 * squareSizeMultipler.y,
       color: "black",
     };
 

@@ -11,6 +11,7 @@ export const createPlayer = () => {
     character: currentCharacter,
     maxHealth: stats.maxHealth,
     health: stats.maxHealth,
+    // health: 0,
     maxShield: currentCharacter.stats.maxShield,
     shield: currentCharacter.stats.shield,
     pos: {
