@@ -3,7 +3,11 @@
 
 // Text above defeated bosses, counting down to the final
 import { aimBullet } from "./weapons.js/createAimBullet.js";
-import { world } from "./world.js";
+import {
+  squareSizeMultipler,
+  world,
+  worldsizeMultiplier as worldsizeMultiplier,
+} from "./world.js";
 
 import { createWalker } from "./enemies/createWalker.js";
 import { doCirclesOverlap } from "./doCirlceOverlap.js";
@@ -230,6 +234,7 @@ const enemyFactor = 200;
 let weaponKills;
 
 export const startGame = () => {
+  console.log(worldsizeMultiplier);
   // stats = currentCharacter.stats;
   (stats.growth = currentCharacter.stats.growth),
     (stats.greed = currentCharacter.stats.growth),
@@ -238,8 +243,8 @@ export const startGame = () => {
     (stats.regeneration = currentCharacter.stats.regen),
     (stats.armor = currentCharacter.stats.armor),
     (stats.damage = currentCharacter.stats.damage),
-    (stats.area = currentCharacter.stats.area),
-    (stats.speed = currentCharacter.stats.speed),
+    (stats.area = currentCharacter.stats.area * worldsizeMultiplier),
+    (stats.speed = currentCharacter.stats.speed * worldsizeMultiplier),
     (stats.curse = currentCharacter.stats.curse),
     (stats.cooldown = currentCharacter.stats.cooldown),
     (oldTime = Date.now());
@@ -270,6 +275,8 @@ export const startGame = () => {
   //   }
   // };
   // maxEnemyCount = 3;
+  createXp(-400, -400, 100000);
+
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
@@ -401,18 +408,31 @@ const update = () => {
       weapon.attack?.();
     }
 
-    drawText(weapon.name, 80, 52.5 * (index + 2), "green");
+    drawText(
+      weapon.name,
+      80 * squareSizeMultipler.x,
+      52.5 * (index + 2) * squareSizeMultipler.y,
+      "green",
+      worldsizeMultiplier
+    );
 
     const buttonTextWidth = ctx.measureText(weapon.name).width;
     drawText(
       weapon.upgrades.level,
-      100 + buttonTextWidth,
-      52.5 * (index + 2),
-      "black"
+      (100 + buttonTextWidth) * squareSizeMultipler.x,
+      52.5 * (index + 2) * squareSizeMultipler.y,
+      "black",
+      worldsizeMultiplier
     );
 
     if (weapon.image !== undefined) {
-      ctx.drawImage(weapon.image, 20, 65 + 55 * index, 50, 50);
+      ctx.drawImage(
+        weapon.image,
+        20 * squareSizeMultipler.x,
+        (65 + 55 * index) * squareSizeMultipler.y,
+        50 * squareSizeMultipler.x,
+        50 * squareSizeMultipler.y
+      );
     }
 
     // weaponKills += weapon.statistics.killCount;
@@ -627,13 +647,39 @@ const update = () => {
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 
+  const UIStatistics = {
+    goldKillYMargin: 100 * squareSizeMultipler.y,
+  };
+
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
-  drawText(player.xp.level, world.width - 80, 40, "green");
+  drawText(
+    player.xp.level,
+    world.width - 80 * squareSizeMultipler.x,
+    40 * squareSizeMultipler.y,
+    "green",
+    worldsizeMultiplier
+  );
 
   const goldtextX = world.width - 80;
 
-  ctx.drawImage(assets.goldBag, 0, 0, 211, 239, goldtextX - 60, 60, 50, 50);
-  drawText(player.gold, goldtextX, 100, "#ECF500");
+  ctx.drawImage(
+    assets.goldBag,
+    0,
+    0,
+    211,
+    239,
+    goldtextX - 60 * squareSizeMultipler.x,
+    60 * squareSizeMultipler.y,
+    50 * squareSizeMultipler.x,
+    50 * squareSizeMultipler.x
+  );
+  drawText(
+    player.gold,
+    goldtextX,
+    UIStatistics.goldKillYMargin,
+    "#ECF500",
+    worldsizeMultiplier
+  );
 
   ctx.drawImage(
     assets.skull,
@@ -641,12 +687,18 @@ const update = () => {
     0,
     136,
     160,
-    (world.width / 5) * 4 - 50,
-    60,
-    40,
-    50
+    (world.width / 5) * 4 - 50 * squareSizeMultipler.x,
+    60 * squareSizeMultipler.y,
+    40 * squareSizeMultipler.x,
+    50 * squareSizeMultipler.y
   );
-  drawText(statistics.overall.kills, (world.width / 5) * 4, 100, "black");
+  drawText(
+    statistics.overall.kills,
+    (world.width / 5) * 4,
+    UIStatistics.goldKillYMargin,
+    "black",
+    worldsizeMultiplier
+  );
 
   drawHealthBar(
     ctx,

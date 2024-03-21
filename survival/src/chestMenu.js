@@ -217,9 +217,6 @@ const chestReward = () => {
       buttons.length = 0;
       drawingSquares.length = 0;
       hasDecidedWeapon = false;
-      // console.log("start");
-
-      // console.log(chosenWeapons);
 
       chosenWeapons.forEach((chosenWeapon) => {
         const weaponUpgrades = chosenWeapon.upgrades;
@@ -232,8 +229,6 @@ const chestReward = () => {
           const amount = upgradeAmounts[index];
 
           chosenWeapon.stats[statType] += amount;
-
-          // console.log(square.weapon.stats);
         });
 
         if (!weapons.includes(chosenWeapon)) {
@@ -241,8 +236,6 @@ const chestReward = () => {
         }
 
         chosenWeapon.upgrades.level += 1;
-
-        // console.log(chosenWeapon.name, chosenWeapon.upgrades.level, "chest");
       });
 
       chosenWeapons.length = 0;
@@ -285,16 +278,12 @@ const drawWeapons = (square, lootAmount) => {
         const finalImageWidth = (imageWidth / 20) * (2 / halfLootAmount);
         const startX = halfLootAmount > 1 ? 325 : 0;
 
-        // console.log(i);
-
         ctx.drawImage(
           drawChosenWeapon.image,
           square.x +
             (square.width / (halfLootAmount + 1)) * (i + 1) -
             finalImageWidth / 2,
-          // finalImageWidth +
-          // 150 * i,
-          // startX,
+
           square.y + square.height / 2 - 125,
           finalImageWidth,
           finalImageWidth

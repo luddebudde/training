@@ -13,11 +13,13 @@ import { makeDirection } from "../makeDirection.js";
 import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { worldsizeMultiplier } from "../world.js";
 
 export const createTank = (spawnWidth, spawnHeight) => {
   const tank = {
     health: 300,
-    radius: 40,
+    // startRadius: 40,
+    radius: 40 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -26,7 +28,7 @@ export const createTank = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    speed: 1 * stats.curse,
+    speed: 1 * stats.curse * worldsizeMultiplier,
     // speed: 0,
     damage: 0.5,
     // damage: 0,

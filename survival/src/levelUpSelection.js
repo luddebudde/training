@@ -22,7 +22,7 @@ import { shotgun } from "./weapons.js/createShotgun.js";
 import { buba, colin, jedå, uluk } from "./weapons.js/randomWeapons.js";
 import { selfImpaler } from "./weapons.js/selfImpaler.js";
 import { wiper } from "./weapons.js/wiper.js";
-import { world } from "./world.js";
+import { squareSizeMultipler, world, worldsizeMultiplier } from "./world.js";
 
 let upgradeWeaponPool = [];
 let amountOfWeapons = 0;
@@ -54,10 +54,10 @@ let weaponPool = [];
 
 export const levelUpSelection = () => {
   const square = {
-    x: 750,
-    y: 100,
-    width: 1060,
-    height: 1000,
+    x: 750 * squareSizeMultipler.x,
+    y: 100 * squareSizeMultipler.y,
+    width: 1060 * squareSizeMultipler.x,
+    height: 1000 * squareSizeMultipler.y,
     color: "green",
   };
   drawSquare(square);
@@ -106,10 +106,10 @@ export const levelUpSelection = () => {
       image: chosenWeapon?.image,
 
       weapon: chosenWeapon,
-      x: square.x + 20,
-      y: (i * square.height) / 4 + 120,
-      width: square.width - 40,
-      height: square.height / 4 - 40,
+      x: square.x + 20 * squareSizeMultipler.x,
+      y: (i * square.height) / 4 + 120 * squareSizeMultipler.y,
+      width: square.width - 40 * squareSizeMultipler.x,
+      height: square.height / 4 - 40 * squareSizeMultipler.y,
       function: () => {
         if (button.weapon !== undefined) {
           const weaponUpgrades = button.weapon.upgrades;
@@ -156,13 +156,18 @@ export const levelUpSelection = () => {
     ctx.fill();
 
     if (button.weapon !== undefined) {
+      const textBonusMarginX = 40 * squareSizeMultipler.x;
+      const textBonusMarginY = 180 * squareSizeMultipler.y;
+
       const level = button.weapon.upgrades.level;
       // Rita vapennamnet
+
       drawText(
         button.weapon.name,
-        square.x + 40,
-        (i * square.height) / 4 + 180,
-        "green"
+        square.x + textBonusMarginX,
+        (i * square.height) / 4 + textBonusMarginY,
+        "green",
+        worldsizeMultiplier
       );
 
       // Rita uppgraderingsnivån
@@ -173,16 +178,18 @@ export const levelUpSelection = () => {
 
       drawText(
         levelText,
-        square.x + 40 + weaponNameWidth + 20, // Placera texten 100 enheter åt höger från vapennamnet
-        (i * square.height) / 4 + 180,
-        "yellow"
+        square.x + textBonusMarginX + weaponNameWidth + textBonusMarginX / 2, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + textBonusMarginY,
+        "yellow",
+        worldsizeMultiplier
       );
 
       drawText(
         `${button.weapon.upgrades.statsOrder[level]}:`,
-        square.x + 40 + weaponNameWidth + 20, // Placera texten 100 enheter åt höger från vapennamnet
-        (i * square.height) / 4 + 300,
-        "yellow"
+        square.x + textBonusMarginX + weaponNameWidth + textBonusMarginX / 2, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + textBonusMarginY * 1.66,
+        "yellow",
+        worldsizeMultiplier
       );
 
       const weaponStatsWidth = ctx.measureText(
@@ -191,20 +198,30 @@ export const levelUpSelection = () => {
 
       drawText(
         button.weapon.upgrades.amountOrder[level],
-        square.x + 40 + weaponNameWidth + weaponStatsWidth + 50, // Placera texten 100 enheter åt höger från vapennamnet
-        (i * square.height) / 4 + 300,
-        "yellow"
+        square.x +
+          textBonusMarginX +
+          weaponNameWidth +
+          weaponStatsWidth +
+          textBonusMarginX * 1.25, // Placera texten 100 enheter åt höger från vapennamnet
+        (i * square.height) / 4 + textBonusMarginY * 1.66,
+        "yellow",
+        worldsizeMultiplier
       );
 
       if (button.weapon.upgrades.description !== undefined) {
         const description = button.weapon.upgrades.description[level];
 
-        const maxWidth = 500; // Bredden där du vill bryta raden
+        const textBonusWidth = weaponNameWidth + weaponStatsWidth + 150;
+
+        // const maxWidth = textBonusWidth - square.width; // Bredden där du vill bryta raden
+
+        // const maxWidth = Math.min(textBonusWidth - square.width, square.width); // Begränsa maxWidth till bredden av rutan
+        const maxWidth = Math.min(square.width - textBonusWidth, square.width); // Begränsa maxWidth till bredden av rutan
         const lineHeight = 40; // Önskat mellanrum mellan raderna
 
         let words = description.split(" ");
         let line = "";
-        let y = (i * square.height) / 4 + 180;
+        let y = (i * square.height) / 4 + textBonusMarginY;
 
         for (let word of words) {
           const testLine = line + word + " ";
@@ -212,11 +229,7 @@ export const levelUpSelection = () => {
           const testWidth = metrics.width;
 
           if (testWidth > maxWidth && line !== "") {
-            ctx.fillText(
-              line,
-              square.x + 40 + weaponNameWidth + weaponStatsWidth + 150,
-              y
-            );
+            ctx.fillText(line, square.x + textBonusWidth, y);
             line = word + " ";
             y += lineHeight; // Höjningen för nästa rad
           } else {
@@ -224,16 +237,23 @@ export const levelUpSelection = () => {
           }
         }
 
-        ctx.fillText(
-          line,
-          square.x + 40 + weaponNameWidth + weaponStatsWidth + 150,
-          y
-        );
+        ctx.fillText(line, square.x + textBonusWidth, y);
       }
     }
 
+    const imageMarginBonus = {
+      x: 20 * squareSizeMultipler.x,
+      y: 90 * squareSizeMultipler.y,
+    };
+
     if (button.image !== undefined) {
-      ctx.drawImage(button.image, button.x + 20, button.y + 90, 100, 100);
+      ctx.drawImage(
+        button.image,
+        button.x + imageMarginBonus.x,
+        button.y + imageMarginBonus.y,
+        100 * squareSizeMultipler.x,
+        100 * squareSizeMultipler.y
+      );
     }
 
     buttons.push(button);

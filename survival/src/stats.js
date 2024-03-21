@@ -1,4 +1,5 @@
 import { currentCharacter } from "./createPlayer.js";
+import { worldsizeMultiplier } from "./world.js";
 
 export const stats = {
   growth: currentCharacter.stats.growth,
@@ -11,7 +12,7 @@ export const stats = {
   armor: currentCharacter.stats.armor,
 
   damage: currentCharacter.stats.damage,
-  area: currentCharacter.stats.area,
+  area: currentCharacter.stats.area * 0.001,
   speed: currentCharacter.stats.speed,
 
   luck: currentCharacter.stats.luck,

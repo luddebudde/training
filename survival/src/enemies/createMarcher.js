@@ -14,6 +14,7 @@ import { makeDirection } from "../makeDirection.js";
 import { playHurt, playMinigunOverheat } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { worldsizeMultiplier } from "../world.js";
 
 const marcherAnimation = animation({
   imageCount: 4,
@@ -32,7 +33,7 @@ export const createMarcher = (
     y: spawnHeight,
   };
   // console.log("hej");
-  const MarcherSpeed = 10 * stats.curse;
+  const MarcherSpeed = 10 * stats.curse * worldsizeMultiplier;
 
   const newVel = makeDirection(marcherSpawnPos, player.pos);
 
@@ -40,7 +41,8 @@ export const createMarcher = (
 
   const marcher = {
     health: 100,
-    radius: 50,
+    // startRadius: 50,
+    radius: 50 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -55,7 +57,7 @@ export const createMarcher = (
           ? newVel.y * MarcherSpeed
           : direction.y * MarcherSpeed,
     },
-    speed: 2 * stats.curse,
+    speed: 10 * stats.curse * worldsizeMultiplier,
 
     damage: 0.4,
 

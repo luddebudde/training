@@ -13,6 +13,7 @@ import { makeDirection } from "../makeDirection.js";
 import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { worldsizeMultiplier } from "../world.js";
 
 let enemyType;
 let nerfamount;
@@ -37,7 +38,8 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
 
   const nerfer = {
     health: 10,
-    radius: 40,
+    // startRadius: 40,
+    radius: 40 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -48,7 +50,7 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
     },
     nerfType: enemyType,
     nerfamount: nerfamount,
-    speed: 4 * stats.curse,
+    speed: 4 * stats.curse * worldsizeMultiplier,
     // speed: 0,
     damage: 0.5,
     // damage: 0,

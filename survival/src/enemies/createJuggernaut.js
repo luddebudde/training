@@ -14,11 +14,13 @@ import { makeDirection } from "../makeDirection.js";
 import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { worldsizeMultiplier } from "../world.js";
 
 export const createJuggernaut = (spawnWidth, spawnHeight) => {
   const juggernaut = {
     health: 800,
-    radius: 45,
+    // startRadius: 45,
+    radius: 45 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -27,7 +29,7 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    speed: 0.75 * stats.curse,
+    speed: 0.75 * stats.curse * worldsizeMultiplier,
     // speed: 0,
     damage: 1 * stats.curse,
     // damage: 0,

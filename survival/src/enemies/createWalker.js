@@ -14,6 +14,7 @@ import { makeDirection } from "../makeDirection.js";
 import { playHurt, playMinigunOverheat } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
+import { worldsizeMultiplier } from "../world.js";
 
 const walkerAnimations = animation({
   imageCount: 9,
@@ -25,7 +26,8 @@ const walkerAnimations = animation({
 export const createWalker = (spawnWidth, spawnHeight) => {
   const walker = {
     health: 100,
-    radius: 40,
+    // startRadius: 40,
+    radius: 40 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -34,7 +36,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    speed: 2 * stats.curse,
+    speed: 2 * stats.curse * worldsizeMultiplier,
 
     damage: 0.3 * 0,
 
