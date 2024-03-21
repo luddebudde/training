@@ -343,7 +343,13 @@ const update = () => {
     }, 1000);
   }
 
-  drawText(Math.floor(timer), world.width / 2, 100, "red");
+  drawText(
+    Math.floor(timer),
+    world.width / 2,
+    100 * squareSizeMultipler.y,
+    "red",
+    worldsizeMultiplier
+  );
 
   if (isKeyDown("KeyW")) {
     player.pos.y -= player.speed;
@@ -419,7 +425,7 @@ const update = () => {
     const buttonTextWidth = ctx.measureText(weapon.name).width;
     drawText(
       weapon.upgrades.level,
-      (100 + buttonTextWidth) * squareSizeMultipler.x,
+      buttonTextWidth + 100 * squareSizeMultipler.x,
       52.5 * (index + 2) * squareSizeMultipler.y,
       "black",
       worldsizeMultiplier
