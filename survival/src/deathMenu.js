@@ -5,7 +5,7 @@ import { buttons, ctx, entities, player, start, startGame } from "./main.js";
 import { showStatistics } from "./showStatistics.js";
 import { stats } from "./stats.js";
 
-import { squareSizeMultipler, world } from "./world.js";
+import { squareSizeMultipler, world, worldsizeMultiplier } from "./world.js";
 
 let chosenWeapon = 0;
 
@@ -39,7 +39,7 @@ export const deathMenu = () => {
 
     const square = {
       x: world.width / 2 - (buttonNameInfo.width / 2) * squareSizeMultipler.x,
-      y: 250 * i + 150 * squareSizeMultipler.y,
+      y: (250 * i + 150) * squareSizeMultipler.y,
       width: buttonNameInfo.width + 80 * squareSizeMultipler.x,
 
       height: 200 * squareSizeMultipler.y,
@@ -73,14 +73,17 @@ export const deathMenu = () => {
       // Rita vapennamnet
       drawText(
         buttonName,
-        square.x + 40,
-        (i * loopAmount * square.height + square.y) / loopAmount + 180,
-        "red"
+        square.x + 40 * squareSizeMultipler.x,
+        // (i * loopAmount * square.height + square.y) / loopAmount + 100,
+        square.y + 100 * squareSizeMultipler.y,
+        // ((i + 1) * square.y) / loopAmount,
+        "red",
+        worldsizeMultiplier
       );
 
-      if (button.image !== undefined) {
-        ctx.drawImage(button.image, button.x + 20, button.y + 90, 100, 100);
-      }
+      // if (button.image !== undefined) {
+      //   ctx.drawImage(button.image, button.x + 20, button.y + 90, 100, 100);
+      // }
 
       buttons.push(button);
       // console.log(buttons);

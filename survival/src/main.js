@@ -234,7 +234,7 @@ const enemyFactor = 200;
 let weaponKills;
 
 export const startGame = () => {
-  console.log(worldsizeMultiplier);
+  // console.log(worldsizeMultiplier);
   // stats = currentCharacter.stats;
   (stats.growth = currentCharacter.stats.growth),
     (stats.greed = currentCharacter.stats.growth),
@@ -708,11 +708,11 @@ const update = () => {
 
   drawHealthBar(
     ctx,
-    world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
+    world.width / 2 - player.radius * 1.25,
     world.height / 2 +
       player.radius +
       player.radius * 0.25 * squareSizeMultipler.y,
-    player.radius * 2.5 * squareSizeMultipler.x,
+    player.radius * 2.5,
     15 * squareSizeMultipler.y,
     player.health,
     stats.maxHealth
@@ -730,11 +730,11 @@ const update = () => {
     // );
     drawShieldbar(
       ctx,
-      world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
+      world.width / 2 - player.radius * 1.25,
       world.height / 2 +
         player.radius +
         player.radius * 0.25 * squareSizeMultipler.y,
-      player.radius * 2.5 * squareSizeMultipler.x,
+      player.radius * 2.5,
       15 * squareSizeMultipler.y,
       player.health,
       stats.maxHealth
