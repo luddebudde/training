@@ -709,7 +709,9 @@ const update = () => {
   drawHealthBar(
     ctx,
     world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
-    world.height / 2 + player.radius * 1.25 * squareSizeMultipler.y,
+    world.height / 2 +
+      player.radius +
+      player.radius * 0.25 * squareSizeMultipler.y,
     player.radius * 2.5 * squareSizeMultipler.x,
     15 * squareSizeMultipler.y,
     player.health,
@@ -729,15 +731,15 @@ const update = () => {
     drawShieldbar(
       ctx,
       world.width / 2 - player.radius * 1.25 * squareSizeMultipler.x,
-      world.height / 2 + player.radius * 1.25 * squareSizeMultipler.y,
+      world.height / 2 +
+        player.radius +
+        player.radius * 0.25 * squareSizeMultipler.y,
       player.radius * 2.5 * squareSizeMultipler.x,
       15 * squareSizeMultipler.y,
       player.health,
       stats.maxHealth
     );
   }
-
-  // console.log(buttons);
 
   if (player.health <= 0) {
     pause();

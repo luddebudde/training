@@ -1,7 +1,7 @@
 export const world = {
-  width: screen.width / 2,
+  width: screen.width,
   // width: 1000,
-  height: screen.height / 2,
+  height: screen.height,
 };
 
 export const worldsizeMultiplier = world.width / 2560;
