@@ -118,7 +118,7 @@ export const createCherry = () => {
 export const cherry = {
   name: "cherry",
   // image: assets.rhino,
-  image: await loadImage(`/public/sprites/aimBulletSprite.png`),
+  image: await loadImage(`public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
   attackIntervall: cherryStats.cooldown * stats.cooldown,
   cooldown: cherryStats.cooldown * stats.cooldown,
