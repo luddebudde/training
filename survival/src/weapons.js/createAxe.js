@@ -12,9 +12,6 @@ import { makeDirection } from "../makeDirection.js";
 import { stats } from "../stats.js";
 import { world } from "../world.js";
 
-const bulletSpeed = 20 * stats.speed;
-// const cooldown = 25;
-
 const axeStats = {
   area: 80,
   speed: 10,
@@ -27,19 +24,9 @@ let axeBullet = {};
 
 export const createAxe = () => {
   const area = axeStats.area + stats.area;
-  // const speed = stats.speed * axeStats.speed;
   const speed = 5;
   const damage = stats.damage * axeStats.damage;
   const cooldown = stats.cooldown * axeStats.cooldown;
-
-  // const circleRadius = 50;
-
-  // const randomAngle = getRandomAngle();
-  // const randomDistance = getRandomDistance(area);
-
-  // Beräkna slumpad position i cirkeln
-
-  // const direction = makeDirection(stopPos, player.pos);
 
   axeBullet = {
     angle: 4,
@@ -64,18 +51,9 @@ export const createAxe = () => {
     enemiesHit: [],
     pierce: 10000,
     weapon: axe,
-
-    // attack: () => {
-    //   bullets.push(axeBullet);
-    // },
   };
 
   bullets.push(axeBullet);
-  // console.log("axe");
-
-  // console.log(axeBullet);
-  // console.log(player.pos.y - player.radius * 4 + area);
-  // console.log(axeBullet.pos);
 };
 
 function moveAroundCircle(circle) {
@@ -110,14 +88,7 @@ export const axe = {
     axe.attackIntervall = axeStats.cooldown * stats.cooldown;
 
     if (axeBullet.pos !== undefined) {
-      // console.log(axeBullet.pos, 1);
-      // console.log(axeBullet.pos);
       moveAroundCircle(axeBullet);
-
-      // console.log(
-      //   world.width / 2 + axeBullet.radius * Math.cos(axeBullet.angle)
-      // );
-      // console.log(axeBullet.speed * Math.PI);
     }
   },
 

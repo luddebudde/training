@@ -9,9 +9,5 @@ export const makeDirection = (secondObject, mainObject) => {
     y: diff.y / (dist + 0.001),
   };
 
-  // if (isNaN(direction)) {
-  //   throw new Error("kill me...");
-  // }
-
   return direction;
 };

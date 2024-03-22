@@ -107,6 +107,15 @@ export const createCherry = () => {
         targetables.splice(index, 1);
       }
     },
+    draw: (ctx, assets) => {
+      ctx.drawImage(
+        assets.cherry,
+        cherryBullet.pos.x - cherryBullet.radius,
+        cherryBullet.pos.y - cherryBullet.radius,
+        cherryBullet.radius * 2,
+        cherryBullet.radius * 2
+      );
+    },
   };
   //   bullets.push(cherryBullet);
   targetables.push(cherryBullet);

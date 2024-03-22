@@ -15,6 +15,7 @@ import { cherry } from "./weapons.js/cherry.js";
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import { airstrike } from "./weapons.js/createAirstrike.js";
 import { axe } from "./weapons.js/createAxe.js";
+import { droper } from "./weapons.js/createDroper.js";
 import { holyArea } from "./weapons.js/createHolyArea.js";
 import { minigun } from "./weapons.js/createMinigun.js";
 import { randomAimBullet } from "./weapons.js/createRandomAimBullet.js";
@@ -39,6 +40,7 @@ export const totalWeapons = [
   airstrike,
   selfImpaler,
   cherry,
+  droper,
 
   jedå,
   colin,

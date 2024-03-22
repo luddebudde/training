@@ -1,5 +1,7 @@
+import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { enemies, player, worldObjects } from "../main.js";
+import { drawObject } from "../draw/drawObject.js";
+import { ctx, drawingCircles, enemies, player, worldObjects } from "../main.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -10,12 +12,11 @@ const holyAreaStats = {
   area: 0,
   speed: 0,
   damage: 0,
+  effect: 8,
 };
 
 export const createHolyArea = () => {
   const area = stats.area * holyAreaStats.area;
-  // const speed = stats.speed + holyAreaStats.speed;
-  // const damage = stats.damage + holyAreaStats.damage;
 
   const holyAreaBody = {
     radius: 300 * area,
@@ -34,7 +35,6 @@ export const createHolyArea = () => {
     color: "green",
     team: "player",
     priority: 1,
-    // enemiesHit: [],
   };
 
   return holyAreaBody;
@@ -46,12 +46,21 @@ export const holyArea = {
   name: "holyArea",
   attackIntervall: cooldown,
   cooldown: cooldown,
-  // attack: () => {
 
-  // },
   update: () => {
     holyAreaBody.pos = player.pos;
     holyAreaBody.radius = 300 * (holyAreaStats.area + stats.area);
+
+    enemies.forEach((enemy) => {
+      if (doCirclesOverlap(holyAreaBody, enemy)) {
+        // dealDamage(enemy, "death", 1000, holyArea);
+        // enemy.vel = vector.alone.div(enemy.vel, 4);
+        // enemy.speed -= 5;
+        enemy.slowEffect = holyAreaStats.effect / 10;
+      }
+    });
+
+    // drawObject(ctx, holyAreaBody);
   },
 
   statistics: {

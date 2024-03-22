@@ -33,6 +33,7 @@ export const createPlayer = () => {
     },
     levelUpIncrease: currentCharacter.levelUpIncrease,
 
+    eggCount: 0,
     gold: 0,
     speed: stats.movementSpeed * worldsizeMultiplier,
     // startRadius: 40,

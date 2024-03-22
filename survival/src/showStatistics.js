@@ -13,12 +13,18 @@ let overallStatAmount = 0;
 let weaponStatisticAmount = 0;
 
 const drawStatistics = (type, value, x, y, color = "red") => {
-  const margin = x + 10;
+  const margin = (x + 10) * squareSizeMultipler.x;
 
   const keyHeight = 100 * overallStatAmount * squareSizeMultipler.x;
   const keyLenght = ctx.measureText(type);
 
-  drawText(type, 40, keyHeight, "red", worldsizeMultiplier);
+  drawText(
+    type,
+    40 * squareSizeMultipler.x,
+    keyHeight,
+    "red",
+    worldsizeMultiplier
+  );
   drawText(
     ":",
     keyLenght.width + margin,
@@ -28,7 +34,7 @@ const drawStatistics = (type, value, x, y, color = "red") => {
   );
   drawText(
     value,
-    keyLenght.width + margin + 20,
+    keyLenght.width + margin + 20 * squareSizeMultipler.x,
     keyHeight,
     color,
     worldsizeMultiplier
@@ -50,6 +56,18 @@ export const showStatistics = () => {
 
   drawSquare(square);
 
+  const playerSquare = {
+    x: world.width,
+    y: world.height,
+    width: -600 * squareSizeMultipler.x,
+    height: -600 * squareSizeMultipler.y,
+    color: "white",
+  };
+
+  drawSquare(playerSquare);
+
+  // draw
+
   const objectKeys = Object.keys(statistics.overall);
 
   for (const key of objectKeys) {
@@ -65,7 +83,9 @@ export const showStatistics = () => {
 
     drawText(
       weapon.name,
-      (previusWeaponLenght.width * index - currentWeaponLenght.width + 1100) *
+      (previusWeaponLenght.width * index -
+        currentWeaponLenght.width +
+        1100 * squareSizeMultipler.x) *
         1,
       60 * squareSizeMultipler.y,
       "blue",

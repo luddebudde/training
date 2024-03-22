@@ -55,6 +55,7 @@ export const createMarcherBoss = (
       x: 0,
       y: 0,
     },
+    slowEffect: 0,
     speed: 20 * stats.curse * worldsizeMultiplier,
 
     damage: 5,

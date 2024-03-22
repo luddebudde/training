@@ -79,6 +79,10 @@ import {
   wave4,
   wave5,
 } from "./waves.js";
+import { drawPointingArrow } from "./drawPointingArrow.js";
+import { createEgg } from "./createEgg.js";
+import { placeEggMap } from "./eggMap.js";
+import { droper } from "./weapons.js/createDroper.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -106,7 +110,7 @@ export let weapons = [
   // selfImpaler,
 ];
 export let printWeapons = [
-  // holyArea.body
+  // holyAreaBody
 ];
 
 export let maxAmountOfWeapons = 6;
@@ -126,6 +130,10 @@ export const movable = [];
 export const pickupTypes = [];
 export const pickups = [];
 
+export const mapObjects = [];
+
+export const drawingCircles = [holyAreaBody];
+
 export let worldObjects = [
   printWeapons,
   entities,
@@ -135,6 +143,8 @@ export let worldObjects = [
   targetables,
   pickups,
   chests,
+  mapObjects,
+  drawingCircles,
 ];
 const worldObjectsLenght = worldObjects.length;
 
@@ -153,13 +163,16 @@ export const assets = {
   skull: await loadImage("public/sprites/skull.png"),
   goldBag: await loadImage("public/sprites/goldbag.png"),
   blue: await loadImage("public/sprites/blue.png"),
-  marcher: await loadImage("public/animations/marcher_rotated.png"),
+  egg: await loadImage("public/sprites/egg.png"),
+  cherry: await loadImage("public/sprites/cherry.png"),
   // assault: loadImage(`ships/player/large/assault.png`),
   // fighter: loadImage(`ships/player/large/green.png`),
   rhino: await loadImage(`public/ships/player/large/green-rhino.png`),
   jet: await loadImage("public/animations/jet-even.png"),
   explosion: await loadImage("public/animations/explosion.png"),
   comet: await loadImage("public/animations/comet.png"),
+
+  marcher: await loadImage("public/animations/marcher_rotated.png"),
 };
 
 canvas.addEventListener("mousemove", (event) => {
@@ -253,6 +266,12 @@ export const startGame = () => {
   targetables.push(player);
   players.push(player);
 
+  for (let i = 0; i < 3; i++) {
+    createEgg(300 * i, -300);
+  }
+
+  placeEggMap(0, -1500);
+
   enemies.length = 0;
   entities.length = 0;
   entities.push(player);
@@ -281,14 +300,15 @@ export const startGame = () => {
   weapons = [
     // currentCharacter.startingWeapon,
     aimBullet,
-    // holyArea,
+    holyArea,
     // minigun,
     // wiper,
     // randomAimBullet,
     // axe,
-    airstrike,
+    // airstrike,
     // selfImpaler,
     cherry,
+    droper,
   ];
 
   createCollector(100, 100);
@@ -454,13 +474,6 @@ const update = () => {
     if (entity.health <= 0) {
       createXp(entity.pos.x, entity.pos.y, entity.xp);
     }
-
-    if (
-      doCirclesOverlap(holyAreaBody, entity) &&
-      holyAreaBody.team !== entity.team
-    ) {
-      entity.vel = vector.alone.div(entity.vel, 4);
-    }
   });
 
   xps.forEach((xp) => {
@@ -603,6 +616,12 @@ const update = () => {
 
   targetables.forEach((targetable, index) => {
     targetable.update?.(index);
+    // target
+  });
+
+  mapObjects.forEach((object) => {
+    object.update?.();
+    drawPointingArrow(ctx, player, object, "green");
   });
 
   pickups.forEach((pickup, indexU) => {
@@ -636,9 +655,10 @@ const update = () => {
     // gameObjects.sort((a, b) => a.priority - b.priority);
 
     gameObjects.forEach((object) => {
-      if (object.vel !== undefined) {
-        object.pos.x += object.vel.x;
-        object.pos.y += object.vel.y;
+      if (object.vel !== undefined && object.slowEffect !== undefined) {
+        const slowdownFactor = 1 - object.slowEffect;
+        object.pos.x += object.vel.x * slowdownFactor;
+        object.pos.y += object.vel.y * slowdownFactor;
       }
 
       // console.log(gameObjects);
@@ -749,6 +769,7 @@ const update = () => {
   oldHealth = player.health;
 
   worldObjects = [
+    drawingCircles,
     entities,
     bullets,
     xps,
@@ -757,6 +778,7 @@ const update = () => {
     targetables,
     pickups,
     chests,
+    mapObjects,
   ];
 };
 

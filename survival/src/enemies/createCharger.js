@@ -28,6 +28,7 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
+    slowEffect: 0,
     speed: 5 * stats.curse * worldsizeMultiplier,
     // speed: 0,
     // damage: 0.5,

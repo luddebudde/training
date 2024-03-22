@@ -50,6 +50,7 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
     },
     nerfType: enemyType,
     nerfamount: nerfamount,
+    slowEffect: 0,
     speed: 4 * stats.curse * worldsizeMultiplier,
     // speed: 0,
     damage: 0.5,

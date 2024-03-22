@@ -29,6 +29,6 @@ export const Blugo = {
     revives: 300,
   },
   levelUpIncrease: () => {
-    stats.curse += 0.1;
+    // stats.curse += 0.1;
   },
 };
