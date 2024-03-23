@@ -12,7 +12,7 @@ export const stats = {
   armor: currentCharacter.stats.armor,
 
   damage: currentCharacter.stats.damage,
-  area: currentCharacter.stats.area * 0.001,
+  area: currentCharacter.stats.area,
   speed: currentCharacter.stats.speed,
 
   luck: currentCharacter.stats.luck,

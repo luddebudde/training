@@ -54,7 +54,7 @@ export const playSlice = () => {
 
 export const playBossDefeat = () => {
   const audio = new Audio("public/sounds/small_boss_defeat.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 0.5 * universalVolume;
   audio.play();
 };
 

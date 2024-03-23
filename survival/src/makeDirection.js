@@ -11,3 +11,13 @@ export const makeDirection = (secondObject, mainObject) => {
 
   return direction;
 };
+
+export const getDistance = (mainObject, secondObject) => {
+  const diff = {
+    x: mainObject.x - secondObject.x,
+    y: mainObject.y - secondObject.y,
+  };
+  const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
+
+  return dist;
+};

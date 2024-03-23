@@ -19,6 +19,7 @@ export const createEgg = (spawnWidth, spawnHeight) => {
     team: "enemy",
     priority: 10,
     shouldPoint: false,
+    arrowColor: "green",
 
     update: () => {
       if (doCirclesOverlap(player, egg)) {

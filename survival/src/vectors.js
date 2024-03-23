@@ -61,3 +61,8 @@ export const vector = {
     },
   },
 };
+
+export const origo = {
+  x: 0,
+  y: 0,
+};

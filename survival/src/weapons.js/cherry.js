@@ -16,7 +16,7 @@ const bulletSpeed = 20 * stats.speed;
 
 const cherryStats = {
   area: 20,
-  speed: 1,
+  speed: 3,
   damage: 20,
   cooldown: 400,
   pullForceBonus: 0,
@@ -73,6 +73,7 @@ export const createCherry = () => {
     lifetime: cherryStats.lifetime,
     bulletStopPos: stopPos,
     radius: area,
+    angle: 0,
     // bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
@@ -85,6 +86,8 @@ export const createCherry = () => {
       x: direction.x * speed,
       y: direction.y * speed,
     },
+    rotateSpeed: speed,
+    // speed: speed,
     damage: damage,
     color: "green",
     team: "player",
@@ -95,6 +98,8 @@ export const createCherry = () => {
     pullForceBonus: cherryStats.pullForceBonus,
     update: (index) => {
       cherryBullet.lifetime--;
+      cherryBullet.angle += 1;
+      // console.log((cherryBullet.angle += 1));
 
       if (cherryBullet.lifetime <= 0) {
         createExplosion(
@@ -108,13 +113,31 @@ export const createCherry = () => {
       }
     },
     draw: (ctx, assets) => {
+      // ctx.rotate((cherryBullet.angle * Math.PI) / 180);
+      // ctx.drawImage(
+      //   assets.cherry,
+      //   cherryBullet.pos.x - cherryBullet.radius,
+      //   cherryBullet.pos.y - cherryBullet.radius,
+      //   cherryBullet.radius * 2,
+      //   cherryBullet.radius * 2
+      // );
+      // ctx.rotate((-cherryBullet.angle * Math.PI) / 180);
+      // ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      ctx.save();
+      ctx.translate(cherryBullet.pos.x, cherryBullet.pos.y);
+      ctx.rotate(
+        (cherryBullet.angle * cherryBullet.rotateSpeed * Math.PI) / 180
+      );
       ctx.drawImage(
         assets.cherry,
-        cherryBullet.pos.x - cherryBullet.radius,
-        cherryBullet.pos.y - cherryBullet.radius,
+        -cherryBullet.radius,
+        -cherryBullet.radius,
         cherryBullet.radius * 2,
         cherryBullet.radius * 2
       );
+
+      ctx.restore();
     },
   };
   //   bullets.push(cherryBullet);

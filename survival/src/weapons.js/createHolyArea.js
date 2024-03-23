@@ -1,7 +1,10 @@
+import { loopPerSecond } from "../basic.js";
+import { createExplosion } from "../createExplosion.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { drawObject } from "../draw/drawObject.js";
 import { ctx, drawingCircles, enemies, player, worldObjects } from "../main.js";
+
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -9,17 +12,18 @@ const bulletSpeed = 20;
 const cooldown = 25;
 
 const holyAreaStats = {
-  area: 0,
+  area: 150,
   speed: 0,
   damage: 0,
-  effect: 8,
+  effect: 5,
+  special: 0,
 };
 
 export const createHolyArea = () => {
   const area = stats.area * holyAreaStats.area;
 
   const holyAreaBody = {
-    radius: 300 * area,
+    radius: area,
     // bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
@@ -32,7 +36,7 @@ export const createHolyArea = () => {
       y: 0,
     },
     damage: 20,
-    color: "green",
+    color: "yellow",
     team: "player",
     priority: 1,
   };
@@ -49,14 +53,30 @@ export const holyArea = {
 
   update: () => {
     holyAreaBody.pos = player.pos;
-    holyAreaBody.radius = 300 * (holyAreaStats.area + stats.area);
+    holyAreaBody.radius = stats.area * holyAreaStats.area;
+
+    // console.log(stats.area *);
 
     enemies.forEach((enemy) => {
       if (doCirclesOverlap(holyAreaBody, enemy)) {
-        // dealDamage(enemy, "death", 1000, holyArea);
-        // enemy.vel = vector.alone.div(enemy.vel, 4);
-        // enemy.speed -= 5;
+        dealDamage(
+          enemy,
+          "divinity",
+          holyAreaStats.damage / loopPerSecond,
+          holyArea
+        );
         enemy.slowEffect = holyAreaStats.effect / 10;
+
+        if (holyAreaStats.special > 0 && Math.random() < 0.05 / loopPerSecond) {
+          // playDivinity();
+          createExplosion(
+            holyArea,
+            enemy.pos.x,
+            enemy.pos.y,
+            enemy.radius * 3,
+            50
+          );
+        }
       }
     });
 
@@ -72,9 +92,16 @@ export const holyArea = {
   stats: holyAreaStats,
 
   upgrades: {
-    level: 0,
-    statsOrder: [["area"], ["area"], ["area"], ["area"], ["area"], ["area"]],
-    amountOrder: [[0.1], [0.1], [0.1], [0.1], [0.1], [0.1]],
+    level: 5,
+    statsOrder: [
+      ["area"],
+      ["area", "effect"],
+      ["damage"],
+      ["damage", "area"],
+      ["area", "effect"],
+      ["special"],
+    ],
+    amountOrder: [[50], [50, 1], [5], [5, 50], [50, 2], [0.1]],
   },
 
   body: holyAreaBody,

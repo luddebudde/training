@@ -3,6 +3,7 @@ import { createJuggernaut } from "./enemies/createJuggernaut.js";
 import { createMarcher } from "./enemies/createMarcher.js";
 import { createMarcherBoss } from "./enemies/createMarcherBoss.js";
 import { createNerfer } from "./enemies/createNerfer.js";
+import { createShooter } from "./enemies/createShooter.js";
 import { createTank } from "./enemies/createTank.js";
 import { createWalker } from "./enemies/createWalker.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
@@ -13,13 +14,18 @@ import { stats } from "./stats.js";
 export const bossWaves = [2, 4];
 export const bossType = [createWalkerBoss, createMarcherBoss];
 
+export let enemiesAmountMultiplier = 1;
+
 export const wave1 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos(player);
-    createWalker(spawnPos.x, spawnPos.y);
-    createCharger(spawnPos.x, spawnPos.y);
-    createTank(spawnPos.x, spawnPos.y + 100);
-    // createNerfer(spawnPos.x, spawnPos.y);
+    // createWalker(spawnPos.x, spawnPos.y);
+    // createCharger(spawnPos.x, spawnPos.y);
+    // createTank(spawnPos.x, spawnPos.y + 100);
+
+    createShooter(spawnPos.x, spawnPos.y);
+
+    enemiesAmountMultiplier = 5;
   }
 };
 
@@ -61,6 +67,7 @@ export const wave4 = () => {
       createMarcher(spawnPos.x + i * 25, spawnPos.y);
     }
   }
+  enemiesAmountMultiplier = 0.5;
 };
 
 export const wave5 = () => {
@@ -69,13 +76,14 @@ export const wave5 = () => {
       const spawnPos = getRandomSpawnPos(player);
       // createWalker(spawnPos.x, spawnPos.y);
       //   createCharger(spawnPos.x, spawnPos.y);
-      // // createTank(spawnPos.x, spawnPos.y + 100);
+      createTank(spawnPos.x, spawnPos.y + 100);
 
       // createJuggernaut(spawnPos.x, spawnPos.y + 100);
       // createJuggernaut(spawnPos.x, spawnPos.y + 200);
-      // createNerfer(spawnPos.x, spawnPos.y);
+      createNerfer(spawnPos.x, spawnPos.y);
 
-      createMarcher(spawnPos.x + i * 25, spawnPos.y);
+      // createMarcher(spawnPos.x + i * 25, spawnPos.y);
     }
   }
+  enemiesAmountMultiplier = 3;
 };

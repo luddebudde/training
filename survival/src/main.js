@@ -73,6 +73,7 @@ import { chestMenu } from "./chestMenu.js";
 import {
   bossType,
   bossWaves,
+  enemiesAmountMultiplier,
   wave1,
   wave2,
   wave3,
@@ -267,10 +268,20 @@ export const startGame = () => {
   players.push(player);
 
   for (let i = 0; i < 3; i++) {
-    createEgg(300 * i, -300);
+    // const maxDistance = 1200;
+    // const spawnWidth = maxDistance * 2 - Math.random() * maxDistance;
+    // const spawnHeight = maxDistance * 2 - Math.random() * maxDistance;
+
+    // createEgg(spawnWidth, spawnHeight);
+
+    const maxDistance = 10000;
+    const spawnWidth = -maxDistance + Math.random() * (2 * maxDistance);
+    const spawnHeight = -maxDistance + Math.random() * (2 * maxDistance);
+
+    createEgg(spawnWidth, spawnHeight);
   }
 
-  placeEggMap(0, -1500);
+  placeEggMap(0, -150);
 
   enemies.length = 0;
   entities.length = 0;
@@ -294,7 +305,7 @@ export const startGame = () => {
   //   }
   // };
   // maxEnemyCount = 3;
-  createXp(-400, -400, 100000);
+  // createXp(-400, -400, 100000);
 
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
@@ -307,8 +318,8 @@ export const startGame = () => {
     // axe,
     // airstrike,
     // selfImpaler,
-    cherry,
-    droper,
+    // cherry,
+    // droper,
   ];
 
   createCollector(100, 100);
@@ -340,14 +351,14 @@ const update = () => {
   ctx.fill();
 
   spawnRate = 50 / stats.curse;
-  maxEnemyCount = (enemyFactor * stats.curse) / 3;
+  maxEnemyCount = ((enemyFactor * stats.curse) / 3) * enemiesAmountMultiplier;
 
   checkRegen();
 
   const currentTime = Date.now();
   timer = (currentTime - oldTime - menuTime) / 1000;
 
-  if (Math.floor(timer) % 5 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 10 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -520,12 +531,10 @@ const update = () => {
   }
 
   chests.forEach((chest, index) => {
+    // drawPointingArrow(ctx, player, chest, "black");
     // console.log(chest.pos.x);
     if (doCirclesOverlap(player, chest)) {
-      // player.xp.amount *= 100000;
       chestMenu();
-      // pause();
-      // console.log(chest);
       chests.splice(index, 1);
     }
   });
@@ -619,11 +628,6 @@ const update = () => {
     // target
   });
 
-  mapObjects.forEach((object) => {
-    object.update?.();
-    drawPointingArrow(ctx, player, object, "green");
-  });
-
   pickups.forEach((pickup, indexU) => {
     players.forEach((player, indexP) => {
       // console.log(player);
@@ -655,8 +659,9 @@ const update = () => {
     // gameObjects.sort((a, b) => a.priority - b.priority);
 
     gameObjects.forEach((object) => {
-      if (object.vel !== undefined && object.slowEffect !== undefined) {
-        const slowdownFactor = 1 - object.slowEffect;
+      if (object.vel !== undefined) {
+        const slowdownFactor =
+          object.slowEffect !== undefined ? 1 - object.slowEffect : 1;
         object.pos.x += object.vel.x * slowdownFactor;
         object.pos.y += object.vel.y * slowdownFactor;
       }
@@ -672,6 +677,11 @@ const update = () => {
   });
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  mapObjects.forEach((object) => {
+    object.update?.();
+    drawPointingArrow(ctx, player, object, object.arrowColor);
+  });
 
   const UIStatistics = {
     goldKillYMargin: 100 * squareSizeMultipler.y,

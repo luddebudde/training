@@ -3,7 +3,7 @@ import { makeDirection } from "./makeDirection.js";
 import { world } from "./world.js";
 
 export const drawPointingArrow = (ctx, fromObj, toObj, color) => {
-  if (toObj.shouldPoint !== undefined && toObj.shouldPoint === true) {
+  if (toObj.shouldPoint === undefined || toObj.shouldPoint === true) {
     const direction = makeDirection(toObj.pos, fromObj.pos);
     // fromObj.vel.x += 3;
     const startX = world.width / 2 + -direction.x * 50;
