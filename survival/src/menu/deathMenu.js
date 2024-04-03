@@ -1,11 +1,12 @@
-import { drawSquare } from "./draw/drawSquare.js";
-import { drawText } from "./draw/drawText.js";
-import { getNextElement } from "./getNextElement.js";
-import { buttons, ctx, entities, player, start, startGame } from "./main.js";
+import { drawSquare } from "../draw/drawSquare.js";
+import { drawText } from "../draw/drawText.js";
+import { getNextElement } from "../getNextElement.js";
+import { buttons, ctx, entities, player, start, startGame } from "../main.js";
 import { showStatistics } from "./showStatistics.js";
-import { stats } from "./stats.js";
+import { stats } from "../stats.js";
 
-import { squareSizeMultipler, world, worldsizeMultiplier } from "./world.js";
+import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { mainMenu } from "./mainMenu.js";
 
 let chosenWeapon = 0;
 
@@ -21,6 +22,7 @@ export const deathMenu = () => {
     stats.revives > 0 ? revivePlayer : undefined,
     startGame,
     showStatistics,
+    mainMenu,
   ];
   const buttonTexts = [
     stats.revives > 0 ? "REVIVE" : "OUT OF REVIVES",
@@ -38,11 +40,11 @@ export const deathMenu = () => {
     const buttonNameInfo = ctx.measureText(buttonName);
 
     const square = {
-      x: world.width / 2 - (buttonNameInfo.width / 2) * squareSizeMultipler.x,
-      y: (250 * i + 150) * squareSizeMultipler.y,
-      width: buttonNameInfo.width + 80 * squareSizeMultipler.x,
+      x: world.width / 2 - (buttonNameInfo.width / 2) * screenSizeMultipler.x,
+      y: (250 * i + 150) * screenSizeMultipler.y,
 
-      height: 200 * squareSizeMultipler.y,
+      width: buttonNameInfo.width + 80 * screenSizeMultipler.x,
+      height: 200 * screenSizeMultipler.y,
       color: "black",
     };
 
@@ -59,23 +61,23 @@ export const deathMenu = () => {
       y: square.y,
       width: square.width,
       height: square.height,
-      function: () => {
-        act();
-        // console.log("gick");
-        // console.log(button.number);
 
+      function: () => {
+        console.log(buttons, 1);
         buttons.length = 0;
+        console.log(buttons, 2);
+
+        act();
       },
     };
-    // console.log(button.function);
 
     if (button.weapon !== undefined) {
       // Rita vapennamnet
       drawText(
         buttonName,
-        square.x + 40 * squareSizeMultipler.x,
+        square.x + 40 * screenSizeMultipler.x,
         // (i * loopAmount * square.height + square.y) / loopAmount + 100,
-        square.y + 100 * squareSizeMultipler.y,
+        square.y + 100 * screenSizeMultipler.y,
         // ((i + 1) * square.y) / loopAmount,
         "red",
         worldsizeMultiplier

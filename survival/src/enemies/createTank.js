@@ -7,6 +7,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -65,5 +66,6 @@ export const createTank = (spawnWidth, spawnHeight) => {
 
   entities.push(tank);
   enemies.push(tank);
+  updateables.push(tank);
   // worldObjects.push(charger);
 };

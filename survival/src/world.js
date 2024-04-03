@@ -6,7 +6,7 @@ export const world = {
 
 export const worldsizeMultiplier = world.width / 2560;
 
-export const squareSizeMultipler = {
+export const screenSizeMultipler = {
   x: world.width / 2560,
   y: world.height / 1440,
 };

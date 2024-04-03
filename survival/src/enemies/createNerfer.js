@@ -7,6 +7,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -62,10 +63,14 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
 
     update: () => {
       if (doCirclesOverlap(nerfer, player)) {
-        if (nerfer.nerfType === "maxHealth" && stats[nerfer.nerfType] > 20) {
-          stats[nerfer.nerfType] -= nerfer.nerfamount;
-        }
-        if (stats[nerfer.nerfType] > 0.5) {
+        if (nerfer.nerfType === "maxHealth" && player.maxHealth > 20) {
+          const newMaxHealth = player.maxHealth - nerfer.nerfamount;
+          // stats[nerfer.nerfType] -= nerfer.nerfamount;
+          if (newMaxHealth > 20) {
+            player.maxHealth = newMaxHealth;
+            console.log(player.maxHealth);
+          }
+        } else if (stats[nerfer.nerfType] > 0.5) {
           stats[nerfer.nerfType] -= nerfer.nerfamount;
         }
 
@@ -91,5 +96,6 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
 
   entities.push(nerfer);
   enemies.push(nerfer);
+  updateables.push(nerfer);
   // worldObjects.push(charger);
 };

@@ -10,6 +10,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -88,6 +89,7 @@ export const createWalkerBoss = (
 
   entities.push(walker);
   enemies.push(walker);
+  updateables.push(walker);
   bosses.push(walker);
   // worldObjects.push(walker);
 };

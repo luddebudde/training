@@ -7,6 +7,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -65,5 +66,6 @@ export const createCharger = (spawnWidth, spawnHeight) => {
 
   entities.push(charger);
   enemies.push(charger);
+  updateables.push(charger);
   // worldObjects.push(charger);
 };

@@ -1,26 +1,26 @@
-import { drawSquare } from "./draw/drawSquare.js";
-import { drawText } from "./draw/drawText.js";
-import { getNextElement } from "./getNextElement.js";
-import { ctx, maxAmountOfWeapons, weapons } from "./main.js";
-import { statistics } from "./statistics.js";
-import { aimBullet } from "./weapons.js/createAimBullet.js";
-import { shotgun } from "./weapons.js/createShotgun.js";
-import { wiper } from "./weapons.js/wiper.js";
-import { squareSizeMultipler, world, worldsizeMultiplier } from "./world.js";
+import { drawSquare } from "../draw/drawSquare.js";
+import { drawText } from "../draw/drawText.js";
+import { getNextElement } from "../getNextElement.js";
+import { ctx, maxAmountOfWeapons, weapons } from "../main.js";
+import { statistics } from "../statistics.js";
+import { aimBullet } from "../weapons.js/createAimBullet.js";
+import { shotgun } from "../weapons.js/createShotgun.js";
+import { wiper } from "../weapons.js/wiper.js";
+import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 
 let loopAmount = 0;
 let overallStatAmount = 0;
 let weaponStatisticAmount = 0;
 
 const drawStatistics = (type, value, x, y, color = "red") => {
-  const margin = (x + 10) * squareSizeMultipler.x;
+  const margin = (x + 10) * screenSizeMultipler.x;
 
-  const keyHeight = 100 * overallStatAmount * squareSizeMultipler.x;
+  const keyHeight = 100 * overallStatAmount * screenSizeMultipler.x;
   const keyLenght = ctx.measureText(type);
 
   drawText(
     type,
-    40 * squareSizeMultipler.x,
+    40 * screenSizeMultipler.x,
     keyHeight,
     "red",
     worldsizeMultiplier
@@ -34,7 +34,7 @@ const drawStatistics = (type, value, x, y, color = "red") => {
   );
   drawText(
     value,
-    keyLenght.width + margin + 20 * squareSizeMultipler.x,
+    keyLenght.width + margin + 20 * screenSizeMultipler.x,
     keyHeight,
     color,
     worldsizeMultiplier
@@ -59,8 +59,8 @@ export const showStatistics = () => {
   const playerSquare = {
     x: world.width,
     y: world.height,
-    width: -600 * squareSizeMultipler.x,
-    height: -600 * squareSizeMultipler.y,
+    width: -600 * screenSizeMultipler.x,
+    height: -600 * screenSizeMultipler.y,
     color: "white",
   };
 
@@ -85,9 +85,9 @@ export const showStatistics = () => {
       weapon.name,
       (previusWeaponLenght.width * index -
         currentWeaponLenght.width +
-        1100 * squareSizeMultipler.x) *
+        1100 * screenSizeMultipler.x) *
         1,
-      60 * squareSizeMultipler.y,
+      60 * screenSizeMultipler.y,
       "blue",
       worldsizeMultiplier
     );
@@ -100,15 +100,15 @@ export const showStatistics = () => {
 
         drawText(
           key,
-          500 * squareSizeMultipler.x,
-          100 * weaponStatisticAmount + 100 * squareSizeMultipler.y,
+          500 * screenSizeMultipler.x,
+          100 * weaponStatisticAmount + 100 * screenSizeMultipler.y,
           "green",
           worldsizeMultiplier
         );
         drawText(
           weapon.statistics[key],
-          (300 * index + 900) * squareSizeMultipler.x,
-          100 * weaponStatisticAmount + 100 * squareSizeMultipler.y,
+          (300 * index + 900) * screenSizeMultipler.x,
+          100 * weaponStatisticAmount + 100 * screenSizeMultipler.y,
           "green",
           worldsizeMultiplier
         );

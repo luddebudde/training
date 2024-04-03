@@ -1,5 +1,5 @@
 import { doCirclesOverlap } from "./doCirlceOverlap.js";
-import { mapObjects, player } from "./main.js";
+import { mapObjects, player, updateables } from "./main.js";
 import { stats } from "./stats.js";
 import { worldsizeMultiplier } from "./world.js";
 
@@ -44,4 +44,5 @@ export const createEgg = (spawnWidth, spawnHeight) => {
   };
 
   mapObjects.push(egg);
+  updateables.push(egg);
 };

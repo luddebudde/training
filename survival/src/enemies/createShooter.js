@@ -3,10 +3,12 @@ import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import {
+  bosses,
   enemies,
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { getDistance, makeDirection } from "../makeDirection.js";
@@ -14,7 +16,7 @@ import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { origo, vector } from "../vectors.js";
 import { worldsizeMultiplier } from "../world.js";
-import { createEnemyBullet } from "./enemyShoot.js";
+import { createEnemyBullet } from "./shootEnemyBullet.js";
 
 let lastCallTime = 0;
 
@@ -29,6 +31,8 @@ let lastCallTime = 0;
 //   }
 // }
 
+const shootCooldown = loopPerSecond * 2;
+
 export const createShooter = (spawnWidth, spawnHeight) => {
   const shooter = {
     health: 60,
@@ -41,8 +45,8 @@ export const createShooter = (spawnWidth, spawnHeight) => {
       x: 0,
       y: 0,
     },
-    attackCounter: 0,
-    attackCooldown: loopPerSecond,
+    attackCounter: shootCooldown,
+    attackCooldown: shootCooldown,
     slowEffect: 0,
     speed: 3 * stats.curse * worldsizeMultiplier,
     damage: 0,
@@ -84,8 +88,18 @@ export const createShooter = (spawnWidth, spawnHeight) => {
         shooter.vel.y = direction.y * shooter.speed;
       }
     },
+    draw: (ctx, assets, gameObject) => {
+      ctx.drawImage(
+        assets.shooter,
+        shooter.pos.x - shooter.radius,
+        shooter.pos.y - shooter.radius,
+        shooter.radius * 2,
+        shooter.radius * 2
+      );
+    },
   };
 
   entities.push(shooter);
   enemies.push(shooter);
+  updateables.push(shooter);
 };

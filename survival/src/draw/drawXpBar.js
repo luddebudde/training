@@ -1,8 +1,8 @@
 import { ctx } from "../main.js";
-import { squareSizeMultipler } from "../world.js";
+import { screenSizeMultipler } from "../world.js";
 
 export const drawXpBar = (x, y, width, height, health, maxHealth) => {
-  const newHeight = height * squareSizeMultipler.y;
+  const newHeight = height * screenSizeMultipler.y;
 
   ctx.beginPath();
   ctx.rect(x, y, width, newHeight);

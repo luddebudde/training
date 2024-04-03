@@ -1,4 +1,4 @@
-import { player } from "./main.js";
+import { healthArrays, player } from "./main.js";
 import { statistics } from "./statistics.js";
 import { stats } from "./stats.js";
 
@@ -23,16 +23,18 @@ export const dealDamage = (
 
   if (obj === player) {
     statistics.overall.damageTaken += amount;
+    statistics.game.damageTaken += amount;
   } else if (obj.team === "enemy") {
     statistics.overall.damage += amount;
+    statistics.game.damage += amount;
   }
 
   if (creditWeapon !== undefined) {
-    statistics.overall.damage += amount;
     creditWeapon.statistics.damage += amount;
 
     if (obj.health <= 0) {
       statistics.overall.kills += 1;
+      statistics.game.kills += 1;
       creditWeapon.statistics.kills += 1;
     }
   }

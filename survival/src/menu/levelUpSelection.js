@@ -1,6 +1,6 @@
-import { checkButtonPress } from "./checkButtonPress.js";
-import { drawSquare } from "./draw/drawSquare.js";
-import { drawText } from "./draw/drawText.js";
+import { checkButtonPress } from "../checkButtonPress.js";
+import { drawSquare } from "../draw/drawSquare.js";
+import { drawText } from "../draw/drawText.js";
 import {
   assets,
   buttons,
@@ -9,21 +9,21 @@ import {
   player,
   start,
   weapons,
-} from "./main.js";
-import { stats, upgradeStats } from "./stats.js";
-import { cherry } from "./weapons.js/cherry.js";
-import { aimBullet } from "./weapons.js/createAimBullet.js";
-import { airstrike } from "./weapons.js/createAirstrike.js";
-import { axe } from "./weapons.js/createAxe.js";
-import { droper } from "./weapons.js/createDroper.js";
-import { holyArea } from "./weapons.js/createHolyArea.js";
-import { minigun } from "./weapons.js/createMinigun.js";
-import { randomAimBullet } from "./weapons.js/createRandomAimBullet.js";
-import { shotgun } from "./weapons.js/createShotgun.js";
-import { buba, colin, jedå, uluk } from "./weapons.js/randomWeapons.js";
-import { selfImpaler } from "./weapons.js/selfImpaler.js";
-import { wiper } from "./weapons.js/wiper.js";
-import { squareSizeMultipler, world, worldsizeMultiplier } from "./world.js";
+} from "../main.js";
+import { stats, upgradeStats } from "../stats.js";
+import { cherry } from "../weapons.js/cherry.js";
+import { aimBullet } from "../weapons.js/createAimBullet.js";
+import { airstrike } from "../weapons.js/createAirstrike.js";
+import { axe } from "../weapons.js/createAxe.js";
+import { droper } from "../weapons.js/createDroper.js";
+import { holyArea } from "../weapons.js/createHolyArea.js";
+import { minigun } from "../weapons.js/createMinigun.js";
+import { randomAimBullet } from "../weapons.js/createRandomAimBullet.js";
+import { shotgun } from "../weapons.js/createShotgun.js";
+import { buba, colin, jedå, uluk } from "../weapons.js/randomWeapons.js";
+import { selfImpaler } from "../weapons.js/selfImpaler.js";
+import { wiper } from "../weapons.js/wiper.js";
+import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 
 let upgradeWeaponPool = [];
 let amountOfWeapons = 0;
@@ -56,10 +56,10 @@ let weaponPool = [];
 
 export const levelUpSelection = () => {
   const square = {
-    x: 750 * squareSizeMultipler.x,
-    y: 100 * squareSizeMultipler.y,
-    width: 1060 * squareSizeMultipler.x,
-    height: 1000 * squareSizeMultipler.y,
+    x: 750 * screenSizeMultipler.x,
+    y: 100 * screenSizeMultipler.y,
+    width: 1060 * screenSizeMultipler.x,
+    height: 1000 * screenSizeMultipler.y,
     color: "green",
   };
   drawSquare(square);
@@ -108,10 +108,10 @@ export const levelUpSelection = () => {
       image: chosenWeapon?.image,
 
       weapon: chosenWeapon,
-      x: square.x + 20 * squareSizeMultipler.x,
-      y: (i * square.height) / 4 + 120 * squareSizeMultipler.y,
-      width: square.width - 40 * squareSizeMultipler.x,
-      height: square.height / 4 - 40 * squareSizeMultipler.y,
+      x: square.x + 20 * screenSizeMultipler.x,
+      y: (i * square.height) / 4 + 120 * screenSizeMultipler.y,
+      width: square.width - 40 * screenSizeMultipler.x,
+      height: square.height / 4 - 40 * screenSizeMultipler.y,
       function: () => {
         if (button.weapon !== undefined) {
           const weaponUpgrades = button.weapon.upgrades;
@@ -158,8 +158,8 @@ export const levelUpSelection = () => {
     ctx.fill();
 
     if (button.weapon !== undefined) {
-      const textBonusMarginX = 40 * squareSizeMultipler.x;
-      const textBonusMarginY = 180 * squareSizeMultipler.y;
+      const textBonusMarginX = 40 * screenSizeMultipler.x;
+      const textBonusMarginY = 180 * screenSizeMultipler.y;
 
       const level = button.weapon.upgrades.level;
       // Rita vapennamnet
@@ -244,8 +244,8 @@ export const levelUpSelection = () => {
     }
 
     const imageMarginBonus = {
-      x: 20 * squareSizeMultipler.x,
-      y: 90 * squareSizeMultipler.y,
+      x: 20 * screenSizeMultipler.x,
+      y: 90 * screenSizeMultipler.y,
     };
 
     if (button.image !== undefined) {
@@ -253,8 +253,8 @@ export const levelUpSelection = () => {
         button.image,
         button.x + imageMarginBonus.x,
         button.y + imageMarginBonus.y,
-        100 * squareSizeMultipler.x,
-        100 * squareSizeMultipler.y
+        100 * screenSizeMultipler.x,
+        100 * screenSizeMultipler.y
       );
     }
 

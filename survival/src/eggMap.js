@@ -1,5 +1,5 @@
 import { doCirclesOverlap } from "./doCirlceOverlap.js";
-import { chests, entities, mapObjects, player } from "./main.js";
+import { chests, entities, mapObjects, player, updateables } from "./main.js";
 import { world, worldsizeMultiplier } from "./world.js";
 
 export const placeEggMap = (xPos, yPos) => {
@@ -41,4 +41,5 @@ export const placeEggMap = (xPos, yPos) => {
   };
 
   mapObjects.push(map);
+  updateables.push(map);
 };

@@ -8,6 +8,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -102,4 +103,5 @@ export const createMarcher = (
 
   entities.push(marcher);
   enemies.push(marcher);
+  updateables.push(marcher);
 };

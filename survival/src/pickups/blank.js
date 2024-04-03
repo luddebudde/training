@@ -1,8 +1,8 @@
-import { enemies, pickups, xps } from "../main.js";
+import { bosses, enemies, pickups, xps } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 
 export const createBlank = (xPos, yPos) => {
-  const collector = {
+  const blank = {
     radius: 10,
     // bulletHealth: 10,
     // destroy: false,
@@ -16,12 +16,12 @@ export const createBlank = (xPos, yPos) => {
 
     effect: (object) => {
       enemies.forEach((enemy) => {
-        enemy.health = 0;
+        if (!bosses.includes(enemy)) enemy.health = 0;
       });
     },
     // enemiesHit: [],
     // pierce: aimBulletStats.pierce,
     // weapon: aimBullet,
   };
-  pickups.push(collector);
+  pickups.push(blank);
 };

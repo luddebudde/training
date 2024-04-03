@@ -1,4 +1,4 @@
-import { levelUpSelection } from "./levelUpSelection.js";
+import { levelUpSelection } from "./menu/levelUpSelection.js";
 import { player } from "./main.js";
 import { playLevelUp, playLevelUpSpecial } from "./sounds.js";
 

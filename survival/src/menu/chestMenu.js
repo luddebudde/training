@@ -1,7 +1,7 @@
-import { drawObject } from "./draw/drawObject.js";
-import { drawSquare } from "./draw/drawSquare.js";
-import { drawText } from "./draw/drawText.js";
-import { getNextElement } from "./getNextElement.js";
+import { drawObject } from "../draw/drawObject.js";
+import { drawSquare } from "../draw/drawSquare.js";
+import { drawText } from "../draw/drawText.js";
+import { getNextElement } from "../getNextElement.js";
 import {
   buttons,
   ctx,
@@ -13,15 +13,15 @@ import {
   startGame,
   weapons,
   pause,
-} from "./main.js";
-import { makeDirection } from "./makeDirection.js";
+} from "../main.js";
+import { makeDirection } from "../makeDirection.js";
 import { showStatistics } from "./showStatistics.js";
-import { stats } from "./stats.js";
-import { vector } from "./vectors.js";
-import { selfImpaler } from "./weapons.js/selfImpaler.js";
-import { wiper } from "./weapons.js/wiper.js";
+import { stats } from "../stats.js";
+import { vector } from "../vectors.js";
+import { selfImpaler } from "../weapons.js/selfImpaler.js";
+import { wiper } from "../weapons.js/wiper.js";
 
-import { world } from "./world.js";
+import { world } from "../world.js";
 
 const animationMoveSpeed = 10;
 

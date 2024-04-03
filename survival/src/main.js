@@ -4,7 +4,7 @@
 // Text above defeated bosses, counting down to the final
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import {
-  squareSizeMultipler,
+  screenSizeMultipler,
   world,
   worldsizeMultiplier as worldsizeMultiplier,
 } from "./world.js";
@@ -33,7 +33,7 @@ import {
 } from "./sounds.js";
 import { drawText } from "./draw/drawText.js";
 import { drawObject } from "./draw/drawObject.js";
-import { levelUpSelection, totalWeapons } from "./levelUpSelection.js";
+import { levelUpSelection, totalWeapons } from "./menu/levelUpSelection.js";
 import { checkButtonPress } from "./checkButtonPress.js";
 import { minigun } from "./weapons.js/createMinigun.js";
 import { loadImage } from "./image.js";
@@ -57,10 +57,10 @@ import { checkRegen } from "./checkRegen.js";
 import { drawShieldbar } from "./draw/drawShieldbar.js";
 import { dealDamage } from "./dealDamage.js";
 import { levelUp } from "./levelUp.js";
-import { deathMenu } from "./deathMenu.js";
+import { deathMenu } from "./menu/deathMenu.js";
 import { getNextElement } from "./getNextElement.js";
 import { statistics } from "./statistics.js";
-import { showStatistics } from "./showStatistics.js";
+import { showStatistics } from "./menu/showStatistics.js";
 import { cherry } from "./weapons.js/cherry.js";
 import { createCollector } from "./pickups/collector.js";
 import { createBlank } from "./pickups/blank.js";
@@ -69,7 +69,7 @@ import { createNerfer } from "./enemies/createNerfer.js";
 import { createPickupWeapon } from "./pickups/pickupWeapon.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
 import { dropChest } from "./dropChest.js";
-import { chestMenu } from "./chestMenu.js";
+import { chestMenu } from "./menu/chestMenu.js";
 import {
   bossType,
   bossWaves,
@@ -84,6 +84,8 @@ import { drawPointingArrow } from "./drawPointingArrow.js";
 import { createEgg } from "./createEgg.js";
 import { placeEggMap } from "./eggMap.js";
 import { droper } from "./weapons.js/createDroper.js";
+import { createShooterBoss } from "./enemies/createShooterBoss.js";
+import { mainMenu } from "./menu/mainMenu.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -99,6 +101,8 @@ export const chests = [];
 
 export let bullets = [];
 export let explosions = [];
+
+export let updateables = [];
 
 export let weapons = [
   // aimBullet,
@@ -147,6 +151,7 @@ export let worldObjects = [
   mapObjects,
   drawingCircles,
 ];
+export const healthArrays = [entities, enemies, updateables];
 const worldObjectsLenght = worldObjects.length;
 
 let oldHealth = player.health;
@@ -164,6 +169,8 @@ export const assets = {
   skull: await loadImage("public/sprites/skull.png"),
   goldBag: await loadImage("public/sprites/goldbag.png"),
   blue: await loadImage("public/sprites/blue.png"),
+  shooter: await loadImage("public/sprites/shooters.png"),
+  limbots: await loadImage("public/sprites/limbot.png"),
   egg: await loadImage("public/sprites/egg.png"),
   cherry: await loadImage("public/sprites/cherry.png"),
   // assault: loadImage(`ships/player/large/assault.png`),
@@ -185,7 +192,7 @@ canvas.addEventListener("mousemove", (event) => {
 
 createPickupWeapon(100, 100, randomAimBullet);
 
-const myButton = document.getElementById("myButton");
+// const myButton = document.getElementById("myButton");
 
 // Lägg till en händelsedetektor för musklick
 document.addEventListener("click", function (event) {
@@ -268,12 +275,6 @@ export const startGame = () => {
   players.push(player);
 
   for (let i = 0; i < 3; i++) {
-    // const maxDistance = 1200;
-    // const spawnWidth = maxDistance * 2 - Math.random() * maxDistance;
-    // const spawnHeight = maxDistance * 2 - Math.random() * maxDistance;
-
-    // createEgg(spawnWidth, spawnHeight);
-
     const maxDistance = 10000;
     const spawnWidth = -maxDistance + Math.random() * (2 * maxDistance);
     const spawnHeight = -maxDistance + Math.random() * (2 * maxDistance);
@@ -282,6 +283,7 @@ export const startGame = () => {
   }
 
   placeEggMap(0, -150);
+  createShooterBoss();
 
   enemies.length = 0;
   entities.length = 0;
@@ -293,19 +295,6 @@ export const startGame = () => {
   currentWave = wavesList[0];
 
   pickupTypes.push(createCollector, createBlank);
-
-  // currentWave = () => {
-  //   // const spawnPos = 0;
-  //   for (let i = 0; i < 5 * stats.curse; i++) {
-  //     const spawnPos = getRandomSpawnPos(player);
-  //     createWalker(spawnPos.x, spawnPos.y);
-  //     createCharger(spawnPos.x, spawnPos.y);
-  //     createTank(spawnPos.x, spawnPos.y + 100);
-  //     // createNerfer(spawnPos.x, spawnPos.y);
-  //   }
-  // };
-  // maxEnemyCount = 3;
-  // createXp(-400, -400, 100000);
 
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
@@ -328,7 +317,11 @@ export const startGame = () => {
     weapon.upgrades.level = 0;
   });
 
-  start();
+  // mainMenu();
+  deathMenu();
+  pause();
+
+  // start();
 };
 
 startGame();
@@ -358,14 +351,14 @@ const update = () => {
   const currentTime = Date.now();
   timer = (currentTime - oldTime - menuTime) / 1000;
 
-  if (Math.floor(timer) % 10 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 2 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
         canChangeWave = true;
         waveIndex += 1;
 
-        currentWave = wavesList[waveIndex];
+        // currentWave = wavesList[waveIndex];
 
         if (bossWaves[waveIndex - 1] !== undefined) {
           bossType[waveIndex - 1]();
@@ -377,7 +370,7 @@ const update = () => {
   drawText(
     Math.floor(timer),
     world.width / 2,
-    100 * squareSizeMultipler.y,
+    100 * screenSizeMultipler.y,
     "red",
     worldsizeMultiplier
   );
@@ -447,8 +440,8 @@ const update = () => {
 
     drawText(
       weapon.name,
-      80 * squareSizeMultipler.x,
-      52.5 * (index + 2) * squareSizeMultipler.y,
+      80 * screenSizeMultipler.x,
+      52.5 * (index + 2) * screenSizeMultipler.y,
       "green",
       worldsizeMultiplier
     );
@@ -456,8 +449,8 @@ const update = () => {
     const buttonTextWidth = ctx.measureText(weapon.name).width;
     drawText(
       weapon.upgrades.level,
-      buttonTextWidth + 100 * squareSizeMultipler.x,
-      52.5 * (index + 2) * squareSizeMultipler.y,
+      buttonTextWidth + 100 * screenSizeMultipler.x,
+      52.5 * (index + 2) * screenSizeMultipler.y,
       "black",
       worldsizeMultiplier
     );
@@ -465,10 +458,10 @@ const update = () => {
     if (weapon.image !== undefined) {
       ctx.drawImage(
         weapon.image,
-        20 * squareSizeMultipler.x,
-        (65 + 55 * index) * squareSizeMultipler.y,
-        50 * squareSizeMultipler.x,
-        50 * squareSizeMultipler.y
+        20 * screenSizeMultipler.x,
+        (65 + 55 * index) * screenSizeMultipler.y,
+        50 * screenSizeMultipler.x,
+        50 * screenSizeMultipler.y
       );
     }
 
@@ -551,8 +544,14 @@ const update = () => {
         world.height + 400
       )
     ) {
-      enemy.health = 0;
-      // Tar bort fienden
+      if (!bosses.includes(enemy)) {
+        // enemy.health = 0;
+        dealDamage(enemy, "instant", enemy.health);
+        // Tar bort fienden
+      } else {
+        const spawnPos = getRandomSpawnPos(player);
+        enemy.pos = spawnPos;
+      }
     }
   });
 
@@ -577,6 +576,7 @@ const update = () => {
 
   entities = entities.filter((entity) => entity.health > 0);
   enemies = enemies.filter((enemy) => enemy.health > 0);
+  updateables = updateables.filter((updateable) => updateable?.health > 0);
   bullets = bullets.filter((bullet) => !bullet.destroy);
   explosions = explosions.filter((explosion) => !explosion.hasExpired);
 
@@ -655,6 +655,10 @@ const update = () => {
 
   // console.log(worldObjects);
   // console.log(worldObjects);
+  // updateables.forEach((object) => {
+  //   object?.update();
+  // });
+
   worldObjects.forEach((gameObjects) => {
     // gameObjects.sort((a, b) => a.priority - b.priority);
 
@@ -684,14 +688,14 @@ const update = () => {
   });
 
   const UIStatistics = {
-    goldKillYMargin: 100 * squareSizeMultipler.y,
+    goldKillYMargin: 100 * screenSizeMultipler.y,
   };
 
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
   drawText(
     player.xp.level,
-    world.width - 80 * squareSizeMultipler.x,
-    40 * squareSizeMultipler.y,
+    world.width - 80 * screenSizeMultipler.x,
+    40 * screenSizeMultipler.y,
     "green",
     worldsizeMultiplier
   );
@@ -704,10 +708,10 @@ const update = () => {
     0,
     211,
     239,
-    goldtextX - 60 * squareSizeMultipler.x,
-    60 * squareSizeMultipler.y,
-    50 * squareSizeMultipler.x,
-    50 * squareSizeMultipler.x
+    goldtextX - 60 * screenSizeMultipler.x,
+    60 * screenSizeMultipler.y,
+    50 * screenSizeMultipler.x,
+    50 * screenSizeMultipler.x
   );
   drawText(
     player.gold,
@@ -723,10 +727,10 @@ const update = () => {
     0,
     136,
     160,
-    (world.width / 5) * 4 - 50 * squareSizeMultipler.x,
-    60 * squareSizeMultipler.y,
-    40 * squareSizeMultipler.x,
-    50 * squareSizeMultipler.y
+    (world.width / 5) * 4 - 50 * screenSizeMultipler.x,
+    60 * screenSizeMultipler.y,
+    40 * screenSizeMultipler.x,
+    50 * screenSizeMultipler.y
   );
   drawText(
     statistics.overall.kills,
@@ -741,9 +745,9 @@ const update = () => {
     world.width / 2 - player.radius * 1.25,
     world.height / 2 +
       player.radius +
-      player.radius * 0.25 * squareSizeMultipler.y,
+      player.radius * 0.25 * screenSizeMultipler.y,
     player.radius * 2.5,
-    15 * squareSizeMultipler.y,
+    15 * screenSizeMultipler.y,
     player.health,
     stats.maxHealth
   );
@@ -763,9 +767,9 @@ const update = () => {
       world.width / 2 - player.radius * 1.25,
       world.height / 2 +
         player.radius +
-        player.radius * 0.25 * squareSizeMultipler.y,
+        player.radius * 0.25 * screenSizeMultipler.y,
       player.radius * 2.5,
-      15 * squareSizeMultipler.y,
+      15 * screenSizeMultipler.y,
       player.health,
       stats.maxHealth
     );

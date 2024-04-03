@@ -8,6 +8,7 @@ import {
   entities,
   player,
   targetables,
+  updateables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
@@ -26,7 +27,6 @@ const walkerAnimations = animation({
 export const createWalker = (spawnWidth, spawnHeight) => {
   const walker = {
     health: 100,
-    // startRadius: 40,
     radius: 40 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
@@ -63,7 +63,6 @@ export const createWalker = (spawnWidth, spawnHeight) => {
         assets.blue,
         walker.pos.x - walker.radius,
         walker.pos.y - walker.radius,
-
         walker.radius * 2,
         walker.radius * 2
       );
@@ -72,4 +71,5 @@ export const createWalker = (spawnWidth, spawnHeight) => {
 
   entities.push(walker);
   enemies.push(walker);
+  updateables.push(walker);
 };
