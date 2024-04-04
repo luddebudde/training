@@ -1,12 +1,22 @@
+import { currentCharacter } from "../createPlayer.js";
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { getNextElement } from "../getNextElement.js";
-import { ctx, maxAmountOfWeapons, weapons } from "../main.js";
+import {
+  assets,
+  buttons,
+  ctx,
+  maxAmountOfWeapons,
+  player,
+  weapons,
+} from "../main.js";
 import { statistics } from "../statistics.js";
 import { aimBullet } from "../weapons.js/createAimBullet.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { wiper } from "../weapons.js/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { totalWeapons } from "./levelUpSelection.js";
+import { mainMenu } from "./mainMenu.js";
 
 let loopAmount = 0;
 let overallStatAmount = 0;
@@ -15,12 +25,14 @@ let weaponStatisticAmount = 0;
 const drawStatistics = (type, value, x, y, color = "red") => {
   const margin = (x + 10) * screenSizeMultipler.x;
 
-  const keyHeight = 100 * overallStatAmount * screenSizeMultipler.x;
+  const keyHeight = y * overallStatAmount * screenSizeMultipler.x;
   const keyLenght = ctx.measureText(type);
+
+  // console.log(value);
 
   drawText(
     type,
-    40 * screenSizeMultipler.x,
+    x * screenSizeMultipler.x,
     keyHeight,
     "red",
     worldsizeMultiplier
@@ -56,65 +68,84 @@ export const showGameStatistics = () => {
 
   drawSquare(square);
 
+  const playerSquarePos = {
+    x: world.width - 25,
+    y: world.height - 25,
+    width: -650 * screenSizeMultipler.x,
+    height: -650 * screenSizeMultipler.y,
+  };
+
   const playerSquare = {
-    x: world.width,
-    y: world.height,
-    width: -600 * screenSizeMultipler.x,
-    height: -600 * screenSizeMultipler.y,
+    x: playerSquarePos.x,
+    y: playerSquarePos.y,
+    width: playerSquarePos.width,
+    height: playerSquarePos.height,
     color: "white",
   };
 
   drawSquare(playerSquare);
 
+  drawText(
+    "Most played character:" + currentCharacter.fullname,
+    world.width - 675,
+    world.height - 700,
+    "red",
+    0.8
+  );
+
+  ctx.drawImage(
+    assets[currentCharacter.sprite],
+    playerSquarePos.x - 500,
+    playerSquarePos.y - 500,
+    400,
+    400
+  );
+
   // draw
 
-  const objectKeys = Object.keys(statistics.overall);
+  const objectKeys = Object.keys(statistics.game);
 
   for (const key of objectKeys) {
     overallStatAmount++;
 
-    const value = statistics.overall[key];
-    drawStatistics(key, Math.floor(value), 40);
+    const value = statistics.game[key];
+    drawStatistics(key, value, 40, 100);
   }
 
-  weapons.forEach((weapon, index) => {
-    const previusWeaponLenght = ctx.measureText(weapons[index - 1]);
-    const currentWeaponLenght = ctx.measureText(weapons[index]);
-
-    // drawText(
-    //   weapon.name,
-    //   (previusWeaponLenght.width * index -
-    //     currentWeaponLenght.width +
-    //     1100 * screenSizeMultipler.x) *
-    //     1,
-    //   60 * screenSizeMultipler.y,
-    //   "blue",
-    //   worldsizeMultiplier
-    // );
-
-    // if (weapon.statistics !== undefined) {
-    //   const weaponStatistics = Object.keys(weapon.statistics);
-
-    //   for (const key of weaponStatistics) {
-    //     weaponStatisticAmount++;
-
-    //     drawText(
-    //       key,
-    //       500 * screenSizeMultipler.x,
-    //       100 * weaponStatisticAmount + 100 * screenSizeMultipler.y,
-    //       "green",
-    //       worldsizeMultiplier
-    //     );
-    //     drawText(
-    //       weapon.statistics[key],
-    //       (300 * index + 900) * screenSizeMultipler.x,
-    //       100 * weaponStatisticAmount + 100 * screenSizeMultipler.y,
-    //       "green",
-    //       worldsizeMultiplier
-    //     );
-    //     console.log(weapon.statistics[key]);
-    //   }
-    //   weaponStatisticAmount = 0;
-    // }
+  totalWeapons.forEach((weapon, index) => {
+    drawStatistics(
+      weapon.name,
+      weapon.timesTaken,
+      600 + 500 * Math.round(index / 3),
+      20 + ((25 * index) % 75),
+      "green"
+    );
   });
+
+  const buttonWidth = 400;
+  const buttonHeight = 200;
+
+  const backButton = {
+    x: world.width / 2 - buttonWidth / 2,
+    y: world.height - buttonHeight * 1.2,
+    width: buttonWidth,
+    height: buttonHeight,
+    color: "purple",
+    function: () => {
+      console.log("back");
+      buttons.length = 0;
+      mainMenu();
+    },
+    text: "BACK",
+  };
+
+  drawSquare(backButton);
+  drawText(
+    backButton.text,
+    backButton.x + 90,
+    backButton.y + backButton.height * 0.6,
+    "red",
+    1.5
+  );
+  buttons.push(backButton);
 };

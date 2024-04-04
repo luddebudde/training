@@ -6,6 +6,7 @@ import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { drawObject } from "../draw/drawObject.js";
 import { deathMenu } from "./deathMenu.js";
 import { showGameStatistics } from "./showGameStatistics.js";
+import { characterSelection } from "./characterSelection.js";
 
 let chosenWeapon = 0;
 
@@ -20,7 +21,8 @@ const playGame = {
   },
 
   function: () => {
-    // characterSelection();
+    buttons.length = 0;
+    characterSelection();
     console.log("character");
   },
 };
@@ -36,7 +38,7 @@ const statistics = {
   function: () => {
     buttons.length = 0;
     showGameStatistics();
-    // console.log("stat");
+    console.log("stat");
   },
 };
 const feats = {
@@ -95,10 +97,8 @@ export const mainMenu = () => {
     const currentButton = getNextElement(menuButtons, i - 2);
     const buttonText = currentButton.text;
     const sizeMult = currentButton.sizeMult;
-    // const buttonName = getNextElement(buttonTexts, i - 1);
-    // const act = currentButton.function;
-    // const act = buttonFunctions[i % buttonFunctions.length];
-    const act = buttonFunctions[i % buttonFunctions.length];
+
+    const act = currentButton.function;
 
     // console.log(act);
 
@@ -162,7 +162,7 @@ export const mainMenu = () => {
     );
 
     buttons.push(button);
-    console.log(buttons, 3);
+    // console.log(buttons, 3);
   }
   const circle = {
     pos: {

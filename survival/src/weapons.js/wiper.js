@@ -48,6 +48,7 @@ export const wiperBody = createWiper();
 
 export const wiper = {
   name: "wiper",
+  timesTaken: 0,
   attackIntervall: cooldown,
   cooldown: cooldown,
   attack: () => {

@@ -81,6 +81,7 @@ let attackCounter = 0;
 
 export const airstrike = {
   name: "airstrike",
+  timesTaken: 0,
   // image: assets.rhino,
   //   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,

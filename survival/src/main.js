@@ -1,10 +1,11 @@
 // Must fix bug where weapons gets infinitly stronger when restarting the game
 // Make the start and "startgame" function better
+// Fix text when movement and other stats are below 5 and multiplies by 100 for %
 
 // Text above defeated bosses, counting down to the final
 import { aimBullet } from "./weapons.js/createAimBullet.js";
 import {
-  screenSizeMultipler,
+  screenSizeMultipler as screenSizeMultiplier,
   world,
   worldsizeMultiplier as worldsizeMultiplier,
 } from "./world.js";
@@ -86,6 +87,8 @@ import { placeEggMap } from "./eggMap.js";
 import { droper } from "./weapons.js/createDroper.js";
 import { createShooterBoss } from "./enemies/createShooterBoss.js";
 import { mainMenu } from "./menu/mainMenu.js";
+import { showGameStatistics } from "./menu/showGameStatistics.js";
+import { characterSelection } from "./menu/characterSelection.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -202,6 +205,27 @@ document.addEventListener("click", function (event) {
   const x = checkButtonPress(mouseX, mouseY);
 });
 
+export let scrollChange = {
+  x: 0,
+  y: 0,
+};
+
+export const handleMouseWheel = (event) => {
+  // Hämta scrollhastigheten från eventet
+  const scrollSpeed = event.deltaY;
+
+  scrollChange.y += scrollSpeed;
+
+  // Scrollhastigheten är negativ om användaren scrollar uppåt och positiv om användaren scrollar nedåt
+  if (scrollSpeed < 0) {
+    console.log("Användaren scrollar uppåt");
+  } else if (scrollSpeed > 0) {
+    console.log("Användaren scrollar nedåt");
+  }
+};
+
+document.addEventListener("wheel", handleMouseWheel);
+
 let currentMusicIndex = 0;
 
 let spawnRate = 50 / stats.curse;
@@ -243,7 +267,7 @@ const wavesList = [wave1, wave2, wave3, wave4, wave5];
 
 document.body.addEventListener("mousemove", playMusic);
 
-let timer = 0;
+export let timer = 0;
 
 let canChangeMusic = true;
 
@@ -318,7 +342,9 @@ export const startGame = () => {
   });
 
   // mainMenu();
-  deathMenu();
+  characterSelection();
+  // deathMenu();
+  // showGameStatistics();
   pause();
 
   // start();
@@ -346,10 +372,12 @@ const update = () => {
   spawnRate = 50 / stats.curse;
   maxEnemyCount = ((enemyFactor * stats.curse) / 3) * enemiesAmountMultiplier;
 
+  // scrollChange.y = Math.sqrt(scrollChange.y);
+
   checkRegen();
 
   const currentTime = Date.now();
-  timer = (currentTime - oldTime - menuTime) / 1000;
+  timer = (currentTime - oldTime - menuTime) / 1000 + 10;
 
   if (Math.floor(timer) % 2 === 0 && canChangeWave) {
     canChangeWave = false;
@@ -367,10 +395,24 @@ const update = () => {
     }, 1000);
   }
 
+  // drawText(
+  //   Math.floor(timer / 60) + ":" + Math.floor(timer % 60),
+  //   world.width / 2,
+  //   100 * screenSizeMultipler.y,
+  //   "red",
+  //   worldsizeMultiplier
+  // );
+  const minutes = Math.floor(timer / 60);
+  const seconds = Math.floor(timer % 60);
+
+  const formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+  const timerText = minutes + ":" + formattedSeconds;
+
   drawText(
-    Math.floor(timer),
+    timerText,
     world.width / 2,
-    100 * screenSizeMultipler.y,
+    100 * screenSizeMultiplier.y,
     "red",
     worldsizeMultiplier
   );
@@ -440,8 +482,8 @@ const update = () => {
 
     drawText(
       weapon.name,
-      80 * screenSizeMultipler.x,
-      52.5 * (index + 2) * screenSizeMultipler.y,
+      80 * screenSizeMultiplier.x,
+      52.5 * (index + 2) * screenSizeMultiplier.y,
       "green",
       worldsizeMultiplier
     );
@@ -449,8 +491,8 @@ const update = () => {
     const buttonTextWidth = ctx.measureText(weapon.name).width;
     drawText(
       weapon.upgrades.level,
-      buttonTextWidth + 100 * screenSizeMultipler.x,
-      52.5 * (index + 2) * screenSizeMultipler.y,
+      buttonTextWidth + 100 * screenSizeMultiplier.x,
+      52.5 * (index + 2) * screenSizeMultiplier.y,
       "black",
       worldsizeMultiplier
     );
@@ -458,10 +500,10 @@ const update = () => {
     if (weapon.image !== undefined) {
       ctx.drawImage(
         weapon.image,
-        20 * screenSizeMultipler.x,
-        (65 + 55 * index) * screenSizeMultipler.y,
-        50 * screenSizeMultipler.x,
-        50 * screenSizeMultipler.y
+        20 * screenSizeMultiplier.x,
+        (65 + 55 * index) * screenSizeMultiplier.y,
+        50 * screenSizeMultiplier.x,
+        50 * screenSizeMultiplier.y
       );
     }
 
@@ -688,14 +730,14 @@ const update = () => {
   });
 
   const UIStatistics = {
-    goldKillYMargin: 100 * screenSizeMultipler.y,
+    goldKillYMargin: 100 * screenSizeMultiplier.y,
   };
 
   drawXpBar(0, 0, world.width, 50, player.xp.amount, player.xp.nextLevel);
   drawText(
     player.xp.level,
-    world.width - 80 * screenSizeMultipler.x,
-    40 * screenSizeMultipler.y,
+    world.width - 80 * screenSizeMultiplier.x,
+    40 * screenSizeMultiplier.y,
     "green",
     worldsizeMultiplier
   );
@@ -708,10 +750,10 @@ const update = () => {
     0,
     211,
     239,
-    goldtextX - 60 * screenSizeMultipler.x,
-    60 * screenSizeMultipler.y,
-    50 * screenSizeMultipler.x,
-    50 * screenSizeMultipler.x
+    goldtextX - 60 * screenSizeMultiplier.x,
+    60 * screenSizeMultiplier.y,
+    50 * screenSizeMultiplier.x,
+    50 * screenSizeMultiplier.x
   );
   drawText(
     player.gold,
@@ -727,10 +769,10 @@ const update = () => {
     0,
     136,
     160,
-    (world.width / 5) * 4 - 50 * screenSizeMultipler.x,
-    60 * screenSizeMultipler.y,
-    40 * screenSizeMultipler.x,
-    50 * screenSizeMultipler.y
+    (world.width / 5) * 4 - 50 * screenSizeMultiplier.x,
+    60 * screenSizeMultiplier.y,
+    40 * screenSizeMultiplier.x,
+    50 * screenSizeMultiplier.y
   );
   drawText(
     statistics.overall.kills,
@@ -745,9 +787,9 @@ const update = () => {
     world.width / 2 - player.radius * 1.25,
     world.height / 2 +
       player.radius +
-      player.radius * 0.25 * screenSizeMultipler.y,
+      player.radius * 0.25 * screenSizeMultiplier.y,
     player.radius * 2.5,
-    15 * screenSizeMultipler.y,
+    15 * screenSizeMultiplier.y,
     player.health,
     stats.maxHealth
   );
@@ -767,9 +809,9 @@ const update = () => {
       world.width / 2 - player.radius * 1.25,
       world.height / 2 +
         player.radius +
-        player.radius * 0.25 * screenSizeMultipler.y,
+        player.radius * 0.25 * screenSizeMultiplier.y,
       player.radius * 2.5,
-      15 * screenSizeMultipler.y,
+      15 * screenSizeMultiplier.y,
       player.health,
       stats.maxHealth
     );

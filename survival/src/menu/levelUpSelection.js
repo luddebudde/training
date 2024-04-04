@@ -42,10 +42,10 @@ export const totalWeapons = [
   cherry,
   droper,
 
-  jedå,
-  colin,
-  uluk,
-  buba,
+  // jedå,
+  // colin,
+  // uluk,
+  // buba,
 ];
 
 let undefinedButtons = 0;
@@ -114,28 +114,34 @@ export const levelUpSelection = () => {
       height: square.height / 4 - 40 * screenSizeMultipler.y,
       function: () => {
         if (button.weapon !== undefined) {
-          const weaponUpgrades = button.weapon.upgrades;
-          const level = weaponUpgrades.level;
+          if (weapons.includes(button.weapon)) {
+            const weaponUpgrades = button.weapon.upgrades;
+            const level = weaponUpgrades.level;
 
-          const statTypes = weaponUpgrades.statsOrder[level];
-          const upgradeAmounts = weaponUpgrades.amountOrder[level];
+            const statTypes = weaponUpgrades.statsOrder[level];
+            const upgradeAmounts = weaponUpgrades.amountOrder[level];
 
-          statTypes.forEach((statType, index) => {
-            const amount = upgradeAmounts[index];
+            statTypes.forEach((statType, index) => {
+              const amount = upgradeAmounts[index];
 
-            button.weapon.stats[statType] += amount;
+              button.weapon.stats[statType] += amount;
 
-            console.log(button.weapon.stats);
-          });
+              console.log(button.weapon.stats);
+            });
 
-          if (!weapons.includes(button.weapon)) {
+            if (!weapons.includes(button.weapon)) {
+              weapons.push(button.weapon);
+            }
+
+            button.weapon.upgrades.level += 1;
+            buttons.length = 0;
+
+            console.log(button.weapon.name, button.weapon.upgrades.level);
+          } else {
+            console.log(button.weapon);
+            button.weapon.timesTaken++;
             weapons.push(button.weapon);
           }
-
-          button.weapon.upgrades.level += 1;
-          buttons.length = 0;
-
-          console.log(button.weapon.name, button.weapon.upgrades.level);
         } else {
           if (button.number === 0) {
             if (player.health <= stats.maxHealth) player.health += 15;

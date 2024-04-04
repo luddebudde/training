@@ -1,5 +1,6 @@
 export const Pelin = {
   fullname: "Pelin McFluffy",
+  sprite: "limbots",
 
   stats: {
     growth: 0.3,

@@ -1,5 +1,6 @@
 export const Ludwigo = {
   fullname: "Ludwigo Ferone",
+  sprite: "cherry",
 
   stats: {
     growth: 0.7,

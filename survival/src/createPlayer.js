@@ -4,7 +4,11 @@ import { Pelin } from "./characters.js/Pelin.js";
 import { stats } from "./stats.js";
 import { world, worldsizeMultiplier } from "./world.js";
 
-export const currentCharacter = Blugo;
+export let currentCharacter = Blugo;
+
+export const changeCurrentCharacter = (character) => {
+  currentCharacter = character;
+};
 
 export const createPlayer = () => {
   return {
@@ -26,10 +30,10 @@ export const createPlayer = () => {
       // amount: 1000,
       amount: 0,
       level: 1,
-      // nextLevel: 100,
-      nextLevel: 5000,
-      levelIncrease: 100,
-      // levelIncrease: 50000,
+      nextLevel: 100,
+      // nextLevel: 5000,
+      // levelIncrease: 100,
+      levelIncrease: 50000,
     },
     levelUpIncrease: currentCharacter.levelUpIncrease,
 

@@ -1,12 +1,14 @@
+import { currentCharacter } from "../createPlayer.js";
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { getNextElement } from "../getNextElement.js";
-import { ctx, maxAmountOfWeapons, weapons } from "../main.js";
+import { assets, buttons, ctx, maxAmountOfWeapons, weapons } from "../main.js";
 import { statistics } from "../statistics.js";
 import { aimBullet } from "../weapons.js/createAimBullet.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { wiper } from "../weapons.js/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { mainMenu } from "./mainMenu.js";
 
 let loopAmount = 0;
 let overallStatAmount = 0;
@@ -56,15 +58,38 @@ export const showStatistics = () => {
 
   drawSquare(square);
 
-  const playerSquare = {
-    x: world.width,
-    y: world.height,
+  const playerSquarePos = {
+    x: world.width - 25,
+    y: world.height - 25,
     width: -600 * screenSizeMultipler.x,
     height: -600 * screenSizeMultipler.y,
+  };
+
+  const playerSquare = {
+    x: playerSquarePos.x,
+    y: playerSquarePos.y,
+    width: playerSquarePos.width,
+    height: playerSquarePos.height,
     color: "white",
   };
 
   drawSquare(playerSquare);
+
+  ctx.drawImage(
+    assets[currentCharacter.sprite],
+    playerSquarePos.x - 500,
+    playerSquarePos.y - 500,
+    400,
+    400
+  );
+
+  drawText(
+    "Played character: " + currentCharacter.fullname,
+    world.width - 625,
+    world.height - 650,
+    "red",
+    0.8
+  );
 
   // draw
 
@@ -117,4 +142,30 @@ export const showStatistics = () => {
       weaponStatisticAmount = 0;
     }
   });
+
+  const buttonWidth = 400;
+  const buttonHeight = 200;
+
+  const mainMenuButton = {
+    x: world.width / 2 - buttonWidth / 2,
+    y: world.height - buttonHeight * 1.2,
+    width: buttonWidth,
+    height: buttonHeight,
+    color: "purple",
+    function: () => {
+      buttons.length = 0;
+      mainMenu();
+    },
+    text: "MAIN MENU",
+  };
+
+  drawSquare(mainMenuButton);
+  drawText(
+    mainMenuButton.text,
+    mainMenuButton.x + 15,
+    mainMenuButton.y + mainMenuButton.height * 0.55,
+    "red",
+    1.3
+  );
+  buttons.push(mainMenuButton);
 };

@@ -1,8 +1,10 @@
+import { assets } from "../main.js";
 import { stats } from "../stats.js";
 // import { aimBullet } from "../weapons.js/createAimBullet.js";
 
 export const Blugo = {
   fullname: "Blugo McPlommon",
+  sprite: "blue",
   // startingWeapon: aimBullet,
 
   stats: {
@@ -30,5 +32,14 @@ export const Blugo = {
   },
   levelUpIncrease: () => {
     // stats.curse += 0.1;
+  },
+  draw: (ctx, assets, player) => {
+    ctx.drawImage(
+      assets.blue,
+      player.pos.x - player.radius,
+      player.pos.y - player.radius,
+      player.radius * 2,
+      player.radius * 2
+    );
   },
 };
