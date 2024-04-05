@@ -1,12 +1,21 @@
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { getNextElement } from "../getNextElement.js";
-import { buttons, ctx, entities, player, start, startGame } from "../main.js";
+import {
+  backgrounds,
+  buttons,
+  ctx,
+  entities,
+  player,
+  start,
+  startGame,
+} from "../main.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { drawObject } from "../draw/drawObject.js";
 import { deathMenu } from "./deathMenu.js";
 import { showGameStatistics } from "./showGameStatistics.js";
 import { characterSelection } from "./characterSelection.js";
+import { leaderboard } from "./leaderboard.js";
 
 let chosenWeapon = 0;
 
@@ -23,7 +32,7 @@ const playGame = {
   function: () => {
     buttons.length = 0;
     characterSelection();
-    console.log("character");
+    // console.log("character");
   },
 };
 const statistics = {
@@ -38,7 +47,7 @@ const statistics = {
   function: () => {
     buttons.length = 0;
     showGameStatistics();
-    console.log("stat");
+    // console.log("stat");
   },
 };
 const feats = {
@@ -52,7 +61,7 @@ const feats = {
   },
   function: () => {
     // showFeats();
-    console.log("feat");
+    // console.log("feat");
   },
 };
 const weapons = {
@@ -66,7 +75,7 @@ const weapons = {
   },
   function: () => {
     // shotUnlockedWeapons();
-    console.log("weapon");
+    // console.log("weapon");
   },
 };
 
@@ -76,13 +85,14 @@ let buttonXPos;
 const buttonFunctions = [];
 
 export const mainMenu = () => {
-  ctx.beginPath();
-  ctx.globalAlpha = 1;
-  ctx.clearRect(0, 0, world.width, world.height);
-  ctx.fillStyle = "white";
-  ctx.fill();
+  // ctx.beginPath();
+  // ctx.globalAlpha = 1;
+  // ctx.clearRect(0, 0, world.width, world.height);
+  // ctx.fillStyle = "white";
+  // ctx.fill();
 
-  //   const buttonFunctions = [startGame, showStatistics];
+  ctx.drawImage(backgrounds.forest, 0, 0, world.width, world.height);
+
   const menuButtons = [statistics, feats, weapons, playGame];
 
   menuButtons.forEach((button) => {
@@ -91,8 +101,6 @@ export const mainMenu = () => {
 
   const loopAmount = menuButtons.length;
 
-  //   console.log(buttonFunctions);
-
   for (let i = 1; i < loopAmount + 1; i++) {
     const currentButton = getNextElement(menuButtons, i - 2);
     const buttonText = currentButton.text;
@@ -100,13 +108,8 @@ export const mainMenu = () => {
 
     const act = currentButton.function;
 
-    // console.log(act);
-
     const buttonNameInfo = ctx.measureText(buttonText);
     const buttonNameWidth = buttonNameInfo.width;
-
-    // console.log(buttonNameWidth);
-    // console.log(buttonNameInfo);
 
     if (currentButton === playGame) {
       buttonYPos = world.height / 2;
@@ -123,9 +126,7 @@ export const mainMenu = () => {
 
     const square = {
       x: buttonXPos - squareWidth / 2,
-      //  - (buttonNameWidth / 2) * screenSizeMultipler.x * sizeMult.x,
       y: buttonYPos - (squareHeight / 2) * sizeMult.y,
-      //   * screenSizeMultipler.y * sizeMult.y,
 
       width: squareWidth,
       height: squareHeight * sizeMult.y,
@@ -144,14 +145,8 @@ export const mainMenu = () => {
       height: square.height,
       function: () => {
         act();
-
-        // start();
-
-        // buttons.length = 0;
       },
     };
-
-    // console.log(button);
 
     drawText(
       buttonText,
@@ -162,16 +157,28 @@ export const mainMenu = () => {
     );
 
     buttons.push(button);
-    // console.log(buttons, 3);
   }
-  const circle = {
-    pos: {
-      x: world.width / 2,
-      y: world.height / 2,
-    },
-    radius: 15,
 
+  const leaderboardButton = {
+    x: 0,
+    y: 0,
+    width: 200,
+    height: 100,
     color: "green",
+    text: "LEADERBOARD",
+    function: () => {
+      buttons.length = 0;
+      leaderboard();
+    },
   };
-  drawObject(ctx, circle);
+
+  drawSquare(leaderboardButton);
+  drawText(
+    leaderboardButton.text,
+    10,
+    leaderboardButton.height / 2,
+    "black",
+    0.5
+  );
+  buttons.push(leaderboardButton);
 };

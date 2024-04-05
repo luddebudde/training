@@ -58,6 +58,18 @@ export const playBossDefeat = () => {
   audio.play();
 };
 
+export const playWilhelm = () => {
+  const audio = new Audio("public/sounds/wilhelm.mp3");
+  audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
+export const playDeathSound = () => {
+  const audio = new Audio("public/sounds/death_sound.mp3");
+  audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
 let isHurtSoundPlaying = false;
 
 export const playHurt = () => {

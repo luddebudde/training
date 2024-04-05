@@ -11,6 +11,7 @@ export const changeCurrentCharacter = (character) => {
 };
 
 export const createPlayer = () => {
+  const radius = 40;
   return {
     character: currentCharacter,
     maxHealth: stats.maxHealth,
@@ -35,11 +36,21 @@ export const createPlayer = () => {
       // levelIncrease: 100,
       levelIncrease: 50000,
     },
+    draw: (ctx, assets, object) => {
+      ctx.drawImage(
+        assets[currentCharacter.sprite],
+        object.pos.x - radius,
+        object.pos.y - radius,
+        object.radius * 2,
+        object.radius * 2
+      );
+    },
     levelUpIncrease: currentCharacter.levelUpIncrease,
 
     eggCount: 0,
     gold: 0,
     speed: stats.movementSpeed * worldsizeMultiplier,
+    speedMult: 1,
     // startRadius: 40,
     radius: 40 * worldsizeMultiplier,
     // health: 100,

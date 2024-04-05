@@ -2,8 +2,10 @@ import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { getNextElement } from "../getNextElement.js";
 import {
+  bullets,
   buttons,
   ctx,
+  enemies,
   entities,
   player,
   start,
@@ -16,15 +18,23 @@ import { stats } from "../stats.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { mainMenu } from "./mainMenu.js";
 import { statistics } from "../statistics.js";
+import { restoreMusicVolume, startMusic } from "../changeMusic.js";
+import { createBlank } from "../pickups/blank.js";
 
 let chosenWeapon = 0;
 
 const revivePlayer = () => {
+  restoreMusicVolume();
+  startMusic();
   statistics.game.deaths -= 1;
 
+  player.speedMult = 1;
   player.health = stats.maxHealth;
   entities.push(player);
 
+  // enemies.length = 0;
+  createBlank(player.pos.x, player.pos.y);
+  bullets.length = 0;
   stats.revives -= 1;
 
   statistics.game.revivesUsed += 1;
@@ -32,6 +42,8 @@ const revivePlayer = () => {
 };
 
 export const deathMenu = () => {
+  // stopMusic();
+  // fadeOutMusic();
   const buttonFunctions = [
     stats.revives > 0 ? revivePlayer : undefined,
     startGame,

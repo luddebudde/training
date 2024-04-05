@@ -168,8 +168,8 @@ export const levelUpSelection = () => {
       const textBonusMarginY = 180 * screenSizeMultipler.y;
 
       const level = button.weapon.upgrades.level;
-      // Rita vapennamnet
 
+      // Rita vapennamnet
       drawText(
         button.weapon.name,
         square.x + textBonusMarginX,
@@ -215,6 +215,10 @@ export const levelUpSelection = () => {
         "yellow",
         worldsizeMultiplier
       );
+
+      // const shouldWriteDescription =button.weapon.upgrades.amount > 0 || !button.weapon ? true : false
+
+      // if (button.weapon.upgrades.amount > 0)
 
       if (button.weapon.upgrades.description !== undefined) {
         const description = button.weapon.upgrades.description[level];

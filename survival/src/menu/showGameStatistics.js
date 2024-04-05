@@ -1,3 +1,4 @@
+import { characters } from "../characters.js/characterInfo.js";
 import { currentCharacter } from "../createPlayer.js";
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
@@ -85,8 +86,18 @@ export const showGameStatistics = () => {
 
   drawSquare(playerSquare);
 
+  // const numbers = [10, 5, 20, 15];
+  // const timesTakenArray = characters.map((character) => character.timesPicked);
+  // const mostPopularCharacter = Math.max(...timesTakenArray);
+  // console.log(mostPopularCharacter); // Output: 20
+
+  const mostPopularCharacter = characters.reduce((prev, current) => {
+    return prev.timesPicked > current.timesPicked ? prev : current;
+  });
+  console.log(mostPopularCharacter); // Output: Objektet för den mest populära karaktären
+
   drawText(
-    "Most played character:" + currentCharacter.fullname,
+    "Most played character:" + mostPopularCharacter.fullname,
     world.width - 675,
     world.height - 700,
     "red",
@@ -94,7 +105,7 @@ export const showGameStatistics = () => {
   );
 
   ctx.drawImage(
-    assets[currentCharacter.sprite],
+    assets[mostPopularCharacter.sprite],
     playerSquarePos.x - 500,
     playerSquarePos.y - 500,
     400,

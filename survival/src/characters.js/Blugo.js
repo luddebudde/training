@@ -4,6 +4,7 @@ import { stats } from "../stats.js";
 
 export const Blugo = {
   fullname: "Blugo McPlommon",
+  timesPicked: 1,
   sprite: "blue",
   // startingWeapon: aimBullet,
 

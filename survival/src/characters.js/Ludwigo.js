@@ -1,5 +1,6 @@
 export const Ludwigo = {
   fullname: "Ludwigo Ferone",
+  timesPicked: 0,
   sprite: "cherry",
 
   stats: {

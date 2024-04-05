@@ -63,7 +63,7 @@ export const createShooterBoss = (
   spawnHeight = getRandomSpawnPos(player).y
 ) => {
   const shooter = {
-    health: 1000,
+    health: 600,
     radius: 80 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,

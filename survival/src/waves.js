@@ -15,10 +15,10 @@ import { stats } from "./stats.js";
 
 export const bossWaves = [2, 4, 5];
 export const bossType = [
-  createShooterBoss,
-  // createWalkerBoss,
-  // createMarcherBoss,
   // createShooterBoss,
+  createWalkerBoss,
+  createMarcherBoss,
+  createShooterBoss,
 ];
 
 export let enemiesAmountMultiplier = 1;
@@ -26,14 +26,14 @@ export let enemiesAmountMultiplier = 1;
 export const wave1 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos(player);
-    // createWalker(spawnPos.x, spawnPos.y);
+    createWalker(spawnPos.x, spawnPos.y);
     // createCharger(spawnPos.x, spawnPos.y);
     // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
   }
-  const spawnPos = getRandomSpawnPos(player);
+  // const spawnPos = getRandomSpawnPos(player);
   // createLimbots(spawnPos.x, spawnPos.y);
-  createShooter(spawnPos.x, spawnPos.y);
+  // createShooter(spawnPos.x, spawnPos.y);
   enemiesAmountMultiplier = 0.5;
 };
 
@@ -54,10 +54,13 @@ export const wave3 = () => {
     const spawnPos = getRandomSpawnPos(player);
     // createWalker(spawnPos.x, spawnPos.y);
     //   createCharger(spawnPos.x, spawnPos.y);
-    // createTank(spawnPos.x, spawnPos.y + 100);
-    createJuggernaut(spawnPos.x, spawnPos.y + 100);
+    createTank(spawnPos.x, spawnPos.y + 100);
+
     // createNerfer(spawnPos.x, spawnPos.y);
   }
+  const spawnPos = getRandomSpawnPos(player);
+
+  createJuggernaut(spawnPos.x, spawnPos.y + 100);
 };
 
 export const wave4 = () => {
@@ -92,6 +95,11 @@ export const wave5 = () => {
 
       // createMarcher(spawnPos.x + i * 25, spawnPos.y);
     }
+  } else {
+    const spawnPos = getRandomSpawnPos(player);
+    createShooter(spawnPos.x, spawnPos.y);
   }
   enemiesAmountMultiplier = 3;
 };
+
+export const wavesList = [wave1, wave2, wave3, wave4, wave5];

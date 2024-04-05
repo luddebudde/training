@@ -20,12 +20,13 @@ import { wiper } from "../weapons.js/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { totalWeapons } from "./levelUpSelection.js";
 import { mainMenu } from "./mainMenu.js";
+import { mapSelection } from "./mapSelection.js";
 
 let loopAmount = 0;
 let overallStatAmount = 0;
 let weaponStatisticAmount = 0;
 
-const drawStatistics = (
+const drawCharacterStats = (
   type,
   value,
   x,
@@ -62,6 +63,7 @@ const drawStatistics = (
 };
 
 export const drawSidebar = (sideBar) => {
+  // White player square
   const playerSquarePos = {
     x: sideBar.x,
     y: world.height,
@@ -79,14 +81,45 @@ export const drawSidebar = (sideBar) => {
 
   drawSquare(playerSquare);
 
+  // Player Sprite
   const playerRadius = 200;
   ctx.drawImage(
     assets[currentCharacter.sprite],
     playerSquarePos.x + playerSquarePos.width / 2 - playerRadius,
-    playerSquarePos.y - 500,
+    playerSquarePos.y - 600,
     playerRadius * 2,
     playerRadius * 2
   );
+
+  // Play button
+  const playButtonWidth = playerRadius * 2 - 100;
+  const playButtonHeight = 150;
+
+  const playButton = {
+    x: playerSquarePos.x + playerSquarePos.width / 2 - playButtonWidth / 2,
+    y: world.height - playButtonHeight - 10,
+    width: playButtonWidth,
+    height: playButtonHeight,
+    color: "green",
+    text: "PLAY",
+    function: () => {
+      buttons.length = 0;
+      mapSelection();
+      console.log("play!");
+    },
+  };
+
+  drawSquare(playButton);
+  drawText(
+    playButton.text,
+    playButton.x + playButton.width / 15,
+    playButton.y + playButton.height / 1.5,
+    "red",
+    2
+  );
+  buttons.push(playButton);
+
+  // Statistics
 
   const objectKeys = Object.keys(currentCharacter.stats);
 
@@ -94,7 +127,7 @@ export const drawSidebar = (sideBar) => {
     overallStatAmount++;
 
     const value = currentCharacter.stats[key];
-    drawStatistics(key, value, sideBar.x + 40, 50, "red", 0.75);
+    drawCharacterStats(key, value, sideBar.x + 40, 50, "red", 0.75);
   }
   overallStatAmount = 0;
 };
@@ -137,17 +170,6 @@ export const characterSelection = () => {
       height: playerSquarePos.height,
       color: "white",
       function: () => {
-        // ctx.beginPath();
-        // ctx.globalAlpha = 1;
-        // ctx.clearRect(
-        //   sideBar.x,
-        //   0,
-        //   world.width - sideBar.x,
-        //   world.height - 1000
-        // );
-        // ctx.fillStyle = "black";
-        // ctx.fill();
-
         const square = {
           x: sideBar.x + sideBar.width,
           y: 0,
@@ -159,11 +181,9 @@ export const characterSelection = () => {
         drawSquare(square);
 
         changeCurrentCharacter(playerSquare.character);
+        playerSquare.character.timesPicked += 1;
         drawSidebar(sideBar);
       },
-      //   update: () => {
-      //     handleMouseWheel();
-      //   },
     };
 
     drawSquare(playerSquare);
@@ -185,17 +205,4 @@ export const characterSelection = () => {
 
     buttons.push(playerSquare);
   });
-
-  const playButton = {
-    x: 1000,
-    y: 1000,
-    width: 100,
-    height: 100,
-    color: "green",
-    text: "PLAY",
-    function: () => {},
-  };
-
-  drawSquare(playButton);
-  buttons.push(playButton);
 };

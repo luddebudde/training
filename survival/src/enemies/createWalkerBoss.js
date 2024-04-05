@@ -31,7 +31,7 @@ export const createWalkerBoss = (
   spawnHeight = getRandomSpawnPos(player).y
 ) => {
   const walker = {
-    health: 100,
+    health: 1000,
     // startRadius: 100,
     radius: 100 * worldsizeMultiplier,
     pos: {

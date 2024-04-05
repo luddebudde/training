@@ -1,4 +1,4 @@
-import { healthArrays, player } from "./main.js";
+import { player } from "./main.js";
 import { statistics } from "./statistics.js";
 import { stats } from "./stats.js";
 
