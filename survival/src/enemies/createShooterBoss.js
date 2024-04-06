@@ -24,7 +24,7 @@ let shootCooldown = 1000;
 
 const shooterAttacks = {
   shotgun: {
-    attackCooldown: loopPerSecond / 2,
+    attackCooldown: loopPerSecond / 1,
     pellets: 5,
     area: 25,
     speed: 10,
@@ -35,13 +35,13 @@ const shooterAttacks = {
     attackCooldown: loopPerSecond / 15,
     area: 15,
     speed: 15,
-    damage: 5,
+    damage: 2.5,
   },
   sniper: {
     attackCooldown: loopPerSecond,
-    area: 40,
-    speed: 40,
-    damage: 50,
+    area: 35,
+    speed: 25,
+    damage: 20,
   },
 };
 const shotgunStats = shooterAttacks.shotgun;

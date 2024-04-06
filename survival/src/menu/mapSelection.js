@@ -1,3 +1,12 @@
+import {
+  changeMusic,
+  changeVolume,
+  fadeOutMusic,
+  gameMusicList,
+  musicAudio,
+  normalMusic,
+  restoreMusicVolume,
+} from "../changeMusic.js";
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import {
@@ -11,9 +20,11 @@ import {
 import { changeCurrentMap, maps } from "../maps/standardMap.js";
 
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { characterSelection } from "./characterSelection.js";
 
 export const mapSelection = () => {
   scrollChange.y = 0;
+  fadeOutMusic(3000);
   const square = {
     x: 0,
     y: 0,
@@ -23,6 +34,28 @@ export const mapSelection = () => {
   };
 
   drawSquare(square);
+
+  const backButton = {
+    x: 20,
+    y: world.height - 150,
+    width: 160,
+    height: 100,
+    color: "purple",
+    function: () => {
+      buttons.length = 0;
+      characterSelection();
+    },
+    text: "BACK",
+  };
+
+  buttons.push(backButton);
+  drawSquare(backButton);
+  drawText(
+    backButton.text,
+    backButton.x + 10,
+    backButton.y + (backButton.height / 5) * 3,
+    "red"
+  );
 
   maps.forEach((map, index) => {
     const mapIconWidth = 800;
@@ -172,8 +205,9 @@ const drawMapSidebar = (map) => {
     function: () => {
       buttons.length = 0;
       changeCurrentMap(playButton.map);
+      // console.log(musicAudio.src);
+
       startGame();
-      //   console.log("play!");
     },
   };
 
@@ -198,6 +232,35 @@ const drawMapSidebar = (map) => {
     drawMapStats(key, value, sideBar.x + 40, 50, "red", 0.75);
   }
   overallStatAmount = 0;
+
+  gameMusicList.forEach((song, index) => {
+    const songName = ctx.measureText(song.name);
+    const musicButton = {
+      song: song,
+      x: 75 + songName.width,
+      y: 10 + 75 * index,
+      width: 50,
+      height: 50,
+      color: "green",
+      function: () => {
+        changeMusic(song.fileName);
+        changeVolume(song.volume);
+      },
+    };
+
+    // drawSquare(musicButton);
+    buttons.push(musicButton);
+
+    ctx.drawImage(
+      assets.playButton,
+      musicButton.x,
+      musicButton.y,
+      musicButton.width,
+      musicButton.height
+    );
+
+    drawText(song.name, 50, 50 + 75 * index, "red", 1.2);
+  });
 };
 
 const drawMapStats = (type, value, x, y, color = "red", sizeMultplier = 1) => {

@@ -55,6 +55,7 @@ export const selfImpalerBody = createSelfImpaler();
 export const selfImpaler = {
   name: "selfImpaler",
   timesTaken: 0,
+  unlockRequirement: () => {},
   attackIntervall: cooldown,
   cooldown: cooldown,
   // attack: () => {

@@ -39,7 +39,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     slowEffect: 0,
     speed: 2 * stats.curse * worldsizeMultiplier,
 
-    damage: 0.3 * 0,
+    damage: 0.3 * stats.curse,
 
     color: "red",
     team: "enemy",

@@ -54,6 +54,7 @@ export const createDroper = () => {
 export const droper = {
   name: "droper",
   timesTaken: 0,
+  unlockRequirement: () => {},
   image: await loadImage(`public/sprites/egg.png`),
   attackIntervall: droperStats.cooldown * stats.cooldown,
   cooldown: droperStats.cooldown * stats.cooldown,

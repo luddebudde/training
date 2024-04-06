@@ -2,7 +2,7 @@ import { universalVolume } from "./sounds.js";
 
 const shouldPlayMusic = true;
 
-const musicAudio = new Audio("public/sounds/gameMusic.mp3");
+export const musicAudio = new Audio("public/sounds/gameMusic.mp3");
 musicAudio.loop = true;
 musicAudio.volume = 0.7 * universalVolume;
 export const playMusic = () => {
@@ -55,18 +55,27 @@ export const changeVolume = (amount) => {
   musicAudio.volume = amount * universalVolume;
 };
 
-const normalMusic = {
+export const normalMusic = {
+  name: "normal",
   fileName: "public/sounds/gameMusic.mp3",
   volume: 0.7,
 };
 
 const funnyMusic = {
+  name: "funny",
   fileName: "public/sounds/alternativeMusic.mp3",
-  volume: 1,
+  volume: 1.2,
 };
 
 const battleMusic = {
+  name: "battle",
   fileName: "public/sounds/battle_music.mp3",
+  volume: 1,
+};
+
+export const synthMusic = {
+  name: "synth",
+  fileName: "public/sounds/synth.mp3",
   volume: 1,
 };
 
@@ -85,11 +94,12 @@ let originalVolume = normalMusic.volume;
 
 export const restoreMusicVolume = () => {
   normalMusic.volume = 0.7;
-  funnyMusic.volume = 1;
+  funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
+  synthMusic.volume = 1;
 
   // Återställ volymen för den aktuella låten
   changeVolume(originalVolume);
 };
 
-export const musicList = [normalMusic, funnyMusic, battleMusic];
+export const gameMusicList = [normalMusic, funnyMusic, battleMusic];

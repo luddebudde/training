@@ -1,3 +1,9 @@
+// Johannes hjälplista:
+
+// Fixa bugg där man saknar liv men lever
+// Fixa bugg där knappar får konstig form && text konstig position
+// Fixa backgrund som rör på sig
+
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { getNextElement } from "../getNextElement.js";
@@ -16,6 +22,14 @@ import { deathMenu } from "./deathMenu.js";
 import { showGameStatistics } from "./showGameStatistics.js";
 import { characterSelection } from "./characterSelection.js";
 import { leaderboard } from "./leaderboard.js";
+import {
+  changeMusic,
+  changeVolume,
+  musicAudio,
+  playMusic,
+  restoreMusicVolume,
+  synthMusic,
+} from "../changeMusic.js";
 
 let chosenWeapon = 0;
 
@@ -85,6 +99,12 @@ let buttonXPos;
 const buttonFunctions = [];
 
 export const mainMenu = () => {
+  if (musicAudio.volume === 0) {
+    changeMusic(synthMusic.fileName);
+    // changeVolume(synthMusic.volume);
+    restoreMusicVolume();
+    playMusic();
+  }
   // ctx.beginPath();
   // ctx.globalAlpha = 1;
   // ctx.clearRect(0, 0, world.width, world.height);

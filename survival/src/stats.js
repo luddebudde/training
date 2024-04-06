@@ -25,3 +25,21 @@ export const upgradeStats = (weapon, statType, amount) => {
   weapon.stats.statType += amount;
   // stats
 };
+
+export const resetStats = (character) => {
+  stats.growth = character.stats.growth;
+  stats.greed = character.stats.growth;
+  stats.movementSpeed = character.stats.movementSpeed;
+  stats.maxHealth = character.stats.maxHealth;
+  stats.maxShield = character.stats.maxShield;
+  stats.regeneration = character.stats.regen;
+  stats.armor = character.stats.armor;
+  stats.damage = character.stats.damage;
+  stats.area = character.stats.area * worldsizeMultiplier;
+  stats.speed = character.stats.speed * worldsizeMultiplier;
+  stats.curse = character.stats.curse;
+  stats.cooldown = character.stats.cooldown;
+
+  stats.luck = character.stats.luck;
+  stats.revives = character.stats.revives;
+};

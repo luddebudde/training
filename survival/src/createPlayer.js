@@ -33,8 +33,8 @@ export const createPlayer = () => {
       level: 1,
       nextLevel: 100,
       // nextLevel: 5000,
-      // levelIncrease: 100,
-      levelIncrease: 50000,
+      levelIncrease: 100,
+      // levelIncrease: 50000,
     },
     draw: (ctx, assets, object) => {
       ctx.drawImage(

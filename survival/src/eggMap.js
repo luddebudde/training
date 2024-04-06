@@ -14,7 +14,7 @@ export const placeEggMap = (xPos, yPos) => {
 
     color: "purple",
     priority: 10,
-    shouldPoint: true,
+    shouldPoint: false,
 
     update: () => {
       if (doCirclesOverlap(player, map)) {

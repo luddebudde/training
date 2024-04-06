@@ -9,6 +9,7 @@ import {
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { statistics } from "../statistics.js";
 import { stats } from "../stats.js";
 
 const bulletSpeed = 20 * stats.speed;
@@ -150,6 +151,11 @@ export const createCherry = () => {
 export const cherry = {
   name: "cherry",
   timesTaken: 0,
+  unlockRequirement: () => {
+    if (statistics.overall.kills > 300) {
+      return true;
+    }
+  },
   // image: assets.rhino,
   image: await loadImage(`public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,

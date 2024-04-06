@@ -9,7 +9,9 @@ export const levelUp = () => {
 
   // console.log(player.xp.amount, player.xp.nextLevel);
 
-  player?.levelUpIncrease();
+  if (player.levelIncrease !== undefined) {
+    player.levelUpIncrease();
+  }
 
   if (Math.random() <= 0.9995) {
     playLevelUp();

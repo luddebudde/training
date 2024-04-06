@@ -110,6 +110,7 @@ export const createShotgun = () => {
 export const shotgun = {
   name: "shotgun",
   timesTaken: 0,
+  unlockRequirement: () => {},
   newCooldown: cooldown * stats.cooldown,
   attackIntervall: cooldown * stats.cooldown,
   cooldown: cooldown * stats.cooldown,

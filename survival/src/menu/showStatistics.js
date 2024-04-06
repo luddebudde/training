@@ -8,6 +8,7 @@ import { aimBullet } from "../weapons.js/createAimBullet.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { wiper } from "../weapons.js/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { availableWeapons, totalWeapons } from "./levelUpSelection.js";
 import { mainMenu } from "./mainMenu.js";
 
 let loopAmount = 0;
@@ -140,6 +141,20 @@ export const showStatistics = () => {
         console.log(weapon.statistics[key]);
       }
       weaponStatisticAmount = 0;
+    }
+  });
+
+  drawText("Unlocked Weapons:", 40, 300 + 100 * overallStatAmount, "red");
+  totalWeapons.forEach((allWeapon, index) => {
+    console.log(allWeapon);
+
+    if (
+      !availableWeapons.includes(allWeapon) &&
+      allWeapon.unlockRequirement()
+    ) {
+      overallStatAmount++;
+      drawText(allWeapon.name, 40, 300 + 100 * overallStatAmount, "green", 1);
+      availableWeapons.push(allWeapon);
     }
   });
 

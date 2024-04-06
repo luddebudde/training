@@ -9,7 +9,9 @@ export const dealDamage = (
   creditWeapon = undefined
 ) => {
   if (obj.resistance && obj.resistance[damageType] !== undefined) {
-    amount = amount / obj.resistance.strength;
+    console.log(amount);
+    amount = amount * (1 - obj.resistance[damageType]);
+    console.log(amount);
   }
 
   if (obj.shield !== undefined && obj.shield > 0) {
@@ -21,7 +23,7 @@ export const dealDamage = (
     obj.health -= amount;
   }
 
-  if (obj === player) {
+  if (obj === player && player.health > 0) {
     statistics.overall.damageTaken += amount;
     statistics.game.damageTaken += amount;
   } else if (obj.team === "enemy") {

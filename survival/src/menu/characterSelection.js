@@ -14,6 +14,7 @@ import {
   weapons,
 } from "../main.js";
 import { statistics } from "../statistics.js";
+import { resetStats } from "../stats.js";
 import { aimBullet } from "../weapons.js/createAimBullet.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { wiper } from "../weapons.js/wiper.js";
@@ -104,8 +105,8 @@ export const drawSidebar = (sideBar) => {
     text: "PLAY",
     function: () => {
       buttons.length = 0;
+      resetStats(currentCharacter);
       mapSelection();
-      console.log("play!");
     },
   };
 
@@ -133,7 +134,6 @@ export const drawSidebar = (sideBar) => {
 };
 
 export const characterSelection = () => {
-  scrollChange.y = 0;
   const square = {
     x: 0,
     y: 0,
@@ -143,6 +143,30 @@ export const characterSelection = () => {
   };
 
   drawSquare(square);
+
+  const backButton = {
+    x: 20,
+    y: world.height - 150,
+    width: 160,
+    height: 100,
+    color: "purple",
+    function: () => {
+      buttons.length = 0;
+      mainMenu();
+    },
+    text: "BACK",
+  };
+
+  buttons.push(backButton);
+  drawSquare(backButton);
+  drawText(
+    backButton.text,
+    backButton.x + 10,
+    backButton.y + (backButton.height / 5) * 3,
+    "red"
+  );
+
+  scrollChange.y = 0;
 
   const sideBar = {
     x: (world.width / 6) * 4.5,

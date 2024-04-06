@@ -76,7 +76,7 @@ export const createShooter = (spawnWidth, spawnHeight) => {
           createEnemyBullet(shooter, direction, {
             area: 20,
             speed: 5,
-            damage: 5,
+            damage: 2,
           });
         }
         if (dist < 400 + player.radius + shooter.radius) {

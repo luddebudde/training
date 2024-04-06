@@ -133,6 +133,8 @@ export const showGameStatistics = () => {
     );
   });
 
+  overallStatAmount = 0;
+
   const buttonWidth = 400;
   const buttonHeight = 200;
 

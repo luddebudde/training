@@ -24,6 +24,7 @@ import { createBlank } from "../pickups/blank.js";
 let chosenWeapon = 0;
 
 const revivePlayer = () => {
+  console.log("revive");
   restoreMusicVolume();
   startMusic();
   statistics.game.deaths -= 1;
@@ -42,10 +43,11 @@ const revivePlayer = () => {
 };
 
 export const deathMenu = () => {
+  console.log(stats);
   // stopMusic();
   // fadeOutMusic();
   const buttonFunctions = [
-    stats.revives > 0 ? revivePlayer : undefined,
+    stats.revives > 0 ? revivePlayer : deathMenu,
     startGame,
     showStatistics,
     mainMenu,
@@ -81,7 +83,7 @@ export const deathMenu = () => {
     const button = {
       number: i,
       image: chosenWeapon?.image,
-
+      noclick: true,
       weapon: chosenWeapon,
       x: square.x,
       y: square.y,
@@ -90,7 +92,6 @@ export const deathMenu = () => {
 
       function: () => {
         statistics.game.deaths += 1;
-        console.log(timer);
         statistics.timeLivedSeconds += Math.floor(timer);
         const timeLived = statistics.timeLivedSeconds;
 

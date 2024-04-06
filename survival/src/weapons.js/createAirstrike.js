@@ -82,10 +82,15 @@ let attackCounter = 0;
 export const airstrike = {
   name: "airstrike",
   timesTaken: 0,
+  unlockRequirement: () => {
+    // if (statistics.overall.kills > 300) {
+    //   return true;
+    // }
+  },
   // image: assets.rhino,
   //   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
-  image: await loadImage(`public/sprites/aimBulletSprite.png`),
+  // image: await loadImage(`public/sprites/aimBulletSprite.png`),
   attackIntervall: airstrikeStats.cooldown * stats.cooldown,
   cooldown: airstrikeStats.cooldown * stats.cooldown,
   //   attack: createAirstrike,

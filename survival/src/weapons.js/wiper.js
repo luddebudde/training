@@ -49,6 +49,7 @@ export const wiperBody = createWiper();
 export const wiper = {
   name: "wiper",
   timesTaken: 0,
+  unlockRequirement: () => {},
   attackIntervall: cooldown,
   cooldown: cooldown,
   attack: () => {
@@ -57,7 +58,7 @@ export const wiper = {
     // console.log("wiperAtatck");
     // Vänta en sekund
     setTimeout(() => {
-      const totalEnemyHealth = 0;
+      let totalEnemyHealth = 0;
       enemies.forEach((enemy) => {
         amountOfEnemies += 1;
         if (Math.random() * 100 < wiperStats.killAmount) {

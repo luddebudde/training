@@ -36,7 +36,7 @@ export const createMarcherBoss = (
   spawnWidth = getRandomSpawnPos(player).x,
   spawnHeight = getRandomSpawnPos(player).y
 ) => {
-  console.log("marcher");
+  // console.log("marcher");
   const marcherSpawnPos = {
     x: spawnWidth,
     y: spawnHeight,
@@ -56,10 +56,13 @@ export const createMarcherBoss = (
       x: 0,
       y: 0,
     },
+    resistance: {
+      kinetic: 0.5,
+    },
     slowEffect: 0,
     speed: 20 * stats.curse * worldsizeMultiplier,
 
-    damage: 5,
+    damage: 3,
 
     color: "red",
     team: "enemy",

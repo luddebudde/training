@@ -48,6 +48,20 @@ export const totalWeapons = [
   // buba,
 ];
 
+export const availableWeapons = [
+  aimBullet,
+  holyArea,
+  minigun,
+  shotgun,
+  wiper,
+  randomAimBullet,
+  axe,
+  airstrike,
+  // selfImpaler,
+  cherry,
+  droper,
+];
+
 let undefinedButtons = 0;
 
 let newRandomIndex = 0;
@@ -66,7 +80,7 @@ export const levelUpSelection = () => {
 
   document.createElement("button");
 
-  const weaponsNotInList = totalWeapons.filter(
+  const weaponsNotInList = availableWeapons.filter(
     (allWeapon) =>
       !weapons.includes(allWeapon) && !weaponPool.includes(allWeapon)
   );
@@ -106,7 +120,7 @@ export const levelUpSelection = () => {
     const button = {
       number: i,
       image: chosenWeapon?.image,
-
+      noclick: true,
       weapon: chosenWeapon,
       x: square.x + 20 * screenSizeMultipler.x,
       y: (i * square.height) / 4 + 120 * screenSizeMultipler.y,

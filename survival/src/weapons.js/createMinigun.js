@@ -79,6 +79,7 @@ export const createMinigun = () => {
 export const minigun = {
   name: "minigun",
   timesTaken: 0,
+  unlockRequirement: () => {},
   attackIntervall: aimBulletStats.cooldown * stats.cooldown,
   cooldown: aimBulletStats.cooldown * stats.cooldown,
   attack: createMinigun,

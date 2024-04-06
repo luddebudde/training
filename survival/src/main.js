@@ -24,7 +24,7 @@ import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
 import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
 import { vector } from "./vectors.js";
-import { stats } from "./stats.js";
+import { resetStats, stats } from "./stats.js";
 import { drawHealthBar } from "./draw/drawHealthbar.js";
 import { drawXpBar } from "./draw/drawXpBar.js";
 import {
@@ -50,8 +50,11 @@ import {
   changeMusic,
   changeVolume,
   fadeOutMusic,
-  musicList,
+  gameMusicList,
+  musicAudio,
+  normalMusic,
   playMusic,
+  restoreMusicVolume,
   startMusic,
   stopMusic,
 } from "./changeMusic.js";
@@ -78,7 +81,7 @@ import { chestMenu } from "./menu/chestMenu.js";
 import {
   bossType,
   bossWaves,
-  enemiesAmountMultiplier,
+  enemyAmountMultiplier,
   wave1,
   wave2,
   wave3,
@@ -97,6 +100,7 @@ import { characterSelection } from "./menu/characterSelection.js";
 import { mapSelection } from "./menu/mapSelection.js";
 import { changeCurrentMap, currentMap } from "./maps/standardMap.js";
 import { removeFromArrays } from "./removeFromArrays.js";
+import { createMarcherBoss } from "./enemies/createMarcherBoss.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -148,7 +152,9 @@ export const pickups = [];
 
 export const mapObjects = [];
 
-export const drawingCircles = [holyAreaBody];
+export const drawingCircles = [
+  // holyAreaBody
+];
 
 export let worldObjects = [
   printWeapons,
@@ -191,9 +197,11 @@ export let mousePos = {
 
 export const assets = {
   // astronaut: loadImage("/ships/player/astronaut.png"),
+  playButton: await loadImage("public/sprites/playButton1.png"),
   skull: await loadImage("public/sprites/skull.png"),
   goldBag: await loadImage("public/sprites/goldbag.png"),
   blue: await loadImage("public/sprites/blue.png"),
+  red: await loadImage("public/sprites/red.png"),
   shooter: await loadImage("public/sprites/shooters.png"),
   limbots: await loadImage("public/sprites/limbot.png"),
   egg: await loadImage("public/sprites/egg.png"),
@@ -219,7 +227,7 @@ canvas.addEventListener("mousemove", (event) => {
   };
 });
 
-createPickupWeapon(100, 100, randomAimBullet);
+// createPickupWeapon(100, 100, randomAimBullet);
 
 // const myButton = document.getElementById("myButton");
 
@@ -262,7 +270,7 @@ let currentWave;
 
 // let currentWave = () => {};
 
-let isPause = false;
+let isPause = true;
 
 let menuTime = 0;
 let startMenuTime = Date.now();
@@ -284,7 +292,7 @@ export const reverse = () => {
 
 // const wavesList = [wave1, wave2, wave3, wave4, wave5];
 
-document.body.addEventListener("mousemove", playMusic);
+// document.body.addEventListener("mousemove", playMusic);
 
 export let timer = 0;
 
@@ -297,21 +305,25 @@ const enemyFactor = 200;
 
 let weaponKills;
 
+let canChangeWave = true;
+let waveIndex = -1;
+
 export const startGame = () => {
   // console.log(worldsizeMultiplier);
   // stats = currentCharacter.stats;
-  (stats.growth = currentCharacter.stats.growth),
-    (stats.greed = currentCharacter.stats.growth),
-    (stats.movementSpeed = currentCharacter.stats.movementSpeed),
-    (stats.maxHealth = currentCharacter.stats.maxHealth),
-    (stats.regeneration = currentCharacter.stats.regen),
-    (stats.armor = currentCharacter.stats.armor),
-    (stats.damage = currentCharacter.stats.damage),
-    (stats.area = currentCharacter.stats.area * worldsizeMultiplier),
-    (stats.speed = currentCharacter.stats.speed * worldsizeMultiplier),
-    (stats.curse = currentCharacter.stats.curse),
-    (stats.cooldown = currentCharacter.stats.cooldown),
-    (oldTime = Date.now());
+  // (stats.growth = currentCharacter.stats.growth),
+  //   (stats.greed = currentCharacter.stats.growth),
+  //   (stats.movementSpeed = currentCharacter.stats.movementSpeed),
+  //   (stats.maxHealth = currentCharacter.stats.maxHealth),
+  //   (stats.regeneration = currentCharacter.stats.regen),
+  //   (stats.armor = currentCharacter.stats.armor),
+  //   (stats.damage = currentCharacter.stats.damage),
+  //   (stats.area = currentCharacter.stats.area * worldsizeMultiplier),
+  //   (stats.speed = currentCharacter.stats.speed * worldsizeMultiplier),
+  //   (stats.curse = currentCharacter.stats.curse),
+  //   (stats.cooldown = currentCharacter.stats.cooldown),
+  resetStats(currentCharacter);
+  oldTime = Date.now();
 
   bullets.length = 0;
   entities.length = 0;
@@ -330,25 +342,38 @@ export const startGame = () => {
     createEgg(spawnWidth, spawnHeight);
   }
 
-  placeEggMap(0, -150);
-  createShooterBoss();
+  placeEggMap(0, -5000);
+  // createShooterBoss();
 
   enemies.length = 0;
   entities.length = 0;
   entities.push(player);
 
+  player.speedMult = 1;
+
   maxAmountOfWeapons = 6;
   weaponKills = 0;
 
   currentWave = wavesList[0];
+  waveIndex = -1;
 
   pickupTypes.push(createCollector, createBlank);
+
+  for (const key in statistics.overall) {
+    if (Object.hasOwnProperty.call(statistics.overall, key)) {
+      const value = statistics.overall[key];
+      // Gör något med varje egenskap och dess värde
+      statistics.overall[key] = 0;
+      console.log(statistics.overall[key]);
+      // console.log(key + ": " + value);
+    }
+  }
 
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
     aimBullet,
-    holyArea,
+    // holyArea,
     // minigun,
     // wiper,
     // randomAimBullet,
@@ -359,7 +384,7 @@ export const startGame = () => {
     // droper,
   ];
 
-  createCollector(100, 100);
+  // createCollector(100, 100);
 
   totalWeapons.forEach((weapon) => {
     weapon.upgrades.level = 0;
@@ -372,9 +397,14 @@ export const startGame = () => {
   // showGameStatistics();
   // pause();
 
+  if (musicAudio.volume === 0) {
+    changeMusic(normalMusic.fileName);
+    restoreMusicVolume();
+  }
   startMusic();
 
   start();
+  menuTime = 0;
 };
 
 // const startPlaying = () => {
@@ -382,29 +412,40 @@ export const startGame = () => {
 // };
 
 // startPlaying();
-startGame();
+// startGame();
 
+const startMode = () => {
+  changeVolume(0);
+  mainMenu();
+  // showStatistics();
+  // deathMenu();
+  // startGame();
+  // createShooterBoss();
+  // createMarcherBoss();
+};
+
+startMode();
 // showStatistics();
 
 // createWalkerBoss(400, 400);
 // pause();
 
-let canChangeWave = true;
-let waveIndex = -1;
+// dropChest(200, 200);
 
-dropChest(200, 200);
+const deathAnimationTime = 3000;
+// const deathAnimationTime = 0;
 
 const update = () => {
-  // ctx.beginPath();
-  // ctx.globalAlpha = 1;
-  // ctx.clearRect(0, 0, world.width, world.height);
-  // ctx.fillStyle = "white";
-  // ctx.fill();
+  ctx.beginPath();
+  ctx.globalAlpha = 1;
+  ctx.clearRect(0, 0, world.width, world.height);
+  ctx.fillStyle = "white";
+  ctx.fill();
 
   ctx.drawImage(
     backgrounds[currentMap.texture],
-    -player.pos.x / 5,
-    -player.pos.y / 5,
+    -player.pos.x / 1,
+    -player.pos.y / 1,
     world.width,
     world.height
   );
@@ -418,7 +459,7 @@ const update = () => {
   // );
 
   spawnRate = 50 / stats.curse;
-  maxEnemyCount = ((enemyFactor * stats.curse) / 3) * enemiesAmountMultiplier;
+  maxEnemyCount = ((enemyFactor * stats.curse) / 3) * enemyAmountMultiplier;
 
   checkRegen();
 
@@ -427,11 +468,10 @@ const update = () => {
 
   // console.log(wavesList);
 
-  if (Math.floor(timer) % 10 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 60 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
-        console.log("hej");
         canChangeWave = true;
         waveIndex += 1;
 
@@ -498,8 +538,10 @@ const update = () => {
   }
 
   if (isKeyDown("KeyX") && canChangeMusic) {
-    const nextElement = getNextElement(musicList, currentMusicIndex);
+    const nextElement = getNextElement(gameMusicList, currentMusicIndex);
     currentMusicIndex += 1;
+
+    console.log(nextElement);
 
     changeMusic(nextElement.fileName);
     changeVolume(nextElement.volume);
@@ -523,7 +565,7 @@ const update = () => {
     weapon.cooldown -= 1;
     weapon.update?.();
 
-    if (weapon.cooldown <= 0) {
+    if (weapon.cooldown <= 0 && player.health > 0) {
       weapon.cooldown = weapon.attackIntervall;
       weapon.attack?.();
     }
@@ -688,7 +730,12 @@ const update = () => {
     entities.forEach((entity) => {
       if (doCirclesOverlap(entity, bullet) && bullet.team !== entity.team) {
         if (!bullet.enemiesHit.includes(entity)) {
-          dealDamage(entity, "contact", bullet.damage, bullet.weapon);
+          dealDamage(
+            entity,
+            bullet.damageType !== undefined ? bullet.damageType : "kinetic",
+            bullet.damage,
+            bullet.weapon
+          );
 
           entity.hit?.();
 
@@ -861,8 +908,8 @@ const update = () => {
         player.radius * 0.25 * screenSizeMultiplier.y,
       player.radius * 2.5,
       15 * screenSizeMultiplier.y,
-      player.health,
-      stats.maxHealth
+      player.shield,
+      player.maxShield
     );
   }
 
@@ -872,13 +919,13 @@ const update = () => {
     playDeathSound();
 
     setTimeout(() => {
-      fadeOutMusic(3000);
+      fadeOutMusic(deathAnimationTime);
     }, 1000);
 
     setTimeout(() => {
       pause();
       deathMenu();
-    }, 3000);
+    }, deathAnimationTime);
   }
 
   oldHealth = player.health;

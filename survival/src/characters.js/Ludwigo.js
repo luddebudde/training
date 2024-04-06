@@ -10,16 +10,18 @@ export const Ludwigo = {
     movementSpeed: 7,
 
     maxHealth: 200,
-    regen: 1,
+    regen: 2,
     armor: 1,
-    maxShield: 50,
-    shield: 1,
+    maxShield: 100,
+    shield: 0,
 
-    damage: 1.2,
-    area: 2,
-    speed: 1,
+    damage: 0.8,
+    area: 0.9,
+    speed: 0.8,
 
-    curse: 2,
-    cooldown: 1,
+    luck: 1.2,
+    curse: 1.5,
+    cooldown: 0.95,
+    revives: 1,
   },
 };
