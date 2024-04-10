@@ -288,6 +288,11 @@
   resolved "https://registry.yarnpkg.com/@tweenjs/tween.js/-/tween.js-23.1.1.tgz#0ae28ed9c635805557f78c2626464018d5f1b5e2"
   integrity sha512-ZpboH7pCPPeyBWKf8c7TJswtCEQObFo3bOBYalm99NzZarATALYCo5OhbCa/n4RQyJyHfhkdx+hNrdL5ByFYDw==
 
+"@types/cannon@0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@types/cannon/-/cannon-0.1.8.tgz#fce4bc22a245d644747707c51cb3d3025d3f6163"
+  integrity sha512-aabgPL9ho1Qov3mMnBJCTG+vTWhFrhRi/5INwsZCPhf3BwabRWz53ryffCDzRSlV4T0f4eQS0OQo5Y/RCZsngQ==
+
 "@types/estree@1.0.5":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.5.tgz#a6ce3e556e00fd9895dd872dd172ad0d4bd687f4"
@@ -313,6 +318,11 @@
   version "0.5.15"
   resolved "https://registry.yarnpkg.com/@types/webxr/-/webxr-0.5.15.tgz#21cd63e83a997c14ff91c7c537efabb787d1af09"
   integrity sha512-nC9116Gd4N+CqTxqo6gvCfhAMAzgRcfS8ZsciNodHq8uwW4JCVKwhagw8yN0XmC7mHrLnWqniJpoVEiR+72Drw==
+
+cannon@0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/cannon/-/cannon-0.6.2.tgz#1e7bc72dd5841982f3c104c2bc578bfa4fb1c572"
+  integrity sha512-n/7wWSXr8KOSvjad2x0fJHgpMepKjOKi+NdSnjfYyijoDBZnp4JQKgPcpv28jlXoWM+N9zVYU09J0A6Qxx+Y7w==
 
 esbuild@^0.20.1:
   version "0.20.2"

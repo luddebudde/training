@@ -1,4 +1,6 @@
+import { Quaternion } from "three";
 import { zeros } from "./linear-algebra.ts";
+import * as THREE from "three";
 
 export type Tuple2<T> = [T, T];
 export type Tuple3<T> = [T, T, T];
@@ -17,9 +19,16 @@ export type VecXyz = {
   y: number;
   z: number;
 };
+export type Quaternion = {
+  x: number;
+  y: number;
+  z: number;
+  w: number;
+};
 
 export const vec2 = (v: VecXy): Vec2 => [v.x, v.y];
 export const vec3 = (v: VecXyz): Vec3 => [v.x, v.y, v.z];
+export const vec4 = (v: Quaternion): Vec4 => [v.x, v.y, v.z, v.w];
 
 export const vecXy = (v: Vec2): VecXy => ({
   x: v[0],
@@ -44,10 +53,12 @@ export const add = <V extends Vec>(...vecs: V[]): V => {
 export const sub = (v1: Vec2, v2: Vec2): Vec2 => [v1[0] - v2[0], v1[1] - v2[1]];
 
 export const origo: Vec3 = [0, 0, 0];
-export const left: Vec2 = [-1, 0];
-export const right: Vec2 = [1, 0];
-export const up: Vec2 = [0, 1];
-export const down: Vec2 = [0, -1];
+export const left: Vec3 = [-1, 0, 0];
+export const right: Vec3 = [1, 0, 0];
+export const up: Vec3 = [0, 1, 0];
+export const down: Vec3 = [0, -1, 0];
+export const forward: Vec3 = [0, 0, 1];
+export const backward: Vec3 = [0, 0, -1];
 
 export const neg = <T extends Vec>(vec: T): T => {
   let out = new Array(vec.length);
@@ -149,3 +160,27 @@ export const radians = (degrees: number): number => (degrees * Math.PI) / 180;
 export const degrees = (radians: number): number => (radians * 180) / Math.PI;
 export const antiClockWise90deg = (vec: Vec2): Vec2 => [-vec[1], vec[0]];
 export const clockwise90deg = (vec: Vec2): Vec2 => [vec[1], -vec[0]];
+
+export const quaternion_mult = (q: Vec4, r: Vec4): Vec4 => {
+  return [
+    // q[3] * r[3] - q[0] * r[0] - q[1] * r[1] - q[2] * r[2],  // 1
+    // q[3] * r[0] + q[0] * r[3] + q[1] * r[2] - q[2] * r[1],  // i
+    // q[3] * r[1] - q[0] * r[2] + q[1] * r[3] + q[2] * r[0],  // j
+    // q[3] * r[2] + q[0] * r[1] - q[1] * r[0] + q[2] * r[3]   // k
+
+    r[0] * q[0] - r[1] * q[1] - r[2] * q[2] - r[3] * q[3],
+    r[0] * q[1] + r[1] * q[0] - r[2] * q[3] + r[3] * q[2],
+    r[0] * q[2] + r[1] * q[3] + r[2] * q[0] - r[3] * q[1],
+    r[0] * q[3] - r[1] * q[2] + r[2] * q[1] + r[3] * q[0],
+  ];
+};
+
+export const point_rotation_by_quaternion = (point: Vec3, q: Vec4): Vec3 => {
+  const r: Vec4 = [0, ...point];
+  const q_conj: Vec4 = [q[0], -q[1], -q[2], -q[3]];
+  const [_, ...res] = quaternion_mult(quaternion_mult(q, r), q_conj);
+  return res;
+};
+
+export const rotate = (point: Vec3, q: Vec4): Vec3 =>
+  vec3(new THREE.Vector3(...point).applyQuaternion(new THREE.Quaternion(...q)));
