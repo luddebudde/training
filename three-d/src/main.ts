@@ -21,7 +21,9 @@ import {
   vecXyz,
 } from "./vec";
 import { Water } from "three/examples/jsm/Addons.js";
-import { applyTorqueToAlign } from "./physics";
+import { torqueToAlign } from "./physics";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { modelLoader } from "./modelLoader";
 
 // RAPIER
 let gravity = { x: 0.0, y: -9.81, z: 0.0 };
@@ -32,11 +34,42 @@ let world = new RAPIER.World(gravity);
 // Three js
 const scene = new THREE.Scene();
 
-const greenMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
-const redMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+const greenMaterial = new THREE.MeshPhongMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const redMaterial = new THREE.MeshPhongMaterial({
+  color: 0xff0000,
+  wireframe: true,
+});
+
+const boatMesh = await modelLoader()
+  .load("boats/playerBoat.glb")
+  .then((gltf) => gltf.scene)
+  .then((scene) => {
+    scene.scale.setScalar(0.5);
+    scene.rotateY(Math.PI);
+    scene.translateZ(-0.3);
+    scene.receiveShadow = true;
+    scene.castShadow = true;
+    return scene;
+  });
+// .then((group) => {
+//   // group.traverse((obj) => {
+//   //   obj.receiveShadow = true
+//   //   obj.castShadow = true
+//   //   if ('material' in obj && obj.material instanceof MeshBasicMaterial) {
+//   //     obj.material.reflectivity = 0
+//   //   }
+//   // })
+//   const mesh = group.getObjectByName("ship_1") as Mesh;
+//   mesh.geometry.rotateX(-Math.PI / 2);
+//   mesh.castShadow = true;
+//   return mesh;
+// });
 
 const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
-
+const waterDensity = 1;
 const water = new Water(waterGeometry, {
   textureWidth: 512,
   textureHeight: 512,
@@ -57,9 +90,15 @@ water.rotateX(-Math.PI / 2);
 
 scene.add(water);
 
-const boxHeight = 1;
+const boxDim = {
+  x: 1.4,
+  y: 1,
+  z: 4.4,
+};
 
-const geometry = new THREE.BoxGeometry(boxHeight, boxHeight, boxHeight);
+const boxDensity = 0.5;
+
+const geometry = new THREE.BoxGeometry(boxDim.x, boxDim.y, boxDim.z);
 const createBox = (material) => {
   let rigidBodyDesc = RAPIER.RigidBodyDesc.dynamic()
     .setLinearDamping(0.1)
@@ -69,15 +108,15 @@ const createBox = (material) => {
 
   // Create a cuboid collider attached to the dynamic rigidBody.
   let colliderDesc = RAPIER.ColliderDesc.cuboid(
-    boxHeight / 2,
-    boxHeight / 2,
-    boxHeight / 2
-  ).setDensity(0.5);
+    boxDim.x / 2,
+    boxDim.y / 2,
+    boxDim.z / 2
+  ).setDensity(boxDensity);
   let collider = world.createCollider(colliderDesc, rigidBody);
 
   const object3D = new THREE.Mesh(geometry, material);
   const group = new THREE.Group();
-  group.add(object3D);
+  // group.add(object3D);
 
   const arrowHelperRight = new THREE.ArrowHelper(
     new THREE.Vector3(...right),
@@ -102,6 +141,9 @@ const createBox = (material) => {
     "blue"
   );
   group.add(arrowHelperForward);
+
+  // const boat = boatMesh;
+  group.add(boatMesh.clone());
 
   const g = new THREE.SphereGeometry(0.1);
   const arrow = new THREE.Mesh(g, material);
@@ -173,7 +215,7 @@ document.body.appendChild(renderer.domElement);
 // cube.rotation.x = 10;
 // cube.rotation.y = 10;
 
-const boxes = Array(100)
+const boxes = Array(144)
   .fill(0)
   .map((_, index) => createBox(index === 0 ? redMaterial : greenMaterial));
 
@@ -181,7 +223,11 @@ const player = boxes[0];
 
 boxes.forEach((box, index) => {
   box.rigidBody.setTranslation(
-    { x: Math.random(), y: Math.random() * index, z: Math.random() },
+    {
+      x: boxDim.x * Math.floor(index / 12),
+      y: 0,
+      z: boxDim.z * (index % 12),
+    },
     true
   );
   // box.rigidBody.
@@ -199,38 +245,48 @@ camera.position.y = 1.5;
 
 const isKeyDown = keyDownTracker();
 
-const engineStrenght = 20;
-const rudderStrenght = 0.1;
+const engineStrenght = 250;
+const rudderStrenght = 30;
+const boostStrenght = 5;
 
 const update = () => {
   boxes.forEach((box) => {
     const heightInWater = Math.max(
       0,
-      Math.min(boxHeight, -box.rigidBody.translation().y + boxHeight / 2)
+      Math.min(boxDim.y, -box.rigidBody.translation().y + boxDim.y / 2)
     );
     box.rigidBody.resetForces(false);
     box.rigidBody.resetTorques(false);
-    const forceUp = -gravity.y * 1 * heightInWater;
+    const forceUp =
+      -gravity.y *
+      waterDensity *
+      heightInWater *
+      boxDim.x *
+      boxDim.y *
+      boxDim.z;
 
     const boxVel = vec3(box.rigidBody.linvel());
     const dir = normalized2(boxVel);
-    const dragCoeff = 0.25;
-    const forceDrag =
+    const dragCoeff = 5;
+    const waterDragForce =
       dir === undefined
         ? origo
         : scale(
             dir,
             (-dragCoeff *
-              boxHeight *
-              boxHeight *
+              boxDim.x *
+              boxDim.y *
               dot(boxVel, boxVel) *
               heightInWater) /
-              boxHeight
+              boxDim.y
           );
 
     box.rigidBody.addForce(vecXyz([0, forceUp, 0]), true);
-    box.rigidBody.addForce(vecXyz(forceDrag), true);
-    applyTorqueToAlign(box.rigidBody, vec4(box.object3D.quaternion), up);
+    box.rigidBody.addForce(vecXyz(waterDragForce), true);
+    box.rigidBody.addTorque(
+      vecXyz(scale(vec3(torqueToAlign(vec4(box.object3D.quaternion), up)), 5)),
+      true
+    );
   });
 
   // const playerForward = point_rotation_by_quaternion(
@@ -247,27 +303,36 @@ const update = () => {
   const playerUp = vec3(
     new THREE.Vector3(...up).applyQuaternion(player.object3D.quaternion)
   );
-  if (isKeyDown("KeyW")) {
-    player.rigidBody.addForce(
-      vecXyz(scale(playerForward, engineStrenght)),
-      true
-    );
+  if (player.rigidBody.translation().y < boxDim.y / 2) {
+    if (isKeyDown("KeyW")) {
+      player.rigidBody.addForce(
+        vecXyz(scale(playerForward, engineStrenght)),
+        true
+      );
+    }
+    if (isKeyDown("KeyA")) {
+      player.rigidBody.addTorque(vecXyz(scale(playerUp, rudderStrenght)), true);
+    }
+    if (isKeyDown("KeyD")) {
+      player.rigidBody.addTorque(
+        vecXyz(scale(playerUp, -rudderStrenght)),
+        true
+      );
+    }
+    if (isKeyDown("KeyS")) {
+      player.rigidBody.addForce(
+        vecXyz(scale(playerForward, -engineStrenght / 10)),
+        true
+      );
+    }
+    if (isKeyDown("Space")) {
+      player.rigidBody.addForce(
+        vecXyz(scale(playerForward, engineStrenght * boostStrenght)),
+        true
+      );
+    }
   }
-  if (isKeyDown("KeyA")) {
-    player.rigidBody.addTorque(vecXyz(scale(playerUp, rudderStrenght)), true);
-  }
-  if (isKeyDown("KeyD")) {
-    player.rigidBody.addTorque(vecXyz(scale(playerUp, -rudderStrenght)), true);
-  }
-  if (isKeyDown("KeyS")) {
-    player.rigidBody.addForce(
-      vecXyz(scale(playerForward, -engineStrenght / 10)),
-      true
-    );
-  }
-  if (isKeyDown("Space")) {
-    player.rigidBody.addForce({ x: 0, y: engineStrenght, z: 0 }, true);
-  }
+
   if (isKeyDown("KeyX")) {
     player.rigidBody.addTorque({ x: 0.1, y: 0, z: 0 }, true);
   }
@@ -303,7 +368,6 @@ const render = () => {
         )
     );
   });
-  console.log(player.rigidBody.translation().z, player.object3D.position.z);
   // console.log();
 
   // cube.position.set(pos.x, pos.y, pos.z);
@@ -320,7 +384,7 @@ const render = () => {
   //   player.rigidBody.rotation().z,
   //   player.rigidBody.rotation().w,
   // ];
-  const cameraOffset = add(scale(vec3(dir), -10), scale(up, 10));
+  const cameraOffset = add(scale(vec3(dir), -10), scale(up, 7));
   camera.position.copy(vecXyz(add(playerPos, cameraOffset)));
   camera.lookAt(player.object3D.position);
   renderer.render(scene, camera);
