@@ -18,7 +18,7 @@ import { stats } from "../stats.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { mainMenu } from "./mainMenu.js";
 import { statistics } from "../statistics.js";
-import { restoreMusicVolume, startMusic } from "../changeMusic.js";
+import { restoreMusicVolume, startMusicAgain } from "../changeMusic.js";
 import { createBlank } from "../pickups/blank.js";
 
 let chosenWeapon = 0;
@@ -26,7 +26,7 @@ let chosenWeapon = 0;
 const revivePlayer = () => {
   console.log("revive");
   restoreMusicVolume();
-  startMusic();
+  startMusicAgain();
   statistics.game.deaths -= 1;
 
   player.speedMult = 1;

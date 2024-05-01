@@ -1,6 +1,8 @@
 import { bullets, mousePos, player, worldObjects } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { totalWeapons } from "../menu/levelUpSelection.js";
 import { playMinigun, playMinigunOverheat } from "../sounds.js";
+import { statistics } from "../statistics.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -79,7 +81,12 @@ export const createMinigun = () => {
 export const minigun = {
   name: "minigun",
   timesTaken: 0,
-  unlockRequirement: () => {},
+  unlockRequirement: () => {
+    if (statistics.game.kills > 1000) {
+      return true;
+    }
+  },
+  unlockRequirementText: "total 1K kills",
   attackIntervall: aimBulletStats.cooldown * stats.cooldown,
   cooldown: aimBulletStats.cooldown * stats.cooldown,
   attack: createMinigun,

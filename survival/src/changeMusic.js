@@ -17,20 +17,29 @@ export const playMusic = () => {
     .catch((e) => {});
 };
 
+let stopFadin = true;
+
 export const fadeOutMusic = (duration) => {
+  stopFadin = false;
   const steps = 10; // Antal steg för fade-out
   const interval = duration / steps; // Tid mellan varje steg
   const stepSize = 1.0 / steps; // Stegstorlek för att minska volymen gradvis
   let volume = musicAudio.volume;
+  // const fadingMusic = musicAudio;
 
   const fadeInterval = setInterval(() => {
-    if (volume > 0) {
-      volume -= stepSize;
-      musicAudio.volume = volume >= 0 ? volume : 0; // Säkerställ att volymen inte blir negativ
+    if (!stopFadin) {
+      if (volume > 0) {
+        volume -= stepSize;
+        musicAudio.volume = volume >= 0 ? volume : 0; // Säkerställ att volymen inte blir negativ
+      } else {
+        clearInterval(fadeInterval);
+        musicAudio.pause();
+        // musicAudio.currentTime = 0;
+        // pauseMusic();
+      }
     } else {
       clearInterval(fadeInterval);
-      musicAudio.pause();
-      musicAudio.currentTime = 0;
     }
   }, interval);
 };
@@ -40,9 +49,21 @@ export const stopMusic = () => {
   musicAudio.currentTime = 0;
 };
 
-export const startMusic = () => {
+export const pauseMusic = () => {
+  musicAudio.pause();
+  // musicAudio.currentTime = 0;
+};
+
+export const startMusicOver = () => {
   musicAudio.play();
   musicAudio.currentTime = 0;
+  stopFadin = true;
+};
+
+export const startMusicAgain = () => {
+  musicAudio.play();
+  // musicAudio.play();
+  // musicAudio.currentTime = 0;
 };
 
 export const changeMusic = (newMusicSource) => {
@@ -53,6 +74,7 @@ export const changeMusic = (newMusicSource) => {
 
 export const changeVolume = (amount) => {
   musicAudio.volume = amount * universalVolume;
+  stopFadin = true;
 };
 
 export const normalMusic = {
@@ -79,6 +101,12 @@ export const synthMusic = {
   volume: 1,
 };
 
+export const goodMusic = {
+  name: "goodMusic",
+  fileName: "public/sounds/goodMusic.mkv",
+  volume: 2,
+};
+
 // export const restoreMusicVolume = () => {
 //   normalMusic.volume = 0.7;
 //   funnyMusic.volume = 1;
@@ -93,13 +121,28 @@ export const synthMusic = {
 let originalVolume = normalMusic.volume;
 
 export const restoreMusicVolume = () => {
+  stopFadin = true;
   normalMusic.volume = 0.7;
   funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
   synthMusic.volume = 1;
+  goodMusic.volume = 2;
 
   // Återställ volymen för den aktuella låten
-  changeVolume(originalVolume);
+  musicList.forEach((music) => {
+    if ("http://127.0.0.1:8080/" + music.fileName === musicAudio.src) {
+      changeVolume(music.volume);
+      console.log("gick");
+    }
+  });
+  // console.log(musicAudio.src);
 };
 
+export const musicList = [
+  normalMusic,
+  funnyMusic,
+  battleMusic,
+  goodMusic,
+  synthMusic,
+];
 export const gameMusicList = [normalMusic, funnyMusic, battleMusic];

@@ -11,6 +11,7 @@ import {
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { playAirstrikeCall, playAirstrikeExplosion } from "../sounds.js";
+import { statistics } from "../statistics.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
 import { world } from "../world.js";
@@ -83,10 +84,11 @@ export const airstrike = {
   name: "airstrike",
   timesTaken: 0,
   unlockRequirement: () => {
-    // if (statistics.overall.kills > 300) {
-    //   return true;
-    // }
+    if (statistics.overall.damage > 1000000) {
+      return true;
+    }
   },
+  unlockRequirementText: "total 1M damage",
   // image: assets.rhino,
   //   image: await loadImage(`/public/sprites/aimBulletSprite.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,

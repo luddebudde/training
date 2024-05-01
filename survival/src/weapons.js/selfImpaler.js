@@ -2,6 +2,7 @@ import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
 import { enemies, player, worldObjects } from "../main.js";
 import { playAirstrikeCall, playLevelUpSpecial, playSlice } from "../sounds.js";
+import { statistics } from "../statistics.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
@@ -55,7 +56,10 @@ export const selfImpalerBody = createSelfImpaler();
 export const selfImpaler = {
   name: "selfImpaler",
   timesTaken: 0,
-  unlockRequirement: () => {},
+  unlockRequirement: () => {
+    statistics.game.damageTaken > 1000000;
+  },
+  unlockRequirementText: "total 1M dmg taken",
   attackIntervall: cooldown,
   cooldown: cooldown,
   // attack: () => {

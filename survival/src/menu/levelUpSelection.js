@@ -51,14 +51,14 @@ export const totalWeapons = [
 export const availableWeapons = [
   aimBullet,
   holyArea,
-  minigun,
+  // minigun,
   shotgun,
   wiper,
   randomAimBullet,
   axe,
-  airstrike,
+  // airstrike,
   // selfImpaler,
-  cherry,
+  // cherry,
   droper,
 ];
 
@@ -155,6 +155,7 @@ export const levelUpSelection = () => {
             console.log(button.weapon);
             button.weapon.timesTaken++;
             weapons.push(button.weapon);
+            buttons.length = 0;
           }
         } else {
           if (button.number === 0) {

@@ -55,7 +55,7 @@ import {
   normalMusic,
   playMusic,
   restoreMusicVolume,
-  startMusic,
+  startMusicOver,
   stopMusic,
 } from "./changeMusic.js";
 import { createSumXp } from "./createSumXP.js";
@@ -343,7 +343,6 @@ export const startGame = () => {
   }
 
   placeEggMap(0, -5000);
-  // createShooterBoss();
 
   enemies.length = 0;
   entities.length = 0;
@@ -397,11 +396,12 @@ export const startGame = () => {
   // showGameStatistics();
   // pause();
 
-  if (musicAudio.volume === 0) {
-    changeMusic(normalMusic.fileName);
-    restoreMusicVolume();
-  }
-  startMusic();
+  // console.log(musicAudio.name);
+  // if (musicAudio.name === ) {
+  // changeMusic(normalMusic.fileName);
+  restoreMusicVolume();
+  // }
+  startMusicOver();
 
   start();
   menuTime = 0;
@@ -416,10 +416,11 @@ export const startGame = () => {
 
 const startMode = () => {
   changeVolume(0);
-  mainMenu();
+  // mainMenu();
   // showStatistics();
   // deathMenu();
-  // startGame();
+  startGame();
+  // showGameStatistics();
   // createShooterBoss();
   // createMarcherBoss();
 };
@@ -468,7 +469,7 @@ const update = () => {
 
   // console.log(wavesList);
 
-  if (Math.floor(timer) % 60 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 5 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -620,7 +621,7 @@ const update = () => {
     }
   });
 
-  const amountOfXp = 100;
+  const amountOfXp = 500;
 
   if (xps.length > amountOfXp) {
     let totalAmount = 0;

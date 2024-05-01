@@ -32,7 +32,7 @@ export const wave1 = () => {
     // createNerfer(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
-  // createLimbots(spawnPos.x, spawnPos.y);
+
   // createShooter(spawnPos.x, spawnPos.y);
   enemyAmountMultiplier = 0.5;
 };
@@ -121,4 +121,20 @@ export const wave6 = () => {
   enemyAmountMultiplier = 3;
 };
 
-export const wavesList = [wave1, wave2, wave3, wave4, wave5, wave6];
+export const wave7 = () => {
+  for (let i = 0; i < 10 * stats.curse; i++) {
+    const spawnPos = getRandomSpawnPos(player);
+    createWalker(spawnPos.x, spawnPos.y);
+    // createCharger(spawnPos.x, spawnPos.y);
+    // createTank(spawnPos.x, spawnPos.y + 100);
+
+    // createJuggernaut(spawnPos.x, spawnPos.y + 100);
+    // createJuggernaut(spawnPos.x, spawnPos.y + 200);
+    // createNerfer(spawnPos.x, spawnPos.y);
+
+    // createMarcher(spawnPos.x + i * 25, spawnPos.y);
+  }
+  enemyAmountMultiplier = 10;
+};
+
+export const wavesList = [wave1, wave2, wave3, wave4, wave5, wave6, wave7];

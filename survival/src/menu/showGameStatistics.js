@@ -16,7 +16,7 @@ import { aimBullet } from "../weapons.js/createAimBullet.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { wiper } from "../weapons.js/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
-import { totalWeapons } from "./levelUpSelection.js";
+import { availableWeapons, totalWeapons } from "./levelUpSelection.js";
 import { mainMenu } from "./mainMenu.js";
 
 let loopAmount = 0;
@@ -86,15 +86,10 @@ export const showGameStatistics = () => {
 
   drawSquare(playerSquare);
 
-  // const numbers = [10, 5, 20, 15];
-  // const timesTakenArray = characters.map((character) => character.timesPicked);
-  // const mostPopularCharacter = Math.max(...timesTakenArray);
-  // console.log(mostPopularCharacter); // Output: 20
-
   const mostPopularCharacter = characters.reduce((prev, current) => {
     return prev.timesPicked > current.timesPicked ? prev : current;
   });
-  console.log(mostPopularCharacter); // Output: Objektet för den mest populära karaktären
+  console.log(mostPopularCharacter);
 
   drawText(
     "Most played character:" + mostPopularCharacter.fullname,
@@ -112,8 +107,6 @@ export const showGameStatistics = () => {
     400
   );
 
-  // draw
-
   const objectKeys = Object.keys(statistics.game);
 
   for (const key of objectKeys) {
@@ -124,13 +117,23 @@ export const showGameStatistics = () => {
   }
 
   totalWeapons.forEach((weapon, index) => {
-    drawStatistics(
-      weapon.name,
-      weapon.timesTaken,
-      600 + 500 * Math.round(index / 3),
-      20 + ((25 * index) % 75),
-      "green"
-    );
+    if (availableWeapons.includes(weapon)) {
+      drawStatistics(
+        weapon.name,
+        weapon.timesTaken,
+        600 + 500 * Math.floor(index / 3),
+        20 + ((25 * index) % 75),
+        "green"
+      );
+    } else {
+      drawText(
+        "???" + " : " + weapon.unlockRequirementText,
+        600 + 500 * Math.floor(index / 3),
+        (20 + ((25 * index) % 75)) * overallStatAmount * screenSizeMultipler.x,
+        "grey"
+      );
+    }
+    console.log(weapon.name, index);
   });
 
   overallStatAmount = 0;
