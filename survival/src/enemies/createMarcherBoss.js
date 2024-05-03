@@ -59,7 +59,9 @@ export const createMarcherBoss = (
     resistance: {
       kinetic: 0.5,
     },
-    slowEffect: 0,
+    statusEffects: {
+      slow: 0,
+    },
     speed: 20 * stats.curse * worldsizeMultiplier,
 
     damage: 3,

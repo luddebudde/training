@@ -101,6 +101,8 @@ import { mapSelection } from "./menu/mapSelection.js";
 import { changeCurrentMap, currentMap } from "./maps/standardMap.js";
 import { removeFromArrays } from "./removeFromArrays.js";
 import { createMarcherBoss } from "./enemies/createMarcherBoss.js";
+import { burningAnimation, flamethrower } from "./weapons.js/flameThrower.js";
+import { animation } from "./animation.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -115,7 +117,7 @@ export let xps = [];
 export const chests = [];
 
 export let bullets = [];
-export let explosions = [];
+export let areaEffects = [];
 
 export let updateables = [];
 
@@ -161,7 +163,7 @@ export let worldObjects = [
   entities,
   bullets,
   xps,
-  explosions,
+  areaEffects,
   targetables,
   pickups,
   chests,
@@ -171,7 +173,10 @@ export let worldObjects = [
 const worldObjectsLenght = worldObjects.length;
 
 let oldHealth = player.health;
+
 // let oldTime = Date.now();
+
+let burningEntities = [];
 
 export const allArrays = [
   enemies,
@@ -182,10 +187,11 @@ export const allArrays = [
   drawingSquares,
   buttons,
   bullets,
-  explosions,
+  areaEffects,
   bosses,
   xps,
   chests,
+  burningEntities,
 ];
 
 // const worldArrays = [entities, worldObjects, bullets];
@@ -205,12 +211,14 @@ export const assets = {
   shooter: await loadImage("public/sprites/shooters.png"),
   limbots: await loadImage("public/sprites/limbot.png"),
   egg: await loadImage("public/sprites/egg.png"),
+  oilStain: await loadImage("public/sprites/oil_stain1.png"),
   cherry: await loadImage("public/sprites/cherry.png"),
   // assault: loadImage(`ships/player/large/assault.png`),
   // fighter: loadImage(`ships/player/large/green.png`),
   rhino: await loadImage(`public/ships/player/large/green-rhino.png`),
   jet: await loadImage("public/animations/jet-even.png"),
   explosion: await loadImage("public/animations/explosion.png"),
+  fire: await loadImage("public/animations/fireAnimation.gif"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
 };
@@ -297,6 +305,7 @@ export const reverse = () => {
 export let timer = 0;
 
 let canChangeMusic = true;
+let canFlamethrowerMode = true;
 
 let oldTime;
 
@@ -363,7 +372,6 @@ export const startGame = () => {
       const value = statistics.overall[key];
       // Gör något med varje egenskap och dess värde
       statistics.overall[key] = 0;
-      console.log(statistics.overall[key]);
       // console.log(key + ": " + value);
     }
   }
@@ -371,7 +379,7 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    aimBullet,
+    // aimBullet,
     // holyArea,
     // minigun,
     // wiper,
@@ -381,6 +389,7 @@ export const startGame = () => {
     // selfImpaler,
     // cherry,
     // droper,
+    flamethrower,
   ];
 
   // createCollector(100, 100);
@@ -420,6 +429,7 @@ const startMode = () => {
   // showStatistics();
   // deathMenu();
   startGame();
+  // mapSelection();
   // showGameStatistics();
   // createShooterBoss();
   // createMarcherBoss();
@@ -443,13 +453,13 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  ctx.drawImage(
-    backgrounds[currentMap.texture],
-    -player.pos.x / 1,
-    -player.pos.y / 1,
-    world.width,
-    world.height
-  );
+  // ctx.drawImage(
+  //   backgrounds[currentMap.texture],
+  //   -player.pos.x / 1,
+  //   -player.pos.y / 1,
+  //   world.width,
+  //   world.height
+  // );
 
   // ctx.drawImage(
   //   backgrounds[currentMap.texture],
@@ -551,6 +561,18 @@ const update = () => {
     setTimeout(() => {
       canChangeMusic = true;
     }, 500);
+  }
+
+  if (isKeyDown("KeyR")) {
+    if (weapons.includes(flamethrower) && canFlamethrowerMode) {
+      // console.log("flaame!");
+      flamethrower.modeValue++;
+
+      canFlamethrowerMode = false;
+      setTimeout(() => {
+        canFlamethrowerMode = true;
+      }, 500);
+    }
   }
 
   if (isKeyDown("ArrowUp")) {
@@ -710,17 +732,19 @@ const update = () => {
 
   entities = entities.filter((entity) => entity.health > 0);
   enemies = enemies.filter((enemy) => enemy.health > 0);
+  burningEntities = burningEntities.filter((entity) => entity.health > 0);
   updateables = updateables.filter((updateable) => updateable?.health > 0);
   bullets = bullets.filter((bullet) => !bullet.destroy);
-  explosions = explosions.filter((explosion) => !explosion.hasExpired);
+  areaEffects = areaEffects.filter((explosion) => !explosion.hasExpired);
 
   xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
 
-  explosions.forEach((explosion) => {
+  areaEffects.forEach((explosion) => {
     enemies.forEach((enemy) => {
       if (doCirclesOverlap(explosion, enemy)) {
         // enemy.health -= explosion.damage;
-        dealDamage(enemy, "explosion", explosion.damage, explosion.weapon);
+
+        explosion.onHit(explosion, enemy);
       }
     });
   });
@@ -739,6 +763,7 @@ const update = () => {
           );
 
           entity.hit?.();
+          bullet.hit?.();
 
           bullet.enemiesHit.push(entity);
         }
@@ -781,11 +806,13 @@ const update = () => {
     drawSquare(square);
   });
 
-  // Sikte
-  ctx.beginPath();
-  ctx.arc(mousePos.x, mousePos.y, 15, 0, 2 * Math.PI);
-  ctx.fillStyle = player.color;
-  ctx.fill();
+  if (weapons.includes(aimBullet)) {
+    // Sikte
+    ctx.beginPath();
+    ctx.arc(mousePos.x, mousePos.y, 15, 0, 2 * Math.PI);
+    ctx.fillStyle = player.color;
+    ctx.fill();
+  }
 
   ctx.translate(-player.pos.x, -player.pos.y);
   ctx.translate(world.width / 2, world.height / 2);
@@ -804,7 +831,9 @@ const update = () => {
     gameObjects.forEach((object) => {
       if (object.vel !== undefined) {
         const slowdownFactor =
-          object.slowEffect !== undefined ? 1 - object.slowEffect : 1;
+          object.statusEffects !== undefined
+            ? 1 - object.statusEffects.slow
+            : 1;
         object.pos.x += object.vel.x * slowdownFactor;
         object.pos.y += object.vel.y * slowdownFactor;
       }
@@ -816,7 +845,46 @@ const update = () => {
         object.draw?.(ctx, assets, object);
         // drawText("helkl", object.x, object.y, "red");
       }
+      if (object.statusEffects !== undefined) {
+        if (object.statusEffects.oiled) {
+          ctx.drawImage(
+            assets.oilStain,
+            object.pos.x - object.radius,
+            object.pos.y - object.radius,
+            object.radius * 2,
+            object.radius * 2
+          );
+        }
+        if (object.statusEffects.burning && !burningEntities.includes(object)) {
+          console.log("burning");
+          burningEntities.push(object);
+
+          object.animation = burningAnimation;
+        }
+      }
     });
+  });
+
+  burningEntities.forEach((entity) => {
+    entity.animation.step();
+    entity.animation.draw(
+      ctx,
+      assets.fire,
+      entity.pos.x - entity.radius / 1.2,
+      entity.pos.y + entity.radius,
+      entity.radius * 2,
+      -entity.radius * 2
+    );
+
+    // console.log(animation);
+
+    // const stepInfo = burningAnimation.step();
+
+    // if (stepInfo) {
+    //   burningAnimation.hasExpired = true;
+    // }
+
+    entity.health -= 0.2;
   });
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -937,7 +1005,7 @@ const update = () => {
     bullets,
     xps,
     printWeapons,
-    explosions,
+    areaEffects,
     targetables,
     pickups,
     chests,

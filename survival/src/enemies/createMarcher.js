@@ -58,7 +58,9 @@ export const createMarcher = (
           ? newVel.y * MarcherSpeed
           : direction.y * MarcherSpeed,
     },
-    slowEffect: 0,
+    statusEffects: {
+      slow: 0,
+    },
     speed: 10 * (stats.curse / 2) * worldsizeMultiplier,
 
     damage: 0.4,

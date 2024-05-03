@@ -75,7 +75,9 @@ export const createShooterBoss = (
     },
     attackCounter: shootCooldown,
     // attackCooldown: shootCooldown,
-    slowEffect: 0,
+    statusEffects: {
+      slow: 0,
+    },
     speed: 2 * stats.curse * worldsizeMultiplier,
     damage: 0,
     color: "green",

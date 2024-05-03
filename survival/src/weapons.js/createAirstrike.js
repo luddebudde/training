@@ -4,7 +4,7 @@ import {
   assets,
   bullets,
   enemies,
-  explosions,
+  areaEffects,
   mousePos,
   player,
   worldObjects,

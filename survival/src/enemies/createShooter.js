@@ -47,7 +47,9 @@ export const createShooter = (spawnWidth, spawnHeight) => {
     },
     attackCounter: shootCooldown,
     attackCooldown: shootCooldown,
-    slowEffect: 0,
+    statusEffects: {
+      slow: 0,
+    },
     speed: 3 * stats.curse * worldsizeMultiplier,
     damage: 0,
     color: "green",

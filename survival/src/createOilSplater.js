@@ -1,24 +1,24 @@
 import { animation } from "./animation.js";
-import { dealDamage } from "./dealDamage.js";
 import { assets, areaEffects, worldObjects } from "./main.js";
 
-export const createExplosion = (
+export const createSplatter = (
   weapon,
   locX,
   locY,
   size,
   damage,
+  onHit,
   speed = 16,
   sprite = assets.explosion
 ) => {
-  const explosionAnimation = animation({
+  const splatterAnimation = animation({
     imageCount: 7,
     slowDown: speed,
     reverse: false,
     repeat: false,
   });
 
-  const explosion = {
+  const splatter = {
     weapon: weapon,
     pos: {
       x: locX,
@@ -30,25 +30,28 @@ export const createExplosion = (
     draw: (ctx, assets, object) => {
       //   console.log(explosion);
       //   ctx.drawImage(sprite, explosion.pos.x, explosion.pos.y, size, size);
-      explosionAnimation.step();
-      explosionAnimation.draw(
+      splatterAnimation.step();
+      splatterAnimation.draw(
         ctx,
         sprite,
-        explosion.pos.x - explosion.radius / 1.2,
-        explosion.pos.y - explosion.radius / 2,
-        explosion.radius * 2,
-        explosion.radius
+        splatter.pos.x - splatter.radius / 1.2,
+        splatter.pos.y - splatter.radius / 2,
+        splatter.radius * 2,
+        splatter.radius
       );
-      const stepInfo = explosionAnimation.step();
+      const stepInfo = splatterAnimation.step();
 
       if (stepInfo) {
-        explosion.hasExpired = true;
+        splatter.hasExpired = true;
       }
     },
-    onHit: (explosion, enemy) => {
-      dealDamage(enemy, "explosion", explosion.damage, explosion.weapon);
+    onHit: (splatter, enemy) => {
+      //   console.log("spaltt");
+      onHit(enemy);
+
+      //   console.log(enemy.statusEffects);
     },
   };
 
-  areaEffects.push(explosion);
+  areaEffects.push(splatter);
 };

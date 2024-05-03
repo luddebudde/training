@@ -132,7 +132,6 @@ export const restoreMusicVolume = () => {
   musicList.forEach((music) => {
     if ("http://127.0.0.1:8080/" + music.fileName === musicAudio.src) {
       changeVolume(music.volume);
-      console.log("gick");
     }
   });
   // console.log(musicAudio.src);
