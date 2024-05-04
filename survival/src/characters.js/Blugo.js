@@ -15,6 +15,7 @@ export const Blugo = {
     movementSpeed: 5,
 
     maxHealth: 100,
+    // maxHealth: 1000000,
     // maxHealth: 2,
     regen: 1,
     armor: 1,
@@ -29,7 +30,7 @@ export const Blugo = {
     luck: 1,
     curse: 1,
     cooldown: 1,
-    revives: 300,
+    revives: 1,
   },
   levelUpIncrease: () => {
     // stats.curse += 0.1;

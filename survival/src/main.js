@@ -43,7 +43,7 @@ import { loadImage } from "./image.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { isPointInsideArea } from "./isInsideRectangle.js";
 import { wiper } from "./weapons.js/wiper.js";
-import { randomAimBullet } from "./weapons.js/createRandomAimBullet.js";
+import { randomAimBullet } from "./weapons.js/spreader.js";
 import { axe } from "./weapons.js/createAxe.js";
 import { createExplosion } from "./createExplosion.js";
 import {
@@ -379,7 +379,7 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    // aimBullet,
+    aimBullet,
     // holyArea,
     // minigun,
     // wiper,
@@ -389,7 +389,7 @@ export const startGame = () => {
     // selfImpaler,
     // cherry,
     // droper,
-    flamethrower,
+    // flamethrower,
   ];
 
   // createCollector(100, 100);
@@ -425,10 +425,10 @@ export const startGame = () => {
 
 const startMode = () => {
   changeVolume(0);
-  // mainMenu();
+  mainMenu();
   // showStatistics();
   // deathMenu();
-  startGame();
+  // startGame();
   // mapSelection();
   // showGameStatistics();
   // createShooterBoss();
@@ -453,16 +453,16 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  // ctx.drawImage(
-  //   backgrounds[currentMap.texture],
-  //   -player.pos.x / 1,
-  //   -player.pos.y / 1,
-  //   world.width,
-  //   world.height
-  // );
+  ctx.drawImage(
+    backgrounds[currentMap.texture],
+    -player.pos.x / 1,
+    -player.pos.y / 1,
+    world.width,
+    world.height
+  );
 
   // ctx.drawImage(
-  //   backgrounds[currentMap.texture],
+  //   backgrounds[currentMap.textures],
   //   0,
   //   0,
   //   world.width,
@@ -479,7 +479,7 @@ const update = () => {
 
   // console.log(wavesList);
 
-  if (Math.floor(timer) % 5 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 60 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {

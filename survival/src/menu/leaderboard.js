@@ -29,13 +29,13 @@ export const leaderboard = () => {
       pressCounter: 0,
       x: 50,
       y: 100 + 100 * index,
-      width: 10,
-      height: 10,
+      width: 30,
+      height: 30,
       function: () => {
         if (button.index === 0) {
           button.pressCounter += 1;
           console.log(button.pressCounter);
-          if (button.pressCounter % 20 === 0) {
+          if (button.pressCounter % 4 === 0) {
             // playWilhelm();
             // music goodMusic
             gameMusicList.push(goodMusic);

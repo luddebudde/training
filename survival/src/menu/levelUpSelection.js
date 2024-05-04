@@ -18,7 +18,7 @@ import { axe } from "../weapons.js/createAxe.js";
 import { droper } from "../weapons.js/createDroper.js";
 import { holyArea } from "../weapons.js/createHolyArea.js";
 import { minigun } from "../weapons.js/createMinigun.js";
-import { randomAimBullet } from "../weapons.js/createRandomAimBullet.js";
+import { randomAimBullet } from "../weapons.js/spreader.js";
 import { shotgun } from "../weapons.js/createShotgun.js";
 import { buba, colin, jedå, uluk } from "../weapons.js/randomWeapons.js";
 import { selfImpaler } from "../weapons.js/selfImpaler.js";

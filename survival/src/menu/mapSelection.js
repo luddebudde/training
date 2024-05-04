@@ -204,9 +204,9 @@ const drawMapSidebar = (map) => {
     text: "PLAY",
     function: () => {
       buttons.length = 0;
-      // changeCurrentMap(playButton.map);
-      backgroundElement = document.findElementById("background");
-      backgroundElement.style.backgroud = "url(images/background.jpg)";
+      changeCurrentMap(playButton.map);
+      // backgroundElement = document.findElementById("background");
+      // backgroundElement.style.backgroud = "url(images/background.jpg)";
 
       // console.log(musicAudio.src);
 

@@ -1,9 +1,11 @@
 import { animation } from "../animation.js";
+import { closestObject } from "../closestObject.js";
 import { createSplatter } from "../createOilSplater.js";
 import { loadImage } from "../image.js";
 import {
   assets,
   bullets,
+  ctx,
   enemies,
   mousePos,
   player,
@@ -22,7 +24,7 @@ const flamethrowerStats = {
     area: 15,
     speed: 30,
     damage: 20,
-    cooldown: 20,
+    cooldown: 1,
     pierce: 1,
     special: 0,
   },
@@ -31,11 +33,34 @@ const flamethrowerStats = {
     splatterArea: 300,
     speed: 20,
     damage: 0,
-    cooldown: 10,
+    cooldown: 100,
     pierce: 0,
     special: 0,
   },
 };
+
+function getRandomAngle() {
+  return Math.random() * 360; // Slumpad vinkel mellan 0 och 360 grader
+}
+
+// Funktion för att generera slumpat avstånd från cirkelns centrum
+function getRandomDistance(radius) {
+  return Math.random() * 300; // Slumpat avstånd upp till cirkelns radie
+}
+
+// let previusPosDifference = {
+//   pos: {
+//     x: 100000000,
+//     y: 100000000,
+//   },
+// };
+// let direction = {
+//   x: 0,
+//   y: 0,
+// };
+
+let farthestEnemy = null;
+let farthestDistanceSquared = 0;
 
 export const burningAnimation = animation({
   imageCount: 12,
@@ -66,6 +91,51 @@ export const createFlamethrower = () => {
     onHit = (enemy) => {
       enemy.statusEffects.oiled = true;
     };
+
+    // const circleRadius = 50;
+
+    const targetIndex = Math.floor(Math.random() * enemies.length);
+    const target = enemies[targetIndex];
+    const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
+
+    const direction = makeDirection(targetPos, player.pos);
+
+    const bullet = {
+      radius: area,
+
+      attackIntervall: cooldown,
+      cooldown: cooldown,
+      destroy: false,
+      pos: {
+        x: player.pos.x,
+        y: player.pos.y,
+      },
+      vel: {
+        x: -direction.x * speed,
+        y: -direction.y * speed,
+      },
+      damage: damage,
+      color: "red",
+      team: "player",
+      priority: 5,
+
+      hit: () => {
+        createSplatter(
+          flamethrower,
+          bullet.pos.x,
+          bullet.pos.y,
+          splatterArea,
+          0,
+          onHit
+        );
+        //   console.log("splatt!");
+      },
+
+      enemiesHit: [],
+      pierce: pierce,
+      weapon: flamethrower,
+    };
+    bullets.push(bullet);
   } else {
     // Fire mode
     flamethrower.attackIntervall = flamethrowerStats.fireMode.cooldown;
@@ -76,59 +146,104 @@ export const createFlamethrower = () => {
     pierce = stats.cooldown * flamethrowerStats.fireMode.pierce;
 
     onHit = (enemy) => {
-      //   ctx.drawImage(
-      //     assets.blue,
-      //     walker.pos.x - walker.radius,
-      //     walker.pos.y - walker.radius,
-      //     walker.radius * 2,
-      //     walker.radius * 2
-      //   );
-
       enemy.statusEffects.oiled = false;
       enemy.statusEffects.burning = true;
     };
+
+    // let enemyPosValue = {
+    //   x: 0,
+    //   y: 0,
+    // };
+    // // Furthest enemy
+    // enemies.forEach((enemy) => {
+    //   enemyPosValue.x += enemy.pos.x;
+    //   enemyPosValue.y += enemy.pos.y;
+    // });
+
+    // const averageEnemyPos = {
+    //   x: -enemyPosValue.x / enemies.length,
+    //   y: -enemyPosValue.y / enemies.length,
+    // };
+
+    const targetIndex = Math.floor(Math.random() * effe.length);
+    const target = enemies[targetIndex];
+    const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
+
+    const direction = makeDirection(targetPos, player.pos);
+
+    // console.log("Farthest enemy position:", averageEnemyPos);
+
+    ctx.beginPath();
+    ctx.arc(targetPos.x, targetPos.y, 10, 0, 2 * Math.PI);
+    ctx.fillStyle = "green";
+    ctx.fill();
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
+    ctx.lineTo(targetPos.x, targetPos.y); // Dra linjen till fiendens position
+    ctx.strokeStyle = "blue"; // Färg för linjen
+    ctx.stroke(); // Rita linjen
+
+    ctx.save();
+    ctx.translate(targetPos.x, targetPos.y); // Flytta ursprungspunkten till spelaren
+
+    ctx.beginPath();
+    ctx.moveTo(player.pos.x, player.pos.y); // Flytta startpunkten till spelarens position
+    ctx.lineTo(targetPos.x / 2, targetPos.y / 2); // Dra linjen till fiendens position
+    ctx.strokeStyle = "red"; // Färg för linjen
+    ctx.stroke(); // Rita linjen
+
+    ctx.drawImage(
+      assets.goldBag,
+      0,
+      0,
+      10,
+      10, // Ursprungliga bredd och höjd för bilden
+      0,
+      0,
+      Math.abs(targetPos.x - player.pos.x),
+      Math.abs(targetPos.y - player.pos.y) // Rita bilden mellan spelaren och fienden
+    );
+    ctx.restore(); // Återställ sparad kontext
+
+    // const bullet = {
+    //   radius: area,
+
+    //   attackIntervall: cooldown,
+    //   cooldown: cooldown,
+    //   destroy: false,
+    //   pos: {
+    //     x: player.pos.x,
+    //     y: player.pos.y,
+    //   },
+    //   vel: {
+    //     x: direction.x * speed,
+    //     y: direction.y * speed,
+    //   },
+    //   damage: damage,
+    //   color: "red",
+    //   team: "player",
+    //   priority: 5,
+
+    //   hit: () => {
+    //     createSplatter(
+    //       flamethrower,
+    //       bullet.pos.x,
+    //       bullet.pos.y,
+    //       splatterArea,
+    //       0,
+    //       onHit
+    //     );
+    //     //   console.log("splatt!");
+    //   },
+
+    //   enemiesHit: [],
+    //   pierce: pierce,
+    //   weapon: flamethrower,
+    // };
+    // bullets.push(bullet);
   }
-
-  const direction = makeDirection(mousePos, {
-    x: world.width / 2,
-    y: world.height / 2,
-  });
-  const bullet = {
-    radius: area,
-
-    attackIntervall: cooldown,
-    cooldown: cooldown,
-    destroy: false,
-    pos: {
-      x: player.pos.x,
-      y: player.pos.y,
-    },
-    vel: {
-      x: -direction.x * speed,
-      y: -direction.y * speed,
-    },
-    damage: damage,
-    color: "red",
-    team: "player",
-    priority: 5,
-
-    hit: () => {
-      createSplatter(
-        flamethrower,
-        bullet.pos.x,
-        bullet.pos.y,
-        splatterArea,
-        0,
-        onHit
-      );
-      //   console.log("splatt!");
-    },
-
-    enemiesHit: [],
-    pierce: pierce,
-    weapon: flamethrower,
-  };
-  bullets.push(bullet);
 };
 
 export const flamethrower = {
