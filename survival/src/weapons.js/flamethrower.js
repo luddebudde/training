@@ -24,7 +24,7 @@ const flamethrowerStats = {
     area: 15,
     speed: 30,
     damage: 20,
-    cooldown: 1,
+    cooldown: 100,
     pierce: 1,
     special: 0,
   },
@@ -62,11 +62,22 @@ function getRandomDistance(radius) {
 let farthestEnemy = null;
 let farthestDistanceSquared = 0;
 
-export const burningAnimation = animation({
+export const burningAnimationStat = {
   imageCount: 12,
-  slowDown: 20,
+  slowDown: 10,
   reverse: false,
   repeat: true,
+};
+
+export const burningAnimation = animation({
+  imageCount: burningAnimationStat.imageCount,
+  slowDown: burningAnimationStat.slowDown,
+  reverse: false,
+  repeat: true,
+  // vertical: false,
+  // switchLayer: true,
+  // firstLayerCount: 5,
+  // layerCount: 6,
 });
 
 export const createFlamethrower = () => {
@@ -78,7 +89,7 @@ export const createFlamethrower = () => {
   let splatterArea = 1;
   let onHit;
 
-  if (flamethrower.modeValue % 2 === 0) {
+  if (flamethrower.modeValue % 2 === 1) {
     //   Oil mode
     flamethrower.attackIntervall = flamethrowerStats.oilMode.cooldown;
     area = stats.area * flamethrowerStats.oilMode.area;
@@ -165,7 +176,7 @@ export const createFlamethrower = () => {
     //   y: -enemyPosValue.y / enemies.length,
     // };
 
-    const targetIndex = Math.floor(Math.random() * effe.length);
+    const targetIndex = Math.floor(Math.random() * enemies.length);
     const target = enemies[targetIndex];
     const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
 
@@ -173,77 +184,84 @@ export const createFlamethrower = () => {
 
     // console.log("Farthest enemy position:", averageEnemyPos);
 
-    ctx.beginPath();
-    ctx.arc(targetPos.x, targetPos.y, 10, 0, 2 * Math.PI);
-    ctx.fillStyle = "green";
-    ctx.fill();
+    // ctx.beginPath();
+    // ctx.arc(
+    //   targetPos.x + world.width / 2 - player.pos.x,
+    //   targetPos.y + world.height / 2 - player.pos.y,
+    //   100,
+    //   0,
+    //   2 * Math.PI
+    // );
+    // ctx.fillStyle = "green";
+    // ctx.fill();
 
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
-    ctx.lineTo(targetPos.x, targetPos.y); // Dra linjen till fiendens position
+    ctx.lineTo(
+      targetPos.x + world.width / 2 - player.pos.x,
+      targetPos.y + world.height / 2 - player.pos.y
+    ); // Dra linjen till fiendens position
     ctx.strokeStyle = "blue"; // Färg för linjen
     ctx.stroke(); // Rita linjen
 
-    ctx.save();
-    ctx.translate(targetPos.x, targetPos.y); // Flytta ursprungspunkten till spelaren
+    requestAnimationFrame(flameThrowerFire);
 
-    ctx.beginPath();
-    ctx.moveTo(player.pos.x, player.pos.y); // Flytta startpunkten till spelarens position
-    ctx.lineTo(targetPos.x / 2, targetPos.y / 2); // Dra linjen till fiendens position
-    ctx.strokeStyle = "red"; // Färg för linjen
-    ctx.stroke(); // Rita linjen
+    const bullet = {
+      radius: area,
 
-    ctx.drawImage(
-      assets.goldBag,
-      0,
-      0,
-      10,
-      10, // Ursprungliga bredd och höjd för bilden
-      0,
-      0,
-      Math.abs(targetPos.x - player.pos.x),
-      Math.abs(targetPos.y - player.pos.y) // Rita bilden mellan spelaren och fienden
-    );
-    ctx.restore(); // Återställ sparad kontext
+      attackIntervall: cooldown,
+      cooldown: cooldown,
+      destroy: false,
+      pos: {
+        x: player.pos.x,
+        y: player.pos.y,
+      },
+      vel: {
+        x: -direction.x * speed,
+        y: -direction.y * speed,
+      },
+      damage: damage,
+      color: "red",
+      team: "player",
+      priority: 5,
 
-    // const bullet = {
-    //   radius: area,
+      hit: () => {
+        createSplatter(
+          flamethrower,
+          bullet.pos.x,
+          bullet.pos.y,
+          splatterArea,
+          0,
+          onHit
+        );
+        //   console.log("splatt!");
+      },
 
-    //   attackIntervall: cooldown,
-    //   cooldown: cooldown,
-    //   destroy: false,
-    //   pos: {
-    //     x: player.pos.x,
-    //     y: player.pos.y,
-    //   },
-    //   vel: {
-    //     x: direction.x * speed,
-    //     y: direction.y * speed,
-    //   },
-    //   damage: damage,
-    //   color: "red",
-    //   team: "player",
-    //   priority: 5,
-
-    //   hit: () => {
-    //     createSplatter(
-    //       flamethrower,
-    //       bullet.pos.x,
-    //       bullet.pos.y,
-    //       splatterArea,
-    //       0,
-    //       onHit
-    //     );
-    //     //   console.log("splatt!");
-    //   },
-
-    //   enemiesHit: [],
-    //   pierce: pierce,
-    //   weapon: flamethrower,
-    // };
-    // bullets.push(bullet);
+      enemiesHit: [],
+      pierce: pierce,
+      weapon: flamethrower,
+    };
+    bullets.push(bullet);
   }
+};
+
+const flameThrowerFire = () => {
+  const chosenIndex = Math.floor(Math.random() * enemies.length);
+  const chosenEnemy = enemies[chosenIndex];
+  ctx.drawImage(
+    assets.blue,
+    0,
+    0,
+    665,
+    665,
+    world.width / 2,
+    world.height / 2,
+    chosenEnemy.pos.x,
+    chosenEnemy.pos.y
+  );
+  console.log("blueblue!!");
+  requestAnimationFrame(flameThrowerFire);
 };
 
 export const flamethrower = {

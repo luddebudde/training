@@ -1,4 +1,4 @@
-export const universalVolume = 0.5;
+export const universalVolume = 0;
 
 export const playLevelUp = () => {
   const audio = new Audio("public/sounds/levelUp.mp3");
@@ -73,6 +73,12 @@ export const playDeathSound = () => {
 export const playClick = () => {
   const audio = new Audio("public/sounds/click.mp3");
   audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playBangbang = () => {
+  const audio = new Audio("public/sounds/bangbang.mkv");
+  audio.volume = 2 * universalVolume;
   audio.play();
 };
 

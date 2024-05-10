@@ -101,7 +101,11 @@ import { mapSelection } from "./menu/mapSelection.js";
 import { changeCurrentMap, currentMap } from "./maps/standardMap.js";
 import { removeFromArrays } from "./removeFromArrays.js";
 import { createMarcherBoss } from "./enemies/createMarcherBoss.js";
-import { burningAnimation, flamethrower } from "./weapons.js/flameThrower.js";
+import {
+  burningAnimation,
+  burningAnimationStat,
+  flamethrower,
+} from "./weapons.js/flameThrower.js";
 import { animation } from "./animation.js";
 
 export const canvas = document.getElementById("theCanvas");
@@ -219,6 +223,7 @@ export const assets = {
   jet: await loadImage("public/animations/jet-even.png"),
   explosion: await loadImage("public/animations/explosion.png"),
   fire: await loadImage("public/animations/fireAnimation.gif"),
+  flameThrower: await loadImage("public/animations/flameThrowerFireCool2.gif"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
 };
@@ -389,7 +394,7 @@ export const startGame = () => {
     // selfImpaler,
     // cherry,
     // droper,
-    // flamethrower,
+    flamethrower,
   ];
 
   // createCollector(100, 100);
@@ -425,10 +430,10 @@ export const startGame = () => {
 
 const startMode = () => {
   changeVolume(0);
-  mainMenu();
+  // mainMenu();
   // showStatistics();
   // deathMenu();
-  // startGame();
+  startGame();
   // mapSelection();
   // showGameStatistics();
   // createShooterBoss();
@@ -453,13 +458,13 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  ctx.drawImage(
-    backgrounds[currentMap.texture],
-    -player.pos.x / 1,
-    -player.pos.y / 1,
-    world.width,
-    world.height
-  );
+  // ctx.drawImage(
+  //   backgrounds[currentMap.texture],
+  //   -player.pos.x / 1,
+  //   -player.pos.y / 1,
+  //   world.width,
+  //   world.height
+  // );
 
   // ctx.drawImage(
   //   backgrounds[currentMap.textures],
@@ -739,12 +744,12 @@ const update = () => {
 
   xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
 
-  areaEffects.forEach((explosion) => {
+  areaEffects.forEach((areaEffect) => {
     enemies.forEach((enemy) => {
-      if (doCirclesOverlap(explosion, enemy)) {
+      if (doCirclesOverlap(areaEffect, enemy)) {
         // enemy.health -= explosion.damage;
 
-        explosion.onHit(explosion, enemy);
+        areaEffect.onHit(areaEffect, enemy);
       }
     });
   });
@@ -859,6 +864,7 @@ const update = () => {
           console.log("burning");
           burningEntities.push(object);
 
+          object.counter = 0;
           object.animation = burningAnimation;
         }
       }
@@ -866,14 +872,28 @@ const update = () => {
   });
 
   burningEntities.forEach((entity) => {
-    entity.animation.step();
+    // entity.animation.step();
+
+    let counterDirection = 1;
+
+    // let counter = ;
+    entity.counter += counterDirection;
+
+    if (
+      entity.counter >=
+      burningAnimationStat.imageCount * burningAnimationStat.slowDown
+    ) {
+      entity.counter = 0;
+    }
+
     entity.animation.draw(
       ctx,
       assets.fire,
       entity.pos.x - entity.radius / 1.2,
       entity.pos.y + entity.radius,
       entity.radius * 2,
-      -entity.radius * 2
+      -entity.radius * 2,
+      entity.counter
     );
 
     // console.log(animation);

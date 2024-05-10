@@ -1,0 +1,88 @@
+// Idea One
+ctx.beginPath();
+ctx.arc(
+  targetPos.x + world.width / 2 - player.pos.x,
+  targetPos.y + world.height / 2 - player.pos.y,
+  100,
+  0,
+  2 * Math.PI
+);
+ctx.fillStyle = "green";
+ctx.fill();
+
+ctx.save();
+ctx.beginPath();
+ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
+ctx.lineTo(
+  targetPos.x + world.width / 2 - player.pos.x,
+  targetPos.y + world.height / 2 - player.pos.y
+); // Dra linjen till fiendens position
+ctx.strokeStyle = "blue"; // Färg för linjen
+ctx.stroke(); // Rita linjen
+
+// Idea Two
+const targetIndex = Math.floor(Math.random() * enemies.length);
+const target = enemies[targetIndex];
+const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
+
+const direction = makeDirection(targetPos, player.pos);
+
+// console.log("Farthest enemy position:", averageEnemyPos);
+
+ctx.beginPath();
+ctx.arc(
+  targetPos.x + world.width / 2 - player.pos.x,
+  targetPos.y + world.height / 2 - player.pos.y,
+  100,
+  0,
+  2 * Math.PI
+);
+ctx.fillStyle = "green";
+ctx.fill();
+
+ctx.save();
+ctx.beginPath();
+ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
+ctx.lineTo(
+  targetPos.x + world.width / 2 - player.pos.x,
+  targetPos.y + world.height / 2 - player.pos.y
+); // Dra linjen till fiendens position
+ctx.strokeStyle = "blue"; // Färg för linjen
+ctx.stroke(); // Rita linjen
+
+const bullet = {
+  radius: area,
+
+  attackIntervall: cooldown,
+  cooldown: cooldown,
+  destroy: false,
+  pos: {
+    x: player.pos.x,
+    y: player.pos.y,
+  },
+  vel: {
+    x: direction.x * speed,
+    y: direction.y * speed,
+  },
+  damage: damage,
+  color: "red",
+  team: "player",
+  priority: 5,
+
+  hit: () => {
+    createSplatter(
+      flamethrower,
+      bullet.pos.x,
+      bullet.pos.y,
+      splatterArea,
+      0,
+      onHit
+    );
+    //   console.log("splatt!");
+  },
+
+  enemiesHit: [],
+  pierce: pierce,
+  weapon: flamethrower,
+};
+bullets.push(bullet);

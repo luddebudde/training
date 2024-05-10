@@ -8,7 +8,12 @@ import { characters } from "../characters.js/characterInfo.js";
 import { drawSquare } from "../draw/drawSquare.js";
 import { drawText } from "../draw/drawText.js";
 import { buttons, ctx } from "../main.js";
-import { playAirstrikeCall, playLevelUp, playWilhelm } from "../sounds.js";
+import {
+  playAirstrikeCall,
+  playBangbang,
+  playLevelUp,
+  playWilhelm,
+} from "../sounds.js";
 import { world } from "../world.js";
 import { mainMenu } from "./mainMenu.js";
 
@@ -28,9 +33,10 @@ export const leaderboard = () => {
       index: index,
       pressCounter: 0,
       x: 50,
-      y: 100 + 100 * index,
-      width: 30,
-      height: 30,
+      y: 60 + 100 * index,
+      width: 40,
+      height: 40,
+      color: "red",
       function: () => {
         if (button.index === 0) {
           button.pressCounter += 1;
@@ -46,9 +52,13 @@ export const leaderboard = () => {
           playAirstrikeCall();
         } else if (button.index === 2) {
           playLevelUp();
+        } else if (button.index === 3) {
+          playBangbang();
         }
       },
     };
+
+    drawSquare(button);
 
     buttons.push(button);
   });

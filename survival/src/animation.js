@@ -1,4 +1,13 @@
-export const animation = ({ imageCount, slowDown, reverse, repeat }) => {
+export const animation = ({
+  imageCount,
+  slowDown,
+  reverse,
+  repeat,
+  vertical = true,
+  // switchLayer = false,
+  // firstLayerCount = undefined,
+  // layerCount = undefined,
+}) => {
   // const { imageCount, slowDown, reverse, repeat } = options;
   let counter = 0;
 
@@ -22,25 +31,42 @@ export const animation = ({ imageCount, slowDown, reverse, repeat }) => {
       }
       return false;
     },
-    draw: (ctx, image, x, y, width, height) => {
+    draw: (ctx, image, x, y, width, height, counter) => {
       const imageIndex = Math.floor(counter / slowDown);
-      const spriteHeight = image.height / imageCount;
 
       // const canvas = document.getElementById("myCanvas");
       // const ctx = canvas.getContext("2d");
       // const img = document.getElementById("scream");
       // ctx.drawImage(img, 90, 130, 50, 60, 10, 10, 50, 60);
-      ctx.drawImage(
-        image,
-        0,
-        imageIndex * spriteHeight,
-        image.width,
-        spriteHeight,
-        x,
-        y,
-        width,
-        height
-      );
+
+      if (vertical === true) {
+        const spriteHeight = image.height / imageCount;
+        ctx.drawImage(
+          image,
+          0,
+          imageIndex * spriteHeight,
+          image.width,
+          spriteHeight,
+          x,
+          y,
+          width,
+          height
+        );
+      } else {
+        const spriteWidth = image.width / imageCount;
+        console.log(spriteWidth);
+        ctx.drawImage(
+          image,
+          imageIndex * spriteWidth,
+          0,
+          spriteWidth,
+          image.height,
+          x,
+          y,
+          width,
+          height
+        );
+      }
     },
   };
 };
