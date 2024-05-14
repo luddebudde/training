@@ -31,8 +31,8 @@ export const animation = ({
       }
       return false;
     },
-    draw: (ctx, image, x, y, width, height, counter) => {
-      const imageIndex = Math.floor(counter / slowDown);
+    draw: (ctx, image, x, y, width, height, newCounter = counter) => {
+      const imageIndex = Math.floor(newCounter / slowDown);
 
       // const canvas = document.getElementById("myCanvas");
       // const ctx = canvas.getContext("2d");
@@ -54,7 +54,6 @@ export const animation = ({
         );
       } else {
         const spriteWidth = image.width / imageCount;
-        console.log(spriteWidth);
         ctx.drawImage(
           image,
           imageIndex * spriteWidth,
@@ -67,6 +66,9 @@ export const animation = ({
           height
         );
       }
+    },
+    counter: () => {
+      return counter;
     },
   };
 };

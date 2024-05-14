@@ -1,5 +1,12 @@
 import { loadImage } from "../image.js";
-import { assets, bullets, mousePos, player, worldObjects } from "../main.js";
+import {
+  assets,
+  bullets,
+  enemies,
+  mousePos,
+  player,
+  worldObjects,
+} from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 import { stats } from "../stats.js";
 
@@ -31,14 +38,13 @@ export const createRandomAimBullet = () => {
   const damage = stats.damage * randomAimBulletStats.damage;
   const cooldown = stats.cooldown * randomAimBulletStats.cooldown;
 
-  // Ange cirkelns radie
+  let direction;
+
+  // if (randomAimBulletStats.special === 0) {
   const circleRadius = 50;
 
-  // Generera slumpad vinkel och avstånd
   const randomAngle = getRandomAngle();
   const randomDistance = getRandomDistance(area);
-
-  // Beräkna slumpad position i cirkeln
 
   const stopPos = {
     x:
@@ -51,16 +57,21 @@ export const createRandomAimBullet = () => {
       player.pos.y,
   };
 
-  const direction = makeDirection(stopPos, player.pos);
+  direction = makeDirection(stopPos, player.pos);
+  // }
+  //  else {
+  //   const targetIndex = Math.floor(Math.random() * enemies.length);
+  //   const target = enemies[targetIndex];
+  //   const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
 
-  //   console.log("Slumpad vinkel:", randomAngle);
-  //   console.log("Slumpat avstånd:", randomDistance);
-  // console.log("Slumpad position i cirkeln:", { x, y });
-  // console.log(direction);
-
-  // console.log(direction);
+  //   direction = makeDirection(targetPos, player.pos);
+  //   direction = {
+  //     x: -direction.x,
+  //     y: -direction.y,
+  //   };
+  // }
   const bullet = {
-    bulletStopPos: stopPos,
+    // bulletStopPos: stopPos,
     radius: area,
     // bulletHealth: 10,
     attackIntervall: cooldown,
@@ -81,16 +92,8 @@ export const createRandomAimBullet = () => {
     enemiesHit: [],
     pierce: randomAimBulletStats.pierce,
     weapon: randomAimBullet,
-
-    attack: () => {
-      bullets.push(bullet);
-      // worldObjects.push(bullet);
-    },
   };
   bullets.push(bullet);
-  // worldObjects.push(bullet);
-
-  // return cooldown;
 };
 
 export const randomAimBullet = {
@@ -118,7 +121,7 @@ export const randomAimBullet = {
   stats: randomAimBulletStats,
 
   upgrades: {
-    level: 0,
+    level: 5,
     statsOrder: [
       ["cooldown"],
       ["speed"],

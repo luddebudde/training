@@ -106,7 +106,7 @@ import {
   burningAnimationStat,
   flamethrower,
 } from "./weapons.js/flameThrower.js";
-import { animation } from "./animation.js";
+import { devistator } from "./weapons.js/devistator.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -223,7 +223,8 @@ export const assets = {
   jet: await loadImage("public/animations/jet-even.png"),
   explosion: await loadImage("public/animations/explosion.png"),
   fire: await loadImage("public/animations/fireAnimation.gif"),
-  flameThrower: await loadImage("public/animations/flameThrowerFireCool2.gif"),
+  flame: await loadImage("public/animations/flaming.png"),
+  slice: await loadImage("public/animations/slice.png"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
 };
@@ -266,6 +267,21 @@ export const handleMouseWheel = (event) => {
 
 document.addEventListener("wheel", handleMouseWheel);
 
+export let isMouseDown = false;
+
+document.onmousedown = function (event) {
+  // Kontrollera om vänsterknappen trycks ned
+  if (event.button === 0) {
+    isMouseDown = true;
+  }
+};
+
+document.onmouseup = function (event) {
+  // Kontrollera om vänsterknappen släpps
+  if (event.button === 0) {
+    isMouseDown = false;
+  }
+};
 let currentMusicIndex = 0;
 
 let spawnRate = 50 / stats.curse;
@@ -384,7 +400,7 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    aimBullet,
+    // aimBullet,
     // holyArea,
     // minigun,
     // wiper,
@@ -394,7 +410,9 @@ export const startGame = () => {
     // selfImpaler,
     // cherry,
     // droper,
-    flamethrower,
+    // flamethrower,
+    // stunner,
+    devistator,
   ];
 
   // createCollector(100, 100);
@@ -861,7 +879,6 @@ const update = () => {
           );
         }
         if (object.statusEffects.burning && !burningEntities.includes(object)) {
-          console.log("burning");
           burningEntities.push(object);
 
           object.counter = 0;
@@ -1043,4 +1060,4 @@ setInterval(() => {
   });
 }, 1000 / loopPerSecond);
 
-const isKeyDown = keyDownTracker();
+export const isKeyDown = keyDownTracker();

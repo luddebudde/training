@@ -9,7 +9,7 @@ export const Blugo = {
   // startingWeapon: aimBullet,
 
   stats: {
-    growth: 1,
+    growth: 10,
     greed: 1,
 
     movementSpeed: 5,

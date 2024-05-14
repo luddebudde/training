@@ -61,18 +61,11 @@ export const createAimBullet = () => {
     team: "player",
     priority: 5,
 
-    attack: () => {
-      bullets.push(bullet);
-      // worldObjects.push(bullet);
-    },
     enemiesHit: [],
     pierce: aimBulletStats.pierce,
     weapon: aimBullet,
   };
   bullets.push(bullet);
-  // worldObjects.push(bullet);
-
-  // return cooldown;
 };
 
 export const aimBullet = {

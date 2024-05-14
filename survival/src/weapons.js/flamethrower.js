@@ -17,6 +17,7 @@ import { vector } from "../vectors.js";
 import { world } from "../world.js";
 
 const bulletSpeed = 20 * stats.speed;
+let currentTarget;
 // const cooldown = 25;
 
 const flamethrowerStats = {
@@ -39,25 +40,30 @@ const flamethrowerStats = {
   },
 };
 
+const flameThrowerAnimation = {
+  oil: {
+    imageCount: 7,
+    slowDown: 20,
+    reverse: false,
+    repeat: false,
+    vertical: true,
+  },
+  fire: {
+    imageCount: 24,
+    slowDown: 20,
+    reverse: false,
+    repeat: false,
+    vertical: false,
+  },
+};
+
 function getRandomAngle() {
-  return Math.random() * 360; // Slumpad vinkel mellan 0 och 360 grader
+  return Math.random() * 360;
 }
 
-// Funktion för att generera slumpat avstånd från cirkelns centrum
 function getRandomDistance(radius) {
-  return Math.random() * 300; // Slumpat avstånd upp till cirkelns radie
+  return Math.random() * 300;
 }
-
-// let previusPosDifference = {
-//   pos: {
-//     x: 100000000,
-//     y: 100000000,
-//   },
-// };
-// let direction = {
-//   x: 0,
-//   y: 0,
-// };
 
 let farthestEnemy = null;
 let farthestDistanceSquared = 0;
@@ -68,16 +74,27 @@ export const burningAnimationStat = {
   reverse: false,
   repeat: true,
 };
+export const flameAnimationStat = {
+  imageCount: 24,
+  slowDown: 10,
+  reverse: false,
+  repeat: true,
+  vertical: false,
+};
 
 export const burningAnimation = animation({
   imageCount: burningAnimationStat.imageCount,
   slowDown: burningAnimationStat.slowDown,
   reverse: false,
   repeat: true,
-  // vertical: false,
-  // switchLayer: true,
-  // firstLayerCount: 5,
-  // layerCount: 6,
+});
+
+export let flameAnimation = animation({
+  imageCount: flameAnimationStat.imageCount,
+  slowDown: flameAnimationStat.slowDown,
+  reverse: false,
+  repeat: false,
+  vertical: false,
 });
 
 export const createFlamethrower = () => {
@@ -137,7 +154,8 @@ export const createFlamethrower = () => {
           bullet.pos.y,
           splatterArea,
           0,
-          onHit
+          onHit,
+          flameThrowerAnimation.oil
         );
         //   console.log("splatt!");
       },
@@ -161,39 +179,11 @@ export const createFlamethrower = () => {
       enemy.statusEffects.burning = true;
     };
 
-    // let enemyPosValue = {
-    //   x: 0,
-    //   y: 0,
-    // };
-    // // Furthest enemy
-    // enemies.forEach((enemy) => {
-    //   enemyPosValue.x += enemy.pos.x;
-    //   enemyPosValue.y += enemy.pos.y;
-    // });
-
-    // const averageEnemyPos = {
-    //   x: -enemyPosValue.x / enemies.length,
-    //   y: -enemyPosValue.y / enemies.length,
-    // };
-
     const targetIndex = Math.floor(Math.random() * enemies.length);
     const target = enemies[targetIndex];
     const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
 
     const direction = makeDirection(targetPos, player.pos);
-
-    // console.log("Farthest enemy position:", averageEnemyPos);
-
-    // ctx.beginPath();
-    // ctx.arc(
-    //   targetPos.x + world.width / 2 - player.pos.x,
-    //   targetPos.y + world.height / 2 - player.pos.y,
-    //   100,
-    //   0,
-    //   2 * Math.PI
-    // );
-    // ctx.fillStyle = "green";
-    // ctx.fill();
 
     ctx.save();
     ctx.beginPath();
@@ -205,7 +195,9 @@ export const createFlamethrower = () => {
     ctx.strokeStyle = "blue"; // Färg för linjen
     ctx.stroke(); // Rita linjen
 
-    requestAnimationFrame(flameThrowerFire);
+    // currentTarget = target;
+    // console.log(currentTarget);
+    flameThrowerFire();
 
     const bullet = {
       radius: area,
@@ -233,7 +225,8 @@ export const createFlamethrower = () => {
           bullet.pos.y,
           splatterArea,
           0,
-          onHit
+          onHit,
+          flameThrowerAnimation.fire
         );
         //   console.log("splatt!");
       },
@@ -246,22 +239,121 @@ export const createFlamethrower = () => {
   }
 };
 
+let chosenIndex;
+let chosenEnemy;
+let chosenPos;
+
 const flameThrowerFire = () => {
-  const chosenIndex = Math.floor(Math.random() * enemies.length);
-  const chosenEnemy = enemies[chosenIndex];
+  // console.log(chosenEnemy);
+
+  if (chosenPos === undefined) {
+    const chosenIndex = Math.floor(Math.random() * enemies.length);
+    const chosenEnemy = enemies[chosenIndex];
+    chosenPos = { x: chosenEnemy.pos.x, y: chosenEnemy.pos.y }; // Skapa en klon av fiendens position
+
+    // console.log(chosenEnemy);
+    // chosenPos = { x: 100, y: 100 };
+  }
+
+  // console.log(chosenEnemy.pos);
+  console.log();
+
+  flameAnimation.step();
+  // ctx.drawImage(
+  //   assets.blue,
+  //   0,
+  //   0,
+  //   665,
+  //   665,
+  //   world.width / 2,
+  //   world.height / 2,
+  //   chosenEnemy.pos.x,
+  //   chosenEnemy.pos.y
+  // );
+
+  // console.log("blueblue!!");
+
+  // flameAnimation.draw(ctx, assets.flame, 400, 400, 665, 665);
+
+  // flameAnimation.draw(
+  //   ctx,
+  //   assets.flame,
+  //   0,
+  //   0,
+  //   665,
+  //   665,
+  //   world.width / 2,
+  //   world.height / 2,
+  //   chosenEnemy.pos.x,
+  //   chosenEnemy.pos.y
+  // );
+
+  const animationCounter = flameAnimation.counter();
+  // console.log(animationCounter);
+
+  const imageIndex = Math.floor(animationCounter / flameAnimationStat.slowDown);
+  // console.log(flame);
+
+  const spriteWidth = assets.flame.width / flameAnimationStat.imageCount;
+
+  const playerEnemyPosDifference = {
+    x: Math.abs(world.width / 2 - chosenPos.x),
+    y: Math.abs(world.height / 2 - chosenPos.y),
+  };
+
+  // console.log(spriteWidth);
+  // ctx.save();
+  // ctx.rotate((10 * Math.PI) / 180);
+  // ctx.drawImage(
+  //   assets.flame,
+  //   imageIndex * spriteWidth,
+  //   0,
+  //   spriteWidth,
+  //   // 500,
+  //   assets.flame.height,
+  //   world.width / 2,
+  //   world.height / 2,
+
+  //   chosenPos.x - player.pos.x,
+  //   chosenPos.y - player.pos.y
+  // );
+  // ctx.restore();
+
+  // console.log(chosenEnemy.pos);
+
   ctx.drawImage(
-    assets.blue,
+    assets.flame,
+    imageIndex * spriteWidth,
     0,
-    0,
-    665,
-    665,
-    world.width / 2,
-    world.height / 2,
-    chosenEnemy.pos.x,
-    chosenEnemy.pos.y
+    spriteWidth,
+    // 500,
+    assets.flame.height,
+    world.width / 2 + player.radius / 2,
+    world.height / 2 - assets.flame.height / 1.5,
+
+    chosenPos.x,
+    chosenPos.y
   );
-  console.log("blueblue!!");
-  requestAnimationFrame(flameThrowerFire);
+
+  const stepInfo = flameAnimation.step();
+
+  // console.log(stepInfo);
+
+  if (!stepInfo) {
+    // console.log(flameAnimationStat.counter);
+    requestAnimationFrame(flameThrowerFire);
+  } else {
+    chosenPos = undefined;
+    console.log("gone");
+
+    flameAnimation = animation({
+      imageCount: flameAnimationStat.imageCount,
+      slowDown: flameAnimationStat.slowDown,
+      reverse: false,
+      repeat: false,
+      vertical: false,
+    });
+  }
 };
 
 export const flamethrower = {

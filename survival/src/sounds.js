@@ -1,4 +1,4 @@
-export const universalVolume = 0;
+export const universalVolume = 0.5;
 
 export const playLevelUp = () => {
   const audio = new Audio("public/sounds/levelUp.mp3");
@@ -79,6 +79,38 @@ export const playClick = () => {
 export const playBangbang = () => {
   const audio = new Audio("public/sounds/bangbang.mkv");
   audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
+let chargingAudio;
+
+export const playChargingShot = () => {
+  // Kontrollera om ljudet redan spelas
+  if (!chargingAudio || chargingAudio.paused || chargingAudio.ended) {
+    if (chargingAudio && !chargingAudio.ended) {
+      chargingAudio.pause(); // Pausa ljudet om det redan spelas
+    }
+    chargingAudio = new Audio("public/sounds/charging.mp3");
+    chargingAudio.volume = 1 * universalVolume;
+    chargingAudio.play();
+  }
+};
+
+export const playFullyChargedShot = () => {
+  const audio = new Audio("public/sounds/fullyCharged.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playWeakChargedShot = () => {
+  const audio = new Audio("public/sounds/weakChargedShot.mp3");
+  audio.volume = 0.3 * universalVolume;
+  audio.play();
+};
+
+export const playStrongChargedShot = () => {
+  const audio = new Audio("public/sounds/strongChargedShot.mp3");
+  audio.volume = 1 * universalVolume;
   audio.play();
 };
 

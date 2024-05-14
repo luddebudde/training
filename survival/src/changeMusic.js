@@ -44,6 +44,15 @@ export const fadeOutMusic = (duration) => {
   }, interval);
 };
 
+export const playChargingShot = () => {
+  // Kontrollera om ljudet redan spelas
+  if (!chargingAudio || chargingAudio.paused || chargingAudio.ended) {
+    chargingAudio = new Audio("public/sounds/charging.mp3");
+    chargingAudio.volume = 1 * universalVolume;
+    chargingAudio.play();
+  }
+};
+
 export const stopMusic = () => {
   musicAudio.pause();
   musicAudio.currentTime = 0;
@@ -80,7 +89,8 @@ export const changeVolume = (amount) => {
 export const normalMusic = {
   name: "normal",
   fileName: "public/sounds/gameMusic.mp3",
-  volume: 0.7,
+  // volume: 0.7,
+  volume: 0,
 };
 
 const funnyMusic = {
@@ -122,7 +132,8 @@ let originalVolume = normalMusic.volume;
 
 export const restoreMusicVolume = () => {
   stopFadin = true;
-  normalMusic.volume = 0.7;
+  // normalMusic.volume = 0.7;
+  normalMusic.volume = 0;
   funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
   synthMusic.volume = 1;

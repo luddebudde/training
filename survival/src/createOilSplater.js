@@ -8,14 +8,22 @@ export const createSplatter = (
   size,
   damage,
   onHit,
+  splatterInfo,
   speed = 16,
-  sprite = assets.explosion
+  sprite = assets.explosion,
+  vertical = true
 ) => {
   const splatterAnimation = animation({
-    imageCount: 7,
-    slowDown: speed,
-    reverse: false,
-    repeat: false,
+    imageCount: splatterInfo.imageCount,
+    slowDown: splatterInfo.slowDown,
+    reverse: splatterInfo.reverse,
+    repeat: splatterInfo.repeat,
+    vertical: splatterInfo.vertical,
+    // imageCount: 7,
+    // slowDown: 20,
+    // reverse: false,
+    // repeat: false,
+    // vertical: true,
   });
 
   const splatter = {

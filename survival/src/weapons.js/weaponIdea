@@ -1,25 +1,3 @@
-// Idea One
-ctx.beginPath();
-ctx.arc(
-  targetPos.x + world.width / 2 - player.pos.x,
-  targetPos.y + world.height / 2 - player.pos.y,
-  100,
-  0,
-  2 * Math.PI
-);
-ctx.fillStyle = "green";
-ctx.fill();
-
-ctx.save();
-ctx.beginPath();
-ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
-ctx.lineTo(
-  targetPos.x + world.width / 2 - player.pos.x,
-  targetPos.y + world.height / 2 - player.pos.y
-); // Dra linjen till fiendens position
-ctx.strokeStyle = "blue"; // Färg för linjen
-ctx.stroke(); // Rita linjen
-
 // Idea Two
 const targetIndex = Math.floor(Math.random() * enemies.length);
 const target = enemies[targetIndex];
