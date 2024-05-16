@@ -132,8 +132,8 @@ let originalVolume = normalMusic.volume;
 
 export const restoreMusicVolume = () => {
   stopFadin = true;
-  // normalMusic.volume = 0.7;
-  normalMusic.volume = 0;
+  normalMusic.volume = 0.7;
+  // normalMusic.volume = 0;
   funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
   synthMusic.volume = 1;

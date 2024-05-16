@@ -5,13 +5,13 @@ import { loadImage } from "../image.js";
 import {
   assets,
   bullets,
-  ctx,
   enemies,
   mousePos,
   player,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { removeFromArrays } from "../removeFromArrays.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
 import { world } from "../world.js";
@@ -24,9 +24,9 @@ const flamethrowerStats = {
   fireMode: {
     area: 15,
     speed: 30,
-    damage: 20,
+    damage: 0,
     cooldown: 100,
-    pierce: 1,
+    pierce: 100000,
     special: 0,
   },
   oilMode: {
@@ -76,7 +76,7 @@ export const burningAnimationStat = {
 };
 export const flameAnimationStat = {
   imageCount: 24,
-  slowDown: 10,
+  slowDown: 30,
   reverse: false,
   repeat: true,
   vertical: false,
@@ -169,7 +169,7 @@ export const createFlamethrower = () => {
     // Fire mode
     flamethrower.attackIntervall = flamethrowerStats.fireMode.cooldown;
     area = stats.area * flamethrowerStats.fireMode.area;
-    speed = stats.speed * flamethrowerStats.fireMode.speed;
+    speed = stats.speed * flamethrowerStats.fireMode.speed * 1;
     damage = stats.damage * flamethrowerStats.fireMode.damage;
     cooldown = stats.cooldown * flamethrowerStats.fireMode.cooldown;
     pierce = stats.cooldown * flamethrowerStats.fireMode.pierce;
@@ -184,20 +184,6 @@ export const createFlamethrower = () => {
     const targetPos = target.pos; // Hämta pos från det slumpmässigt valda fiendeelementet
 
     const direction = makeDirection(targetPos, player.pos);
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.moveTo(world.width / 2, world.height / 2); // Flytta startpunkten till spelarens position
-    ctx.lineTo(
-      targetPos.x + world.width / 2 - player.pos.x,
-      targetPos.y + world.height / 2 - player.pos.y
-    ); // Dra linjen till fiendens position
-    ctx.strokeStyle = "blue"; // Färg för linjen
-    ctx.stroke(); // Rita linjen
-
-    // currentTarget = target;
-    // console.log(currentTarget);
-    flameThrowerFire();
 
     const bullet = {
       radius: area,
@@ -230,6 +216,7 @@ export const createFlamethrower = () => {
         );
         //   console.log("splatt!");
       },
+      draw: drawFlameThrowerFire,
 
       enemiesHit: [],
       pierce: pierce,
@@ -243,56 +230,20 @@ let chosenIndex;
 let chosenEnemy;
 let chosenPos;
 
-const flameThrowerFire = () => {
+const drawFlameThrowerFire = (ctx, assets, object) => {
   // console.log(chosenEnemy);
 
   if (chosenPos === undefined) {
     const chosenIndex = Math.floor(Math.random() * enemies.length);
     const chosenEnemy = enemies[chosenIndex];
-    chosenPos = { x: chosenEnemy.pos.x, y: chosenEnemy.pos.y }; // Skapa en klon av fiendens position
-
-    // console.log(chosenEnemy);
-    // chosenPos = { x: 100, y: 100 };
+    chosenPos = { x: chosenEnemy.pos.x, y: chosenEnemy.pos.y };
   }
 
-  // console.log(chosenEnemy.pos);
   console.log();
 
   flameAnimation.step();
-  // ctx.drawImage(
-  //   assets.blue,
-  //   0,
-  //   0,
-  //   665,
-  //   665,
-  //   world.width / 2,
-  //   world.height / 2,
-  //   chosenEnemy.pos.x,
-  //   chosenEnemy.pos.y
-  // );
-
-  // console.log("blueblue!!");
-
-  // flameAnimation.draw(ctx, assets.flame, 400, 400, 665, 665);
-
-  // flameAnimation.draw(
-  //   ctx,
-  //   assets.flame,
-  //   0,
-  //   0,
-  //   665,
-  //   665,
-  //   world.width / 2,
-  //   world.height / 2,
-  //   chosenEnemy.pos.x,
-  //   chosenEnemy.pos.y
-  // );
 
   const animationCounter = flameAnimation.counter();
-  // console.log(animationCounter);
-
-  const imageIndex = Math.floor(animationCounter / flameAnimationStat.slowDown);
-  // console.log(flame);
 
   const spriteWidth = assets.flame.width / flameAnimationStat.imageCount;
 
@@ -301,58 +252,79 @@ const flameThrowerFire = () => {
     y: Math.abs(world.height / 2 - chosenPos.y),
   };
 
-  // console.log(spriteWidth);
-  // ctx.save();
-  // ctx.rotate((10 * Math.PI) / 180);
-  // ctx.drawImage(
-  //   assets.flame,
-  //   imageIndex * spriteWidth,
-  //   0,
-  //   spriteWidth,
-  //   // 500,
-  //   assets.flame.height,
-  //   world.width / 2,
-  //   world.height / 2,
+  const diff = vector.eachOther.sub(object.pos, player.pos);
+  const dist = vector.alone.norm(diff);
 
-  //   chosenPos.x - player.pos.x,
-  //   chosenPos.y - player.pos.y
-  // );
-  // ctx.restore();
+  // console.log(object.pos);
 
-  // console.log(chosenEnemy.pos);
+  const n = Math.round(dist / (object.radius * 2));
 
-  ctx.drawImage(
-    assets.flame,
-    imageIndex * spriteWidth,
-    0,
-    spriteWidth,
-    // 500,
-    assets.flame.height,
-    world.width / 2 + player.radius / 2,
-    world.height / 2 - assets.flame.height / 1.5,
+  const dir = vector.alone.normalised(diff);
 
-    chosenPos.x,
-    chosenPos.y
-  );
+  const enemyDiff = vector.eachOther.sub(player.pos, chosenPos);
+  const enemyDist = vector.alone.norm(enemyDiff);
+
+  if (enemyDist < dist) {
+    // removeFromArrays(object);
+    console.log("returend");
+    object.destroy = true;
+    // return;
+  }
+
+  console.log(dist, enemyDist);
+
+  // console.log(dir);
+  Array(n)
+    .fill(0)
+    .map((_, i) => {
+      return vector.eachOther.add(
+        player.pos,
+        vector.alone.mult(dir, i * object.radius * 2)
+      );
+    })
+    .forEach((pos, i) => {
+      // console.log(pos);
+      const r = object.radius * i * 0.25;
+      // const r = object.radius * (1 + Math.pow(i * 0.1, 2));
+      const imageIndex = Math.floor(
+        (animationCounter + i) / flameAnimationStat.slowDown
+      );
+      ctx.drawImage(
+        assets.flame,
+        // image coordinates
+        imageIndex * spriteWidth,
+        0,
+        // image height
+        spriteWidth,
+        assets.flame.height,
+        // world coordinates
+        pos.x - r,
+        pos.y - r,
+
+        // world width
+        r * 2,
+        r * 2
+      );
+    });
 
   const stepInfo = flameAnimation.step();
 
   // console.log(stepInfo);
 
   if (!stepInfo) {
+    // console.log("hello");
     // console.log(flameAnimationStat.counter);
-    requestAnimationFrame(flameThrowerFire);
+    // flameThrowerFire();
   } else {
-    chosenPos = undefined;
-    console.log("gone");
-
-    flameAnimation = animation({
-      imageCount: flameAnimationStat.imageCount,
-      slowDown: flameAnimationStat.slowDown,
-      reverse: false,
-      repeat: false,
-      vertical: false,
-    });
+    // chosenPos = undefined;
+    // // console.log("gone");
+    // flameAnimation = animation({
+    //   imageCount: flameAnimationStat.imageCount,
+    //   slowDown: flameAnimationStat.slowDown,
+    //   reverse: false,
+    //   repeat: false,
+    //   vertical: false,
+    // });
   }
 };
 

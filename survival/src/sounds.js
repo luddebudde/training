@@ -1,4 +1,4 @@
-export const universalVolume = 0.5;
+export const universalVolume = 0;
 
 export const playLevelUp = () => {
   const audio = new Audio("public/sounds/levelUp.mp3");
@@ -110,6 +110,12 @@ export const playWeakChargedShot = () => {
 
 export const playStrongChargedShot = () => {
   const audio = new Audio("public/sounds/strongChargedShot.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playMassiveChargedShot = () => {
+  const audio = new Audio("public/sounds/masiveChargedShot.mp3");
   audio.volume = 1 * universalVolume;
   audio.play();
 };

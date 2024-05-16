@@ -4,9 +4,7 @@ import { createSplatter } from "../createOilSplater.js";
 import { dealDamage } from "../dealDamage.js";
 import { loadImage } from "../image.js";
 import {
-  assets,
   bullets,
-  ctx,
   enemies,
   isKeyDown,
   isMouseDown,
@@ -15,11 +13,13 @@ import {
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { drawRotatedImage } from "../rotateDrawingObject.js";
 import {
   playFullyChargedShot,
   playChargingShot,
   playStrongChargedShot,
   playWeakChargedShot,
+  playMassiveChargedShot,
 } from "../sounds.js";
 import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
@@ -51,6 +51,7 @@ const devistatorStats = {
 
 let canChangeMode = false;
 let timeCharged = 0;
+let bulletSprite;
 
 export const createDevistateBullet = () => {
   // console.log(aimBullet.area);
@@ -60,7 +61,10 @@ export const createDevistateBullet = () => {
   const cooldown = stats.cooldown * devistatorStats.cooldown;
 
   if (isMouseDown) {
-    if (timeCharged === devistatorStats.chargeCap) {
+    if (
+      timeCharged === devistatorStats.chargeCap &&
+      devistatorStats.special === 0
+    ) {
       playFullyChargedShot();
     }
     if (
@@ -98,21 +102,78 @@ export const createDevistateBullet = () => {
       canChangeMode = true;
     }
   } else if (canChangeMode) {
-    if (timeCharged >= devistatorStats.chargeCap) {
+    const direction = makeDirection(mousePos, {
+      x: world.width / 2,
+      y: world.height / 2,
+    });
+
+    if (devistatorStats.chargeDamage > 1000) {
+      playMassiveChargedShot();
+    } else if (
+      timeCharged >= devistatorStats.chargeCap ||
+      (devistatorStats.special > 0 && timeCharged > 50)
+    ) {
       playStrongChargedShot();
     } else {
       playWeakChargedShot();
     }
 
-    const direction = makeDirection(mousePos, {
-      x: world.width / 2,
-      y: world.height / 2,
-    });
+    if (devistatorStats.chargeDamage > 1000) {
+      bulletSprite = (ctx, assets, bullet, normalizedAngleInDegrees) => {
+        drawRotatedImage(
+          ctx,
+          assets.lasers.huge,
+          bullet.pos.x,
+          bullet.pos.y,
+          bullet.radius * 2,
+          bullet.radius * 2,
+          normalizedAngleInDegrees
+        );
+      };
+    } else if (devistatorStats.chargeDamage > 300) {
+      bulletSprite = (ctx, assets, bullet, normalizedAngleInDegrees) => {
+        drawRotatedImage(
+          ctx,
+          assets.lasers.large,
+          bullet.pos.x,
+          bullet.pos.y,
+          bullet.radius * 2,
+          bullet.radius * 2,
+          normalizedAngleInDegrees
+        );
+      };
+    } else if (devistatorStats.chargeDamage > 50) {
+      bulletSprite = (ctx, assets, bullet, normalizedAngleInDegrees) => {
+        drawRotatedImage(
+          ctx,
+          assets.lasers.medium,
+          bullet.pos.x,
+          bullet.pos.y,
+          bullet.radius * 2,
+          bullet.radius * 2,
+          normalizedAngleInDegrees
+        );
+      };
+    } else {
+      bulletSprite = (ctx, assets, bullet, normalizedAngleInDegrees) => {
+        drawRotatedImage(
+          ctx,
+          assets.lasers.small,
+          bullet.pos.x,
+          bullet.pos.y,
+          bullet.radius * 2,
+          bullet.radius * 2,
+          normalizedAngleInDegrees
+        );
+      };
+    }
+
     const bullet = {
       radius: baseArea + devistatorStats.chargeSize * stats.area,
       attackIntervall: cooldown,
       cooldown: cooldown,
       destroy: false,
+      drawBulletSprite: bulletSprite,
       pos: {
         x: player.pos.x,
         y: player.pos.y,
@@ -129,6 +190,16 @@ export const createDevistateBullet = () => {
       color: "purple",
       team: "player",
       priority: 5,
+
+      draw: (ctx, assets, object) => {
+        const angleInRadians = Math.atan2(bullet.vel.y, bullet.vel.x);
+        const angleInDegrees = angleInRadians * (180 / Math.PI);
+        const normalizedAngleInDegrees = (-angleInDegrees + 360) % 360;
+
+        bullet.drawBulletSprite(ctx, assets, object, angleInRadians);
+
+        // ctx.restore(); // Återställ den tidigare duken
+      },
 
       enemiesHit: [],
       pierce: devistatorStats.chargePierce,
@@ -206,7 +277,7 @@ export const devistator = {
       //   7
       [5, 8, 20],
       //   8
-      [10 * loopPerSecond, -20],
+      [10 / loopPerSecond, -20],
       // 9
       [1],
     ],
@@ -227,8 +298,9 @@ export const devistator = {
       //   7
       "Increases all base stats",
       // 8
-      "Remove charge cap",
+      "Increases damage and pierce",
       // 9
+      "Remove charge cap",
     ],
   },
 };

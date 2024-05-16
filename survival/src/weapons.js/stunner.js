@@ -22,10 +22,10 @@ const bulletSpeed = 20 * stats.speed;
 const stunnerStats = {
   area: 20,
   speed: 20,
-  damage: 40,
+  damage: 0,
   cooldown: 50,
   pierce: 1,
-  special: 1,
+  special: 0,
 };
 
 const stunnerAnimation = {

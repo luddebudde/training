@@ -59,6 +59,18 @@ export const vector = {
 
       return finalObj;
     },
+    norm: (v) => {
+      return Math.sqrt(v.x * v.x + v.y * v.y);
+    },
+    normalised: (v) => {
+      const len = vector.alone.norm(v);
+      if (len === 0) {
+        return { x: 1, y: 0 };
+      } else {
+        // console.log(len);
+        return vector.alone.div(v, len);
+      }
+    },
   },
 };
 

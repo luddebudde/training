@@ -107,6 +107,8 @@ import {
   flamethrower,
 } from "./weapons.js/flameThrower.js";
 import { devistator } from "./weapons.js/devistator.js";
+import { stunner } from "./weapons.js/stunner.js";
+import { bouncer } from "./weapons.js/bouncer.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -227,6 +229,12 @@ export const assets = {
   slice: await loadImage("public/animations/slice.png"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
+  lasers: {
+    small: await loadImage("public/sprites/chargedShot_Small.gif"),
+    medium: await loadImage("public/sprites/chargedShot_Medium.gif"),
+    large: await loadImage("public/sprites/chargedShot_Large.gif"),
+    huge: await loadImage("public/sprites/chargedShot_Huge.gif"),
+  },
 };
 export const backgrounds = {
   rocks: await loadImage("public/background/rocks.png"),
@@ -402,7 +410,7 @@ export const startGame = () => {
     // currentCharacter.startingWeapon,
     // aimBullet,
     // holyArea,
-    // minigun,
+    minigun,
     // wiper,
     // randomAimBullet,
     // axe,
@@ -411,8 +419,9 @@ export const startGame = () => {
     // cherry,
     // droper,
     // flamethrower,
-    // stunner,
+    stunner,
     devistator,
+    bouncer,
   ];
 
   // createCollector(100, 100);
@@ -921,7 +930,7 @@ const update = () => {
     //   burningAnimation.hasExpired = true;
     // }
 
-    entity.health -= 0.2;
+    // entity.health -= 0.2;
   });
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);
