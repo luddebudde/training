@@ -114,6 +114,7 @@ import {
   checkKnockbackCounter,
   knockbackEnemies,
 } from "./applyKnockback.js";
+import { createDemonBoss } from "./enemies/createDemonBoss.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -221,9 +222,12 @@ export const assets = {
   red: await loadImage("public/sprites/red.png"),
   shooter: await loadImage("public/sprites/shooters.png"),
   limbots: await loadImage("public/sprites/limbot.png"),
+  compute: await loadImage("public/sprites/compute.png"),
+  wisp: await loadImage("public/animations/wisp.png"),
   egg: await loadImage("public/sprites/egg.png"),
   oilStain: await loadImage("public/sprites/oil_stain1.png"),
   cherry: await loadImage("public/sprites/cherry.png"),
+  collector: await loadImage("public/sprites/collector.png"),
   // assault: loadImage(`ships/player/large/assault.png`),
   // fighter: loadImage(`ships/player/large/green.png`),
   rhino: await loadImage(`public/ships/player/large/green-rhino.png`),
@@ -239,6 +243,13 @@ export const assets = {
     medium: await loadImage("public/sprites/chargedShot_Medium.gif"),
     large: await loadImage("public/sprites/chargedShot_Large.gif"),
     huge: await loadImage("public/sprites/chargedShot_Huge.gif"),
+  },
+  demon: {
+    attack: await loadImage("public/animations/demon/ATTACK.png"),
+    death: await loadImage("public/animations/demon/DEATH.png"),
+    flying: await loadImage("public/animations/demon/FLYING.png"),
+    idle: await loadImage("public/animations/demon/IDLE.png"),
+    appear: await loadImage("public/animations/demon/APPEAR.png"),
   },
 };
 export const backgrounds = {
@@ -413,19 +424,19 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    // aimBullet,
+    aimBullet,
     // holyArea,
-    // minigun,
+    minigun,
     // wiper,
-    // randomAimBullet,
+    randomAimBullet,
     // axe,
     // airstrike,
     // selfImpaler,
-    // cherry,
+    cherry,
     // droper,
     // flamethrower,
     // stunner,
-    devistator,
+    // devistator,
     bouncer,
   ];
 
@@ -466,6 +477,7 @@ const startMode = () => {
   // showStatistics();
   // deathMenu();
   startGame();
+  // chestMenu();
   // mapSelection();
   // showGameStatistics();
   // createShooterBoss();
@@ -475,7 +487,8 @@ const startMode = () => {
 startMode();
 // showStatistics();
 
-createWalkerBoss(400, 400);
+// createWalkerBoss(400, 400);
+createDemonBoss();
 // pause();
 
 // dropChest(200, 200);

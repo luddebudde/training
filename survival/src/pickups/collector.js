@@ -3,15 +3,12 @@ import { makeDirection } from "../makeDirection.js";
 
 export const createCollector = (xPos, yPos) => {
   const collector = {
-    radius: 10,
-    // bulletHealth: 10,
-    // destroy: false,
+    radius: 20,
     pos: {
       x: xPos,
       y: yPos,
     },
     color: "blue",
-    // team: "player",
     priority: 5,
 
     effect: (object) => {
@@ -22,9 +19,15 @@ export const createCollector = (xPos, yPos) => {
         xp.vel.y = newDirection.y * 10;
       });
     },
-    // enemiesHit: [],
-    // pierce: aimBulletStats.pierce,
-    // weapon: aimBullet,
+    draw: (ctx, assets, gameObject) => {
+      ctx.drawImage(
+        assets.collector,
+        collector.pos.x - collector.radius,
+        collector.pos.y - collector.radius,
+        collector.radius * 2,
+        collector.radius * 2
+      );
+    },
   };
   pickups.push(collector);
 };

@@ -136,7 +136,7 @@ export const restoreMusicVolume = () => {
   // normalMusic.volume = 0;
   funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
-  synthMusic.volume = 1;
+  synthMusic.volume = 0.8;
   goodMusic.volume = 2;
 
   // Återställ volymen för den aktuella låten

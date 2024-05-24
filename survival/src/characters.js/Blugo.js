@@ -9,13 +9,13 @@ export const Blugo = {
   // startingWeapon: aimBullet,
 
   stats: {
-    growth: 10,
+    growth: 1,
     greed: 1,
 
     movementSpeed: 5,
 
-    // maxHealth: 100,
-    maxHealth: 1000000,
+    maxHealth: 100,
+    // maxHealth: 1000000,
     // maxHealth: 2,
     regen: 1,
     armor: 1,

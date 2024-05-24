@@ -130,11 +130,11 @@ export const bouncer = {
       ["cooldown", "speed"],
       ["speed"],
       ["damage"],
-      ["area", "cooldown"],
+      ["damage", "cooldown"],
       ["speed", "damage"],
-      ["special"],
+      ["special", "cooldown"],
     ],
-    amountOrder: [[-10, 5], [5], [10], [5, -20], [10, 10], [1]],
+    amountOrder: [[-10, 2.5], [2.5], [10], [10, -20], [5, 10], [1, -30]],
 
     description: [
       "Decreases the cooldown between each shot",

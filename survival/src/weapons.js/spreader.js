@@ -29,13 +29,10 @@ const randomAimBulletStats = {
 };
 
 export const createRandomAimBullet = () => {
-  // console.log(aimBullet.area);
   const area = stats.area * randomAimBulletStats.area;
   const speed = stats.speed * randomAimBulletStats.speed;
   const damage = stats.damage * randomAimBulletStats.damage;
   const cooldown = stats.cooldown * randomAimBulletStats.cooldown;
-
-  // if (randomAimBulletStats.special === 0) {
 
   const direction = randomDirection(player, area);
 

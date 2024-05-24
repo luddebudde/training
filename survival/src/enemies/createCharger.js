@@ -47,24 +47,11 @@ export const createCharger = (spawnWidth, spawnHeight) => {
 
     update: () => {
       if (doCirclesOverlap(charger, player)) {
-        // charger.health = 0;
         playHurt();
-        // player.health -= charger.damage / (1000 / loopPerSecond);
         dealDamage(player, "contact", charger.damage);
       }
-
-      // targetables.forEach((target) => {
-      // const diff = {
-      //   x: target.x - charger.x,
-      //   y: target.y - charger.y,
-      // };
-      // const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
-      // if (dist > pre)
-      // });
       const target = closestObject(targetables, charger);
-      // console.log(target);
       const newVel = makeDirection(charger.pos, target.pos);
-      // console.log(charger.vel.x);
       charger.vel.x = newVel.x * charger.speed;
       charger.vel.y = newVel.y * charger.speed;
     },
@@ -73,5 +60,4 @@ export const createCharger = (spawnWidth, spawnHeight) => {
   entities.push(charger);
   enemies.push(charger);
   updateables.push(charger);
-  // worldObjects.push(charger);
 };

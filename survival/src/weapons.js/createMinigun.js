@@ -7,7 +7,6 @@ import { stats, upgradeStats } from "../stats.js";
 import { vector } from "../vectors.js";
 
 const bulletSpeed = 20 * stats.speed;
-// const cooldown = 25;
 
 const minigunStats = {
   area: 5,
@@ -21,7 +20,6 @@ const minigunStats = {
 };
 
 export const createMinigun = () => {
-  // console.log(aimBullet.area);
   const area = stats.area * minigunStats.area;
   const speed = stats.speed * minigunStats.speed;
   const damage = stats.damage * minigunStats.damage;
@@ -33,7 +31,6 @@ export const createMinigun = () => {
     setTimeout(() => {
       if (i % 10 == 0) {
         playMinigun();
-        // playMinigunOverheat();
       }
       if (i === bulletCount - 1) {
         playMinigunOverheat();
@@ -68,16 +65,12 @@ export const createMinigun = () => {
 
         attack: () => {
           bullets.push(bullet);
-          // worldObjects.push(bullet);
         },
       };
 
       bullets.push(bullet);
-      // worldObjects.push(bullet);
     }, i * fireRate);
   }
-
-  //   return cooldown;
 };
 
 export const minigun = {
@@ -95,7 +88,6 @@ export const minigun = {
 
   update: () => {
     minigun.attackIntervall = minigunStats.cooldown * stats.cooldown;
-    // console.log(minigun.stats.fireRate);
   },
 
   statistics: {

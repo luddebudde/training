@@ -1,4 +1,5 @@
 import { createCharger } from "./enemies/createCharger.js";
+import { createCompute } from "./enemies/createCompute.js";
 import { createJuggernaut } from "./enemies/createJuggernaut.js";
 import { createLimbots } from "./enemies/createLimbots.js";
 import { createMarcher } from "./enemies/createMarcher.js";
@@ -9,8 +10,10 @@ import { createShooterBoss } from "./enemies/createShooterBoss.js";
 import { createTank } from "./enemies/createTank.js";
 import { createWalker } from "./enemies/createWalker.js";
 import { createWalkerBoss } from "./enemies/createWalkerBoss.js";
+import { createWisp } from "./enemies/createWisp.js";
 import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { bosses, player } from "./main.js";
+import { createCollector } from "./pickups/collector.js";
 import { stats } from "./stats.js";
 
 export const bossWaves = [2, 4, 5];
@@ -26,15 +29,19 @@ export let enemyAmountMultiplier = 1;
 export const wave1 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos(player);
-    createWalker(spawnPos.x, spawnPos.y);
+    // createWalker(spawnPos.x, spawnPos.y);
+
     // createCharger(spawnPos.x, spawnPos.y);
     // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
+
+    // createWisp(spawnPos.x, spawnPos.y);
+    createCompute(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
 
   // createShooter(spawnPos.x, spawnPos.y);
-  enemyAmountMultiplier = 0.5;
+  enemyAmountMultiplier = 0;
 };
 
 export const wave2 = () => {

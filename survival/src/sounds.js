@@ -91,26 +91,26 @@ export const playChargingShot = () => {
       chargingAudio.pause(); // Pausa ljudet om det redan spelas
     }
     chargingAudio = new Audio("public/sounds/charging.mp3");
-    chargingAudio.volume = 1 * universalVolume;
+    chargingAudio.volume = 0.75 * universalVolume;
     chargingAudio.play();
   }
 };
 
 export const playFullyChargedShot = () => {
   const audio = new Audio("public/sounds/fullyCharged.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 0.75 * universalVolume;
   audio.play();
 };
 
 export const playWeakChargedShot = () => {
   const audio = new Audio("public/sounds/weakChargedShot.mp3");
-  audio.volume = 0.3 * universalVolume;
+  audio.volume = 0.2 * universalVolume;
   audio.play();
 };
 
 export const playStrongChargedShot = () => {
   const audio = new Audio("public/sounds/strongChargedShot.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 0.75 * universalVolume;
   audio.play();
 };
 

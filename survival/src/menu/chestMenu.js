@@ -184,7 +184,6 @@ const chestReward = () => {
         chosenWeapon =
           availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
 
-        // console.log(chosenWeapon);
         chosenWeapons.push(chosenWeapon);
       } else {
         chosenWeapon = wiper;
@@ -273,7 +272,6 @@ const drawWeapons = (square, lootAmount) => {
     if (square.weapon.image !== undefined) {
       if (i < halfLootAmount) {
         // Övre delen
-
         const imageWidth = square.weapon.image.width;
         const finalImageWidth = (imageWidth / 20) * (2 / halfLootAmount);
         const startX = halfLootAmount > 1 ? 325 : 0;
