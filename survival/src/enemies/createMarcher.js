@@ -62,7 +62,10 @@ export const createMarcher = (
       slow: 0,
     },
     speed: 10 * (stats.curse / 2) * worldsizeMultiplier,
-
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     damage: 0.4,
 
     color: "red",
@@ -77,15 +80,6 @@ export const createMarcher = (
       }
     },
     draw: (ctx, assets, gameObject) => {
-      // ctx.drawImage(
-      //   assets.marcher,
-      //   marcher.pos.x - marcher.radius,
-      //   marcher.pos.y - marcher.radius,
-
-      //   marcher.radius * 2,
-      //   marcher.radius * 2
-      // );
-
       marcherAnimation.step();
       marcherAnimation.draw(
         ctx,

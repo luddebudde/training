@@ -79,6 +79,10 @@ export const createShooterBoss = (
       slow: 0,
     },
     speed: 2 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     damage: 0,
     color: "green",
     team: "enemy",

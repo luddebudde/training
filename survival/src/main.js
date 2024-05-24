@@ -109,6 +109,11 @@ import {
 import { devistator } from "./weapons.js/devistator.js";
 import { stunner } from "./weapons.js/stunner.js";
 import { bouncer } from "./weapons.js/bouncer.js";
+import {
+  applyKnockback,
+  checkKnockbackCounter,
+  knockbackEnemies,
+} from "./applyKnockback.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -410,7 +415,7 @@ export const startGame = () => {
     // currentCharacter.startingWeapon,
     // aimBullet,
     // holyArea,
-    minigun,
+    // minigun,
     // wiper,
     // randomAimBullet,
     // axe,
@@ -419,7 +424,7 @@ export const startGame = () => {
     // cherry,
     // droper,
     // flamethrower,
-    stunner,
+    // stunner,
     devistator,
     bouncer,
   ];
@@ -470,7 +475,7 @@ const startMode = () => {
 startMode();
 // showStatistics();
 
-// createWalkerBoss(400, 400);
+createWalkerBoss(400, 400);
 // pause();
 
 // dropChest(200, 200);
@@ -794,6 +799,10 @@ const update = () => {
             bullet.weapon
           );
 
+          if (!knockbackEnemies.includes(entity)) {
+            // console.log(entity);
+            applyKnockback(entity, 10, bullet.knockback);
+          }
           entity.hit?.();
           bullet.hit?.();
 
@@ -931,6 +940,10 @@ const update = () => {
     // }
 
     // entity.health -= 0.2;
+  });
+
+  knockbackEnemies.forEach((enemy, i) => {
+    checkKnockbackCounter(enemy, i);
   });
 
   ctx.setTransform(1, 0, 0, 1, 0, 0);

@@ -22,6 +22,7 @@ const aimBulletStats = {
   cooldown: 25,
   pierce: 1,
   special: 0,
+  knockback: 1,
 };
 
 export const createAimBullet = () => {
@@ -57,6 +58,7 @@ export const createAimBullet = () => {
       y: -direction.y * speed,
     },
     damage: damage,
+    knockback: aimBulletStats.knockback,
     color: "blue",
     team: "player",
     priority: 5,

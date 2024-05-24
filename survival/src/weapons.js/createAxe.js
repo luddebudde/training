@@ -18,6 +18,7 @@ const axeStats = {
   damage: 160,
   cooldown: 300,
   special: 0,
+  knockback: 1,
 };
 
 let axeBullet = {};
@@ -44,6 +45,7 @@ export const createAxe = () => {
     },
     speed: speed,
     damage: damage,
+    knockback: axeStats.knockback,
     color: "green",
     team: "player",
     priority: 5,

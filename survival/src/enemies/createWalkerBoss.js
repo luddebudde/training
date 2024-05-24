@@ -46,6 +46,10 @@ export const createWalkerBoss = (
       slow: 0,
     },
     speed: 1 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 0.5,
+    },
     // speed: 0,
     damage: 5,
     // damage: 0,

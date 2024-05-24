@@ -25,6 +25,7 @@ const randomAimBulletStats = {
   cooldown: 12,
   pierce: 0,
   special: 0,
+  knockback: 1,
 };
 
 export const createRandomAimBullet = () => {
@@ -52,6 +53,7 @@ export const createRandomAimBullet = () => {
       y: direction.y * speed,
     },
     damage: damage,
+    knockback: randomAimBulletStats.knockback,
     color: "green",
     team: "player",
     priority: 5,

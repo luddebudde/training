@@ -34,6 +34,10 @@ export const createLimbots = (spawnWidth, spawnHeight) => {
       slow: 0,
     },
     speed: 1.5 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     // speed: 0,
     damage: 10 * stats.curse,
     // damage: 0,

@@ -34,6 +34,10 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
       slow: 0,
     },
     speed: 0.75 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 0.05,
+    },
     // speed: 0,
     damage: 1 * stats.curse,
     // damage: 0,

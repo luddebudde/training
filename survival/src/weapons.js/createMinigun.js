@@ -9,7 +9,7 @@ import { vector } from "../vectors.js";
 const bulletSpeed = 20 * stats.speed;
 // const cooldown = 25;
 
-const aimBulletStats = {
+const minigunStats = {
   area: 5,
   speed: 10,
   damage: 20,
@@ -17,16 +17,17 @@ const aimBulletStats = {
   bulletCount: 100,
   fireRate: 10,
   pierce: 0,
+  knockback: 0.2,
 };
 
 export const createMinigun = () => {
   // console.log(aimBullet.area);
-  const area = stats.area * aimBulletStats.area;
-  const speed = stats.speed * aimBulletStats.speed;
-  const damage = stats.damage * aimBulletStats.damage;
-  const cooldown = stats.cooldown * aimBulletStats.cooldown;
-  const bulletCount = aimBulletStats.bulletCount;
-  const fireRate = aimBulletStats.fireRate;
+  const area = stats.area * minigunStats.area;
+  const speed = stats.speed * minigunStats.speed;
+  const damage = stats.damage * minigunStats.damage;
+  const cooldown = stats.cooldown * minigunStats.cooldown;
+  const bulletCount = minigunStats.bulletCount;
+  const fireRate = minigunStats.fireRate;
 
   for (let i = 0; i < bulletCount; i++) {
     setTimeout(() => {
@@ -57,6 +58,7 @@ export const createMinigun = () => {
           y: Math.sin(angle) * speed,
         },
         damage: damage,
+        knockback: minigunStats.knockback,
         color: "red",
         team: "player",
         priority: 5,
@@ -87,12 +89,12 @@ export const minigun = {
     }
   },
   unlockRequirementText: "total 1K kills",
-  attackIntervall: aimBulletStats.cooldown * stats.cooldown,
-  cooldown: aimBulletStats.cooldown * stats.cooldown,
+  attackIntervall: minigunStats.cooldown * stats.cooldown,
+  cooldown: minigunStats.cooldown * stats.cooldown,
   attack: createMinigun,
 
   update: () => {
-    minigun.attackIntervall = aimBulletStats.cooldown * stats.cooldown;
+    minigun.attackIntervall = minigunStats.cooldown * stats.cooldown;
     // console.log(minigun.stats.fireRate);
   },
 
@@ -102,7 +104,7 @@ export const minigun = {
     timeExisted: 0,
   },
 
-  stats: aimBulletStats,
+  stats: minigunStats,
 
   upgrades: {
     level: 0,

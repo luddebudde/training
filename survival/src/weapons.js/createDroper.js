@@ -18,6 +18,7 @@ const droperStats = {
   cooldown: 75,
   pierce: 3,
   special: 0,
+  knockback: 1,
 };
 
 export const createDroper = () => {
@@ -40,6 +41,7 @@ export const createDroper = () => {
       y: 0,
     },
     damage: damage,
+    knockback: droperStats.knockback,
     color: "blue",
     team: "player",
     priority: 5,

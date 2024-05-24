@@ -29,6 +29,7 @@ const shotgunBulletStats = {
   spread: 0.7,
   pellets: 10,
   pierce: 0,
+  knockback: 1,
 };
 
 export const createShotgun = () => {
@@ -90,7 +91,7 @@ export const createShotgun = () => {
         y: finalDirection.y * speed,
       },
       damage: damage,
-      // damage: 0,
+      knockback: shotgunBulletStats.knockback,
       color: "black",
       team: "player",
       priority: 5,

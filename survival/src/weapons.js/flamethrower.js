@@ -28,6 +28,7 @@ const flamethrowerStats = {
     cooldown: 100,
     pierce: 100000,
     special: 0,
+    knockback: 1,
   },
   oilMode: {
     area: 30,
@@ -37,6 +38,7 @@ const flamethrowerStats = {
     cooldown: 100,
     pierce: 0,
     special: 0,
+    knockback: 1,
   },
 };
 
@@ -143,6 +145,7 @@ export const createFlamethrower = () => {
         y: -direction.y * speed,
       },
       damage: damage,
+      knockback: flameAnimationStat.oilMode.knockback,
       color: "red",
       team: "player",
       priority: 5,
@@ -200,6 +203,7 @@ export const createFlamethrower = () => {
         y: -direction.y * speed,
       },
       damage: damage,
+      knockback: flamethrowerStats.fireMode.knockback,
       color: "red",
       team: "player",
       priority: 5,

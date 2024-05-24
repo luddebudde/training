@@ -33,6 +33,10 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       slow: 0,
     },
     speed: 5 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     // speed: 0,
     damage: 0.5,
     // damage: 0,

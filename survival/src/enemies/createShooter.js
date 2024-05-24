@@ -51,6 +51,10 @@ export const createShooter = (spawnWidth, spawnHeight) => {
       slow: 0,
     },
     speed: 3 * stats.curse * worldsizeMultiplier,
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     damage: 0,
     color: "green",
     team: "enemy",

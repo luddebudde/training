@@ -1,3 +1,4 @@
+import { applyKnockback } from "../applyKnockback.js";
 import { loopPerSecond } from "../basic.js";
 import {
   getRandomAngle,
@@ -25,13 +26,21 @@ const bouncerStats = {
   area: 20,
   speed: 20,
   damage: 20,
-  cooldown: 50,
-  lifeTime: loopPerSecond * 1,
+  cooldown: 100,
+  lifeTime: loopPerSecond * 2,
   pierce: 9999,
   special: 0,
+  knockback: 1,
 };
 
+let bouncerBullets = [];
+
 export const createBounceBullet = () => {
+  // applyKnockback(
+  //   enemies[Math.floor(Math.random() * enemies.length)],
+  //   // Math.random() * 95 + 5
+  //   10
+  // );
   const area = stats.area * bouncerStats.area;
   const speed = stats.speed * bouncerStats.speed;
   const damage = stats.damage * bouncerStats.damage;
@@ -54,6 +63,7 @@ export const createBounceBullet = () => {
     },
     lifeTime: bouncerStats.lifeTime,
     damage: damage,
+    knockback: bouncerStats.knockback,
     color: "lime",
     team: "player",
     priority: 5,
@@ -77,32 +87,32 @@ export const bouncer = {
   update: () => {
     bouncer.attackIntervall = bouncerStats.cooldown * stats.cooldown;
 
-    bullets.forEach((bullet) => {
-      if (bullets.includes(bullet)) {
-        bullet.lifeTime--;
-        if (bullet.lifeTime < 0) {
-          bullet.destroy = true;
-        }
+    bouncerBullets = bullets.filter((bullet) => bullet.weapon === bouncer);
 
-        if (bullet.pos.x + bullet.radius >= world.width / 2 + player.pos.x) {
-          bullet.vel.x = -bullet.vel.x;
-          // console.log("höger");
-        }
-        if (bullet.pos.x - bullet.radius <= -world.width / 2 + player.pos.x) {
-          bullet.vel.x = -bullet.vel.x;
-          // console.log("vänster");
-        }
-        if (bullet.pos.y - bullet.radius <= -world.height / 2 + player.pos.y) {
-          bullet.vel.y = -bullet.vel.y;
-          // console.log("upp");
-        }
-        if (bullet.pos.y + bullet.radius >= world.height / 2 + player.pos.y) {
-          bullet.vel.y = -bullet.vel.y;
-          // console.log("ned");
-        }
-
-        // console.log(player.pos);
+    bouncerBullets.forEach((bullet) => {
+      // if (bullets.includes(bullet)) {
+      bullet.lifeTime--;
+      if (bullet.lifeTime < 0) {
+        bullet.destroy = true;
       }
+
+      if (bullet.pos.x + bullet.radius >= world.width / 2 + player.pos.x) {
+        bullet.vel.x = -bullet.vel.x;
+        // console.log("höger");
+      }
+      if (bullet.pos.x - bullet.radius <= -world.width / 2 + player.pos.x) {
+        bullet.vel.x = -bullet.vel.x;
+        // console.log("vänster");
+      }
+      if (bullet.pos.y - bullet.radius <= -world.height / 2 + player.pos.y) {
+        bullet.vel.y = -bullet.vel.y;
+        // console.log("upp");
+      }
+      if (bullet.pos.y + bullet.radius >= world.height / 2 + player.pos.y) {
+        bullet.vel.y = -bullet.vel.y;
+        // console.log("ned");
+      }
+      // }
     });
   },
 
@@ -120,11 +130,11 @@ export const bouncer = {
       ["cooldown", "speed"],
       ["speed"],
       ["damage"],
-      ["area"],
-      ["speed"],
+      ["area", "cooldown"],
+      ["speed", "damage"],
       ["special"],
     ],
-    amountOrder: [[-10, 5], [1], [1], [5], [5], [1]],
+    amountOrder: [[-10, 5], [5], [10], [5, -20], [10, 10], [1]],
 
     description: [
       "Decreases the cooldown between each shot",

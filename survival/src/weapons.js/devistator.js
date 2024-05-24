@@ -36,6 +36,7 @@ const devistatorStats = {
   cooldown: 1,
   //   pierce: 5,
   special: 0,
+  knockback: 1,
 
   increasementSize: 5 / loopPerSecond,
   increasementSpeed: 2 / loopPerSecond,
@@ -187,6 +188,9 @@ export const createDevistateBullet = () => {
           (baseSpeed + devistatorStats.chargeSpeed * stats.speed),
       },
       damage: baseDamage + devistatorStats.chargeDamage * stats.damage,
+      knockback:
+        devistatorStats.knockback *
+        Math.floor((devistatorStats.chargeDamage * stats.damage) / 50),
       color: "purple",
       team: "player",
       priority: 5,
@@ -205,6 +209,7 @@ export const createDevistateBullet = () => {
       pierce: devistatorStats.chargePierce,
       weapon: devistator,
     };
+    console.log(bullet.knockback);
     bullets.push(bullet);
 
     (devistatorStats.chargeSize = 0),
