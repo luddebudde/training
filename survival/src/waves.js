@@ -1,5 +1,5 @@
 import { createCharger } from "./enemies/createCharger.js";
-import { createCompute } from "./enemies/createCompute.js";
+import { createBlueCompute } from "./enemies/computes/createBlueCompute.js";
 import { createJuggernaut } from "./enemies/createJuggernaut.js";
 import { createLimbots } from "./enemies/createLimbots.js";
 import { createMarcher } from "./enemies/createMarcher.js";
@@ -36,7 +36,7 @@ export const wave1 = () => {
     // createNerfer(spawnPos.x, spawnPos.y);
 
     // createWisp(spawnPos.x, spawnPos.y);
-    createCompute(spawnPos.x, spawnPos.y);
+    createBlueCompute(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
 

@@ -17,15 +17,15 @@ import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 import { worldsizeMultiplier } from "../world.js";
 
-const wispAnimation = animation({
-  imageCount: 10,
-  slowDown: 500,
-  reverse: false,
-  repeat: true,
-  vertical: false,
-});
-
 export const createWisp = (spawnWidth, spawnHeight) => {
+  const wispAnimation = animation({
+    imageCount: 10,
+    slowDown: 15,
+    reverse: false,
+    repeat: true,
+    vertical: false,
+  });
+
   const wisp = {
     health: 80,
     // startRadius: 40,
@@ -71,11 +71,8 @@ export const createWisp = (spawnWidth, spawnHeight) => {
       ctx.save();
 
       if (wisp.pos.x > player.pos.x) {
-        // Flytta canvas-kontetexten till wisps position
         ctx.translate(wisp.pos.x, wisp.pos.y);
-        // Spegla canvas-kontetexten horisontellt
         ctx.scale(-1, 1);
-        // Flytta tillbaka canvas-kontetexten så att ritningen sker på rätt plats
         ctx.translate(-wisp.pos.x, -wisp.pos.y);
       }
 

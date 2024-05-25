@@ -1,8 +1,8 @@
-import { animation } from "../animation.js";
-import { loopPerSecond } from "../basic.js";
-import { closestObject } from "../closestObject.js";
-import { dealDamage } from "../dealDamage.js";
-import { doCirclesOverlap } from "../doCirlceOverlap.js";
+import { animation } from "../../animation.js";
+import { loopPerSecond } from "../../basic.js";
+import { closestObject } from "../../closestObject.js";
+import { dealDamage } from "../../dealDamage.js";
+import { doCirclesOverlap } from "../../doCirlceOverlap.js";
 import {
   enemies,
   entities,
@@ -10,14 +10,14 @@ import {
   targetables,
   updateables,
   worldObjects,
-} from "../main.js";
-import { makeDirection } from "../makeDirection.js";
-import { playHurt } from "../sounds.js";
-import { stats } from "../stats.js";
-import { vector } from "../vectors.js";
-import { worldsizeMultiplier } from "../world.js";
+} from "../../main.js";
+import { makeDirection } from "../../makeDirection.js";
+import { playHurt } from "../../sounds.js";
+import { stats } from "../../stats.js";
+import { vector } from "../../vectors.js";
+import { worldsizeMultiplier } from "../../world.js";
 
-export const createCompute = (spawnWidth, spawnHeight) => {
+export const createBlueCompute = (spawnWidth, spawnHeight) => {
   const compute = {
     health: 10,
     // startRadius: 40,
@@ -70,7 +70,7 @@ export const createCompute = (spawnWidth, spawnHeight) => {
       }
 
       ctx.drawImage(
-        assets.compute,
+        assets.blueCompute,
         compute.pos.x - compute.radius,
         compute.pos.y - compute.radius,
         compute.radius * 2,

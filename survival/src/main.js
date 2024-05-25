@@ -115,6 +115,9 @@ import {
   knockbackEnemies,
 } from "./applyKnockback.js";
 import { createDemonBoss } from "./enemies/createDemonBoss.js";
+import { createBlueCompute } from "./enemies/computes/createBlueCompute.js";
+import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.js";
+import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -222,7 +225,9 @@ export const assets = {
   red: await loadImage("public/sprites/red.png"),
   shooter: await loadImage("public/sprites/shooters.png"),
   limbots: await loadImage("public/sprites/limbot.png"),
-  compute: await loadImage("public/sprites/compute.png"),
+  blueCompute: await loadImage("public/sprites/compute.png"),
+  redCompute: await loadImage("public/sprites/redCompute.png"),
+  greyCompute: await loadImage("public/sprites/greyCompute.png"),
   wisp: await loadImage("public/animations/wisp.png"),
   egg: await loadImage("public/sprites/egg.png"),
   oilStain: await loadImage("public/sprites/oil_stain1.png"),
@@ -238,6 +243,7 @@ export const assets = {
   slice: await loadImage("public/animations/slice.png"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
+  bigFireball: await loadImage("public/sprites/bigFireball.png"),
   lasers: {
     small: await loadImage("public/sprites/chargedShot_Small.gif"),
     medium: await loadImage("public/sprites/chargedShot_Medium.gif"),
@@ -488,7 +494,11 @@ startMode();
 // showStatistics();
 
 // createWalkerBoss(400, 400);
-createDemonBoss();
+// createDemonBoss();
+// createBlueComputeBoss();
+console.log(player);
+createGreyComputeBoss({ player });
+
 // pause();
 
 // dropChest(200, 200);

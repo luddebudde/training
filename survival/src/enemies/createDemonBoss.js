@@ -3,6 +3,7 @@ import { loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
+import { getRandomInRange } from "../getRandomInRange.js";
 import { getRandomSpawnPos } from "../getRandomSpawnPos.js";
 import {
   assets,
@@ -19,7 +20,40 @@ import { playHurt, playMinigunOverheat } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 import { world, worldsizeMultiplier } from "../world.js";
+import { createBlueCompute } from "./computes/createBlueCompute.js";
+import { createWisp } from "./createWisp.js";
 import { createEnemyBullet } from "./shootEnemyBullet.js";
+
+function generateRandomPosition(
+  worldWidth,
+  worldHeight,
+  minDistance,
+  maxDistanceFromEdge
+) {
+  let posX, posY;
+  const margin = minDistance;
+
+  do {
+    posX =
+      Math.random() * (worldWidth - 2 * maxDistanceFromEdge) -
+      (worldWidth / 2 - maxDistanceFromEdge);
+    posY =
+      Math.random() * (worldHeight - 2 * maxDistanceFromEdge) -
+      (worldHeight / 2 - maxDistanceFromEdge);
+  } while (getDistance({ x: posX, y: posY }, { x: 0, y: 0 }) < margin);
+
+  return { x: posX, y: posY };
+}
+
+function getDistance(pos1, pos2) {
+  const dx = pos1.x - pos2.x;
+  const dy = pos1.y - pos2.y;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+const appearAndDeathSlowdown = 10;
+
+let randomPosition;
 
 const demonAttackAnimation = {
   animation: animation({
@@ -34,7 +68,7 @@ const demonAttackAnimation = {
 const demonDeathAnimation = {
   animation: animation({
     imageCount: 7,
-    slowDown: 40,
+    slowDown: appearAndDeathSlowdown,
     reverse: false,
     repeat: false,
     vertical: false,
@@ -44,7 +78,7 @@ const demonDeathAnimation = {
 const demonFyingAnimation = {
   animation: animation({
     imageCount: 4,
-    slowDown: 40,
+    slowDown: 25,
     reverse: false,
     repeat: true,
     vertical: false,
@@ -64,7 +98,7 @@ const demonIdleAnimation = {
 const demonAppearAnimation = {
   animation: animation({
     imageCount: 7,
-    slowDown: 20,
+    slowDown: appearAndDeathSlowdown,
     reverse: false,
     repeat: false,
     vertical: false,
@@ -75,18 +109,18 @@ const demonAppearAnimation = {
 const shotSpread = 0.7;
 
 export const createDemonBoss = () => {
-  const chosenPos = {
+  randomPosition = {
     x: Math.random() * world.width,
     y: Math.random() * world.height,
   };
   let currentDemonAnimation = demonAppearAnimation;
 
   const demon = {
-    health: 1000000,
-    radius: 100 * worldsizeMultiplier,
+    health: 2000,
+    radius: 200 * worldsizeMultiplier,
     pos: {
-      x: chosenPos,
-      y: chosenPos,
+      x: randomPosition.x,
+      y: randomPosition.x,
     },
     vel: {
       x: 0,
@@ -110,29 +144,72 @@ export const createDemonBoss = () => {
     update: () => {
       const target = closestObject(targetables, demon);
 
-      if ((demon.actionCounter % loopPerSecond) * 5 === 0) {
+      // demon.pos.x = randomPosition.x + player.pos.x;
+      // demon.pos.y = randomPosition.y + player.pos.y;
+
+      // console.log(randomPosition);
+
+      if (demon.actionCounter % (loopPerSecond * 2) === 0) {
         const randomActionNumber = Math.ceil(Math.random() * 10);
+        console.log(randomActionNumber);
 
-        if (randomActionNumber > 3) {
-          demon.pos.x = Math.random() * world.width;
-          demon.pos.y = Math.random() * world.height;
-        } else if (randomActionNumber > 8) {
-          for (let i = 0; i < 30; i++) {
-            setTimeout(() => {
-              const spreadX = getRandomInRange(-shotSpread, shotSpread);
-              const spreadY = getRandomInRange(-shotSpread, shotSpread);
+        if (randomActionNumber > 7) {
+          currentDemonAnimation = demonDeathAnimation;
+          currentDemonAnimation.animation.restoreCounter();
+          setTimeout(() => {
+            const worldWidth = world.width;
+            const worldHeight = world.height;
+            const minDistance = 400;
+            const maxDistanceFromEdge = 100;
 
-              const finalDirection = {
-                x: direction.x + spreadX,
-                y: direction.y + spreadY,
-              };
+            randomPosition = generateRandomPosition(
+              worldWidth,
+              worldHeight,
+              minDistance,
+              maxDistanceFromEdge
+            );
+            demon.pos.x = randomPosition.x + player.pos.x;
+            demon.pos.y = randomPosition.y + player.pos.y;
 
-              createEnemyBullet(demon, finalDirection, {
-                area: 10,
-                speed: 10,
-                damage: 10,
-              });
-            }, 100);
+            currentDemonAnimation = demonAppearAnimation;
+            currentDemonAnimation = demonAppearAnimation;
+            currentDemonAnimation.animation.restoreCounter();
+          }, appearAndDeathSlowdown * 14);
+        } else if (randomActionNumber > 2) {
+          if (Math.random() > 0.5) {
+            for (let i = 0; i < 30; i++) {
+              setTimeout(() => {
+                const direction = makeDirection(demon.pos, player.pos);
+                const spreadX = getRandomInRange(-shotSpread, shotSpread);
+                const spreadY = getRandomInRange(-shotSpread, shotSpread);
+
+                const finalDirection = {
+                  x: direction.x + spreadX,
+                  y: direction.y + spreadY,
+                };
+
+                createEnemyBullet(demon, finalDirection, {
+                  area: 10,
+                  speed: 10,
+                  damage: 4,
+                  asset: assets.bigFireball,
+                });
+              }, 100);
+            }
+          } else {
+            const direction = makeDirection(demon.pos, player.pos);
+
+            createEnemyBullet(demon, direction, {
+              area: 30,
+              speed: 15,
+              damage: 30,
+              asset: assets.bigFireball,
+            });
+          }
+        } else {
+          for (let i = 0; i < 40; i++) {
+            const spawnPos = getRandomSpawnPos(player);
+            createWisp(spawnPos.x, spawnPos.y);
           }
         }
       }
@@ -162,13 +239,20 @@ export const createDemonBoss = () => {
       const stepInfo = currentDemonAnimation.animation.step();
 
       if (stepInfo) {
-        if (demon.health > 0) {
+        if (demon.health > 200) {
           currentDemonAnimation = demonFyingAnimation;
+
+          currentDemonAnimation.animation.restoreCounter();
         } else {
+          currentDemonAnimation = demonDeathAnimation;
+          setTimeout(() => {
+            demon.health = 0;
+          }, appearAndDeathSlowdown * 14);
           currentDemonAnimation.animation.hasExpired = true;
         }
       }
     },
+
     ability: () => {},
   };
 

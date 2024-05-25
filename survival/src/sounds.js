@@ -120,6 +120,30 @@ export const playMassiveChargedShot = () => {
   audio.play();
 };
 
+export const playDemonScreech = () => {
+  const audio = new Audio("public/sounds/demonScreech.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playDemonFireball = () => {
+  const audio = new Audio("public/sounds/demonFireball.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playSmallDemonFireballs = () => {
+  const audio = new Audio("public/sounds/masiveChargedShot.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
+export const playDemonTeleport = () => {
+  const audio = new Audio("public/sounds/demonTeleport.mp3");
+  audio.volume = 1 * universalVolume;
+  audio.play();
+};
+
 let isHurtSoundPlaying = false;
 
 export const playHurt = () => {

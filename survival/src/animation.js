@@ -70,5 +70,8 @@ export const animation = ({
     counter: () => {
       return counter;
     },
+    restoreCounter: () => {
+      counter = 0;
+    },
   };
 };

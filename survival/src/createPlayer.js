@@ -36,6 +36,10 @@ export const createPlayer = () => {
       levelIncrease: 100,
       // levelIncrease: 50000,
     },
+    knockback: {
+      counter: 0,
+      mult: 1,
+    },
     draw: (ctx, assets, object) => {
       ctx.drawImage(
         assets[currentCharacter.sprite],
