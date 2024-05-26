@@ -125,6 +125,7 @@ export const ctx = canvas.getContext("2d");
 export let enemies = [];
 export let entities = [];
 export const bosses = [];
+export const blankImmune = [];
 
 export const createEnemies = [createWalker];
 
@@ -495,9 +496,9 @@ startMode();
 
 // createWalkerBoss(400, 400);
 // createDemonBoss();
-// createBlueComputeBoss();
-console.log(player);
-createGreyComputeBoss({ player });
+createBlueComputeBoss();
+// console.log(player);
+// createGreyComputeBoss({ player });
 
 // pause();
 
@@ -760,7 +761,7 @@ const update = () => {
         world.height + 400
       )
     ) {
-      if (!bosses.includes(enemy)) {
+      if (!bosses.includes(enemy) && !blankImmune.includes(enemy)) {
         // enemy.health = 0;
         dealDamage(enemy, "instant", enemy.health);
         // Tar bort fienden

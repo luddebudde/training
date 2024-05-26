@@ -1,4 +1,4 @@
-import { bosses, enemies, pickups, xps } from "../main.js";
+import { blankImmune, bosses, enemies, pickups, xps } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
 
 export const createBlank = (xPos, yPos) => {
@@ -15,8 +15,9 @@ export const createBlank = (xPos, yPos) => {
     priority: 5,
 
     effect: (object) => {
+      console.log(blankImmune);
       enemies.forEach((enemy) => {
-        if (!bosses.includes(enemy)) enemy.health = 0;
+        if (!blankImmune.includes(enemy)) enemy.health = 0;
       });
     },
     // enemiesHit: [],

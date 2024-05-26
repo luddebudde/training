@@ -87,12 +87,12 @@ export const createBlueComputeBoss = (
       console.log(compute.health);
       if (compute.health <= 0) {
         console.log("compute dead");
-        for (let i = 0; i < 2000; i++) {
+        for (let i = 0; i < 10000; i++) {
           setTimeout(() => {
             console.log("spawningCompute");
             const spawnPos = getRandomSpawnPos(player);
             createBlueCompute(spawnPos.x, spawnPos.y);
-          }, 10 * i);
+          }, 5 * i);
         }
       }
     },

@@ -1,5 +1,5 @@
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
-import { enemies, player, worldObjects, xps } from "../main.js";
+import { blankImmune, enemies, player, worldObjects, xps } from "../main.js";
 import { playWiper } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
@@ -55,31 +55,30 @@ export const wiper = {
   attack: () => {
     let amountOfEnemies = 0;
     playWiper();
-    // console.log("wiperAtatck");
-    // Vänta en sekund
     setTimeout(() => {
       let totalEnemyHealth = 0;
       enemies.forEach((enemy) => {
-        amountOfEnemies += 1;
-        if (Math.random() * 100 < wiperStats.killAmount) {
+        if (
+          Math.random() * 100 < wiperStats.killAmount &&
+          !blankImmune.includes(enemy)
+        ) {
+          amountOfEnemies += 1;
           totalEnemyHealth += enemy.health;
           enemy.health = 0;
-          // console.log(wiperStats.killAmount);
+
+          player.xp.amount += amountOfEnemies * 12 * wiper.stats.finalLevel;
+          player.gold += amountOfEnemies * 12 * wiper.stats.finalLevel;
+
+          wiper.statistics.damage += totalEnemyHealth;
+          wiper.statistics.killCount += amountOfEnemies;
         }
       });
-      player.xp.amount += amountOfEnemies * 12 * wiper.stats.finalLevel;
-      player.gold += amountOfEnemies * 12 * wiper.stats.finalLevel;
-
-      wiper.statistics.damage += totalEnemyHealth;
-      wiper.statistics.killCount += amountOfEnemies;
 
       if (Math.random() * 100 < wiperStats.keepXpChance) xps.lenght = 0;
     }, 1500);
   },
 
-  update: () => {
-    // wiperBody.radius += 10;
-  },
+  update: () => {},
 
   statistics: {
     kills: 0,
