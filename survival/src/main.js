@@ -4,7 +4,7 @@
 // Remove objects from all arrays, and not just some
 
 // Text above defeated bosses, counting down to the final
-import { aimBullet } from "./weapons.js/createAimBullet.js";
+import { aimBullet } from "./weapons/createAimBullet.js";
 import {
   screenSizeMultipler as screenSizeMultiplier,
   world,
@@ -16,13 +16,13 @@ import { doCirclesOverlap } from "./doCirlceOverlap.js";
 import { spawnEnemy } from "./spawnEnemy.js";
 import { loopPerSecond } from "./basic.js";
 import { shootWeapons } from "./shootWeapons.js";
-import { createShotgun, shotgun } from "./weapons.js/createShotgun.js";
+import { createShotgun, shotgun } from "./weapons/createShotgun.js";
 import { keyDownTracker, oneTimeKeyPress } from "./keyDownTracker.js";
 import { createPlayer, currentCharacter } from "./createPlayer.js";
 import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { createXp } from "./createXP.js";
 import { createCharger } from "./enemies/createCharger.js";
-import { holyArea, holyAreaBody } from "./weapons.js/createHolyArea.js";
+import { holyArea, holyAreaBody } from "./weapons/createHolyArea.js";
 import { vector } from "./vectors.js";
 import { resetStats, stats } from "./stats.js";
 import { drawHealthBar } from "./draw/drawHealthbar.js";
@@ -38,13 +38,13 @@ import { drawText } from "./draw/drawText.js";
 import { drawObject } from "./draw/drawObject.js";
 import { levelUpSelection, totalWeapons } from "./menu/levelUpSelection.js";
 import { checkButtonPress } from "./checkButtonPress.js";
-import { minigun } from "./weapons.js/createMinigun.js";
+import { minigun } from "./weapons/createMinigun.js";
 import { loadImage } from "./image.js";
 import { drawSquare } from "./draw/drawSquare.js";
 import { isPointInsideArea } from "./isInsideRectangle.js";
-import { wiper } from "./weapons.js/wiper.js";
-import { randomAimBullet } from "./weapons.js/spreader.js";
-import { axe } from "./weapons.js/createAxe.js";
+import { wiper } from "./weapons/wiper.js";
+import { randomAimBullet } from "./weapons/spreader.js";
+import { axe } from "./weapons/createAxe.js";
 import { createExplosion } from "./createExplosion.js";
 import {
   changeMusic,
@@ -59,8 +59,8 @@ import {
   stopMusic,
 } from "./changeMusic.js";
 import { createSumXp } from "./createSumXP.js";
-import { airstrike } from "./weapons.js/createAirstrike.js";
-import { selfImpaler } from "./weapons.js/selfImpaler.js";
+import { airstrike } from "./weapons/createAirstrike.js";
+import { selfImpaler } from "./weapons/selfImpaler.js";
 import { checkRegen } from "./checkRegen.js";
 import { drawShieldbar } from "./draw/drawShieldbar.js";
 import { dealDamage } from "./dealDamage.js";
@@ -69,7 +69,7 @@ import { deathMenu } from "./menu/deathMenu.js";
 import { getNextElement } from "./getNextElement.js";
 import { statistics } from "./statistics.js";
 import { showStatistics } from "./menu/showStatistics.js";
-import { cherry } from "./weapons.js/cherry.js";
+import { cherry } from "./weapons/cherry.js";
 import { createCollector } from "./pickups/collector.js";
 import { createBlank } from "./pickups/blank.js";
 import { createTank } from "./enemies/createTank.js";
@@ -92,7 +92,7 @@ import {
 import { drawPointingArrow } from "./drawPointingArrow.js";
 import { createEgg } from "./createEgg.js";
 import { placeEggMap } from "./eggMap.js";
-import { droper } from "./weapons.js/createDroper.js";
+import { droper } from "./weapons/createDroper.js";
 import { createShooterBoss } from "./enemies/createShooterBoss.js";
 import { mainMenu } from "./menu/mainMenu.js";
 import { showGameStatistics } from "./menu/showGameStatistics.js";
@@ -105,10 +105,10 @@ import {
   burningAnimation,
   burningAnimationStat,
   flamethrower,
-} from "./weapons.js/flameThrower.js";
-import { devistator } from "./weapons.js/devistator.js";
-import { stunner } from "./weapons.js/stunner.js";
-import { bouncer } from "./weapons.js/bouncer.js";
+} from "./weapons/flameThrower.js";
+import { devistator } from "./weapons/devistator.js";
+import { stunner } from "./weapons/stunner.js";
+import { bouncer } from "./weapons/bouncer.js";
 import {
   applyKnockback,
   checkKnockbackCounter,
@@ -118,6 +118,7 @@ import { createDemonBoss } from "./enemies/createDemonBoss.js";
 import { createBlueCompute } from "./enemies/computes/createBlueCompute.js";
 import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.js";
 import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
+import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -496,7 +497,8 @@ startMode();
 
 // createWalkerBoss(400, 400);
 // createDemonBoss();
-createBlueComputeBoss();
+// createBlueComputeBoss();
+createRedComputeBoss();
 // console.log(player);
 // createGreyComputeBoss({ player });
 
@@ -773,6 +775,7 @@ const update = () => {
   });
 
   bosses.forEach((boss, index) => {
+    drawPointingArrow(ctx, player, boss);
     boss.ability();
     if (boss.health <= 0) {
       playBossDefeat();
@@ -801,16 +804,15 @@ const update = () => {
   xps = xps.filter((xp) => !doCirclesOverlap(player, xp));
 
   areaEffects.forEach((areaEffect) => {
-    enemies.forEach((enemy) => {
-      if (doCirclesOverlap(areaEffect, enemy)) {
-        // enemy.health -= explosion.damage;
-
-        areaEffect.onHit(areaEffect, enemy);
+    entities.forEach((entity) => {
+      if (
+        doCirclesOverlap(areaEffect, entity) &&
+        areaEffect.team !== entity.team
+      ) {
+        areaEffect.onHit(areaEffect, entity);
       }
     });
   });
-
-  // console.log(explosions);
 
   bullets.forEach((bullet) => {
     entities.forEach((entity) => {

@@ -16,7 +16,7 @@ import { getDistance, makeDirection } from "../makeDirection.js";
 import { playHurt } from "../sounds.js";
 import { stats } from "../stats.js";
 import { origo, vector } from "../vectors.js";
-import { minigun } from "../weapons.js/createMinigun.js";
+import { minigun } from "../weapons/createMinigun.js";
 import { worldsizeMultiplier } from "../world.js";
 import { createEnemyBullet } from "./shootEnemyBullet.js";
 

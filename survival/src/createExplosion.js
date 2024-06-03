@@ -9,7 +9,8 @@ export const createExplosion = (
   size,
   damage,
   speed = 16,
-  sprite = assets.explosion
+  sprite = assets.explosion,
+  team = "player"
 ) => {
   const explosionAnimation = animation({
     imageCount: 7,
@@ -24,12 +25,11 @@ export const createExplosion = (
       x: locX,
       y: locY,
     },
+    team: team,
     radius: size,
     hasExpired: false,
     damage: damage,
     draw: (ctx, assets, object) => {
-      //   console.log(explosion);
-      //   ctx.drawImage(sprite, explosion.pos.x, explosion.pos.y, size, size);
       explosionAnimation.step();
       explosionAnimation.draw(
         ctx,

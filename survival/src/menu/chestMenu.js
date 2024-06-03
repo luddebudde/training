@@ -18,8 +18,8 @@ import { makeDirection } from "../makeDirection.js";
 import { showStatistics } from "./showStatistics.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
-import { selfImpaler } from "../weapons.js/selfImpaler.js";
-import { wiper } from "../weapons.js/wiper.js";
+import { selfImpaler } from "../weapons/selfImpaler.js";
+import { wiper } from "../weapons/wiper.js";
 
 import { world } from "../world.js";
 

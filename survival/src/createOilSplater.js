@@ -11,7 +11,8 @@ export const createSplatter = (
   splatterInfo,
   speed = 16,
   sprite = assets.explosion,
-  vertical = true
+  vertical = true,
+  team = "player"
 ) => {
   const splatterAnimation = animation({
     imageCount: splatterInfo.imageCount,
@@ -32,6 +33,7 @@ export const createSplatter = (
       x: locX,
       y: locY,
     },
+    team: team,
     radius: size,
     hasExpired: false,
     damage: damage,
@@ -54,10 +56,7 @@ export const createSplatter = (
       }
     },
     onHit: (splatter, enemy) => {
-      //   console.log("spaltt");
       onHit(enemy);
-
-      //   console.log(enemy.statusEffects);
     },
   };
 

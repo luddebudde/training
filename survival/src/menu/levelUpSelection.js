@@ -11,18 +11,18 @@ import {
   weapons,
 } from "../main.js";
 import { stats, upgradeStats } from "../stats.js";
-import { cherry } from "../weapons.js/cherry.js";
-import { aimBullet } from "../weapons.js/createAimBullet.js";
-import { airstrike } from "../weapons.js/createAirstrike.js";
-import { axe } from "../weapons.js/createAxe.js";
-import { droper } from "../weapons.js/createDroper.js";
-import { holyArea } from "../weapons.js/createHolyArea.js";
-import { minigun } from "../weapons.js/createMinigun.js";
-import { randomAimBullet } from "../weapons.js/spreader.js";
-import { shotgun } from "../weapons.js/createShotgun.js";
-import { buba, colin, jedå, uluk } from "../weapons.js/randomWeapons.js";
-import { selfImpaler } from "../weapons.js/selfImpaler.js";
-import { wiper } from "../weapons.js/wiper.js";
+import { cherry } from "../weapons/cherry.js";
+import { aimBullet } from "../weapons/createAimBullet.js";
+import { airstrike } from "../weapons/createAirstrike.js";
+import { axe } from "../weapons/createAxe.js";
+import { droper } from "../weapons/createDroper.js";
+import { holyArea } from "../weapons/createHolyArea.js";
+import { minigun } from "../weapons/createMinigun.js";
+import { randomAimBullet } from "../weapons/spreader.js";
+import { shotgun } from "../weapons/createShotgun.js";
+import { buba, colin, jedå, uluk } from "../weapons/randomWeapons.js";
+import { selfImpaler } from "../weapons/selfImpaler.js";
+import { wiper } from "../weapons/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 
 let upgradeWeaponPool = [];

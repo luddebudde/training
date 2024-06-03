@@ -50,7 +50,6 @@ export const createCherry = () => {
   const randomDistance = getRandomDistance(area);
 
   // Beräkna slumpad position i cirkeln
-
   const stopPos = {
     x:
       circleRadius +
@@ -64,18 +63,11 @@ export const createCherry = () => {
 
   const direction = makeDirection(stopPos, player.pos);
 
-  //   console.log("Slumpad vinkel:", randomAngle);
-  //   console.log("Slumpat avstånd:", randomDistance);
-  // console.log("Slumpad position i cirkeln:", { x, y });
-  // console.log(direction);
-
-  // console.log(direction);
   const cherryBullet = {
     lifetime: cherryStats.lifetime,
     bulletStopPos: stopPos,
     radius: area,
     angle: 0,
-    // bulletHealth: 10,
     attackIntervall: cooldown,
     cooldown: cooldown,
     destroy: false,
@@ -88,19 +80,16 @@ export const createCherry = () => {
       y: direction.y * speed,
     },
     rotateSpeed: speed,
-    // speed: speed,
     damage: damage,
     color: "green",
     team: "player",
     priority: 5,
     enemiesHit: [],
-    // pierce: cherryStats.pierce,
     weapon: cherry,
     pullForceBonus: cherryStats.pullForceBonus,
     update: (index) => {
       cherryBullet.lifetime--;
       cherryBullet.angle += 1;
-      // console.log((cherryBullet.angle += 1));
 
       if (cherryBullet.lifetime <= 0) {
         createExplosion(
@@ -114,17 +103,6 @@ export const createCherry = () => {
       }
     },
     draw: (ctx, assets) => {
-      // ctx.rotate((cherryBullet.angle * Math.PI) / 180);
-      // ctx.drawImage(
-      //   assets.cherry,
-      //   cherryBullet.pos.x - cherryBullet.radius,
-      //   cherryBullet.pos.y - cherryBullet.radius,
-      //   cherryBullet.radius * 2,
-      //   cherryBullet.radius * 2
-      // );
-      // ctx.rotate((-cherryBullet.angle * Math.PI) / 180);
-      // ctx.setTransform(1, 0, 0, 1, 0, 0);
-
       ctx.save();
       ctx.translate(cherryBullet.pos.x, cherryBullet.pos.y);
       ctx.rotate(
@@ -141,11 +119,7 @@ export const createCherry = () => {
       ctx.restore();
     },
   };
-  //   bullets.push(cherryBullet);
   targetables.push(cherryBullet);
-  // worldObjects.push(bullet);
-
-  // return cooldown;
 };
 
 export const cherry = {
@@ -158,7 +132,7 @@ export const cherry = {
   },
   unlockRequirementText: "300 kills",
   // image: assets.rhino,
-  image: await loadImage(`public/sprites/aimBulletSprite.png`),
+  image: await loadImage(`public/sprites/cherry.png`),
   // newCooldown: aimBulletStats.cooldown * stats.cooldown,
   attackIntervall: cherryStats.cooldown * stats.cooldown,
   cooldown: cherryStats.cooldown * stats.cooldown,

@@ -1,40 +1,92 @@
+import { loopPerSecond } from "../../basic.js";
 import { closestObject } from "../../closestObject.js";
+import { createExplosion } from "../../createExplosion.js";
 import { dealDamage } from "../../dealDamage.js";
 import { doCirclesOverlap } from "../../doCirlceOverlap.js";
 import { getRandomSpawnPos } from "../../getRandomSpawnPos.js";
 import {
+  assets,
   bosses,
+  canvas,
+  ctx,
   enemies,
   entities,
   player,
   targetables,
   updateables,
-  worldObjects,
 } from "../../main.js";
 import { makeDirection } from "../../makeDirection.js";
-import { playHurt, playMinigunOverheat } from "../../sounds.js";
+import { playHurt } from "../../sounds.js";
 import { stats } from "../../stats.js";
-import { vector } from "../../vectors.js";
-import { worldsizeMultiplier } from "../../world.js";
+import { cherry } from "../../weapons/cherry.js";
+import { world, worldsizeMultiplier } from "../../world.js";
 import { createBlueCompute } from "./createBlueCompute.js";
 
-// const walkerAnimations = animation({
-//   imageCount: 9,
-//   slowDown: 4,
-//   reverse: false,
-//   repeat: true,
-// });
+let explosionRadius = 0;
+let activeExplosions = [];
 
-export const createBlueComputeBoss = (
+let startTime = true;
+
+let rotationSpeed = 1;
+
+let rotationAngle = 0;
+
+const redDeathExplosion = (compute) => {
+  const animate = () => {
+    rotationAngle += rotationSpeed;
+
+    ctx.save();
+
+    // ctx.translate(compute.pos.x, compute.pos.y);
+    // ctx.rotate((rotationAngle * Math.PI) / 180);
+
+    ctx.drawImage(
+      assets.redCompute,
+      world.width / 2 - player.pos.x - compute.radius,
+      world.height / 2 - player.pos.y - compute.radius,
+      compute.radius * 2,
+      compute.radius * 2
+    );
+
+    ctx.beginPath();
+    ctx.arc(
+      world.width / 2 - player.pos.x,
+      world.height / 2 - player.pos.y,
+      100,
+      0,
+      2 * Math.PI
+    );
+    ctx.fillStyle = "red";
+    ctx.fill();
+
+    ctx.restore();
+
+    // if (rotationAngle > 1 || rotationAngle < -1) rotationSpeed = -rotationSpeed;
+    requestAnimationFrame(animate);
+  };
+  requestAnimationFrame(animate);
+};
+
+const handleRedComputeBomb = (compute) => {
+  ctx.save();
+
+  ctx.restore();
+  explosionRadius++;
+
+  // requestAnimationFrame(handleRedComputeBomb);
+  createExplosion(cherry, compute.pos.x, compute.pos.x, 100, 0);
+};
+
+export const createRedComputeBoss = (
   spawnWidth = getRandomSpawnPos(player).x,
   spawnHeight = getRandomSpawnPos(player).y
 ) => {
   const compute = {
-    health: 1000,
+    health: 100,
     radius: 100 * worldsizeMultiplier,
     pos: {
-      x: spawnWidth,
-      y: spawnHeight,
+      x: 100,
+      y: 100,
     },
     vel: {
       x: 0,
@@ -62,7 +114,7 @@ export const createBlueComputeBoss = (
       compute.vel.y = newVel.y * compute.speed;
       if (doCirclesOverlap(compute, player)) {
         playHurt();
-        dealDamage(player, "contact", compute.damage);
+        // dealDamage(player, "contact", compute.damage);
       }
     },
     draw: (ctx, assets, gameObject) => {
@@ -74,7 +126,7 @@ export const createBlueComputeBoss = (
         ctx.translate(-compute.pos.x, -compute.pos.y);
       }
       ctx.drawImage(
-        assets.blueCompute,
+        assets.redCompute,
         compute.pos.x - compute.radius,
         compute.pos.y - compute.radius,
         compute.radius * 2,
@@ -84,16 +136,19 @@ export const createBlueComputeBoss = (
       ctx.restore();
     },
     hit: () => {
-      console.log(compute.health);
       if (compute.health <= 0) {
-        console.log("compute dead");
-        for (let i = 0; i < 3000 * (stats.curse / 3); i++) {
-          setTimeout(() => {
-            console.log("spawningCompute");
-            const spawnPos = getRandomSpawnPos(player);
-            createBlueCompute(spawnPos.x, spawnPos.y);
-          }, (5 * i) / stats.curse);
-        }
+        // redDeathExplosion(compute);
+        redDeathExplosion(compute);
+        // createExplosion(
+        //   cherry,
+        //   compute.pos.x,
+        //   compute.pos.y,
+        //   500,
+        //   0.5,
+        //   100,
+        //   assets.explosion,
+        //   "enemy"
+        // );
       }
     },
     ability: () => {},

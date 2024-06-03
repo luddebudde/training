@@ -20,7 +20,6 @@ import { worldsizeMultiplier } from "../../world.js";
 export const createBlueCompute = (spawnWidth, spawnHeight) => {
   const compute = {
     health: 10,
-    // startRadius: 40,
     radius: 30 * worldsizeMultiplier,
     pos: {
       x: spawnWidth,
@@ -41,9 +40,7 @@ export const createBlueCompute = (spawnWidth, spawnHeight) => {
     resistance: {
       fire: 1,
     },
-    // speed: 0,
-    damage: 0.5,
-    // damage: 0,
+    damage: 1 * stats.curse,
     color: "black",
     team: "enemy",
     xp: Math.random() * 2 * stats.growth,

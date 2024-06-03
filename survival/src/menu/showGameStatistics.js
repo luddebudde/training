@@ -12,9 +12,9 @@ import {
   weapons,
 } from "../main.js";
 import { statistics } from "../statistics.js";
-import { aimBullet } from "../weapons.js/createAimBullet.js";
-import { shotgun } from "../weapons.js/createShotgun.js";
-import { wiper } from "../weapons.js/wiper.js";
+import { aimBullet } from "../weapons/createAimBullet.js";
+import { shotgun } from "../weapons/createShotgun.js";
+import { wiper } from "../weapons/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
 import { availableWeapons, totalWeapons } from "./levelUpSelection.js";
 import { mainMenu } from "./mainMenu.js";

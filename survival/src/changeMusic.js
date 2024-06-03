@@ -117,6 +117,12 @@ export const goodMusic = {
   volume: 2,
 };
 
+export const dragonMusic = {
+  name: "dragonMusic",
+  fileName: "public/sounds/dragonMusic.mp3",
+  volume: 1,
+};
+
 // export const restoreMusicVolume = () => {
 //   normalMusic.volume = 0.7;
 //   funnyMusic.volume = 1;
@@ -138,6 +144,7 @@ export const restoreMusicVolume = () => {
   battleMusic.volume = 1;
   synthMusic.volume = 0.8;
   goodMusic.volume = 2;
+  dragonMusic.volume = 1;
 
   // Återställ volymen för den aktuella låten
   musicList.forEach((music) => {
@@ -154,5 +161,11 @@ export const musicList = [
   battleMusic,
   goodMusic,
   synthMusic,
+  dragonMusic,
 ];
-export const gameMusicList = [normalMusic, funnyMusic, battleMusic];
+export const gameMusicList = [
+  normalMusic,
+  funnyMusic,
+  battleMusic,
+  dragonMusic,
+];
