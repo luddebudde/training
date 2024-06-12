@@ -209,6 +209,7 @@ export const allArrays = [
   xps,
   chests,
   burningEntities,
+  updateables,
 ];
 
 // const worldArrays = [entities, worldObjects, bullets];
@@ -498,7 +499,7 @@ startMode();
 // createWalkerBoss(400, 400);
 // createDemonBoss();
 // createBlueComputeBoss();
-createRedComputeBoss();
+// createRedComputeBoss();
 // console.log(player);
 // createGreyComputeBoss({ player });
 
@@ -542,7 +543,7 @@ const update = () => {
 
   // console.log(wavesList);
 
-  if (Math.floor(timer) % 60 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 2 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -558,13 +559,6 @@ const update = () => {
     }, 1000);
   }
 
-  // drawText(
-  //   Math.floor(timer / 60) + ":" + Math.floor(timer % 60),
-  //   world.width / 2,
-  //   100 * screenSizeMultipler.y,
-  //   "red",
-  //   worldsizeMultiplier
-  // );
   const minutes = Math.floor(timer / 60);
   const seconds = Math.floor(timer % 60);
 
@@ -768,7 +762,7 @@ const update = () => {
         dealDamage(enemy, "instant", enemy.health);
         // Tar bort fienden
       } else {
-        const spawnPos = getRandomSpawnPos(player);
+        const spawnPos = getRandomSpawnPos();
         enemy.pos = spawnPos;
       }
     }
@@ -786,7 +780,7 @@ const update = () => {
   });
 
   if (Math.random() * loopPerSecond * 300 < loopPerSecond) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
 
     const chosenPickupType =
       pickupTypes[Math.floor(Math.random() * pickupTypes.length)];
@@ -857,6 +851,10 @@ const update = () => {
   targetables.forEach((targetable, index) => {
     targetable.update?.(index);
     // target
+  });
+
+  updateables.forEach((object) => {
+    object.update();
   });
 
   pickups.forEach((pickup, indexU) => {

@@ -59,8 +59,8 @@ const shootEnemyBullet = (shooter, direction, { area, speed, damage }) => {
 };
 
 export const createShooterBoss = (
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y
 ) => {
   const shooter = {
     health: 600,

@@ -3,7 +3,7 @@ import { world } from "./world.js";
 
 const spawnMargin = 100;
 
-export const getRandomSpawnPos = (player) => {
+export const getRandomSpawnPos = () => {
   let pos = {
     x: Math.random() * world.width - world.width / 2 + player.pos.x,
     y: Math.random() * world.height - world.height / 2 + player.pos.y,

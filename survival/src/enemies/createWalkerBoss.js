@@ -27,8 +27,8 @@ const walkerAnimations = animation({
 });
 
 export const createWalkerBoss = (
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y
 ) => {
   const walker = {
     health: 1000,

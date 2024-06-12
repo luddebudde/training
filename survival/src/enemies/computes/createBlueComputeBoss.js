@@ -3,6 +3,7 @@ import { dealDamage } from "../../dealDamage.js";
 import { doCirclesOverlap } from "../../doCirlceOverlap.js";
 import { getRandomSpawnPos } from "../../getRandomSpawnPos.js";
 import {
+  assets,
   bosses,
   enemies,
   entities,
@@ -16,6 +17,7 @@ import { playHurt, playMinigunOverheat } from "../../sounds.js";
 import { stats } from "../../stats.js";
 import { vector } from "../../vectors.js";
 import { worldsizeMultiplier } from "../../world.js";
+import { computeBossShake } from "./computeBossShake.js";
 import { createBlueCompute } from "./createBlueCompute.js";
 
 // const walkerAnimations = animation({
@@ -25,13 +27,27 @@ import { createBlueCompute } from "./createBlueCompute.js";
 //   repeat: true,
 // });
 
+const spawnComputes = () => {
+  console.log("compute dead");
+  for (let i = 0; i < 5000 * (stats.curse / 3); i++) {
+    setTimeout(() => {
+      const spawnPos = getRandomSpawnPos(player);
+      createBlueCompute(spawnPos.x, spawnPos.y);
+    }, (5 * i) / stats.curse);
+  }
+};
+
 export const createBlueComputeBoss = (
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y
 ) => {
   const compute = {
-    health: 1000,
+    name: "blue",
+    asset: assets.blueCompute,
+    // health: 1000,
+    health: 100,
     radius: 100 * worldsizeMultiplier,
+    lookDirection: 1,
     pos: {
       x: spawnWidth,
       y: spawnHeight,
@@ -86,14 +102,7 @@ export const createBlueComputeBoss = (
     hit: () => {
       console.log(compute.health);
       if (compute.health <= 0) {
-        console.log("compute dead");
-        for (let i = 0; i < 3000 * (stats.curse / 3); i++) {
-          setTimeout(() => {
-            console.log("spawningCompute");
-            const spawnPos = getRandomSpawnPos(player);
-            createBlueCompute(spawnPos.x, spawnPos.y);
-          }, (5 * i) / stats.curse);
-        }
+        computeBossShake(compute, spawnComputes);
       }
     },
     ability: () => {},

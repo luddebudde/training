@@ -1,3 +1,4 @@
+import { animation } from "../../animation.js";
 import { loopPerSecond } from "../../basic.js";
 import { closestObject } from "../../closestObject.js";
 import { createExplosion } from "../../createExplosion.js";
@@ -15,11 +16,17 @@ import {
   targetables,
   updateables,
 } from "../../main.js";
-import { makeDirection } from "../../makeDirection.js";
+import { getDistance, makeDirection } from "../../makeDirection.js";
+import { removeFromArrays } from "../../removeFromArrays.js";
 import { playHurt } from "../../sounds.js";
 import { stats } from "../../stats.js";
 import { cherry } from "../../weapons/cherry.js";
 import { world, worldsizeMultiplier } from "../../world.js";
+import {
+  computeBossRotationAngle,
+  computeBossRotationSpeed,
+  computeBossShake,
+} from "./computeBossShake.js";
 import { createBlueCompute } from "./createBlueCompute.js";
 
 let explosionRadius = 0;
@@ -27,61 +34,68 @@ let activeExplosions = [];
 
 let startTime = true;
 
-let rotationSpeed = 1;
+const radiusIncrease = 2;
+const explosionDuration = radiusIncrease * loopPerSecond * 5;
 
-let rotationAngle = 0;
+let explosionAnimation = animation({
+  imageCount: 7,
+  slowDown: 40,
+  reverse: false,
+  repeat: true,
+});
 
-const redDeathExplosion = (compute) => {
-  const animate = () => {
-    rotationAngle += rotationSpeed;
+const createDeathBomb = (entity, { rotationSpeed, rotationAngle }) => {
+  const bomb = {
+    pos: {
+      x: entity.pos.x,
+      y: entity.pos.y,
+    },
+    radius: 10,
+    health: 1,
+    update: () => {
+      bomb.radius += radiusIncrease;
+      rotationAngle += rotationSpeed;
 
-    ctx.save();
+      ctx.save();
+      ctx.translate(world.width / 2, world.height / 2);
+      ctx.translate(entity.pos.x - player.pos.x, entity.pos.y - player.pos.y);
 
-    // ctx.translate(compute.pos.x, compute.pos.y);
-    // ctx.rotate((rotationAngle * Math.PI) / 180);
+      ctx.drawImage(
+        assets.explosion,
+        0,
+        (assets.explosion.height / 7) * 4,
+        assets.explosion.width,
+        assets.explosion.height / 7,
+        bomb.pos.x - bomb.radius,
+        bomb.pos.y - bomb.radius,
+        bomb.radius * 2,
+        bomb.radius * 2
+      );
 
-    ctx.drawImage(
-      assets.redCompute,
-      world.width / 2 - player.pos.x - compute.radius,
-      world.height / 2 - player.pos.y - compute.radius,
-      compute.radius * 2,
-      compute.radius * 2
-    );
+      ctx.restore();
 
-    ctx.beginPath();
-    ctx.arc(
-      world.width / 2 - player.pos.x,
-      world.height / 2 - player.pos.y,
-      100,
-      0,
-      2 * Math.PI
-    );
-    ctx.fillStyle = "red";
-    ctx.fill();
+      if (bomb.radius > explosionDuration) {
+        removeFromArrays(entity);
+        console.log(updateables);
+      } else {
+      }
 
-    ctx.restore();
-
-    // if (rotationAngle > 1 || rotationAngle < -1) rotationSpeed = -rotationSpeed;
-    requestAnimationFrame(animate);
+      if (doCirclesOverlap(player, bomb)) {
+        dealDamage(player, "explosion", 0.1);
+      }
+    },
   };
-  requestAnimationFrame(animate);
-};
-
-const handleRedComputeBomb = (compute) => {
-  ctx.save();
-
-  ctx.restore();
-  explosionRadius++;
-
-  // requestAnimationFrame(handleRedComputeBomb);
-  createExplosion(cherry, compute.pos.x, compute.pos.x, 100, 0);
+  console.log("pushing");
+  updateables.push(bomb);
 };
 
 export const createRedComputeBoss = (
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y
 ) => {
   const compute = {
+    name: "red",
+    asset: assets.redCompute,
     health: 100,
     radius: 100 * worldsizeMultiplier,
     pos: {
@@ -123,6 +137,7 @@ export const createRedComputeBoss = (
       if (compute.pos.x < player.pos.x) {
         ctx.translate(compute.pos.x, compute.pos.y);
         ctx.scale(-1, 1);
+        compute.lookDirection = -1;
         ctx.translate(-compute.pos.x, -compute.pos.y);
       }
       ctx.drawImage(
@@ -137,18 +152,10 @@ export const createRedComputeBoss = (
     },
     hit: () => {
       if (compute.health <= 0) {
-        // redDeathExplosion(compute);
-        redDeathExplosion(compute);
-        // createExplosion(
-        //   cherry,
-        //   compute.pos.x,
-        //   compute.pos.y,
-        //   500,
-        //   0.5,
-        //   100,
-        //   assets.explosion,
-        //   "enemy"
-        // );
+        computeBossShake(compute, createDeathBomb, {
+          rotationSpeed: computeBossRotationSpeed,
+          rotationAngle: computeBossRotationAngle,
+        });
       }
     },
     ability: () => {},

@@ -208,7 +208,7 @@ export const createDemonBoss = () => {
           }
         } else {
           for (let i = 0; i < 40; i++) {
-            const spawnPos = getRandomSpawnPos(player);
+            const spawnPos = getRandomSpawnPos();
             createWisp(spawnPos.x, spawnPos.y);
           }
         }

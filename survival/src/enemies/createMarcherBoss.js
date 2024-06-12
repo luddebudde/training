@@ -33,8 +33,8 @@ const numShots = 5; // Justera antalet skott efter behov
 let atWorldEdge = true;
 
 export const createMarcherBoss = (
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y
 ) => {
   // console.log("marcher");
   const marcherSpawnPos = {

@@ -15,20 +15,34 @@ import { getRandomSpawnPos } from "./getRandomSpawnPos.js";
 import { bosses, player } from "./main.js";
 import { createCollector } from "./pickups/collector.js";
 import { stats } from "./stats.js";
+import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
+import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
+import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.js";
 
-export const bossWaves = [2, 4, 5];
+const computeBossList = [
+  createBlueComputeBoss,
+  // createGreyComputeBoss,
+  // createRedComputeBoss,
+];
+const randomComputeBoss =
+  computeBossList[Math.floor(Math.random() * computeBossList.length)];
+
+console.log(randomComputeBoss);
+
+export const bossWaves = [2, 4, 5, 1];
 export const bossType = [
   // createShooterBoss,
-  createWalkerBoss,
-  createMarcherBoss,
-  createShooterBoss,
+  randomComputeBoss,
+  // createWalkerBoss,
+  // createMarcherBoss,
+  // createShooterBoss,
 ];
 
 export let enemyAmountMultiplier = 1;
 
 export const wave1 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
     // createWalker(spawnPos.x, spawnPos.y);
 
     // createCharger(spawnPos.x, spawnPos.y);
@@ -46,27 +60,27 @@ export const wave1 = () => {
 
 export const wave2 = () => {
   for (let i = 0; i < 4 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
 
     createWalker(spawnPos.x, spawnPos.y);
 
     // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
   }
-  const spawnPos = getRandomSpawnPos(player);
+  const spawnPos = getRandomSpawnPos();
   createCharger(spawnPos.x, spawnPos.y);
 };
 
 export const wave3 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
     // createWalker(spawnPos.x, spawnPos.y);
     //   createCharger(spawnPos.x, spawnPos.y);
     createTank(spawnPos.x, spawnPos.y + 100);
 
     // createNerfer(spawnPos.x, spawnPos.y);
   }
-  const spawnPos = getRandomSpawnPos(player);
+  const spawnPos = getRandomSpawnPos();
 
   createJuggernaut(spawnPos.x, spawnPos.y + 100);
 
@@ -76,7 +90,7 @@ export const wave3 = () => {
 export const wave4 = () => {
   if (bosses.length === 0) {
     for (let i = 0; i < 1 * stats.curse; i++) {
-      const spawnPos = getRandomSpawnPos(player);
+      const spawnPos = getRandomSpawnPos();
       // createWalker(spawnPos.x, spawnPos.y);
       //   createCharger(spawnPos.x, spawnPos.y);
       createTank(spawnPos.x, spawnPos.y + 100);
@@ -85,7 +99,7 @@ export const wave4 = () => {
       // createJuggernaut(spawnPos.x, spawnPos.y + 200);
       // createNerfer(spawnPos.x, spawnPos.y);
     }
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
     createMarcher(spawnPos.x, spawnPos.y);
     enemyAmountMultiplier = 0.5;
   }
@@ -94,7 +108,7 @@ export const wave4 = () => {
 export const wave5 = () => {
   if (bosses.length > 0) {
     for (let i = 0; i < 10 * stats.curse; i++) {
-      const spawnPos = getRandomSpawnPos(player);
+      const spawnPos = getRandomSpawnPos();
       // createWalker(spawnPos.x, spawnPos.y);
       //   createCharger(spawnPos.x, spawnPos.y);
       createTank(spawnPos.x, spawnPos.y + 100);
@@ -106,15 +120,15 @@ export const wave5 = () => {
       // createMarcher(spawnPos.x + i * 25, spawnPos.y);
     }
   } else {
-    const spawnPos = getRandomSpawnPos(player);
-    createShooter(spawnPos.x, spawnPos.y);
+    const spawnPos = getRandomSpawnPos();
+    // createShooter(spawnPos.x, spawnPos.y);
   }
   enemyAmountMultiplier = 1;
 };
 
 export const wave6 = () => {
   for (let i = 0; i < 10 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
     createWalker(spawnPos.x, spawnPos.y);
     createCharger(spawnPos.x, spawnPos.y);
     createTank(spawnPos.x, spawnPos.y + 100);
@@ -130,7 +144,7 @@ export const wave6 = () => {
 
 export const wave7 = () => {
   for (let i = 0; i < 10 * stats.curse; i++) {
-    const spawnPos = getRandomSpawnPos(player);
+    const spawnPos = getRandomSpawnPos();
     createWalker(spawnPos.x, spawnPos.y);
     // createCharger(spawnPos.x, spawnPos.y);
     // createTank(spawnPos.x, spawnPos.y + 100);

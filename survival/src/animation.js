@@ -34,11 +34,6 @@ export const animation = ({
     draw: (ctx, image, x, y, width, height, newCounter = counter) => {
       const imageIndex = Math.floor(newCounter / slowDown);
 
-      // const canvas = document.getElementById("myCanvas");
-      // const ctx = canvas.getContext("2d");
-      // const img = document.getElementById("scream");
-      // ctx.drawImage(img, 90, 130, 50, 60, 10, 10, 50, 60);
-
       if (vertical === true) {
         const spriteHeight = image.height / imageCount;
         ctx.drawImage(

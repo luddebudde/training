@@ -3,6 +3,7 @@ import { dealDamage } from "../../dealDamage.js";
 import { doCirclesOverlap } from "../../doCirlceOverlap.js";
 import { getRandomSpawnPos } from "../../getRandomSpawnPos.js";
 import {
+  assets,
   blankImmune,
   bosses,
   enemies,
@@ -17,6 +18,7 @@ import { playHurt, playMinigunOverheat } from "../../sounds.js";
 import { stats } from "../../stats.js";
 import { vector } from "../../vectors.js";
 import { worldsizeMultiplier } from "../../world.js";
+import { computeBossShake } from "./computeBossShake.js";
 import { createBlueCompute } from "./createBlueCompute.js";
 
 const generateSpawnPositions = (basePos, computeRadius, gridSize) => {
@@ -42,17 +44,16 @@ const bigCheck = (compute) => {
   const computeRadius = 80;
 
   for (let i = -1; i < 1; i++) {
-    createGreyComputeBoss({
-      player: player,
-      spawnWidth: compute.pos.x - computeRadius * 2 + computeRadius * 4 * i,
-      spawnHeight: compute.pos.y,
-      health: 2000,
-      damage: 2,
-      radius: computeRadius,
-      knockbackMult: 1.2,
-      speed: Math.random() * 2 + 1,
-      deathCheck: computeBossDeathChecksGrey[1],
-    });
+    createGreyComputeBoss(
+      compute.pos.x - computeRadius * 2 + computeRadius * 4 * i,
+      compute.pos.y,
+      2000,
+      2,
+      computeRadius,
+      1.2,
+      Math.random() * 2 + 1,
+      computeBossDeathChecksGrey[1]
+    );
   }
 };
 
@@ -61,17 +62,16 @@ const mediumCheck = (compute) => {
   const positions = generateSpawnPositions(compute.pos, computeRadius, 2);
 
   positions.forEach((pos) => {
-    createGreyComputeBoss({
-      player: player,
-      spawnWidth: pos.x,
-      spawnHeight: pos.y,
-      health: 1000,
-      damage: 0.5,
-      radius: computeRadius,
-      knockbackMult: 2.0,
-      speed: Math.random() * 3 + 1,
-      deathCheck: computeBossDeathChecksGrey[2],
-    });
+    createGreyComputeBoss(
+      pos.x,
+      pos.y,
+      1000,
+      0.5,
+      computeRadius,
+      2.0,
+      Math.random() * 3 + 1,
+      computeBossDeathChecksGrey[2]
+    );
   });
 };
 
@@ -80,17 +80,16 @@ const smallCheck = (compute) => {
   const positions = generateSpawnPositions(compute.pos, computeRadius, 3);
 
   positions.forEach((pos) => {
-    createGreyComputeBoss({
-      player: player,
-      spawnWidth: pos.x,
-      spawnHeight: pos.y,
-      health: 55,
-      damage: 1,
-      radius: computeRadius,
-      knockbackMult: 1.5,
-      speed: Math.random() * 4 + 1,
-      deathCheck: computeBossDeathChecksGrey[3],
-    });
+    createGreyComputeBoss(
+      pos.x,
+      pos.y,
+      55,
+      1,
+      computeRadius,
+      1.5,
+      Math.random() * 4 + 1,
+      computeBossDeathChecksGrey[3]
+    );
   });
 };
 
@@ -99,16 +98,15 @@ const verySmallCheck = (compute) => {
   const positions = generateSpawnPositions(compute.pos, computeRadius, 4);
 
   positions.forEach((pos) => {
-    createGreyComputeBoss({
-      player: player,
-      spawnWidth: pos.x,
-      spawnHeight: pos.y,
-      health: 4,
-      damage: 0.2,
-      radius: computeRadius,
-      knockbackMult: 2.5,
-      speed: Math.random() * 5 + 1,
-      deathCheck: () => {
+    createGreyComputeBoss(
+      pos.x,
+      pos.y,
+      4,
+      0.2,
+      computeRadius,
+      2.5,
+      Math.random() * 5 + 1,
+      () => {
         if (
           !blankImmune.some(
             (item) => item.type === "compute" && item.health > 0
@@ -116,8 +114,8 @@ const verySmallCheck = (compute) => {
         ) {
           bosses.push(compute);
         }
-      },
-    });
+      }
+    );
   });
 };
 
@@ -129,27 +127,32 @@ const computeBossDeathChecksGrey = [
 ];
 const computeBossDeathChecks = [];
 
-let playerClone = {
-  pos: {
-    x: 0,
-    y: 0,
-  },
-};
+// let spawnWidth = 10,
+// let spawnHeight = 10,
+// let health = 4000,
+// damage = 5,
+// radius = 100,
+// knockbackMult = 0.1,
+// speed = 1,
+// deathCheck = computeBossDeathChecksGrey[0],
 
-export const createGreyComputeBoss = ({
-  player,
-  spawnWidth = getRandomSpawnPos(player).x,
-  spawnHeight = getRandomSpawnPos(player).y,
-  health = 4000,
+export const createGreyComputeBoss = (
+  spawnWidth = getRandomSpawnPos().x,
+  spawnHeight = getRandomSpawnPos().y,
+  // health = 4000,
+  health = 500,
   damage = 5,
   radius = 100,
   knockbackMult = 0.1,
   speed = 1,
-  deathCheck = computeBossDeathChecksGrey[0],
-}) => {
+  deathCheck = computeBossDeathChecksGrey[0]
+) => {
   const compute = {
+    name: "grey",
+    asset: assets.greyCompute,
     health: health,
     radius: radius * worldsizeMultiplier,
+    lookDirection: 1,
     type: "compute",
     pos: {
       x: spawnWidth,
@@ -176,8 +179,6 @@ export const createGreyComputeBoss = ({
 
     update: () => {
       const newVel = makeDirection(compute.pos, player.pos);
-
-      playerClone = player;
 
       compute.vel.x = newVel.x * compute.speed;
       compute.vel.y = newVel.y * compute.speed;
@@ -207,7 +208,8 @@ export const createGreyComputeBoss = ({
     hit: () => {
       console.log(compute.health);
       if (compute.health <= 0) {
-        deathCheck(compute);
+        computeBossShake(compute, deathCheck, compute);
+        // deathCheck(compute);
       }
     },
     ability: () => {},
