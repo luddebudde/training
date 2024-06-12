@@ -98,6 +98,7 @@ export const createRedComputeBoss = (
     asset: assets.redCompute,
     health: 100,
     radius: 100 * worldsizeMultiplier,
+    lookDirection: 1,
     pos: {
       x: 100,
       y: 100,
