@@ -19,6 +19,7 @@ export const createPlayer = () => {
     // health: 0,
     maxShield: currentCharacter.stats.maxShield,
     shield: currentCharacter.stats.shield,
+    invincible: false,
     pos: {
       x: 0,
       y: 0,

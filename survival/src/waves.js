@@ -18,11 +18,12 @@ import { stats } from "./stats.js";
 import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
 import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
 import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.js";
+import { createStealth } from "./enemies/createStealth.js";
 
 const computeBossList = [
   createBlueComputeBoss,
-  // createGreyComputeBoss,
-  // createRedComputeBoss,
+  createGreyComputeBoss,
+  createRedComputeBoss,
 ];
 const randomComputeBoss =
   computeBossList[Math.floor(Math.random() * computeBossList.length)];
@@ -43,14 +44,16 @@ export let enemyAmountMultiplier = 1;
 export const wave1 = () => {
   for (let i = 0; i < 5 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos();
-    // createWalker(spawnPos.x, spawnPos.y);
+    createWalker(spawnPos.x, spawnPos.y);
 
     // createCharger(spawnPos.x, spawnPos.y);
     // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
 
     // createWisp(spawnPos.x, spawnPos.y);
-    createBlueCompute(spawnPos.x, spawnPos.y);
+    // createBlueCompute(spawnPos.x, spawnPos.y);
+
+    // createStealth(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
 
@@ -155,7 +158,7 @@ export const wave7 = () => {
 
     // createMarcher(spawnPos.x + i * 25, spawnPos.y);
   }
-  enemyAmountMultiplier = 10;
+  enemyAmountMultiplier = 0;
 };
 
 export const wavesList = [wave1, wave2, wave3, wave4, wave5, wave6, wave7];

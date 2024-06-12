@@ -8,6 +8,11 @@ export const dealDamage = (
   amount,
   creditWeapon = undefined
 ) => {
+  if (obj.invincible === true) {
+    console.log(obj.invincible);
+    return;
+  }
+
   if (obj.resistance && obj.resistance[damageType] !== undefined) {
     // console.log(amount);
     amount = amount * (1 - obj.resistance[damageType]);

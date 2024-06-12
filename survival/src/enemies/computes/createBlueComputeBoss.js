@@ -87,6 +87,7 @@ export const createBlueComputeBoss = (
       if (compute.pos.x < player.pos.x) {
         ctx.translate(compute.pos.x, compute.pos.y);
         ctx.scale(-1, 1);
+        compute.lookDirection = -1;
         ctx.translate(-compute.pos.x, -compute.pos.y);
       }
       ctx.drawImage(

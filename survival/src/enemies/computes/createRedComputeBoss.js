@@ -129,7 +129,6 @@ export const createRedComputeBoss = (
       compute.vel.y = newVel.y * compute.speed;
       if (doCirclesOverlap(compute, player)) {
         playHurt();
-        // dealDamage(player, "contact", compute.damage);
       }
     },
     draw: (ctx, assets, gameObject) => {

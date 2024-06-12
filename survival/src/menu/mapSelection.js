@@ -251,7 +251,6 @@ const drawMapSidebar = (map) => {
       },
     };
 
-    // drawSquare(musicButton);
     buttons.push(musicButton);
 
     ctx.drawImage(
@@ -271,8 +270,6 @@ const drawMapStats = (type, value, x, y, color = "red", sizeMultplier = 1) => {
 
   const keyHeight = y * overallStatAmount * screenSizeMultipler.x;
   const keyLenght = ctx.measureText(type);
-
-  //   console. log(overallStatAmount);
 
   drawText(
     type,

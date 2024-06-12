@@ -2,8 +2,14 @@
 // Make the start and "startgame" function better
 // Fix text when movement and other stats are below 5 and multiplies by 100 for %
 // Remove objects from all arrays, and not just some
+// Make background
+// Make world specific waves
+// More characters & way to unlock them
 
 // Text above defeated bosses, counting down to the final
+// Make enemies collide with eachother
+// Chest menu fix
+// Upgrade selection menu fix
 import { aimBullet } from "./weapons/createAimBullet.js";
 import {
   screenSizeMultipler as screenSizeMultiplier,
@@ -98,7 +104,12 @@ import { mainMenu } from "./menu/mainMenu.js";
 import { showGameStatistics } from "./menu/showGameStatistics.js";
 import { characterSelection } from "./menu/characterSelection.js";
 import { mapSelection } from "./menu/mapSelection.js";
-import { changeCurrentMap, currentMap } from "./maps/standardMap.js";
+import {
+  changeCurrentMap,
+  currentMap,
+  drawBackground,
+  hardMap,
+} from "./maps/standardMap.js";
 import { removeFromArrays } from "./removeFromArrays.js";
 import { createMarcherBoss } from "./enemies/createMarcherBoss.js";
 import {
@@ -119,6 +130,7 @@ import { createBlueCompute } from "./enemies/computes/createBlueCompute.js";
 import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.js";
 import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
 import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
+import { getDistance } from "./makeDirection.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -510,6 +522,9 @@ startMode();
 const deathAnimationTime = 3000;
 // const deathAnimationTime = 0;
 
+let stealthCounter = 0;
+export let stealthMode = false;
+
 const update = () => {
   ctx.beginPath();
   ctx.globalAlpha = 1;
@@ -518,7 +533,7 @@ const update = () => {
   ctx.fill();
 
   // ctx.drawImage(
-  //   backgrounds[currentMap.texture],
+  // backgrounds[currentMap.texture],
   //   -player.pos.x / 1,
   //   -player.pos.y / 1,
   //   world.width,
@@ -533,6 +548,8 @@ const update = () => {
   //   world.height
   // );
 
+  drawBackground(ctx, player, world, backgrounds);
+
   spawnRate = 50 / stats.curse;
   maxEnemyCount = ((enemyFactor * stats.curse) / 3) * enemyAmountMultiplier;
 
@@ -543,7 +560,7 @@ const update = () => {
 
   // console.log(wavesList);
 
-  if (Math.floor(timer) % 2 === 0 && canChangeWave) {
+  if (Math.floor(timer) % 60 === 0 && canChangeWave) {
     canChangeWave = false;
     setTimeout(() => {
       if (wavesList[waveIndex + 1] !== undefined) {
@@ -574,6 +591,20 @@ const update = () => {
     worldsizeMultiplier
   );
 
+  console.log(enemies.length);
+
+  if (enemies.some((enemy) => enemy.name === "stealth")) {
+    stealthCounter++;
+
+    if (stealthCounter % (loopPerSecond * 15) > loopPerSecond * 7) {
+      // console.log("stealth enable");
+      stealthMode = true;
+    } else {
+      // console.log("stealth disable");
+      stealthMode = false;
+    }
+  }
+
   if (isKeyDown("KeyW")) {
     player.pos.y -= player.speed * player.speedMult;
     // moveCtx.y += player.speed;
@@ -603,6 +634,9 @@ const update = () => {
   }
   if (isKeyDown("KeyZ")) {
     stopMusic();
+  }
+  if (isKeyDown("KeyL")) {
+    changeCurrentMap(hardMap);
   }
 
   if (isKeyDown("KeyX") && canChangeMusic) {
@@ -690,6 +724,21 @@ const update = () => {
     if (entity.health <= 0) {
       createXp(entity.pos.x, entity.pos.y, entity.xp);
     }
+
+    // entities.forEach((entity2) => {
+    //   if (doCirclesOverlap(entity, entity2)) {
+    //     const force = {
+    //       x: (entity.pos.x - entity2.pos.x) / 10,
+    //       y: (entity.pos.y - entity2.pos.y) / 10,
+    //     };
+    //     console.log(force);
+    //     entity.pos.x += force.x;
+    //     entity.pos.y += force.y;
+
+    //     entity2.pos.x -= force.x;
+    //     entity2.pos.y -= force.y;
+    //   }
+    // });
   });
 
   xps.forEach((xp) => {

@@ -24,7 +24,7 @@ import { createBlank } from "../pickups/blank.js";
 let chosenWeapon = 0;
 
 const revivePlayer = () => {
-  console.log("revive");
+  // console.log("revive");
   restoreMusicVolume();
   startMusicAgain();
   statistics.game.deaths -= 1;
@@ -33,13 +33,18 @@ const revivePlayer = () => {
   player.health = stats.maxHealth;
   entities.push(player);
 
-  // enemies.length = 0;
   createBlank(player.pos.x, player.pos.y);
   bullets.length = 0;
   stats.revives -= 1;
 
+  player.invincible = true;
+  console.log();
   statistics.game.revivesUsed += 1;
   start();
+
+  setTimeout(() => {
+    player.invincible = false;
+  }, 3000);
 };
 
 export const deathMenu = () => {
