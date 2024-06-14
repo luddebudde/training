@@ -17,6 +17,9 @@ const holyAreaStats = {
   damage: 0,
   effect: 5,
   special: 0,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createHolyArea = () => {

@@ -31,6 +31,9 @@ const bouncerStats = {
   pierce: 9999,
   special: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 let bouncerBullets = [];

@@ -17,6 +17,9 @@ const minigunStats = {
   fireRate: 10,
   pierce: 0,
   knockback: 0.2,
+  applyEffect: {
+    fear: 5,
+  },
 };
 
 export const createMinigun = () => {

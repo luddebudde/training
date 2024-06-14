@@ -30,6 +30,9 @@ const shotgunBulletStats = {
   pellets: 10,
   pierce: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createShotgun = () => {

@@ -48,6 +48,9 @@ const devistatorStats = {
   chargeDamage: 0,
   chargePierce: 0,
   chargeCap: loopPerSecond * 5,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 let canChangeMode = false;

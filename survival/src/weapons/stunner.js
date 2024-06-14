@@ -26,6 +26,9 @@ const stunnerStats = {
   cooldown: 50,
   pierce: 1,
   special: 0,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 const stunnerAnimation = {

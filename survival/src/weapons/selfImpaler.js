@@ -19,6 +19,9 @@ const selfImpalerStats = {
   area: 0,
 
   effects: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createSelfImpaler = () => {

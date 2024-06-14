@@ -19,6 +19,9 @@ const droperStats = {
   pierce: 3,
   special: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createDroper = () => {

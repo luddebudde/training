@@ -32,15 +32,15 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 0.75 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
       mult: 0.05,
     },
-    // speed: 0,
     damage: 1 * stats.curse,
-    // damage: 0,
     color: "purple",
     team: "enemy",
     xp: Math.random() * 10 * stats.growth,
@@ -48,15 +48,13 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
 
     update: () => {
       if (doCirclesOverlap(juggernaut, player)) {
-        // charger.health = 0;
         playHurt();
-        // player.health -= charger.damage / (1000 / loopPerSecond);
         dealDamage(player, "contact", juggernaut.damage);
       }
 
       const newVel = makeDirection(juggernaut.pos, player.pos);
-      juggernaut.vel.x = newVel.x * juggernaut.speed;
-      juggernaut.vel.y = newVel.y * juggernaut.speed;
+      juggernaut.vel.x = newVel.x * juggernaut.speed * juggernaut.fearMult;
+      juggernaut.vel.y = newVel.y * juggernaut.speed * juggernaut.fearMult;
     },
     hit: () => {
       if (Math.random() > 0.95) {
@@ -68,5 +66,4 @@ export const createJuggernaut = (spawnWidth, spawnHeight) => {
   entities.push(juggernaut);
   enemies.push(juggernaut);
   updateables.push(juggernaut);
-  // worldObjects.push(charger);
 };

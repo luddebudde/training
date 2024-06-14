@@ -26,6 +26,9 @@ const randomAimBulletStats = {
   pierce: 0,
   special: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createRandomAimBullet = () => {

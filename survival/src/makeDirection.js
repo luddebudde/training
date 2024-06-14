@@ -12,12 +12,16 @@ export const makeDirection = (secondObject, mainObject) => {
   return direction;
 };
 
-export const getDistance = (mainObject, secondObject) => {
+export const getDistance = (mainObject, secondObject, vector = false) => {
   const diff = {
     x: mainObject.x - secondObject.x,
     y: mainObject.y - secondObject.y,
   };
   const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
 
-  return dist;
+  if (!vector) {
+    return dist;
+  } else {
+    return diff;
+  }
 };

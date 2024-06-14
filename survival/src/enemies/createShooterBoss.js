@@ -77,7 +77,9 @@ export const createShooterBoss = (
     // attackCooldown: shootCooldown,
     statusEffects: {
       slow: 0,
+      courage: 100000,
     },
+    fearMult: 1,
     speed: 2 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,

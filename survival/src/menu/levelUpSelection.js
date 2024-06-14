@@ -24,6 +24,11 @@ import { buba, colin, jedå, uluk } from "../weapons/randomWeapons.js";
 import { selfImpaler } from "../weapons/selfImpaler.js";
 import { wiper } from "../weapons/wiper.js";
 import { screenSizeMultipler, world, worldsizeMultiplier } from "../world.js";
+import { pusher } from "../weapons/pusher.js";
+import { flamethrower } from "../weapons/flameThrower.js";
+import { stunner } from "../weapons/stunner.js";
+import { devistator } from "../weapons/devistator.js";
+import { bouncer } from "../weapons/bouncer.js";
 
 let upgradeWeaponPool = [];
 let amountOfWeapons = 0;
@@ -41,6 +46,11 @@ export const totalWeapons = [
   selfImpaler,
   cherry,
   droper,
+  flamethrower,
+  stunner,
+  devistator,
+  bouncer,
+  pusher,
 
   // jedå,
   // colin,
@@ -60,6 +70,11 @@ export const availableWeapons = [
   // selfImpaler,
   // cherry,
   droper,
+  // flamethrower,
+  stunner,
+  devistator,
+  bouncer,
+  pusher,
 ];
 
 let undefinedButtons = 0;

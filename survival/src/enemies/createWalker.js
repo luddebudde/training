@@ -38,7 +38,9 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 2 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -56,8 +58,8 @@ export const createWalker = (spawnWidth, spawnHeight) => {
 
       const newVel = makeDirection(walker.pos, target.pos);
 
-      walker.vel.x = newVel.x * walker.speed;
-      walker.vel.y = newVel.y * walker.speed;
+      walker.vel.x = newVel.x * walker.speed * walker.fearMult;
+      walker.vel.y = newVel.y * walker.speed * walker.fearMult;
       if (doCirclesOverlap(walker, player)) {
         playHurt();
         dealDamage(player, "contact", walker.damage);

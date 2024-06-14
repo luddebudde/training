@@ -60,7 +60,9 @@ export const createMarcher = (
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 10 * (stats.curse / 2) * worldsizeMultiplier,
     knockback: {
       counter: 0,

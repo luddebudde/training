@@ -40,7 +40,9 @@ export const createWisp = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 100,
     },
+    fearMult: 1,
     speed: 3 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -64,8 +66,8 @@ export const createWisp = (spawnWidth, spawnHeight) => {
       }
       const target = closestObject(targetables, wisp);
       const newVel = makeDirection(wisp.pos, target.pos);
-      wisp.vel.x = newVel.x * wisp.speed;
-      wisp.vel.y = newVel.y * wisp.speed;
+      wisp.vel.x = newVel.x * wisp.speed * wisp.fearMult;
+      wisp.vel.y = newVel.y * wisp.speed * wisp.fearMult;
     },
     draw: (ctx, assets, gameObject) => {
       ctx.save();

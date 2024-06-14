@@ -41,6 +41,10 @@ export const createPlayer = () => {
       counter: 0,
       mult: 1,
     },
+    statusEffects: {
+      slow: 0,
+      courage: 10,
+    },
     draw: (ctx, assets, object) => {
       ctx.drawImage(
         assets[currentCharacter.sprite],

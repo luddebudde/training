@@ -31,7 +31,9 @@ export const createTank = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 1 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -65,8 +67,8 @@ export const createTank = (spawnWidth, spawnHeight) => {
       // console.log(target);
       const newVel = makeDirection(tank.pos, target.pos);
       // console.log(charger.vel.x);
-      tank.vel.x = newVel.x * tank.speed;
-      tank.vel.y = newVel.y * tank.speed;
+      tank.vel.x = newVel.x * tank.speed * tank.fearMult;
+      tank.vel.y = newVel.y * tank.speed * tank.fearMult;
     },
   };
 

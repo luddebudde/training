@@ -36,7 +36,9 @@ export const createStealth = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: (stealthSpeed / 2) * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -60,8 +62,8 @@ export const createStealth = (spawnWidth, spawnHeight) => {
 
       const target = closestObject(targetables, stealth);
       const newVel = makeDirection(stealth.pos, target.pos);
-      stealth.vel.x = newVel.x * stealth.speed;
-      stealth.vel.y = newVel.y * stealth.speed;
+      stealth.vel.x = newVel.x * stealth.speed * stealth.fearMult;
+      stealth.vel.y = newVel.y * stealth.speed * stealth.fearMult;
 
       if (stealth.invincible === true) {
         stealth.color = "red";

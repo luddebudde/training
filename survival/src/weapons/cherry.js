@@ -24,6 +24,9 @@ const cherryStats = {
   //   pierce: 0,
   special: 0,
   lifetime: 500,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 function getRandomAngle() {

@@ -15,6 +15,9 @@ const wiperStats = {
 
   keepXpChance: 10,
   killAmount: 25,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createWiper = () => {

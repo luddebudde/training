@@ -18,7 +18,7 @@ import { vector } from "../vectors.js";
 import { worldsizeMultiplier } from "../world.js";
 
 export const createLimbots = (spawnWidth, spawnHeight) => {
-  const limbots = {
+  const limbot = {
     health: 50,
     // startRadius: 45,
     radius: 30 * worldsizeMultiplier,
@@ -31,8 +31,9 @@ export const createLimbots = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     statusEffects: {
-      slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 1.5 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -47,26 +48,26 @@ export const createLimbots = (spawnWidth, spawnHeight) => {
     priority: 10,
 
     update: () => {
-      if (doCirclesOverlap(limbots, player)) {
-        limbots.health = 0;
+      if (doCirclesOverlap(limbot, player)) {
+        limbot.health = 0;
         playHurt();
         player.vel.x = 0.5;
         player.vel.y = 0.5;
         // player.health -= charger.damage / (1000 / loopPerSecond);
-        dealDamage(player, "contact", limbots.damage);
+        dealDamage(player, "contact", limbot.damage);
       }
 
-      const newVel = makeDirection(limbots.pos, player.pos);
-      limbots.vel.x = newVel.x * limbots.speed;
-      limbots.vel.y = newVel.y * limbots.speed;
+      const newVel = makeDirection(limbot.pos, player.pos);
+      limbot.vel.x = newVel.x * limbot.speed * limbot.fearMult;
+      limbot.vel.y = newVel.y * limbot.speed * limbot.fearMult;
     },
     draw: (ctx, assets, gameObject) => {
       ctx.drawImage(
         assets.limbots,
-        limbots.pos.x - limbots.radius,
-        limbots.pos.y - limbots.radius,
-        limbots.radius * 2,
-        limbots.radius * 2
+        limbot.pos.x - limbot.radius,
+        limbot.pos.y - limbot.radius,
+        limbot.radius * 2,
+        limbot.radius * 2
       );
     },
     // hit: () => {
@@ -76,7 +77,7 @@ export const createLimbots = (spawnWidth, spawnHeight) => {
     // },
   };
 
-  entities.push(limbots);
-  enemies.push(limbots);
-  updateables.push(limbots);
+  entities.push(limbot);
+  enemies.push(limbot);
+  updateables.push(limbot);
 };

@@ -53,7 +53,9 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
     nerfamount: nerfamount,
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 4 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -95,8 +97,8 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
       // console.log(target);
       const newVel = makeDirection(nerfer.pos, target.pos);
       // console.log(charger.vel.x);
-      nerfer.vel.x = newVel.x * nerfer.speed;
-      nerfer.vel.y = newVel.y * nerfer.speed;
+      nerfer.vel.x = newVel.x * nerfer.speed * nerfer.fearMult;
+      nerfer.vel.y = newVel.y * nerfer.speed * nerfer.fearMult;
     },
   };
 

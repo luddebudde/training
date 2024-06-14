@@ -19,6 +19,9 @@ const axeStats = {
   cooldown: 300,
   special: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 let axeBullet = {};

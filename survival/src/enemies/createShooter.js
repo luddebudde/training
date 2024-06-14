@@ -49,7 +49,9 @@ export const createShooter = (spawnWidth, spawnHeight) => {
     attackCooldown: shootCooldown,
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 3 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -90,8 +92,8 @@ export const createShooter = (spawnWidth, spawnHeight) => {
           shooter.vel.y = -direction.y * (shooter.speed / 2);
         }
       } else {
-        shooter.vel.x = direction.x * shooter.speed;
-        shooter.vel.y = direction.y * shooter.speed;
+        shooter.vel.x = direction.x * shooter.speed * shooter.fearMult;
+        shooter.vel.y = direction.y * shooter.speed * shooter.fearMult;
       }
     },
     draw: (ctx, assets, gameObject) => {

@@ -31,7 +31,9 @@ export const createCharger = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10,
     },
+    fearMult: 1,
     speed: 5 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -50,10 +52,13 @@ export const createCharger = (spawnWidth, spawnHeight) => {
         playHurt();
         dealDamage(player, "contact", charger.damage);
       }
+
+      const fearMult = -charger.statusEffects.fear + 1;
+
       const target = closestObject(targetables, charger);
       const newVel = makeDirection(charger.pos, target.pos);
-      charger.vel.x = newVel.x * charger.speed;
-      charger.vel.y = newVel.y * charger.speed;
+      charger.vel.x = newVel.x * charger.speed * charger.fearMult;
+      charger.vel.y = newVel.y * charger.speed * charger.fearMult;
     },
   };
 

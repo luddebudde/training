@@ -27,6 +27,9 @@ const airstrikeStats = {
   // cooldown: 200,
   amount: 20,
   special: 0,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createAirstrike = () => {

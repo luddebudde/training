@@ -10,6 +10,9 @@
 // Make enemies collide with eachother
 // Chest menu fix
 // Upgrade selection menu fix
+// Fix bug where "health nerfers" will kill you even if you get revived or restarting without getting hit
+
+// Add thunder weapon which will increase fear for all enemies
 import { aimBullet } from "./weapons/createAimBullet.js";
 import {
   screenSizeMultipler as screenSizeMultiplier,
@@ -131,6 +134,7 @@ import { createBlueComputeBoss } from "./enemies/computes/createBlueComputeBoss.
 import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.js";
 import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
 import { getDistance } from "./makeDirection.js";
+import { pusher } from "./weapons/pusher.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -446,7 +450,7 @@ export const startGame = () => {
   weapons = [
     // currentCharacter.startingWeapon,
     aimBullet,
-    // holyArea,
+    holyArea,
     minigun,
     // wiper,
     randomAimBullet,
@@ -456,9 +460,10 @@ export const startGame = () => {
     cherry,
     // droper,
     // flamethrower,
-    // stunner,
+    stunner,
     // devistator,
-    bouncer,
+    // bouncer,
+    pusher,
   ];
 
   // createCollector(100, 100);
@@ -591,7 +596,7 @@ const update = () => {
     worldsizeMultiplier
   );
 
-  console.log(enemies.length);
+  // console.log(enemies.length);
 
   if (enemies.some((enemy) => enemy.name === "stealth")) {
     stealthCounter++;
@@ -870,7 +875,7 @@ const update = () => {
 
           if (!knockbackEnemies.includes(entity)) {
             // console.log(entity);
-            applyKnockback(entity, 10, bullet.knockback);
+            applyKnockback(entity, 0.1, bullet.knockback);
           }
           entity.hit?.();
           bullet.hit?.();

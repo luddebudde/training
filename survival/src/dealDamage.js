@@ -38,6 +38,20 @@ export const dealDamage = (
 
   if (creditWeapon !== undefined) {
     creditWeapon.statistics.damage += amount;
+    obj.statusEffects.courage -= creditWeapon.stats.applyEffect.fear;
+
+    if (obj.statusEffects.courage <= 0) {
+      obj.fearMult = -2;
+    }
+
+    console.log(obj.statusEffects);
+
+    // const fearMult = walker.statusEffects.courage > 0 ? 1 : -1;
+
+    // const newVel = makeDirection(walker.pos, target.pos);
+
+    // walker.vel.x = newVel.x * walker.speed * fearMult;
+    // walker.vel.y = newVel.y * walker.speed * fearMult;
 
     if (obj.health <= 0) {
       statistics.overall.kills += 1;

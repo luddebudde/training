@@ -44,7 +44,9 @@ export const createWalkerBoss = (
     },
     statusEffects: {
       slow: 0,
+      courage: 1000000,
     },
+    fearMult: 1,
     speed: 1 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,
@@ -66,8 +68,8 @@ export const createWalkerBoss = (
 
       // const newVel = makeDirection(walker.pos, player.pos);
       // console.log(makeDirection(walker, player));
-      walker.vel.x = newVel.x * walker.speed;
-      walker.vel.y = newVel.y * walker.speed;
+      walker.vel.x = newVel.x * walker.speed * walker.fearMult;
+      walker.vel.y = newVel.y * walker.speed * walker.fearMult;
       if (doCirclesOverlap(walker, player)) {
         // walker.health = 0;
         playHurt();

@@ -46,19 +46,21 @@ export const wave1 = () => {
     const spawnPos = getRandomSpawnPos();
     createWalker(spawnPos.x, spawnPos.y);
 
-    // createCharger(spawnPos.x, spawnPos.y);
-    // createTank(spawnPos.x, spawnPos.y + 100);
+    createCharger(spawnPos.x, spawnPos.y);
+    createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
 
-    // createWisp(spawnPos.x, spawnPos.y);
+    createWisp(spawnPos.x, spawnPos.y);
     // createBlueCompute(spawnPos.x, spawnPos.y);
 
-    // createStealth(spawnPos.x, spawnPos.y);
+    createJuggernaut(spawnPos.x, spawnPos.y);
+
+    createStealth(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
 
   // createShooter(spawnPos.x, spawnPos.y);
-  enemyAmountMultiplier = 0;
+  enemyAmountMultiplier = 10;
 };
 
 export const wave2 = () => {

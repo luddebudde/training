@@ -61,7 +61,9 @@ export const createMarcherBoss = (
     },
     statusEffects: {
       slow: 0,
+      courage: 1000000,
     },
+    fearMult: 1,
     speed: 20 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,

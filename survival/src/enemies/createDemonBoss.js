@@ -128,7 +128,9 @@ export const createDemonBoss = () => {
     },
     statusEffects: {
       slow: 0,
+      courage: 10000,
     },
+    fearMult: 1,
     speed: 1 * stats.curse * worldsizeMultiplier,
     knockback: {
       counter: 0,

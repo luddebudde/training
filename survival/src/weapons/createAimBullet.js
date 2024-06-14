@@ -23,6 +23,9 @@ const aimBulletStats = {
   pierce: 1,
   special: 0,
   knockback: 1,
+  applyEffect: {
+    fear: 0,
+  },
 };
 
 export const createAimBullet = () => {
@@ -57,6 +60,7 @@ export const createAimBullet = () => {
       x: -direction.x * speed,
       y: -direction.y * speed,
     },
+    // applyEffect: aimBulletStats.applyEffect,
     damage: damage,
     knockback: aimBulletStats.knockback,
     color: "blue",
