@@ -1,5 +1,5 @@
 import { animation } from "../animation.js";
-import { loopPerSecond } from "../basic.js";
+import { dt, loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
@@ -38,7 +38,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: 2 * stats.curse * worldsizeMultiplier,
@@ -56,10 +56,23 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     update: () => {
       const target = closestObject(targetables, walker);
 
-      const newVel = makeDirection(walker.pos, target.pos);
+      // walker.vel = { x: 0, y: 0 };
 
-      walker.vel.x = newVel.x * walker.speed * walker.fearMult;
-      walker.vel.y = newVel.y * walker.speed * walker.fearMult;
+      const r = vector.eachOther.sub(walker.pos, target.pos);
+      const rNorm = vector.alone.normalised(r);
+      const walkA = vector.alone.mult(
+        rNorm,
+        -1 * walker.speed * walker.fearMult
+      );
+      const dragA = vector.alone.mult(
+        rNorm,
+        10 * vector.eachOther.dot(walker.vel, walker.vel)
+      );
+      const a = vector.eachOther.add(walkA, dragA);
+
+      walker.vel = vector.eachOther.add(walker.vel, vector.alone.mult(a, dt));
+      console.log(dragA, walkA);
+
       if (doCirclesOverlap(walker, player)) {
         playHurt();
         dealDamage(player, "contact", walker.damage);

@@ -23,6 +23,7 @@ const stunnerStats = {
   area: 20,
   speed: 20,
   damage: 0,
+  duration: 0.5,
   cooldown: 50,
   pierce: 1,
   special: 0,
@@ -55,6 +56,10 @@ export const createSlash = () => {
     createExplosion(stunner, targetPos.x, targetPos.y, target.radius * 2.5, 10);
   }
   target.statusEffects.slow = 1;
+
+  setTimeout(() => {
+    target.statusEffects.slow = 0;
+  }, stunnerStats.duration * 1000);
 
   createSplatter(
     stunner,
@@ -96,21 +101,21 @@ export const stunner = {
   upgrades: {
     level: 0,
     statsOrder: [
-      ["cooldown", "damage"],
-      ["damage"],
-      ["damage"],
       ["cooldown"],
-      ["cooldown, damage"],
+      ["duration"],
+      ["duration"],
+      ["cooldown"],
+      ["cooldown", "duration"],
       ["special"],
     ],
-    amountOrder: [[-10, 5], [5], [10], [-10], [-20, 20], [1]],
+    amountOrder: [[-10], [0.25], [0.25], [-10], [-20, 0.5], [1]],
 
     description: [
-      "Decreases the cooldown between each shot",
-      "Increases the speed",
-      "Increases the damage",
-      "Increases the area",
-      "Increases the speed even further",
+      "Decreases cooldown",
+      "Increasement of stun duration",
+      "Increasement of stun duration even more",
+      "Decreases the cooldown",
+      "Decrease in cooldown and increases stun duration",
       "Adds special ability",
     ],
   },

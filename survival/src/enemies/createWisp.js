@@ -40,7 +40,7 @@ export const createWisp = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
-      courage: 100,
+      courage: 1000,
     },
     fearMult: 1,
     speed: 3 * stats.curse * worldsizeMultiplier,

@@ -33,7 +33,7 @@ console.log(randomComputeBoss);
 export const bossWaves = [2, 4, 5, 1];
 export const bossType = [
   // createShooterBoss,
-  randomComputeBoss,
+  // randomComputeBoss,
   // createWalkerBoss,
   // createMarcherBoss,
   // createShooterBoss,
@@ -42,25 +42,25 @@ export const bossType = [
 export let enemyAmountMultiplier = 1;
 
 export const wave1 = () => {
-  for (let i = 0; i < 5 * stats.curse; i++) {
+  for (let i = 0; i < 1 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos();
     createWalker(spawnPos.x, spawnPos.y);
 
-    createCharger(spawnPos.x, spawnPos.y);
-    createTank(spawnPos.x, spawnPos.y + 100);
+    // createCharger(spawnPos.x, spawnPos.y);
+    // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
 
-    createWisp(spawnPos.x, spawnPos.y);
+    // createWisp(spawnPos.x, spawnPos.y);
     // createBlueCompute(spawnPos.x, spawnPos.y);
 
-    createJuggernaut(spawnPos.x, spawnPos.y);
+    // createJuggernaut(spawnPos.x, spawnPos.y);
 
-    createStealth(spawnPos.x, spawnPos.y);
+    // createStealth(spawnPos.x, spawnPos.y);
   }
   // const spawnPos = getRandomSpawnPos(player);
 
   // createShooter(spawnPos.x, spawnPos.y);
-  enemyAmountMultiplier = 10;
+  enemyAmountMultiplier = 0;
 };
 
 export const wave2 = () => {

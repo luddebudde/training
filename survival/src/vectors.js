@@ -22,6 +22,9 @@ export const vector = {
 
       return finalObj;
     },
+    dot: (firstObj, secondObj) => {
+      return firstObj.x * secondObj.x + firstObj.y * secondObj.y;
+    },
   },
   alone: {
     neg: (firstObj) => {

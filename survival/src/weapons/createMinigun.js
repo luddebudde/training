@@ -18,7 +18,7 @@ const minigunStats = {
   pierce: 0,
   knockback: 0.2,
   applyEffect: {
-    fear: 5,
+    // fear: 5,
   },
 };
 

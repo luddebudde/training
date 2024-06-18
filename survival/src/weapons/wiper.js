@@ -4,15 +4,12 @@ import { playWiper } from "../sounds.js";
 import { stats } from "../stats.js";
 import { vector } from "../vectors.js";
 
-// const bulletSpeed = 20;
-const cooldown = 500;
-
 const wiperStats = {
   area: 0,
   speed: 0,
   damage: 0,
   finalLevel: 0,
-
+  cooldown: 500,
   keepXpChance: 10,
   killAmount: 25,
   applyEffect: {
@@ -28,8 +25,8 @@ export const createWiper = () => {
   const wiperBullet = {
     radius: 1 * area,
     // bulletHealth: 10,
-    attackIntervall: cooldown,
-    cooldown: cooldown,
+    attackIntervall: wiperStats.cooldown,
+    cooldown: wiperStats.cooldown,
     pos: {
       x: 0,
       y: 0,
@@ -53,8 +50,8 @@ export const wiper = {
   name: "wiper",
   timesTaken: 0,
   unlockRequirement: () => {},
-  attackIntervall: cooldown,
-  cooldown: cooldown,
+  attackIntervall: wiperStats.cooldown,
+  cooldown: wiperStats.cooldown,
   attack: () => {
     let amountOfEnemies = 0;
     playWiper();
@@ -81,7 +78,9 @@ export const wiper = {
     }, 1500);
   },
 
-  update: () => {},
+  update: () => {
+    wiper.attackIntervall = wiperStats.cooldown * stats.cooldown;
+  },
 
   statistics: {
     kills: 0,

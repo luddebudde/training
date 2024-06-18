@@ -39,7 +39,7 @@
 //   return closestElement;
 // };
 
-export const closestObject = (array, object) => {
+export const closestObject = (array, object, excludeObject = undefined) => {
   if (!array.length) {
     return "hej"; // Returnera null om arrayen är tom
   }
@@ -47,7 +47,12 @@ export const closestObject = (array, object) => {
   let closestElement = null;
   let closestDistance = Infinity;
 
+  // console.log(excludeObject);
+
   array.forEach((element) => {
+    if (element === excludeObject) {
+      return;
+    }
     const dx = object.pos.x - element.pos.x;
     const dy = object.pos.y - element.pos.y;
     const distanceSquared = dx * dx + dy * dy - (element.pullForceBonus || 0);

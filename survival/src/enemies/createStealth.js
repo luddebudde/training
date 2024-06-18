@@ -36,7 +36,7 @@ export const createStealth = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: (stealthSpeed / 2) * stats.curse * worldsizeMultiplier,

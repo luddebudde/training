@@ -1,4 +1,4 @@
-export const universalVolume = 0.5;
+export const universalVolume = 0;
 
 export const playLevelUp = () => {
   const audio = new Audio("public/sounds/levelUp.mp3");
@@ -31,6 +31,12 @@ export const playMinigunOverheat = () => {
 
 export const playWiper = () => {
   const audio = new Audio("public/sounds/wiperEffect.mp3");
+  audio.volume = 2 * universalVolume;
+  audio.play();
+};
+
+export const playScreecher = () => {
+  const audio = new Audio("public/sounds/screecher.mp3");
   audio.volume = 2 * universalVolume;
   audio.play();
 };
@@ -122,7 +128,7 @@ export const playMassiveChargedShot = () => {
 
 export const playDemonScreech = () => {
   const audio = new Audio("public/sounds/demonScreech.mp3");
-  audio.volume = 1 * universalVolume;
+  audio.volume = 1.5 * universalVolume;
   audio.play();
 };
 

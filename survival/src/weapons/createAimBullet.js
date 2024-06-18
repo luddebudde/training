@@ -28,7 +28,7 @@ const aimBulletStats = {
   },
 };
 
-export const createAimBullet = () => {
+const createAimBullet = () => {
   // console.log(aimBullet.area);
   const area = stats.area * aimBulletStats.area;
   const speed = stats.speed * aimBulletStats.speed;

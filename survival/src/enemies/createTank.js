@@ -31,7 +31,7 @@ export const createTank = (spawnWidth, spawnHeight) => {
     },
     statusEffects: {
       slow: 0,
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: 1 * stats.curse * worldsizeMultiplier,

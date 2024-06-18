@@ -31,7 +31,7 @@ export const createLimbots = (spawnWidth, spawnHeight) => {
       y: 0,
     },
     statusEffects: {
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: 1.5 * stats.curse * worldsizeMultiplier,

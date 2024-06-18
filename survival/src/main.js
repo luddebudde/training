@@ -10,9 +10,21 @@
 // Make enemies collide with eachother
 // Chest menu fix
 // Upgrade selection menu fix
-// Fix bug where "health nerfers" will kill you even if you get revived or restarting without getting hit
+// Fix bug where "health nerfers" will kill you even if you get revived or restarting without getting hit [UPDATE: Not sure why, and it's not nerfers]
 
 // Add thunder weapon which will increase fear for all enemies
+
+// New enemy idea!
+// const target = closestObject(targetables, walker);
+
+//       const a = vector.alone.mult(
+//         makeDirection(walker.pos, target.pos),
+//         1 * walker.speed * walker.fearMult
+//       );
+
+//       walker.vel = vector.eachOther.add(walker.vel, vector.alone.mult(a, dt));
+//       // console.log(a);
+
 import { aimBullet } from "./weapons/createAimBullet.js";
 import {
   screenSizeMultipler as screenSizeMultiplier,
@@ -23,7 +35,7 @@ import {
 import { createWalker } from "./enemies/createWalker.js";
 import { doCirclesOverlap } from "./doCirlceOverlap.js";
 import { spawnEnemy } from "./spawnEnemy.js";
-import { loopPerSecond } from "./basic.js";
+import { dt, loopPerSecond } from "./basic.js";
 import { shootWeapons } from "./shootWeapons.js";
 import { createShotgun, shotgun } from "./weapons/createShotgun.js";
 import { keyDownTracker, oneTimeKeyPress } from "./keyDownTracker.js";
@@ -135,6 +147,8 @@ import { createGreyComputeBoss } from "./enemies/computes/createGreyComputeBoss.
 import { createRedComputeBoss } from "./enemies/computes/createRedComputeBoss.js";
 import { getDistance } from "./makeDirection.js";
 import { pusher } from "./weapons/pusher.js";
+import { screecher } from "./weapons/screecher.js";
+import { lightningStriker } from "./weapons/lightningStrike.js";
 
 export const canvas = document.getElementById("theCanvas");
 export const ctx = canvas.getContext("2d");
@@ -222,10 +236,12 @@ export const allArrays = [
   bullets,
   areaEffects,
   bosses,
+  blankImmune,
   xps,
   chests,
   burningEntities,
   updateables,
+  movable,
 ];
 
 // const worldArrays = [entities, worldObjects, bullets];
@@ -449,21 +465,23 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    aimBullet,
-    holyArea,
-    minigun,
+    // aimBullet,
+    // holyArea,
+    // minigun,
     // wiper,
-    randomAimBullet,
+    // randomAimBullet,
     // axe,
     // airstrike,
     // selfImpaler,
-    cherry,
+    // cherry,
     // droper,
     // flamethrower,
-    stunner,
+    // stunner,
     // devistator,
     // bouncer,
-    pusher,
+    // pusher,
+    // screecher,
+    // lightningStriker,
   ];
 
   // createCollector(100, 100);
@@ -730,20 +748,29 @@ const update = () => {
       createXp(entity.pos.x, entity.pos.y, entity.xp);
     }
 
-    // entities.forEach((entity2) => {
-    //   if (doCirclesOverlap(entity, entity2)) {
-    //     const force = {
-    //       x: (entity.pos.x - entity2.pos.x) / 10,
-    //       y: (entity.pos.y - entity2.pos.y) / 10,
-    //     };
-    //     console.log(force);
-    //     entity.pos.x += force.x;
-    //     entity.pos.y += force.y;
-
-    //     entity2.pos.x -= force.x;
-    //     entity2.pos.y -= force.y;
-    //   }
-    // });
+    // Collision
+    entities.forEach((entity2) => {
+      if (entity === entity2) {
+        return;
+      }
+      if (doCirclesOverlap(entity, entity2)) {
+        // const r = vector.eachOther.sub(entity.pos, entity2.pos);
+        // const rNorm = vector.alone.normalised(r);
+        // const k = 0;
+        // const m = 1;
+        // const a = vector.alone.mult(rNorm, -k / vector.eachOther.dot(r, r));
+        // entity.vel = vector.eachOther.add(entity.vel, vector.alone.mult(a, dt));
+        // {
+        //   x: (entity.pos.x - entity2.pos.x) / 15,
+        //   y: (entity.pos.y - entity2.pos.y) / 15,
+        // };
+        // console.log(force);
+        // entity.pos.x += r.x / 30;
+        // entity.pos.y += r.y / 30;
+        // entity2.pos.x -= force.x;
+        // entity2.pos.y -= force.y;
+      }
+    });
   });
 
   xps.forEach((xp) => {

@@ -29,6 +29,8 @@ import { flamethrower } from "../weapons/flameThrower.js";
 import { stunner } from "../weapons/stunner.js";
 import { devistator } from "../weapons/devistator.js";
 import { bouncer } from "../weapons/bouncer.js";
+import { screecher } from "../weapons/screecher.js";
+import { lightningStriker } from "../weapons/lightningStrike.js";
 
 let upgradeWeaponPool = [];
 let amountOfWeapons = 0;
@@ -51,6 +53,8 @@ export const totalWeapons = [
   devistator,
   bouncer,
   pusher,
+  screecher,
+  lightningStriker,
 
   // jedå,
   // colin,
@@ -75,6 +79,8 @@ export const availableWeapons = [
   devistator,
   bouncer,
   pusher,
+  screecher,
+  lightningStriker,
 ];
 
 let undefinedButtons = 0;

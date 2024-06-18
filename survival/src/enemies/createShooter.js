@@ -49,7 +49,7 @@ export const createShooter = (spawnWidth, spawnHeight) => {
     attackCooldown: shootCooldown,
     statusEffects: {
       slow: 0,
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: 3 * stats.curse * worldsizeMultiplier,

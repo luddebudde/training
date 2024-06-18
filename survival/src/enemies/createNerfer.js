@@ -53,7 +53,7 @@ export const createNerfer = (spawnWidth, spawnHeight) => {
     nerfamount: nerfamount,
     statusEffects: {
       slow: 0,
-      courage: 10,
+      courage: 100,
     },
     fearMult: 1,
     speed: 4 * stats.curse * worldsizeMultiplier,

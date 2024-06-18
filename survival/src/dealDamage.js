@@ -44,7 +44,7 @@ export const dealDamage = (
       obj.fearMult = -2;
     }
 
-    console.log(obj.statusEffects);
+    // console.log(obj.statusEffects);
 
     // const fearMult = walker.statusEffects.courage > 0 ? 1 : -1;
 
