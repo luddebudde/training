@@ -12,7 +12,8 @@ export const Blugo = {
     growth: 1,
     greed: 1,
 
-    movementSpeed: 5,
+    movementSpeed: 100,
+    // movementSpeed: 5,
 
     maxHealth: 100,
     // maxHealth: 1000000,
@@ -30,7 +31,7 @@ export const Blugo = {
     luck: 1,
     curse: 1,
     cooldown: 1,
-    revives: 1,
+    revives: 10,
   },
   levelUpIncrease: () => {
     // stats.curse += 0.1;

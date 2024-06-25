@@ -31,7 +31,7 @@ const revivePlayer = () => {
 
   player.speedMult = 1;
   player.health = stats.maxHealth;
-  entities.push(player);
+  // entities.push(player);
 
   createBlank(player.pos.x, player.pos.y);
   bullets.length = 0;

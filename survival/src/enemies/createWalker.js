@@ -14,7 +14,7 @@ import {
 import { makeDirection } from "../makeDirection.js";
 import { playHurt, playMinigunOverheat } from "../sounds.js";
 import { stats } from "../stats.js";
-import { vector } from "../vectors.js";
+import { origo, vector } from "../vectors.js";
 import { worldsizeMultiplier } from "../world.js";
 
 const walkerAnimations = animation({
@@ -60,18 +60,18 @@ export const createWalker = (spawnWidth, spawnHeight) => {
 
       const r = vector.eachOther.sub(walker.pos, target.pos);
       const rNorm = vector.alone.normalised(r);
-      const walkA = vector.alone.mult(
+      const walkAcc = vector.alone.mult(
         rNorm,
-        -1 * walker.speed * walker.fearMult
+        -10 * walker.speed * walker.fearMult
       );
-      const dragA = vector.alone.mult(
-        rNorm,
-        10 * vector.eachOther.dot(walker.vel, walker.vel)
-      );
-      const a = vector.eachOther.add(walkA, dragA);
+      // const dragA = origo;
+      // const a = vector.eachOther.add(walkAcc, dragA);
 
-      walker.vel = vector.eachOther.add(walker.vel, vector.alone.mult(a, dt));
-      console.log(dragA, walkA);
+      walker.vel = vector.eachOther.add(
+        walker.vel,
+        vector.alone.mult(walkAcc, dt)
+      );
+      // console.log(walker.vel);
 
       if (doCirclesOverlap(walker, player)) {
         playHurt();

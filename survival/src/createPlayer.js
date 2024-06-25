@@ -13,6 +13,7 @@ export const changeCurrentCharacter = (character) => {
 export const createPlayer = () => {
   const radius = 40;
   return {
+    isPlayer: true,
     character: currentCharacter,
     maxHealth: stats.maxHealth,
     health: stats.maxHealth,

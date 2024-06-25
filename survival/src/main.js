@@ -439,9 +439,10 @@ export const startGame = () => {
 
   placeEggMap(0, -5000);
 
-  enemies.length = 0;
-  entities.length = 0;
   entities.push(player);
+
+  player.pos.x += 500;
+  console.log(entities);
 
   player.speedMult = 1;
 
@@ -465,7 +466,7 @@ export const startGame = () => {
   maxEnemyCount = (enemyFactor * stats.curse) / 3;
   weapons = [
     // currentCharacter.startingWeapon,
-    // aimBullet,
+    aimBullet,
     // holyArea,
     // minigun,
     // wiper,
@@ -473,12 +474,12 @@ export const startGame = () => {
     // axe,
     // airstrike,
     // selfImpaler,
-    // cherry,
+    cherry,
     // droper,
     // flamethrower,
     // stunner,
     // devistator,
-    // bouncer,
+    bouncer,
     // pusher,
     // screecher,
     // lightningStriker,
@@ -629,20 +630,22 @@ const update = () => {
   }
 
   if (isKeyDown("KeyW")) {
-    player.pos.y -= player.speed * player.speedMult;
+    player.vel.y = player.vel.y + -player.speed * player.speedMult * dt;
     // moveCtx.y += player.speed;
-  }
-  if (isKeyDown("KeyS")) {
-    player.pos.y += player.speed * player.speedMult;
+  } else if (isKeyDown("KeyS")) {
+    player.vel.y = player.vel.y + player.speed * player.speedMult * dt;
     // moveCtx.y -= player.speed;
+  } else {
+    // player.vel.y = 0;
   }
   if (isKeyDown("KeyA")) {
-    player.pos.x -= player.speed * player.speedMult;
+    player.vel.x = player.vel.x + -player.speed * player.speedMult * dt;
     // moveCtx.x += player.speed;
-  }
-  if (isKeyDown("KeyD")) {
-    player.pos.x += player.speed * player.speedMult;
+  } else if (isKeyDown("KeyD")) {
+    player.vel.x = player.vel.x + player.speed * player.speedMult * dt;
     // moveCtx.x -= player.speed;
+  } else {
+    // player.vel.x = 0;
   }
 
   if (isKeyDown("Escape")) {
@@ -742,36 +745,38 @@ const update = () => {
   }
 
   entities.forEach((entity) => {
+    // console.log(entity);
     entity.update?.();
 
     if (entity.health <= 0) {
       createXp(entity.pos.x, entity.pos.y, entity.xp);
     }
 
+    // Drag
+    const dragA = vector.alone.mult(
+      vector.alone.normalised(entity.vel),
+      -20 * vector.alone.norm(entity.vel)
+    );
+    entity.vel = vector.eachOther.add(entity.vel, vector.alone.mult(dragA, dt));
+
     // Collision
     entities.forEach((entity2) => {
       if (entity === entity2) {
         return;
       }
-      if (doCirclesOverlap(entity, entity2)) {
-        // const r = vector.eachOther.sub(entity.pos, entity2.pos);
-        // const rNorm = vector.alone.normalised(r);
-        // const k = 0;
-        // const m = 1;
-        // const a = vector.alone.mult(rNorm, -k / vector.eachOther.dot(r, r));
-        // entity.vel = vector.eachOther.add(entity.vel, vector.alone.mult(a, dt));
-        // {
-        //   x: (entity.pos.x - entity2.pos.x) / 15,
-        //   y: (entity.pos.y - entity2.pos.y) / 15,
-        // };
-        // console.log(force);
-        // entity.pos.x += r.x / 30;
-        // entity.pos.y += r.y / 30;
-        // entity2.pos.x -= force.x;
-        // entity2.pos.y -= force.y;
+      if (!doCirclesOverlap(entity, entity2)) {
+        return;
       }
+
+      const r = vector.eachOther.sub(entity2.pos, entity.pos);
+      const rNorm = vector.alone.normalised(r);
+      const k = 10000;
+      const a = vector.alone.mult(rNorm, -k / vector.alone.norm(r));
+      entity.vel = vector.eachOther.add(entity.vel, vector.alone.mult(a, dt));
     });
   });
+
+  // console.log("");
 
   xps.forEach((xp) => {
     if (doCirclesOverlap(xp, player)) {
@@ -976,6 +981,11 @@ const update = () => {
 
     gameObjects.forEach((object) => {
       if (object.vel !== undefined) {
+        // const dragA = vector.alone.mult(
+        //   vector.alone.normalised(walker.vel),
+        //   -20 * vector.alone.norm(walker.vel)
+        // );
+
         const slowdownFactor =
           object.statusEffects !== undefined
             ? 1 - object.statusEffects.slow
@@ -984,12 +994,10 @@ const update = () => {
         object.pos.y += object.vel.y * slowdownFactor;
       }
 
-      // console.log(gameObjects);
       if (object.draw === undefined) {
         drawObject(ctx, object);
       } else {
         object.draw?.(ctx, assets, object);
-        // drawText("helkl", object.x, object.y, "red");
       }
       if (object.statusEffects !== undefined) {
         if (object.statusEffects.oiled) {
