@@ -1,6 +1,7 @@
 import { animation } from "./animation.js";
 import { dealDamage } from "./dealDamage.js";
 import { assets, areaEffects, worldObjects } from "./main.js";
+import { removeFromArrays } from "./removeFromArrays.js";
 
 export const createExplosion = (
   weapon,
@@ -42,7 +43,8 @@ export const createExplosion = (
       const stepInfo = explosionAnimation.step();
 
       if (stepInfo) {
-        explosion.hasExpired = true;
+        // explosion.hasExpired = true;
+        removeFromArrays(explosion);
       }
     },
     onHit: (explosion, enemy) => {

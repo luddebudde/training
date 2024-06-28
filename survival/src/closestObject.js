@@ -39,24 +39,51 @@
 //   return closestElement;
 // };
 
+// export const closestObject = (array, object, excludeObject = undefined) => {
+//   if (!array.length) {
+//     return "hej";
+//   }
+
+//   let closestElement = null;
+//   let closestDistance = Infinity;
+
+//   array.forEach((element) => {
+//     if (element === excludeObject) {
+//       return;
+//     }
+//     const dx = object.pos.x - element.pos.x;
+//     const dy = object.pos.y - element.pos.y;
+//     const distanceSquared = dx * dx + dy * dy - (element.pullForceBonus || 0);
+
+//     if (distanceSquared < closestDistance) {
+//       closestDistance = distanceSquared;
+//       closestElement = element;
+//     }
+//   });
+
+//   return closestElement;
+// };
+
 export const closestObject = (array, object, excludeObject = undefined) => {
   if (!array.length) {
-    return "hej"; // Returnera null om arrayen är tom
+    return null; // Returnera null om arrayen är tom
   }
 
   let closestElement = null;
   let closestDistance = Infinity;
 
-  // console.log(excludeObject);
-
   array.forEach((element) => {
-    if (element === excludeObject) {
+    // Hoppa över det objekt som ska exkluderas
+    if (excludeObject && element === excludeObject) {
       return;
     }
+
+    // Beräkna avståndet mellan object och element
     const dx = object.pos.x - element.pos.x;
     const dy = object.pos.y - element.pos.y;
     const distanceSquared = dx * dx + dy * dy - (element.pullForceBonus || 0);
 
+    // Uppdatera närmaste element om detta element är närmare
     if (distanceSquared < closestDistance) {
       closestDistance = distanceSquared;
       closestElement = element;

@@ -56,7 +56,7 @@ export const createWalker = (spawnWidth, spawnHeight) => {
     update: () => {
       const target = closestObject(targetables, walker);
 
-      // walker.vel = { x: 0, y: 0 };
+      console.log(target);
 
       const r = vector.eachOther.sub(walker.pos, target.pos);
       const rNorm = vector.alone.normalised(r);
@@ -64,14 +64,11 @@ export const createWalker = (spawnWidth, spawnHeight) => {
         rNorm,
         -10 * walker.speed * walker.fearMult
       );
-      // const dragA = origo;
-      // const a = vector.eachOther.add(walkAcc, dragA);
 
       walker.vel = vector.eachOther.add(
         walker.vel,
         vector.alone.mult(walkAcc, dt)
       );
-      // console.log(walker.vel);
 
       if (doCirclesOverlap(walker, player)) {
         playHurt();

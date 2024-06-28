@@ -5,10 +5,12 @@ import {
   bullets,
   mousePos,
   player,
+  printWeapons,
   targetables,
   worldObjects,
 } from "../main.js";
 import { makeDirection } from "../makeDirection.js";
+import { removeFromArrays } from "../removeFromArrays.js";
 import { statistics } from "../statistics.js";
 import { stats } from "../stats.js";
 
@@ -102,7 +104,19 @@ export const createCherry = () => {
           100,
           100
         );
-        targetables.splice(index, 1);
+        // const elementToRemove = cherryBullet;
+        // const printIndex = printWeapons.findIndex(
+        //   (element) => element === elementToRemove
+        // );
+
+        // if (printIndex !== -1) {
+        //   console.log(printWeapons[printIndex]);
+        //   // printWeapons.splice(printIndex, 1);
+        // }
+
+        // // printWeapons.splice(index, 1);
+        // targetables.splice(printIndex, 1);
+        removeFromArrays(cherryBullet);
       }
     },
     draw: (ctx, assets) => {
@@ -122,6 +136,7 @@ export const createCherry = () => {
       ctx.restore();
     },
   };
+  printWeapons.push(cherryBullet);
   targetables.push(cherryBullet);
 };
 

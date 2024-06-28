@@ -1,4 +1,4 @@
-import { loopPerSecond } from "../basic.js";
+import { dt, loopPerSecond } from "../basic.js";
 import { closestObject } from "../closestObject.js";
 import { dealDamage } from "../dealDamage.js";
 import { doCirclesOverlap } from "../doCirlceOverlap.js";
@@ -39,9 +39,8 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       counter: 0,
       mult: 1,
     },
-    // speed: 0,
+
     damage: 0.5,
-    // damage: 0,
     color: "black",
     team: "enemy",
     xp: Math.random() * 25 * stats.growth,
@@ -56,9 +55,18 @@ export const createCharger = (spawnWidth, spawnHeight) => {
       const fearMult = -charger.statusEffects.fear + 1;
 
       const target = closestObject(targetables, charger);
-      const newVel = makeDirection(charger.pos, target.pos);
-      charger.vel.x = newVel.x * charger.speed * charger.fearMult;
-      charger.vel.y = newVel.y * charger.speed * charger.fearMult;
+
+      const r = vector.eachOther.sub(charger.pos, target.pos);
+      const rNorm = vector.alone.normalised(r);
+      const walkAcc = vector.alone.mult(
+        rNorm,
+        -10 * charger.speed * charger.fearMult
+      );
+
+      charger.vel = vector.eachOther.add(
+        charger.vel,
+        vector.alone.mult(walkAcc, dt)
+      );
     },
   };
 

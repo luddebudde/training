@@ -44,10 +44,10 @@ export let enemyAmountMultiplier = 1;
 export const wave1 = () => {
   for (let i = 0; i < 1 * stats.curse; i++) {
     const spawnPos = getRandomSpawnPos();
-    createWalker(spawnPos.x, spawnPos.y);
+    // createWalker(spawnPos.x, spawnPos.y);
     // createBlueCompute(spawnPos.x, spawnPos.y);
 
-    // createCharger(spawnPos.x, spawnPos.y);
+    createCharger(spawnPos.x + i * 50, spawnPos.y);
     // createTank(spawnPos.x, spawnPos.y + 100);
     // createNerfer(spawnPos.x, spawnPos.y);
 
@@ -61,7 +61,7 @@ export const wave1 = () => {
   // const spawnPos = getRandomSpawnPos(player);
 
   // createShooter(spawnPos.x, spawnPos.y);
-  enemyAmountMultiplier = 1;
+  enemyAmountMultiplier = 10;
 };
 
 export const wave2 = () => {

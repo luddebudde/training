@@ -12,7 +12,8 @@
 // Upgrade selection menu fix
 // Fix bug where "health nerfers" will kill you even if you get revived or restarting without getting hit [UPDATE: Not sure why, and it's not nerfers]
 
-// Add thunder weapon which will increase fear for all enemies
+// Add thunder weapon which can be combined with lightning striker to be even more powerful
+// Fix ligtnign striker image rendering
 
 // New enemy idea!
 // const target = closestObject(targetables, walker);
@@ -228,6 +229,7 @@ let burningEntities = [];
 export const allArrays = [
   enemies,
   entities,
+  printWeapons,
   targetables,
   pickups,
   mapObjects,
@@ -276,6 +278,7 @@ export const assets = {
   fire: await loadImage("public/animations/fireAnimation.gif"),
   flame: await loadImage("public/animations/flaming.png"),
   slice: await loadImage("public/animations/slice.png"),
+  lightning: await loadImage("public/animations/lightning.png"),
   comet: await loadImage("public/animations/comet.png"),
   marcher: await loadImage("public/animations/marcher_rotated.png"),
   bigFireball: await loadImage("public/sprites/bigFireball.png"),
@@ -467,8 +470,8 @@ export const startGame = () => {
   weapons = [
     // currentCharacter.startingWeapon,
     aimBullet,
-    // holyArea,
-    // minigun,
+    holyArea,
+    minigun,
     // wiper,
     // randomAimBullet,
     // axe,
@@ -479,10 +482,10 @@ export const startGame = () => {
     // flamethrower,
     // stunner,
     // devistator,
-    bouncer,
+    // bouncer,
     // pusher,
     // screecher,
-    // lightningStriker,
+    lightningStriker,
   ];
 
   // createCollector(100, 100);
@@ -1178,7 +1181,7 @@ const update = () => {
     xps,
     printWeapons,
     areaEffects,
-    targetables,
+    // targetables,
     pickups,
     chests,
     mapObjects,
