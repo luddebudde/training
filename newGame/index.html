@@ -23,18 +23,43 @@
     <!-- <canvas id="theCanvas" width="2650" height="1600"> </canvas>
     <div id="background"></div> -->
 
-    <div
-      id="myElement"
+    <!-- <div
+      id="mapDiv"
       ;
-      style="display: flex; flex-direction: column; align-items: center"
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid black;
+        padding: 20px;
+      "
+    > -->
+    <div
+      id="mapDiv"
+      style="
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: start;
+        border: 5px solid black;
+        padding: 0px;
+        width: 1476px; /* Set the desired width */
+        height: 988x;
+        margin: 0 auto; /* Center horizontally */
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Center vertically */
+      "
     >
-      <button
+      <!-- <button
         style="
           background-color: red;
           color: green;
           font-size: 30px;
           padding: 50px;
           padding-bottom: 20px;
+          margin-bottom: 10px;
         "
         onclick="this.style.color = this.style.color === 'black' ? 'green' : 'black';"
       >
@@ -48,11 +73,12 @@
           font-size: 30px;
           padding: 50px;
           padding-bottom: 20px;
+          margin-bottom: 10px;
         "
         onclick="this.style.color = this.style.color === 'black' ? 'green' : 'black';"
       >
         Hello
-      </button>
+      </button> -->
     </div>
   </body>
 </html>
