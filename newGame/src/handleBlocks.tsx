@@ -1,27 +1,49 @@
-import { checkCloseMapBlocks } from "./checkCloseMapBlocks";
+import { checkNeighbors } from "./checkNeighbors"
+import { hexToRgb } from "./hexToRgb";
 import { pathBlocks } from "./main";
 
-export const handleBlocks = () => {
-  setTimeout(() => {
-    pathBlocks.forEach(block => {
-      // Get neighboring green blocks
-      const greenNeighboringBlocks = checkCloseMapBlocks(block);
+type Block = {
+  row: number,
+  column: number,
+  color: string;
+  text: string;
+}
 
-      console.log(greenNeighboringBlocks, "hi");
+export const chosePathGeneration = (startingBlock: Block) => {
+  const targetColor: string = startingBlock.color
+  const neighboringBlocks = checkNeighbors(startingBlock)
+  
+  const contestantNeighbors: Block[] = []
 
-      // Choose a random block if there are any
-      if (greenNeighboringBlocks.length > 0) {
-        if (Math.random() < 0.3) {
-          const chosenBlock = greenNeighboringBlocks[Math.floor(Math.random() * greenNeighboringBlocks.length)];
-          chosenBlock.color = `#FFB266`;
-          pathBlocks.push(chosenBlock);
-        }
+  neighboringBlocks.forEach((neighBlock: Block) => {
+    // console.log(neighBlock);
+    
+    if (neighBlock === undefined || neighBlock.color === targetColor) {
+      return
+    }
+    let secondNeighborBlocks = checkNeighbors(neighBlock)
 
-        const chosenBlock = greenNeighboringBlocks[Math.floor(Math.random() * greenNeighboringBlocks.length)];
-        console.log("chosenBlock", chosenBlock);
-        chosenBlock.color = `#FFB266`;
-        pathBlocks.push(chosenBlock);
-      }
-    });
-  }, 10);
-};
+     secondNeighborBlocks = secondNeighborBlocks.filter((block: Block) => block !== undefined);
+    const matchingBlocks = secondNeighborBlocks.filter((block: Block) => block.color === targetColor);
+
+
+    
+
+
+    if (matchingBlocks.length <= 1){
+       contestantNeighbors.push(neighBlock)
+       console.log(matchingBlocks, "matchingBlocks");
+    }
+  });
+
+
+  const chosenNeighbor = contestantNeighbors[Math.floor(Math.random() * contestantNeighbors.length)]
+
+  console.log(chosenNeighbor, "contestantNeighbors");
+  
+  
+  chosenNeighbor.color = targetColor
+
+  
+  return chosenNeighbor
+}

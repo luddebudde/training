@@ -1,6 +1,5 @@
-import { Vector } from "three/examples/jsm/Addons.js";
-import {checkCloseMapBlocks} from "./checkCloseMapBlocks.tsx";
-import { handleBlocks } from "./handleBlocks.tsx";
+import {checkNeighbors} from "./checkNeighbors.tsx";
+import { chosePathGeneration, handleBlocks } from "./handleBlocks.tsx";
 import { hexToRgb } from "./hexToRgb.tsx";
 import { mapLayouts } from "./mapLayouts.tsx";
 
@@ -36,59 +35,68 @@ export const mapBlocks = [];
 export const pathBlocks = []
 
 type Block = {
-  index: number;
+  row: number,
+  column: number,
   color: string;
   text: string;
 }
 
-export const chosenMapLayout = 
+// export const chosenMapLayout = 
 // mapLayouts[3]
-mapLayouts[Math.floor(Math.random() * mapLayouts.length)]
+// mapLayouts[Math.floor(Math.random() * mapLayouts.length)]
 
 
-for (let x = 54; x > 0; x--) {
-  let colorHex: string = '#009900'
-  let blockText: string = ""
-
-  chosenMapLayout.forEach(tile => {
-
-    
-      if (Array.isArray(tile)) {
-        
-        if (x === tile[0]){
-          colorHex = '#FFB266'
-        } if ((tile[1] === "Enemy" || tile[1] === "Boss") && x === tile[0]){
-          console.log(tile[1]);
-          
-          blockText = tile[1]
-          colorHex = '#FF4000'
-        }
-
-      } else {
-      if (x === tile){
-        colorHex = '#FFB266'
-      }}
-    });
-
+// setTimeout(() => {
   
-  const colorRgb = hexToRgb(colorHex);
 
-  const currentBlock: Block = {
-    index: x,
-    color: colorRgb,
-    text: blockText,
-  };
+  for (let row = 0; row <= 5; row++) {
+    for (let column = 0; column <= 8; column++) {
+      let colorHex: string = '#009900';
+      let blockText: string = '';
 
-  if (currentBlock.color === hexToRgb(`#FFB266`)){
-    pathBlocks.push(currentBlock)
+      if (row === 5 && column === 4) {
+        colorHex = '#FFB266';
+      }
+
+      const colorRgb = hexToRgb(colorHex);
+
+      const currentBlock: Block = {
+        row: row,
+        column: column,
+        color: colorRgb,
+        text: blockText,
+      };
+
+      // Anropa den importerade funktionen
+      if (row === 5 && column === 4) {
+        pathBlocks.push(currentBlock)
+      }
+
+      // console.log(currentBlock);
+
+      // Lägg till blocket i mapBlocks arrayen
+      mapBlocks.push(currentBlock);
+    }
   }
 
-  mapBlocks.unshift(currentBlock); 
-}
-
-console.log(mapBlocks);
 
 
+// console.log(mapBlocks);
+
+(async () => {
+  // Dynamisk import och tillgång till den exporterade funktionen
+  const module = await import('./handleBlocks');
+  const chosePathGeneration = module.chosePathGeneration;
+
+  for (let row = 0; row <= 5; row++) {
+    
+
+    const result: Block = chosePathGeneration(pathBlocks[pathBlocks.length - 1]);
+    // console.log("results", result); 
+
+    // pathBlocks.push(result)
+  }
+})();
 
 
 mapBlocks.forEach((block, loopIndex) => {
@@ -113,3 +121,4 @@ mapBlocks.forEach((block, loopIndex) => {
 });
 
 
+// }, 100);
