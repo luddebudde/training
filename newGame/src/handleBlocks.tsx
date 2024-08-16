@@ -1,49 +1,41 @@
 import { checkNeighbors } from "./checkNeighbors"
-import { hexToRgb } from "./hexToRgb";
-import { pathBlocks } from "./main";
+import { Block } from "./main"
 
-type Block = {
-  row: number,
-  column: number,
-  color: string;
-  text: string;
-}
+// export type Block = {
+//   row: number,
+//   column: number,
+//   color: string;
+//   text: string;
+// }
+
+const targetColors = [`#FFB266`, `#FF8000`, "#FF0000"];
 
 export const chosePathGeneration = (startingBlock: Block) => {
-  const targetColor: string = startingBlock.color
+  const targetColor = (color: string) => {
+    return targetColors.includes(color)
+  }
+  // const targetColor: string = startingBlock.color
   const neighboringBlocks = checkNeighbors(startingBlock)
   
   const contestantNeighbors: Block[] = []
 
-  neighboringBlocks.forEach((neighBlock: Block) => {
-    // console.log(neighBlock);
-    
-    if (neighBlock === undefined || neighBlock.color === targetColor) {
-      return
-    }
-    let secondNeighborBlocks = checkNeighbors(neighBlock)
+    for (const neighBlock of neighboringBlocks) {
+    if (neighBlock !== undefined && !targetColor(neighBlock.color)) {
+      let secondNeighborBlocks = checkNeighbors(neighBlock)
 
-     secondNeighborBlocks = secondNeighborBlocks.filter((block: Block) => block !== undefined);
-    const matchingBlocks = secondNeighborBlocks.filter((block: Block) => block.color === targetColor);
+      // secondNeighborBlocks = secondNeighborBlocks.filter((block: Block) => block !== undefined);
+      // const matchingBlocks = secondNeighborBlocks.filter((block: Block) => block.color === targetColor);
+ 
+      secondNeighborBlocks = secondNeighborBlocks.filter((block): block is Block => block !== undefined);
+      const matchingBlocks = secondNeighborBlocks.filter((block): block is Block => targetColor(block.color));
 
+      
+   
 
-    
-
-
-    if (matchingBlocks.length <= 1){
-       contestantNeighbors.push(neighBlock)
-       console.log(matchingBlocks, "matchingBlocks");
-    }
-  });
-
-
-  const chosenNeighbor = contestantNeighbors[Math.floor(Math.random() * contestantNeighbors.length)]
-
-  console.log(chosenNeighbor, "contestantNeighbors");
-  
-  
-  chosenNeighbor.color = targetColor
-
-  
-  return chosenNeighbor
+     if (matchingBlocks.length <= 1){
+        contestantNeighbors.push(neighBlock)
+     }
+    } 
+  };
+  return contestantNeighbors
 }
