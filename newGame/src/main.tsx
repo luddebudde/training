@@ -1,6 +1,5 @@
-import { hexToRgb } from "./hexToRgb.tsx";
-import { survivalLetter } from "./survivalLetter.tsx";
-// import { survivalLetter } from './survivalLetter.tsx';
+import { player } from "./player.tsx";
+import { walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -41,6 +40,7 @@ export type Block = {
   column: number,
   color: string;
   text: string;
+  image: string,
   infested: boolean | Enemy
 }
 
@@ -66,6 +66,7 @@ export const pathBlocks: Block[] = []
         column: column,
         color: colorHex,
         text: blockText,
+        image: "",
         infested: false,
       };
 
@@ -153,7 +154,7 @@ const generateMap = () => {
       if (Math.random() > 0.3){
         chosenNeighbor.color = `#FFB266`
       } else {
-        console.log(chosenNeighbor);
+        // console.log(chosenNeighbor);
         
         chosenNeighbor.color = `#FF8000`
         chosenNeighbor.infested = randomEnemy()
@@ -164,10 +165,12 @@ const generateMap = () => {
       drawmap()
 
 
+      // console.log(pathBlocks);
+      
       pathBlocks.push(chosenNeighbor)
   }
 
-}, 500 * row);    
+}, 0 * row);    
   }
 })();
 }
@@ -175,48 +178,96 @@ const generateMap = () => {
 generateMap()
 console.log(pathBlocks);
 
+export const drawmap = () => {
+  const div = document.getElementById('mapDiv');
+  if (!div) return;
 
-const drawmap = () => {
+  // Clear previous content
+  div.innerHTML = '';
+
 mapBlocks.forEach((block) => {
-  console.log(block.color);
-  
-  const mapButton = `
-      <button
-        style="
-          background-color: ${};
-          font-size: 30px;
-          padding: 0px;
-          margin: 0px;
-          padding-down: 0px;
+  if (block === player.currentBlock){
+    block.image = `/ringo starr.jpg`
+  } else if (block.color === '#009900'){
+     block.image = '/map/fog.webp' 
+    } else if ( block.color === '#FF8000'){
+     block.image ='/paul mcartney.jpg'
+    } else if (block.color === '#FF0000'){
+     block.image ='/george harrison.jpg'
+    } else {
+     block.image = `/john lennon.jpg`
+    }
 
-        "
-   onclick="
-      if (${block.infested !== false}) {
-        console.log('${block.infested.name}');
-      }
-    "
-      >
-  <img 
-    src="${block.color === '#009900' ? '/map/fog.webp' : '/map/john lennon.jpg'}" 
-    style="
-      width: 100%; 
-      height: 100%; 
-      display: block; /* Ta bort inline-relaterat mellanrum */
-      margin: 0; /* Säkerställ att ingen marginal läggs till */
-      padding: 0; /* Säkerställ att ingen padding läggs till */
-      border: none; /* Ta bort eventuell kantlinje på bilden */
-      outline: none; /* Ta bort eventuell outline */
-      border-spacing: 0px;
-    "
-      alt="${survivalLetter}" 
-  />
-      </button>
-      `
-  
+  // const mapButton = `
+  //     <button
+  //       style="
+  //         background-color: ${block.color};
+  //         font-size: 30px;
+  //         padding: 0px;
+  //         margin: 0px;
+  //         padding-down: 0px;
 
-      const div = document.getElementById('mapDiv');
-      if (div) {
-        div.insertAdjacentHTML('beforeend', mapButton);
+  //       "
+  //  onclick=
+  //           player.currentBlock.row = block.row
+  //           player.currentBlock.column = block.column
+  //     >
+  // <img 
+  //   src="${block.image}"
+  //   style="
+  //     width: 160px; 
+  //     height: 160px; 
+  //     display: block;
+  //     margin: 0;
+  //     padding: 0;
+  //     border: none; 
+  //     outline: none;
+  //     border-spacing: 0px;
+  //   "
+  //     alt="If you read this you are upside down, just so you know" 
+  // />
+  //     </button>
+  //     `
+
+  // const div = document.getElementById('mapDiv');
+  // if (div) {
+  //   div.insertAdjacentHTML('beforeend', mapButton);
+  // }
+  
+  const button = document.createElement('button');
+    button.style.backgroundColor = block.color;
+    button.style.fontSize = '30px';
+    button.style.padding = '0px';
+    button.style.margin = '0px';
+    button.style.border = 'none'; // Ensures no border is shown
+
+      // Create image element
+      const img = document.createElement('img');
+      img.src = block.image;
+      img.style.width = '160px';
+      img.style.height = '160px';
+      img.style.display = 'block';
+      img.style.margin = '0';
+      img.style.padding = '0';
+      img.style.border = 'none';
+      img.style.outline = 'none';
+  
+      button.appendChild(img);
+  
+      // Add event listener to button
+      button.addEventListener('click', () => {
+        // console.log(pathBlocks);
+        
+        if (pathBlocks.includes(block)){
+          walkTowardsMapBlock(player.currentBlock, block)
+        // player.currentBlock = block
+        // drawmap(); 
       }
+      });
+
+      div.appendChild(button);
+
+
+ 
 });
 }
