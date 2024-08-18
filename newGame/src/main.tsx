@@ -1,34 +1,40 @@
+import { createCredits } from "./createCredits.tsx";
+import { createMenu } from "./createMenu.tsx";
+import { randomBoss, randomEnemy } from "./enemies.tsx";
 import { player } from "./player.tsx";
+import { showMap } from "./showMap.tsx";
 import { walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
-const deletion = `
-  <ul> 
-    <li>BANANANA</li>
-    <li>APPPLEEE</li>
-  </ul>`;
 
-const a = `
-<button
-  style="
-    background-color: red;
-    color: green;
-    font-size: 30px;
-    padding: 50px;
-    padding-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  "
-  onclick="deleteList()"
-> 
-  DELETE
-</button>
-`;
 
-document.body.insertAdjacentHTML('beforeend', deletion);
-document.body.insertAdjacentHTML('beforeend', a);
+// const deletion = `
+//   <ul> 
+//     <li>BANANANA</li>
+//     <li>APPPLEEE</li>
+//   </ul>`;
+
+// const a = `
+// <button
+//   style="
+//     background-color: red;
+//     color: green;
+//     font-size: 30px;
+//     padding: 50px;
+//     padding-bottom: 20px;
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//   "
+//   onclick="deleteList()"
+// > 
+//   DELETE
+// </button>
+// `;
+
+// document.body.insertAdjacentHTML('beforeend', deletion);
+// document.body.insertAdjacentHTML('beforeend', a);
 
 export type Enemy = {
   health: number,
@@ -45,11 +51,11 @@ export type Block = {
 }
 
 
-
 export const mapBlocks: Block[] = [];
 export const pathBlocks: Block[] = []
 
-
+export const generateMap = () => {
+(async () => {
   for (let row = 0; row <= 5; row++) {
     for (let column = 0; column <= 8; column++) {
       let colorHex: string = '#009900';
@@ -78,95 +84,40 @@ export const pathBlocks: Block[] = []
     }
   }
 
+  showMap()
 
-
-const enemyPrototype: Enemy = {
-  health: 100,
-  name: "Prototype"
-}
-
-const runAway: Enemy = {
-  health: 50,
-  name: "Runaway"
-}
-
-const giganian: Enemy = {
-  health: 50,
-  name: "giganian"
-}
-
-const basher: Enemy = {
-  health: 50,
-  name: "basher"
-}
-
-const enemyTypesOnFloor = [enemyPrototype, runAway];
-const bossTypesOnFloor = [giganian, basher];
-
-const randomEnemy = () => {
-  return enemyTypesOnFloor[Math.floor(Math.random() * enemyTypesOnFloor.length)]
-}
-
-const randomBoss = () => {
-  return bossTypesOnFloor[Math.floor(Math.random() * bossTypesOnFloor.length)]
-}
-
-
-
-const generateMap = () => {
-(async () => {
   const module = await import('./handleBlocks');
   const chosePathGeneration = module.chosePathGeneration;
-
+  
   for (let row = 0; row <= 50; row++) {
   setTimeout(() => {
     
-
+    player.currentBlock = pathBlocks[0]
 
     const contestantNeighbors: Block[] = chosePathGeneration(pathBlocks[pathBlocks.length - 1]);
     
     const chosenNeighbor = contestantNeighbors[Math.floor(Math.random() * contestantNeighbors.length)]
 
-    
     const div = document.getElementById('mapDiv');
     if (div)  {
       div.innerHTML = '';
     }
 
-
-    // console.log(pathBlocks);
-    
-
     if (chosenNeighbor === undefined || pathBlocks.includes(chosenNeighbor)){
       const lastElement: Block =  pathBlocks[pathBlocks.length - 1]
       lastElement.color = "#FF0000"
-
-      
       lastElement.infested = randomBoss()
-
-      // console.log("reset");
       drawmap()
-
       return
     } else {
-
-
       if (Math.random() > 0.3){
         chosenNeighbor.color = `#FFB266`
-      } else {
-        // console.log(chosenNeighbor);
-        
+      } else { 
         chosenNeighbor.color = `#FF8000`
         chosenNeighbor.infested = randomEnemy()
-        
       }
-
-      // console.log("next");
       drawmap()
 
-
-      // console.log(pathBlocks);
-      
       pathBlocks.push(chosenNeighbor)
   }
 
@@ -175,14 +126,23 @@ const generateMap = () => {
 })();
 }
 
-generateMap()
-console.log(pathBlocks);
+// generateMap()
+
+// (async () => {
+  (async () => {
+    createCredits(); // Anropa funktionen när sidan laddas
+  })();
+  
+// console.log("då");
+
+// })
+
+// console.log("tja");
+
 
 export const drawmap = () => {
   const div = document.getElementById('mapDiv');
   if (!div) return;
-
-  // Clear previous content
   div.innerHTML = '';
 
 mapBlocks.forEach((block) => {
@@ -197,51 +157,14 @@ mapBlocks.forEach((block) => {
     } else {
      block.image = `/john lennon.jpg`
     }
-
-  // const mapButton = `
-  //     <button
-  //       style="
-  //         background-color: ${block.color};
-  //         font-size: 30px;
-  //         padding: 0px;
-  //         margin: 0px;
-  //         padding-down: 0px;
-
-  //       "
-  //  onclick=
-  //           player.currentBlock.row = block.row
-  //           player.currentBlock.column = block.column
-  //     >
-  // <img 
-  //   src="${block.image}"
-  //   style="
-  //     width: 160px; 
-  //     height: 160px; 
-  //     display: block;
-  //     margin: 0;
-  //     padding: 0;
-  //     border: none; 
-  //     outline: none;
-  //     border-spacing: 0px;
-  //   "
-  //     alt="If you read this you are upside down, just so you know" 
-  // />
-  //     </button>
-  //     `
-
-  // const div = document.getElementById('mapDiv');
-  // if (div) {
-  //   div.insertAdjacentHTML('beforeend', mapButton);
-  // }
   
   const button = document.createElement('button');
     button.style.backgroundColor = block.color;
     button.style.fontSize = '30px';
     button.style.padding = '0px';
     button.style.margin = '0px';
-    button.style.border = 'none'; // Ensures no border is shown
+    button.style.border = 'none';
 
-      // Create image element
       const img = document.createElement('img');
       img.src = block.image;
       img.style.width = '160px';
@@ -253,15 +176,14 @@ mapBlocks.forEach((block) => {
       img.style.outline = 'none';
   
       button.appendChild(img);
-  
-      // Add event listener to button
+
       button.addEventListener('click', () => {
-        // console.log(pathBlocks);
-        
+        // console.log("ppgaawf");
         if (pathBlocks.includes(block)){
+
+          // console.log("ppgaawf");
+          
           walkTowardsMapBlock(player.currentBlock, block)
-        // player.currentBlock = block
-        // drawmap(); 
       }
       });
 

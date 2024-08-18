@@ -6,7 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>New game</title>
-    <script type="module" src="src/main.tsx" defer></script>
+    <script type="module" src="src/main.tsx" defer>
+           <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </script>
     <!-- <base href="/training/survival"/> -->
     <style>
       body {
@@ -19,7 +23,7 @@
     <div
       id="mapDiv"
       style="
-        display: flex;
+        display: none;
         flex-direction: row;
         flex-wrap: wrap;
         align-items: start;
@@ -34,5 +38,71 @@
         transform: translate(-50%, -50%); /* Center vertically */
       "
     ></div>
+    <div
+      id="menu"
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh; /* Full height of the viewport */
+        background-color: gray;
+
+        background-image: url('/public/john lennon.jpg');
+        background-size: cover; /* Gör att bilden täcker hela div:en */
+        background-position: center; /* Centrera bilden */
+        background-repeat: no-repeat; /* Förhindrar upprepning av bilden */
+      "
+    >
+      <!-- <p
+        style="
+          padding: 60px;
+          color: red;
+          font-size: 60px;
+          background-color: darkred;
+          border-radius: 10px;
+          text-align: start;
+          position: absolute;
+          top: 5%;
+        "
+      >
+        Thye Bangbing Musig
+      </p>
+      <button
+        style="
+          padding: 40px;
+          color: darkred;
+          font-size: 40px;
+          background-color: blue;
+          width: 15%;
+        "
+      >
+        PLAY
+      </button>
+      <button
+        style="
+          padding: 40px;
+          color: darkred;
+          font-size: 40px;
+          background-color: darkgreen;
+          width: 15%;
+          margin: 15px;
+        "
+        onClick="generateMap()"
+      >
+        CREDITS
+      </button>
+      <button
+        style="
+          padding: 40px;
+          color: darkred;
+          font-size: 40px;
+          background-color: orange;
+          width: 15%;
+        "
+      >
+        EXTRA
+      </button> -->
+    </div>
   </body>
 </html>

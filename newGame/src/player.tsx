@@ -1,6 +1,18 @@
-import { pathBlocks } from "./main";
+import { Block, pathBlocks } from "./main";
 
-export const player = {
+type Player = {
+    health: number,
+    currentBlock: Block
+}
+
+export const player: Player = {
     health: 100,
-    currentBlock: pathBlocks[0]
+    currentBlock: {
+        row: 0,
+        column: 0,
+        color: "",
+        text: "",
+        image: "",
+        infested: false,
+      }
 }
