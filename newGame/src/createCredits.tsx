@@ -3,7 +3,8 @@ import { createMenu } from "./createMenu";
 export const createCredits = () => {
     // Creator title
     const creatorTitle = document.createElement('p');
-    creatorTitle.style.padding = '60px';
+    // creatorTitle.style.padding = '60px';
+    creatorTitle.style.padding = '30px';
     creatorTitle.style.color = 'red';
     creatorTitle.style.fontSize = '60px';
     creatorTitle.style.backgroundColor = 'darkred';
@@ -16,7 +17,6 @@ export const createCredits = () => {
     creatorTitle.textContent = 'Creator, maker & founder';
   
 
-
     //  Creator name square
     const wrapperDiv = document.createElement('div');
     wrapperDiv.style.display = 'flex';
@@ -28,24 +28,26 @@ export const createCredits = () => {
     wrapperDiv.style.margin = '0 auto'; 
     wrapperDiv.style.position = 'relative';
 
-    const playButton = document.createElement('textarea');
-    playButton.style.padding = '15px';
-    playButton.style.color = 'darkred';
-    playButton.style.fontSize = '60px';
-    playButton.style.textAlign = 'center';
-    playButton.style.backgroundColor = 'blue';
-    playButton.style.border = 'none';
-    playButton.style.resize = 'none';
-    playButton.style.overflow = 'hidden';
-    playButton.style.width = '15%';
-    playButton.style.height = '10%';
-    playButton.style.lineHeight = '1';
-    playButton.style.margin = '75px';
-    playButton.style.position = 'absolute';
-    playButton.style.top = '22.5%';
-    playButton.value = 'Ludwig Lindgren'; 
+    const creatorText = document.createElement('textarea');
+    // creatorText.style.padding = '15px';
+    creatorText.style.padding = '15px';
+    creatorText.style.color = 'darkred';
+    // creatorText.style.fontSize = '60px';
+    creatorText.style.fontSize = '45px';
+    creatorText.style.textAlign = 'center';
+    creatorText.style.backgroundColor = 'blue';
+    creatorText.style.border = 'none';
+    creatorText.style.resize = 'none';
+    creatorText.style.overflow = 'hidden';
+    creatorText.style.width = '15%';
+    creatorText.style.height = '10%';
+    creatorText.style.lineHeight = '1';
+    creatorText.style.margin = '75px';
+    creatorText.style.position = 'absolute';
+    creatorText.style.top = '22.5%';
+    creatorText.value = 'Ludwig Lindgren'; 
 
-    wrapperDiv.appendChild(playButton);
+    wrapperDiv.appendChild(creatorText);
 
 
     // Helper credit
@@ -57,7 +59,7 @@ export const createCredits = () => {
     helperTitle.style.borderRadius = '10px';
     helperTitle.style.textAlign = 'center'; 
     helperTitle.style.position = 'absolute';
-    helperTitle.style.top = '42.5%';
+    helperTitle.style.top = '45%';
     helperTitle.style.left = '50%'; 
     helperTitle.style.transform = 'translateX(-50%)'; 
     helperTitle.textContent = 'Assistance & helpers';
@@ -71,7 +73,7 @@ export const createCredits = () => {
     helperNameTitle.style.borderRadius = '10px';
     helperNameTitle.style.textAlign = 'center';
     helperNameTitle.style.position = 'absolute';
-    helperNameTitle.style.top = '55%';
+    helperNameTitle.style.top = '63%';
     helperNameTitle.style.left = '50%'; 
     helperNameTitle.style.transform = 'translateX(-50%)';
     helperNameTitle.textContent = 'Johannes Lindgren & ChatGPT';
@@ -82,9 +84,9 @@ export const createCredits = () => {
     backButton.style.fontSize = '40px';
     backButton.style.backgroundColor = 'orange';
     backButton.style.position = 'absolute';
-    backButton.style.top = '89.5%';
-    backButton.style.left = '89.5%';
-    backButton.style.width = '10%';
+    backButton.style.top = '84%';
+    backButton.style.left = '86%';
+    backButton.style.width = '13%';
     helperNameTitle.style.transform = 'translateX(-50%)';
     backButton.textContent = 'BACK';
     backButton.onclick = () => {
@@ -97,7 +99,7 @@ export const createCredits = () => {
     if (div) {
       div.innerHTML = ''; 
       div.appendChild(creatorTitle);
-      div.appendChild(playButton);
+      div.appendChild(creatorText);
       div.appendChild(helperTitle);
       div.appendChild(helperNameTitle);
       div.appendChild(backButton);
@@ -118,25 +120,25 @@ export const createCredits = () => {
     outsideCredit.style.top = '0%';
     outsideCredit.style.left = '1%'; 
     // outsideCredit.style.transform = 'translateX(-50%)';
-    outsideCredit.textContent = 'Johannes Lindgren & ChatGPT';
+    outsideCredit.textContent = 'Author of Sprites  ';
 
 
     const creditsList = document.createElement('ul');
     creditsList.style.padding = '30px';
     creditsList.style.color = 'red';
-    creditsList.style.fontSize = '25px';
-    creditsList.style.backgroundColor = 'green';
+    creditsList.style.fontSize = '23px';
+    // creditsList.style.backgroundColor = 'green';
     creditsList.style.borderRadius = '10px';
     creditsList.style.textAlign = 'left'; // Ändrat från center till left
     creditsList.style.position = 'absolute';
     creditsList.style.top = '8%'; // Justera position
-    creditsList.style.left = '1%';
+    creditsList.style.left = '-1%';
     creditsList.style.listStyleType = 'disc'; // Standard punktlista (bullet points)
     
 
 
     // Skapa och lägg till li-element (punkter) med bilder
-    const createCreditItem = (text, imgSrc) => {
+    const createCreditItem = (text: string, imgSrc: string) => {
         const listItem = document.createElement('li');
         listItem.style.display = 'flex';
         listItem.style.alignItems = 'center';
@@ -150,20 +152,23 @@ export const createCredits = () => {
         img.alt = text; // Alternativ text för bilden
         img.style.width = '50px'; // Bildbredd
         img.style.height = '50px'; // Bildhöjd
+        img.style.margin = '5px'
     
         listItem.appendChild(nameSpan);
         listItem.appendChild(img);
     
         return listItem;
     };
-    
+
     // Lägg till namn och bilder till punktlistan
     creditsList.appendChild(createCreditItem('John Lennon - Background & path', '/public/john lennon.jpg'));
     creditsList.appendChild(createCreditItem('Paul McCartney - Enemy block', '/paul mcartney.jpg'));
     creditsList.appendChild(createCreditItem('George Harrison - Boss block', '/george harrison.jpg'));
     creditsList.appendChild(createCreditItem('Paul McCartney - Enemy block', '/ringo starr.jpg'));
+    creditsList.appendChild(createCreditItem('ChatGPT - Grey fog', '/map/fog.webp'));
+    creditsList.appendChild(createCreditItem('ChatGPT - Red fog', '/map/hellishFog.webp'));
     
     // Lägg till punktlistan i dokumentet
-    document.body.appendChild(outsideCredit);
-    document.body.appendChild(creditsList);
+    div.appendChild(outsideCredit);
+    div.appendChild(creditsList);
   };

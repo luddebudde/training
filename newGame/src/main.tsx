@@ -130,7 +130,8 @@ export const generateMap = () => {
 
 // (async () => {
   (async () => {
-    createCredits(); // Anropa funktionen när sidan laddas
+  //  createCredits(); // Anropa funktionen när sidan laddas
+  createMenu()
   })();
   
 // console.log("då");

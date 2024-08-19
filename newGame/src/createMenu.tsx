@@ -1,83 +1,19 @@
-// const gameTitle = `
-// <p
-// style="
-//   padding: 60px;
-//   color: red;
-//   font-size: 60px;
-//   background-color: darkred;
-//   border-radius: 10px;
-//   text-align: start;
-//   position: absolute;
-//   top: 5%;
-// "
-// Thye Bangbing Musig
-// </p>`
-
 import { createCredits } from "./createCredits";
 import { generateMap } from "./main";
 
-// const playButton = `
-// <button
-// style="
-//   padding: 40px;
-//   color: darkred;
-//   font-size: 40px;
-//   background-color: blue;
-//   width: 15%;
-// "
-// >
-// PLAY
-// </button>`
-
-// const creditsButton =`
-// <button
-// style="
-//   padding: 40px;
-//   color: darkred;
-//   font-size: 40px;
-//   background-color: darkgreen;
-//   width: 15%;
-//   margin: 15px;
-// "
-// onClick="generateMap()"
-// >
-// CREDITS
-// </button>`
-
-// const extraButton =`
-// <button
-// style="
-//   padding: 40px;
-//   color: darkred;
-//   font-size: 40px;
-//   background-color: orange;
-//   width: 15%;
-// "
-// >
-// EXTRA
-// </button>`
-
-// const div = document.getElementById('menuDiv');
-// div.innerHTML = '';
-
-// div.appendChild(gameTitle);
-// div.appendChild(playButton);
-// div.appendChild(creditsButton);
-// div.appendChild(extraButton);
-
 export const createMenu = () => {
-
-    // console.log("hej");
     // Skapa och styla gameTitle
     const gameTitle = document.createElement('p');
-    gameTitle.style.padding = '60px';
+    gameTitle.style.padding = '30px';
+    //gameTitle.style.padding = '60px';
     gameTitle.style.color = 'red';
     gameTitle.style.fontSize = '60px';
+    //gameTitle.style.fontSize = '60px';
     gameTitle.style.backgroundColor = 'darkred';
     gameTitle.style.borderRadius = '10px';
     gameTitle.style.textAlign = 'center'; // Ändra till center för bättre visning
     gameTitle.style.position = 'absolute';
-    gameTitle.style.top = '5%';
+    gameTitle.style.top = '0%';
     gameTitle.style.left = '50%'; // Centrera horisontellt
     gameTitle.style.transform = 'translateX(-50%)'; // Justera för centrering
     gameTitle.textContent = 'Thye Bangbing Musig';
@@ -104,7 +40,7 @@ export const createMenu = () => {
     creditsButton.style.width = '15%';
     creditsButton.style.margin = '15px';
     creditsButton.textContent = 'CREDITS';
-    playButton.onclick = () => {
+    creditsButton.onclick = () => {
         console.log('creditButton clicked.');
         createCredits()
     }
