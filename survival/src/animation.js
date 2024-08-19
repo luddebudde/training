@@ -1,72 +1,37 @@
-export const animation = ({
-  imageCount,
-  slowDown,
-  reverse,
-  repeat,
-  vertical = true,
-  // switchLayer = false,
-  // firstLayerCount = undefined,
-  // layerCount = undefined,
-}) => {
-  // const { imageCount, slowDown, reverse, repeat } = options;
-  let counter = 0;
+export const playAnimation = (
+  picture: string,
+  parts: number,
+  frameRate: number,
+  containerId: string
+) => {
+  const container = document.getElementById(containerId);
+  if (!container) {
+    console.error(`Element with id ${containerId} not found.`);
+    return;
+  }
 
-  let counterDirection = 1;
+  // Skapa ett nytt img-element
+  const spriteImage = document.createElement("img");
+  spriteImage.src = picture;
+  spriteImage.style.position = "absolute";
+  container.appendChild(spriteImage);
 
-  return {
-    step: () => {
-      counter += counterDirection;
-      if (!repeat) {
-        return counter >= imageCount * slowDown;
-      }
-      if (reverse) {
-        if (counter >= imageCount * slowDown || counter < 0) {
-          counterDirection = -counterDirection;
-          counter += counterDirection;
-        }
-      } else {
-        if (counter >= imageCount * slowDown) {
-          counter = 0;
-        }
-      }
-      return false;
-    },
-    draw: (ctx, image, x, y, width, height, newCounter = counter) => {
-      const imageIndex = Math.floor(newCounter / slowDown);
+  let currentFrame = 0;
+  const frameWidth = spriteImage.width / parts;
 
-      if (vertical === true) {
-        const spriteHeight = image.height / imageCount;
-        ctx.drawImage(
-          image,
-          0,
-          imageIndex * spriteHeight,
-          image.width,
-          spriteHeight,
-          x,
-          y,
-          width,
-          height
-        );
-      } else {
-        const spriteWidth = image.width / imageCount;
-        ctx.drawImage(
-          image,
-          imageIndex * spriteWidth,
-          0,
-          spriteWidth,
-          image.height,
-          x,
-          y,
-          width,
-          height
-        );
-      }
-    },
-    counter: () => {
-      return counter;
-    },
-    restoreCounter: () => {
-      counter = 0;
-    },
+  const animate = () => {
+    // Beräkna den del av bilden som ska visas
+    const offsetX = -currentFrame * frameWidth;
+    spriteImage.style.transform = `translateX(${offsetX}px)`;
+
+    currentFrame = (currentFrame + 1) % parts; // Gå till nästa frame, loopar runt
+
+    // Kör nästa frame efter en viss tid baserat på frameRate
+    setTimeout(animate, 1000 / frameRate);
+  };
+
+  // Kör animationen
+  spriteImage.onload = () => {
+    animate();
   };
 };

@@ -2,13 +2,16 @@ import { createCredits } from "./createCredits";
 import { generateMap } from "./main";
 
 export const createMenu = () => {
+
     // Skapa och styla gameTitle
     const gameTitle = document.createElement('p');
-    gameTitle.style.padding = '30px';
-    //gameTitle.style.padding = '60px';
+    // gameTitle.style.padding = '30px';
+    // gameTitle.style.padding = '60px';
+    gameTitle.style.padding = '3vw';
     gameTitle.style.color = 'red';
-    gameTitle.style.fontSize = '60px';
-    //gameTitle.style.fontSize = '60px';
+    gameTitle.style.fontSize = '400%';
+    // gameTitle.style.fontSize = '60px';
+    // gameTitle.style.fontSize = '80px';
     gameTitle.style.backgroundColor = 'darkred';
     gameTitle.style.borderRadius = '10px';
     gameTitle.style.textAlign = 'center'; // Ändra till center för bättre visning
@@ -20,25 +23,34 @@ export const createMenu = () => {
   
     // Skapa och styla playButton
     const playButton = document.createElement('button');
-    playButton.style.padding = '40px';
+    // playButton.style.padding = '40px';
+    playButton.style.padding = '2vw';
     playButton.style.color = 'darkred';
-    playButton.style.fontSize = '40px';
+    // playButton.style.fontSize = '40px';
+    playButton.style.fontSize = '3.5vh';
     playButton.style.backgroundColor = 'blue';
-    playButton.style.width = '15%';
+    playButton.style.width = '15vw';
     playButton.textContent = 'PLAY';
     playButton.onclick = () => {
+      const div = document.getElementById('menu');
+
+      if (div) {
+        div.innerHTML = '';
         console.log('playButton clicked.');
         generateMap()
+      }
     }
   
     // Skapa och styla creditsButton
     const creditsButton = document.createElement('button');
-    creditsButton.style.padding = '40px';
+    // creditsButton.style.padding = '40px';
+    creditsButton.style.padding = '2vw';
     creditsButton.style.color = 'darkred';
-    creditsButton.style.fontSize = '40px';
+    // creditsButton.style.fontSize = '40px';
+    creditsButton.style.fontSize = '3.5vh';
     creditsButton.style.backgroundColor = 'darkgreen';
-    creditsButton.style.width = '15%';
-    creditsButton.style.margin = '15px';
+    creditsButton.style.width = '15vw';
+    creditsButton.style.margin = '1vh';
     creditsButton.textContent = 'CREDITS';
     creditsButton.onclick = () => {
         console.log('creditButton clicked.');
@@ -47,11 +59,13 @@ export const createMenu = () => {
   
     // Skapa och styla extraButton
     const extraButton = document.createElement('button');
-    extraButton.style.padding = '40px';
+    // extraButton.style.padding = '40px';
+    extraButton.style.padding = '2vw';
     extraButton.style.color = 'darkred';
-    extraButton.style.fontSize = '40px';
+    // extraButton.style.fontSize = '40px';
+    extraButton.style.fontSize = '3.5vh';
     extraButton.style.backgroundColor = 'orange';
-    extraButton.style.width = '15%';
+    extraButton.style.width = '15vw';
     extraButton.textContent = 'EXTRA';
   
     // Hitta div och lägg till alla element

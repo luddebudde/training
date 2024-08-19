@@ -8,7 +8,7 @@ const findBlockIndex = (block: Block): number => {
   };
 
 
-let currentlyWalking = false
+export let currentlyWalking = false
 
 
 const timeouts = []
@@ -33,14 +33,11 @@ const walk = (speed: number, startIndex: number, endIndex: number) => {
                 currentlyWalking = false;
 
                 if (enemyTypesOnFloor.includes(currentBlock.infested)){
-                    console.log("ENEMEY FIHGHT!", currentBlock.infested);
-                    currentBlock.color = '#FFB266'
-                    currentBlock.infested = false
+                    // console.log("ENEMEY FIHGHT!", currentBlock.infested);
+                    // currentBlock.color = '#FFB266'
+                    // currentBlock.infested = false
 
-                    const div = document.getElementById('mapDiv');
-                    div.innerHTML = '';
-
-                    startFight()
+                    // startFight()
 
                     // drawmap()
                 } else {

@@ -2,8 +2,10 @@ import { createCredits } from "./createCredits.tsx";
 import { createMenu } from "./createMenu.tsx";
 import { randomBoss, randomEnemy } from "./enemies.tsx";
 import { player } from "./player.tsx";
-import { showMap } from "./showMap.tsx";
-import { walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
+import { changeDivStatus } from "./changeDivStatus.tsx";
+import { currentlyWalking, walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
+import { playAnimation } from "./playAnimation.tsx";
+import { loopPerSecond } from "./startFight.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -84,7 +86,9 @@ export const generateMap = () => {
     }
   }
 
-  showMap()
+  changeDivStatus('mapDiv', "display", "flex")
+
+
 
   const module = await import('./handleBlocks');
   const chosePathGeneration = module.chosePathGeneration;
@@ -126,13 +130,31 @@ export const generateMap = () => {
 })();
 }
 
-// generateMap()
+
 
 // (async () => {
   (async () => {
-  //  createCredits(); // Anropa funktionen när sidan laddas
-  createMenu()
+    // createMenu()
+    generateMap()
+
+
+    const runAnimation = playAnimation('/run.png', 7, 10, 1, 'spriteContainer', () => {
+      const checkWalking = () => {
+      if (checkWalking){
+        runAnimation()
+      } else {
+        checkWalking
+      }}
+    })
+
+    const playerAnimationCheck = setInterval(() => {
+      
+
+      
+    }, 1000 / loopPerSecond);
+
   })();
+
   
 // console.log("då");
 
