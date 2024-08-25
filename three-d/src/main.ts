@@ -377,7 +377,7 @@ const render = () => {
 
   const dir = new THREE.Vector3();
   player.object3D.getWorldDirection(dir);
-  // const dir = quaternionToVector(player.rigidBody.rotation());
+  const dir = quaternionToVector(player.rigidBody.rotation());
 
   // [
   //   player.rigidBody.rotation().y,

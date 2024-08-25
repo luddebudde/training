@@ -1,79 +1,94 @@
-export const playAnimation = (picture: string, parts: number, frameRate: number, loopTimes: number, containerId: string, whenDone?: () => void) => {
-    let loopsLeft = loopTimes
-    const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Element with id ${containerId} not found.`);
-        return;
-    }
+export const playAnimation = (
+  picture: string,
+  parts: number,
+  frameRate: number,
+  loopTimes: number,
+  canvasId: string,
+  pos: {
+    x: number;
+    y: number;
+  },
+  size: {
+    x: number;
+    y: number;
+  },
+  whenDone?: () => void
+) => {
+  let loopsLeft = loopTimes;
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) {
+    console.error(`Canvas element with id ${canvasId} not found.`);
+    return;
+  }
+  const ctx = canvas.getContext("2d");
+  if (!ctx) {
+    console.error("Failed to get 2D context.");
+    return;
+  }
 
-    // Cleanup any existing animations
-    const existingWrapper = container.querySelector('.animation-wrapper');
-    if (existingWrapper) {
-        existingWrapper.remove();
-    }
+  const spriteImage = new Image();
+  spriteImage.src = picture;
 
-    // Create a wrapper to hide the overflow of the image
-    const wrapper = document.createElement('div');
-    wrapper.className = 'animation-wrapper'; // Add a class for easier selection
-    wrapper.style.position = 'relative';
-    wrapper.style.overflow = 'hidden';  // Hide the overflow
-    container.appendChild(wrapper);
+  let currentFrame = 0;
+  let frameWidth = 0;
+  let animationTimeout = null;
 
-    // Create the image element
-    const spriteImage = document.createElement('img');
-    spriteImage.src = picture;
-    spriteImage.style.position = 'absolute';
-    spriteImage.style.width = '40vw';
-    spriteImage.style.height = '10vw';
-    wrapper.appendChild(spriteImage);
+  spriteImage.onload = () => {
+    frameWidth = spriteImage.width / parts;
 
-    let currentFrame = 0;
-    let frameWidth = 0;
-    let animationTimeout: number | null = null;
+    // Justera canvas storlek för att rymma hela bilden plus eventuell flytt
+    canvas.width = Math.max(
+      frameWidth + Math.abs(pos.x),
+      canvas.width + size.x
+    );
+    canvas.height = Math.max(
+      spriteImage.height + Math.abs(pos.y),
+      canvas.height + size.y
+    );
 
-    spriteImage.onload = () => {
-        frameWidth = spriteImage.width / parts;
-        // Set the width and height of the wrapper to match one frame
-        wrapper.style.width = `${frameWidth}px`;
-        wrapper.style.height = `${spriteImage.height}px`;
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Rensa hela canvasen
 
-        const animate = () => {
-            // Calculate the offset to display the correct frame
-            const offsetX = -currentFrame * frameWidth;
-            spriteImage.style.transform = `translateX(${offsetX}px)`;
+      // Ritar bilden på canvasen med justerade koordinater
+      ctx.drawImage(
+        spriteImage,
+        currentFrame * frameWidth, // Source x
+        0, // Source y
+        frameWidth, // Source width
+        spriteImage.height, // Source height
+        pos.x - size.x / 2, // Destination x
+        pos.y - size.y / 2, // Destination y
+        frameWidth + size.x, // Destination width
+        spriteImage.height + size.y // Destination height
+      );
 
-            currentFrame = (currentFrame + 1) % parts; // Go to the next frame, looping around
+      currentFrame = (currentFrame + 1) % parts;
 
-            if (currentFrame === 0) {
+      if (currentFrame === 0) {
+        loopsLeft--;
 
-                loopsLeft--
+        if (typeof whenDone === "function" && loopsLeft === 0) {
+          whenDone();
+          stopAnimation();
+          return;
+        }
+      }
 
-                if (typeof whenDone === 'function' && loopsLeft === 0){
-                whenDone(); 
-                
-                stopAnimation();
-                return;}
-            } 
-                animationTimeout = setTimeout(animate, 1000 / frameRate);
-            
-        };
-
-        // Start the animation
-        animate();
+      animationTimeout = setTimeout(animate, 1000 / frameRate);
     };
 
-    const stopAnimation = () => {
-        if (animationTimeout !== null) {
-            clearTimeout(animationTimeout);
-            animationTimeout = null;
-        }
+    animate();
+  };
 
-        // Remove the image and wrapper elements from the container
-        if (wrapper.parentNode) {
-            wrapper.parentNode.removeChild(wrapper);
-        }
-    };
+  const stopAnimation = () => {
+    if (animationTimeout !== null) {
+      clearTimeout(animationTimeout);
+      animationTimeout = null;
+    }
 
-    // Provide a way to stop animation externally if needed
-    return stopAnimation;
+    // Rensa canvasen
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+
+  return stopAnimation;
 };
