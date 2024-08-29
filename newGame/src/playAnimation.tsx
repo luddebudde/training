@@ -1,3 +1,5 @@
+import { animationQueue, checkNextAnimation } from "./playerAnimations";
+
 export const playAnimation = (
   picture: string,
   parts: number,
@@ -12,7 +14,7 @@ export const playAnimation = (
     x: number;
     y: number;
   },
-  whenDone?: () => void
+  //whenDone?: () => void
 ) => {
   let loopsLeft = loopTimes;
   const canvas = document.getElementById(canvasId);
@@ -67,11 +69,16 @@ export const playAnimation = (
       if (currentFrame === 0) {
         loopsLeft--;
 
-        if (typeof whenDone === "function" && loopsLeft === 0) {
-          whenDone();
-          stopAnimation();
-          return;
-        }
+       // if (typeof whenDone === "function" && loopsLeft === 0) {
+         // whenDone();
+         // stopAnimation();
+        //  return;
+       // }
+       if (loopsLeft === 0) {
+        checkNextAnimation()
+        stopAnimation();
+        return;
+      }
       }
 
       animationTimeout = setTimeout(animate, 1000 / frameRate);

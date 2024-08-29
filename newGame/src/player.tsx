@@ -25,11 +25,13 @@ export const player: Player = {
     infested: false,
   },
   pos: {
-    x: 250,
+    x: 150,
     y: world.height / 2,
   },
   size: {
-    x: 200,
-    y: 200,
+    //x: 200,
+    //y: 200,
+    x: 100,
+    y: 100,
   },
 };

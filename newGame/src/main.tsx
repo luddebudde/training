@@ -6,7 +6,7 @@ import { changeDivStatus } from "./changeDivStatus.tsx";
 import { walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
 import { playAnimation } from "./playAnimation.tsx";
 import { loopPerSecond } from "./startFight.tsx";
-import { runAnimation } from "./playerAnimations.tsx";
+import { animationQueue, attackAnimation, runAnimation } from "./playerAnimations.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -216,4 +216,12 @@ export const drawmap = () => {
   });
 };
 
-const gameLoop = setInterval(() => {}, 1000 / loopPerSecond);
+//const gameLoop = setInterval(() => {}, 1000 / loopPerSecond);
+
+document.addEventListener('keydown', function(event) {
+  if (event.key === "Enter") {
+      console.log('Enter key was pressed');
+      animationQueue.push(attackAnimation)
+      // Your logic when the Enter key is pressed
+  }
+});
