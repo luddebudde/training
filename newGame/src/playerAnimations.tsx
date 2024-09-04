@@ -1,58 +1,42 @@
-// import { playAnimation } from "./playAnimation";
-// import { currentlyWalking } from "./walkTowardsMapBlock";
-
-import { playAnimation } from "./playAnimation";
+import { playAnimation, stopAnimation } from "./playAnimation";
 import { player } from "./player";
 import { currentlyWalking } from "./walkTowardsMapBlock";
 
-// export const runAnimation = () => {
-//   playAnimation("/run.png", 7, 10, 1, "spriteContainer", () => {
-//     const checkWalking = () => currentlyWalking;
+export const playerAnimationQueue = [];
 
-//     if (checkWalking()) {
-//       console.log("walk");
-//       //   setTimeout(() => {
-//       runAnimation();
-//       console.log("walk again");
-//       //   }, 1000);
-//     } else {
-//       idleAnimation();
-//     }
-//   });
-// };
+export const checkNextPlayerAnimation = () => {
+  // console.log(animationQueue);
 
-// export const idleAnimation = () => {
-//   playAnimation("/Idle.png", 4, 5, 1, "spriteContainer", () => {
-//     const checkWalking = () => currentlyWalking;
+  if (playerAnimationQueue[0] === undefined) {
+    // console.log("tjena");
 
-//     if (checkWalking()) {
-//       console.log("walk");
-//       //   setTimeout(() => {
-//       runAnimation();
-//       console.log("walk again");
-//       //   }, 1000);
-//     } else {
-//       idleAnimation();
-//     }
-//   });
-// };
+    idleAnimation();
+    return;
+  } else {
+    // console.log("benfh");
 
-export const animationQueue = []
-
-export const checkNextAnimation = () => {
-  console.log("hej");
-  
-  if (animationQueue[0] === undefined){
-    console.log("tjena");
-    
-    idleAnimation()
-    return
+    playerAnimationQueue[0]();
+    playerAnimationQueue.splice(0);
   }
-  console.log("benfh");
-  
-  animationQueue[0]()
-  animationQueue.splice(0)
-}
+};
+
+// playAnimation(
+//   "sprite.png",
+//   10, // parts
+//   24, // frameRate
+//   5, // loopTimes
+//   "myCanvas",
+//   { x: 100, y: 100 }, // pos
+//   { x: 50, y: 50 }, // size
+//   "player1" // unique entityId
+// );
+
+export const checkWalking = () => {
+  if (currentlyWalking) {
+    playerAnimationQueue.push(runAnimation);
+  }
+  checkNextPlayerAnimation();
+};
 
 export const runAnimation = () => {
   playAnimation(
@@ -63,19 +47,8 @@ export const runAnimation = () => {
     "myCanvas",
     player.pos,
     player.size,
-    //() => {
-      //const checkWalking = () => currentlyWalking;
-
-      //if (checkWalking()) {
-        //console.log("walk");
-        //   setTimeout(() => {
-        //runAnimation();
-       // console.log("walk again");
-        //   }, 1000);
-     // } else {
-       // idleAnimation();
-     // }
-   // }
+    "player",
+    checkWalking
   );
 };
 
@@ -83,11 +56,13 @@ export const idleAnimation = () => {
   playAnimation(
     "/Idle.png",
     4,
-    5,
+    0.4,
     1,
     "myCanvas",
     player.pos,
     player.size,
+    "player",
+    checkNextPlayerAnimation
   );
 };
 
@@ -95,10 +70,40 @@ export const attackAnimation = () => {
   playAnimation(
     "/attack.png",
     5,
-    1,
+    5,
     1,
     "myCanvas",
     player.pos,
     player.size,
+    "player", // unique entityId
+    checkNextPlayerAnimation
   );
+};
+
+export const protectAnimation = () => {
+  playAnimation(
+    "/Protect.png",
+    2,
+    2,
+    1,
+    "myCanvas",
+    player.pos,
+    player.size,
+    "player", // unique entityId
+    checkNextPlayerAnimation
+  );
+};
+
+const processAnimationQueue = () => {
+  if (playerAnimationQueue.length > 0) {
+    const nextAnimation = playerAnimationQueue.shift(); // Hämta och ta bort den första animationen i kön
+    nextAnimation(); // Kör animationen
+  }
+};
+
+export const overwritePlayerAnimation = (playAnimation) => {
+  playerAnimationQueue.length = 0; // Rensa animationskön
+  stopAnimation("player"); // Stopp den nuvarande animationen
+  playerAnimationQueue.push(playAnimation); // Lägg till ny animation
+  processAnimationQueue(); // Processa den nya animationen
 };

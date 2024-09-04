@@ -86,14 +86,14 @@ export const createMenu = () => {
     div.appendChild(creditsButton);
     div.appendChild(extraButton);
 
-    console.log(gameTitle);
-    console.log("");
-    console.log(playButton);
-    console.log("");
-    console.log(creditsButton);
-    console.log("");
-    console.log(extraButton);
-    console.log("");
+    // console.log(gameTitle);
+    // console.log("");
+    // console.log(playButton);
+    // console.log("");
+    // console.log(creditsButton);
+    // console.log("");
+    // console.log(extraButton);
+    // console.log("");
   } else {
     console.error('Element with id "menuDiv" not found.');
   }

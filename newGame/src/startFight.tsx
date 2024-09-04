@@ -1,32 +1,30 @@
 import { changeDivStatus } from "./changeDivStatus";
 import { clearArray } from "./clearArray";
 import { mapBlocks, pathBlocks } from "./main";
+import { spawnEnemy } from "./spawnEnemy";
 
+export const loopPerSecond = 60;
 
-export const loopPerSecond = 60
+export const startFight = (infestation) => {
+  console.log("ben");
 
-export const startFight = () => {
-    console.log("ben");
+  const div = document.getElementById("mapDiv");
+  if (div) {
+    div.innerHTML = "";
+  }
 
-    const div = document.getElementById('mapDiv');
-    if (div)  {
-      div.innerHTML = '';
-    }
+  // mapBlocks.splice(0, mapBlocks.length)
+  // pathBlocks.splice(0, pathBlocks.length)
 
-    // mapBlocks.splice(0, mapBlocks.length)
-    // pathBlocks.splice(0, pathBlocks.length)
+  clearArray(mapBlocks);
+  clearArray(pathBlocks);
 
-    clearArray(mapBlocks)
-    clearArray(pathBlocks)
+  changeDivStatus("mapDiv", "display", "none");
 
-    changeDivStatus('mapDiv', "display", "none")
+  // playAnimation('/gothic-hero-jump.png', 5, 10, 'spriteContainer')
 
-    // playAnimation('/gothic-hero-jump.png', 5, 10, 'spriteContainer')
-
-    const battleInterval = setInterval((index) => {
-
-
-        // console.log("Loop körs");
-    }, 1000 / loopPerSecond);
-
-}
+  spawnEnemy([infestation]);
+  // const battleInterval = setInterval((index) => {
+  //   // console.log("Loop körs");
+  // }, 1000 / loopPerSecond);
+};

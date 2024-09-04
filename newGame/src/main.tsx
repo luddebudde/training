@@ -3,10 +3,20 @@ import { createMenu } from "./createMenu.tsx";
 import { randomBoss, randomEnemy } from "./enemies.tsx";
 import { player } from "./player.tsx";
 import { changeDivStatus } from "./changeDivStatus.tsx";
-import { walkTowardsMapBlock } from "./walkTowardsMapBlock.tsx";
-import { playAnimation } from "./playAnimation.tsx";
-import { loopPerSecond } from "./startFight.tsx";
-import { animationQueue, attackAnimation, runAnimation } from "./playerAnimations.tsx";
+import {
+  currentlyWalking,
+  walkTowardsMapBlock,
+} from "./walkTowardsMapBlock.tsx";
+import { playAnimation, stopAnimation } from "./playAnimation.tsx";
+import { loopPerSecond, startFight } from "./startFight.tsx";
+import {
+  playerAnimationQueue,
+  attackAnimation,
+  protectAnimation,
+  runAnimation,
+  overwritePlayerAnimation,
+} from "./playerAnimations.tsx";
+import { prototype } from "stats.js";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -44,6 +54,11 @@ export type Enemy = {
     x: number;
     y: number;
   };
+  size: {
+    x: number;
+    y: number;
+  };
+  animations: [];
 };
 
 export type Block = {
@@ -139,32 +154,12 @@ export const generateMap = () => {
 const animationCheck = [];
 
 (async () => {
-  // createMenu();
+  createMenu();
   // createCredits();
-  generateMap();
+  // generateMap();
+  // startFight(prototype);
 
   runAnimation();
-  // runAnimation();
-  // const runAnimation = playAnimation(
-  //   "/run.png",
-  //   7,
-  //   10,
-  //   1,
-  //   "spriteContainer"
-  //   () => {
-  //     const checkWalking = () => currentlyWalking;
-
-  //     if (!checkWalking()) {
-  //       console.log("walk");
-  //       setTimeout(() => {
-  //         runAnimation();
-  //         console.log("walk again");
-  //       }, 1000);
-  //     } else {
-  //       console.log("stop");
-  //     }
-  //   }
-  // );
 })();
 
 export const drawmap = () => {
@@ -207,7 +202,13 @@ export const drawmap = () => {
     button.appendChild(img);
 
     button.addEventListener("click", () => {
-      if (pathBlocks.includes(block)) {
+      if (pathBlocks.includes(block) && !currentlyWalking) {
+        // playerAnimationQueue.length = 0;
+        // stopAnimation("player");
+        // playerAnimationQueue.push(runAnimation);
+        // processAnimationQueue();
+        overwritePlayerAnimation(runAnimation);
+
         walkTowardsMapBlock(player.currentBlock, block);
       }
     });
@@ -217,11 +218,26 @@ export const drawmap = () => {
 };
 
 //const gameLoop = setInterval(() => {}, 1000 / loopPerSecond);
-
-document.addEventListener('keydown', function(event) {
-  if (event.key === "Enter") {
-      console.log('Enter key was pressed');
-      animationQueue.push(attackAnimation)
-      // Your logic when the Enter key is pressed
+document.addEventListener("keydown", function (event) {
+  if (event.code === "Enter") {
+    // playerAnimationQueue.length = 0; // Rensa animationskön
+    // stopAnimation("player"); // Stopp den nuvarande animationen
+    // playerAnimationQueue.push(attackAnimation); // Lägg till ny animation
+    // processAnimationQueue(); // Processa den nya animationen
+    overwritePlayerAnimation(attackAnimation);
+  }
+  if (event.code === "Space") {
+    // playerAnimationQueue.length = 0; // Rensa animationskön
+    // stopAnimation("player"); // Stopp den nuvarande animationen
+    // playerAnimationQueue.push(protectAnimation); // Lägg till ny animation
+    // processAnimationQueue(); // Processa den nya animationen
+    overwritePlayerAnimation(protectAnimation);
   }
 });
+
+// const processAnimationQueue = () => {
+//   if (playerAnimationQueue.length > 0) {
+//     const nextAnimation = playerAnimationQueue.shift(); // Hämta och ta bort den första animationen i kön
+//     nextAnimation(); // Kör animationen
+//   }
+// };
