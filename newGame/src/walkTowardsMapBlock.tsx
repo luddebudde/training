@@ -1,4 +1,4 @@
-import { enemyTypesOnFloor } from "./enemies";
+import { enemyTypesOnFloor } from "./enemies/enemyTypes";
 import { Block, drawmap, generateMap, mapBlocks, pathBlocks } from "./main";
 import { player } from "./player";
 import { startFight } from "./startFight";

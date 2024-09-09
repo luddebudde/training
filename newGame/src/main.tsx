@@ -1,6 +1,7 @@
 import { createCredits } from "./createCredits.tsx";
 import { createMenu } from "./createMenu.tsx";
-import { randomBoss, randomEnemy } from "./enemies.tsx";
+import { randomBoss, randomEnemy } from "./enemies/enemyTypes.tsx";
+import { slimeEnemy } from "./enemies/slimeEnemy.tsx";
 import { player } from "./player.tsx";
 import { changeDivStatus } from "./changeDivStatus.tsx";
 import {
@@ -17,6 +18,7 @@ import {
   overwritePlayerAnimation,
 } from "./playerAnimations.tsx";
 import { prototype } from "stats.js";
+import { spawnEnemy } from "./spawnEnemy.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -58,6 +60,7 @@ export type Enemy = {
     x: number;
     y: number;
   };
+  id: number;
   animations: [];
 };
 
@@ -159,7 +162,8 @@ const animationCheck = [];
   // generateMap();
   // startFight(prototype);
 
-  runAnimation();
+  // runAnimation();
+  // spawnEnemy([slimeEnemy]);
 })();
 
 export const drawmap = () => {

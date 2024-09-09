@@ -1,4 +1,5 @@
 import { world } from "./basics";
+import { generateUniqueId } from "./generateAnimationId";
 import { Block, pathBlocks } from "./main";
 
 type Player = {
@@ -8,6 +9,7 @@ type Player = {
     x: number;
     y: number;
   };
+  id: number;
   size: {
     x: number;
     y: number;
@@ -28,6 +30,7 @@ export const player: Player = {
     x: 150,
     y: world.height / 2,
   },
+  id: generateUniqueId(),
   size: {
     //x: 200,
     //y: 200,

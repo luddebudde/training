@@ -23,7 +23,7 @@ export const startFight = (infestation) => {
 
   // playAnimation('/gothic-hero-jump.png', 5, 10, 'spriteContainer')
 
-  spawnEnemy([infestation]);
+  spawnEnemy(infestation);
   // const battleInterval = setInterval((index) => {
   //   // console.log("Loop körs");
   // }, 1000 / loopPerSecond);
