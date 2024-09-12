@@ -19,7 +19,7 @@ export const blueSlimeIdle = (enemy) => {
       } else {
         console.log("attack");
 
-        blueSlimeFirstAttack(enemy);
+        slimeAttack(enemy);
       }
     }
   );
@@ -41,27 +41,49 @@ export const blueSlimeHurt = (enemy) => {
   );
 };
 
-export const blueSlimeFirstAttack = (enemy) => {
-  playAnimation(
-    "/Slime Enemy/blue/attack-first.png",
-    9,
-    5,
-    1,
-    "myCanvas",
-    enemy.pos,
-    enemy.size,
-    `slime-${enemy.id}`, // Unik id för varje fiende
-    () => {
-      console.log("HIT!");
-      blueSlimeSecondAttack(enemy);
-      // blueSlimeIdle(enemy);
-    }
-  );
+export const slimeAttack = (enemy) => {
+  const blueSlimeFirstAttack = () => {
+    playAnimation(
+      "/Slime Enemy/blue/attack-firstNew.png",
+      9,
+      10,
+      1,
+      "myCanvas",
+      enemy.pos,
+      enemy.size,
+      `slime-${enemy.id}`, // Unik id för varje fiende
+      () => {
+        console.log("HIT!");
+        blueSlimeSecondAttack(enemy);
+        // blueSlimeIdle(enemy);
+      }
+    );
+  };
+
+  const blueSlimeSecondAttack = () => {
+    playAnimation(
+      "/Slime Enemy/blue/attack-second.png",
+      6,
+      10,
+      1,
+      "myCanvas",
+      enemy.pos,
+      enemy.size,
+      `slime-${enemy.id}`, // Unik id för varje fiende
+      () => {
+        console.log("second attakc ht");
+
+        blueSlimeIdle(enemy);
+      }
+    );
+  };
+
+  blueSlimeFirstAttack();
 };
 
-export const blueSlimeSecondAttack = (enemy) => {
+export const blueSlimeAttack = (enemy) => {
   playAnimation(
-    "/Slime Enemy/blue/attack-secondOld.png",
+    "/Slime Enemy/blue/hurt.png",
     6,
     5,
     1,
@@ -70,15 +92,16 @@ export const blueSlimeSecondAttack = (enemy) => {
     enemy.size,
     `slime-${enemy.id}`, // Unik id för varje fiende
     () => {
-      console.log("second attakc ht");
-
       blueSlimeIdle(enemy);
     }
   );
 };
 
+const slimeMaxHP = 100;
+
 export const slimeEnemy: Enemy = {
-  health: 100,
+  maxHealth: slimeMaxHP,
+  health: slimeMaxHP,
   name: "Slime",
   pos: {
     x: 0,
@@ -89,5 +112,5 @@ export const slimeEnemy: Enemy = {
     y: 50,
   },
   id: 0,
-  animations: [blueSlimeIdle],
+  startAnimation: blueSlimeIdle,
 };

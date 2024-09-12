@@ -40,3 +40,5 @@ export const randomEnemy = () => {
 export const randomBoss = () => {
   return bossTypesOnFloor[Math.floor(Math.random() * bossTypesOnFloor.length)];
 };
+
+export const enemies = [];

@@ -1,21 +1,30 @@
 import { world } from "./basics";
+import { deepCloneWithFunctions } from "./createCloneObject";
+import { enemies } from "./enemies/enemyTypes";
 import { generateUniqueId } from "./generateAnimationId";
 import { Enemy } from "./main";
 
-export const spawnEnemy = (enemies: Enemy[]) => {
-  console.log(`Spawning ${enemies.length} enemies`);
+export const spawnEnemy = (spawnEnemies: Enemy[]) => {
+  console.log(`Spawning ${spawnEnemies.length} enemies`);
 
-  enemies.forEach((enemy, i) => {
-    const posX = world.width / 2 + 750 * i;
-    const posY = world.height / 2 + 250 * i;
+  spawnEnemies.forEach((enemy, i) => {
+    const newEnemy: Enemy = deepCloneWithFunctions(enemy);
+    // const posX = (world.width / 4) * 3 + 0 * i;
+    // const posY = (world.height / 4) * 3 + 75 * i;
 
-    enemy.pos.x = posX;
-    enemy.pos.y = posY;
+    const posX =
+      (Math.random() * world.width) / 2 + world.width / 2 - newEnemy.size.x * 2;
+    const posY = Math.random() * world.height - newEnemy.size.y * 2;
 
-    enemy.id = generateUniqueId();
+    newEnemy.pos.x = posX;
+    newEnemy.pos.y = posY;
 
-    enemy.animations[0](enemy);
+    newEnemy.id = generateUniqueId();
+
+    newEnemy.startAnimation(newEnemy);
 
     console.log(enemy, i);
+
+    enemies.push(newEnemy);
   });
 };

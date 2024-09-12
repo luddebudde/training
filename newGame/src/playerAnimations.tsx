@@ -20,17 +20,6 @@ export const checkNextPlayerAnimation = () => {
   }
 };
 
-// playAnimation(
-//   "sprite.png",
-//   10, // parts
-//   24, // frameRate
-//   5, // loopTimes
-//   "myCanvas",
-//   { x: 100, y: 100 }, // pos
-//   { x: 50, y: 50 }, // size
-//   "player1" // unique entityId
-// );
-
 export const checkWalking = () => {
   if (currentlyWalking) {
     playerAnimationQueue.push(runAnimation);
@@ -40,7 +29,7 @@ export const checkWalking = () => {
 
 export const runAnimation = () => {
   playAnimation(
-    "/runNew.png",
+    "/run.png",
     7,
     10,
     1,
@@ -89,21 +78,21 @@ export const protectAnimation = () => {
     "myCanvas",
     player.pos,
     player.size,
-    "player", // unique entityId
+    "player",
     checkNextPlayerAnimation
   );
 };
 
 const processAnimationQueue = () => {
   if (playerAnimationQueue.length > 0) {
-    const nextAnimation = playerAnimationQueue.shift(); // Hämta och ta bort den första animationen i kön
-    nextAnimation(); // Kör animationen
+    const nextAnimation = playerAnimationQueue.shift();
+    nextAnimation();
   }
 };
 
 export const overwritePlayerAnimation = (playAnimation) => {
-  playerAnimationQueue.length = 0; // Rensa animationskön
-  stopAnimation("player"); // Stopp den nuvarande animationen
-  playerAnimationQueue.push(playAnimation); // Lägg till ny animation
-  processAnimationQueue(); // Processa den nya animationen
+  playerAnimationQueue.length = 0;
+  stopAnimation("player");
+  playerAnimationQueue.push(playAnimation);
+  processAnimationQueue();
 };

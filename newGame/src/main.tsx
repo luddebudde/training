@@ -1,6 +1,6 @@
 import { createCredits } from "./createCredits.tsx";
 import { createMenu } from "./createMenu.tsx";
-import { randomBoss, randomEnemy } from "./enemies/enemyTypes.tsx";
+import { enemies, randomBoss, randomEnemy } from "./enemies/enemyTypes.tsx";
 import { slimeEnemy } from "./enemies/slimeEnemy.tsx";
 import { player } from "./player.tsx";
 import { changeDivStatus } from "./changeDivStatus.tsx";
@@ -19,6 +19,7 @@ import {
 } from "./playerAnimations.tsx";
 import { prototype } from "stats.js";
 import { spawnEnemy } from "./spawnEnemy.tsx";
+import { drawHealthBar } from "./draw/drawHealthbar.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -49,7 +50,11 @@ import { spawnEnemy } from "./spawnEnemy.tsx";
 // document.body.insertAdjacentHTML('beforeend', deletion);
 // document.body.insertAdjacentHTML('beforeend', a);
 
+export const canvas = document.getElementById("myCanvas");
+export const ctx = canvas.getContext("2d");
+
 export type Enemy = {
+  maxHealth: number;
   health: number;
   name: string;
   pos: {
@@ -61,7 +66,7 @@ export type Enemy = {
     y: number;
   };
   id: number;
-  animations: [];
+  startAnimation: Function;
 };
 
 export type Block = {
@@ -163,7 +168,7 @@ const animationCheck = [];
   // startFight(prototype);
 
   // runAnimation();
-  // spawnEnemy([slimeEnemy]);
+  spawnEnemy([slimeEnemy, slimeEnemy]);
 })();
 
 export const drawmap = () => {
@@ -221,23 +226,40 @@ export const drawmap = () => {
   });
 };
 
+export let attackDelay = 0;
+
 //const gameLoop = setInterval(() => {}, 1000 / loopPerSecond);
 document.addEventListener("keydown", function (event) {
-  if (event.code === "Enter") {
-    // playerAnimationQueue.length = 0; // Rensa animationskön
-    // stopAnimation("player"); // Stopp den nuvarande animationen
-    // playerAnimationQueue.push(attackAnimation); // Lägg till ny animation
-    // processAnimationQueue(); // Processa den nya animationen
-    overwritePlayerAnimation(attackAnimation);
-  }
-  if (event.code === "Space") {
-    // playerAnimationQueue.length = 0; // Rensa animationskön
-    // stopAnimation("player"); // Stopp den nuvarande animationen
-    // playerAnimationQueue.push(protectAnimation); // Lägg till ny animation
-    // processAnimationQueue(); // Processa den nya animationen
-    overwritePlayerAnimation(protectAnimation);
+  console.log(event.code);
+
+  if (attackDelay <= 0) {
+    if (event.code === "KeyD") {
+      overwritePlayerAnimation(attackAnimation);
+      attackDelay = loopPerSecond;
+    }
+    if (event.code === "Space") {
+      overwritePlayerAnimation(protectAnimation);
+      attackDelay = loopPerSecond * 1.5;
+    }
   }
 });
+
+setInterval(() => {
+  attackDelay--;
+
+  enemies.forEach((enemy) => {
+    const offsetX = enemy.size.x / 2;
+    drawHealthBar(
+      ctx,
+      enemy.pos.x - offsetX,
+      enemy.pos.y + enemy.size.y * 1.3,
+      enemy.size.x * 1.8,
+      enemy.size.y / 5,
+      enemy.health,
+      enemy.maxHealth
+    );
+  });
+}, 1000 / loopPerSecond);
 
 // const processAnimationQueue = () => {
 //   if (playerAnimationQueue.length > 0) {

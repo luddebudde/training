@@ -1,11 +1,9 @@
+import { canvas, ctx } from "./main";
 import {
   playerAnimationQueue,
   checkNextPlayerAnimation,
   idleAnimation,
 } from "./playerAnimations";
-
-const canvas = document.getElementById("myCanvas");
-const ctx = canvas.getContext("2d");
 
 const resizeCanvas = () => {
   canvas.width = window.innerWidth;
@@ -109,10 +107,10 @@ export const stopAnimation = (entityId, whenDone = () => {}) => {
 
     // Rensa endast det område där animationen finns
     ctx.clearRect(
-      pos.x - size.x / 2,
-      pos.y - size.y / 2,
-      frameWidth + size.x,
-      spriteHeight + size.y
+      pos.x - size.x / 2 - 5,
+      pos.y - size.y / 2 - 5,
+      frameWidth + size.x + 10,
+      spriteHeight + size.y + 10
     );
 
     delete animationsRegistry[entityId]; // Ta bort animationen från registret
