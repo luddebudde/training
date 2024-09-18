@@ -1,5 +1,25 @@
-import { Enemy } from "../main";
+import { Player } from "../player";
 import { slimeEnemy } from "./slimeEnemy";
+
+export type Enemy = {
+  maxHealth: number;
+  health: number;
+  name: string;
+  pos: {
+    x: number;
+    y: number;
+  };
+  size: {
+    x: number;
+    y: number;
+  };
+
+  target: Player | undefined;
+  possibleTargets: Player;
+
+  id: number;
+  startAnimation: Function;
+};
 
 const runAway: Enemy = {
   health: 50,
@@ -41,4 +61,21 @@ export const randomBoss = () => {
   return bossTypesOnFloor[Math.floor(Math.random() * bossTypesOnFloor.length)];
 };
 
+export const checkAlive = (entity: Enemy) => {
+  if (entity.health > 0) {
+    // whenDone();
+    // return true;
+  } else {
+    console.log("dead");
+
+    // return false;
+  }
+};
+
+export const changeEnemyArray = (oldArray, newArray) => {
+  oldArray = newArray;
+};
+
 export const enemies = [];
+export const bosses = [];
+export const entities = [];

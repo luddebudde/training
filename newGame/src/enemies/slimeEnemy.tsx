@@ -1,5 +1,6 @@
-import { Enemy } from "../main";
+import { checkAlive, Enemy } from "./enemyTypes";
 import { playAnimation } from "../playAnimation";
+import { player } from "../player";
 
 export const blueSlimeIdle = (enemy) => {
   playAnimation(
@@ -12,12 +13,13 @@ export const blueSlimeIdle = (enemy) => {
     enemy.size,
     `slime-${enemy.id}`, // Unik id för varje fiende
     () => {
+      if (!checkAlive) return;
       if (Math.random() > 0.5) {
-        console.log("idle");
+        // console.log("idle");
 
         blueSlimeIdle(enemy);
       } else {
-        console.log("attack");
+        // console.log("attack");
 
         slimeAttack(enemy);
       }
@@ -36,6 +38,7 @@ export const blueSlimeHurt = (enemy) => {
     enemy.size,
     `slime-${enemy.id}`, // Unik id för varje fiende
     () => {
+      if (!checkAlive) return;
       blueSlimeIdle(enemy);
     }
   );
@@ -53,7 +56,8 @@ export const slimeAttack = (enemy) => {
       enemy.size,
       `slime-${enemy.id}`, // Unik id för varje fiende
       () => {
-        console.log("HIT!");
+        if (!checkAlive) return;
+        // console.log("HIT!");
         blueSlimeSecondAttack(enemy);
         // blueSlimeIdle(enemy);
       }
@@ -71,8 +75,8 @@ export const slimeAttack = (enemy) => {
       enemy.size,
       `slime-${enemy.id}`, // Unik id för varje fiende
       () => {
-        console.log("second attakc ht");
-
+        // console.log("second attakc ht");
+        if (!checkAlive) return;
         blueSlimeIdle(enemy);
       }
     );
@@ -92,6 +96,7 @@ export const blueSlimeAttack = (enemy) => {
     enemy.size,
     `slime-${enemy.id}`, // Unik id för varje fiende
     () => {
+      if (!checkAlive) return;
       blueSlimeIdle(enemy);
     }
   );
@@ -103,6 +108,10 @@ export const slimeEnemy: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
   name: "Slime",
+
+  possibleTargets: player,
+  target: player,
+
   pos: {
     x: 0,
     y: 0,
@@ -112,5 +121,6 @@ export const slimeEnemy: Enemy = {
     y: 50,
   },
   id: 0,
+
   startAnimation: blueSlimeIdle,
 };

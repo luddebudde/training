@@ -1,8 +1,9 @@
 import { world } from "./basics";
 import { deepCloneWithFunctions } from "./createCloneObject";
-import { enemies } from "./enemies/enemyTypes";
+import { enemies, entities } from "./enemies/enemyTypes";
 import { generateUniqueId } from "./generateAnimationId";
-import { Enemy } from "./main";
+import { Enemy } from "./enemies/enemyTypes";
+import { initializePlayerTarget, player } from "./player";
 
 export const spawnEnemy = (spawnEnemies: Enemy[]) => {
   console.log(`Spawning ${spawnEnemies.length} enemies`);
@@ -26,5 +27,11 @@ export const spawnEnemy = (spawnEnemies: Enemy[]) => {
     console.log(enemy, i);
 
     enemies.push(newEnemy);
+    entities.push(newEnemy);
+
+    // initializePlayerTarget();
+    player.possibleTargets = enemies;
+    player.target = player.possibleTargets[0];
+    // console.log("playertarget", player);
   });
 };

@@ -1,14 +1,25 @@
 import { createCredits } from "./createCredits.tsx";
 import { createMenu } from "./createMenu.tsx";
-import { enemies, randomBoss, randomEnemy } from "./enemies/enemyTypes.tsx";
+import {
+  changeEnemyArray,
+  enemies,
+  Enemy,
+  entities as entities,
+  randomBoss,
+  randomEnemy,
+} from "./enemies/enemyTypes.tsx";
 import { slimeEnemy } from "./enemies/slimeEnemy.tsx";
-import { player } from "./player.tsx";
+import { initializePlayerTarget, player } from "./player.tsx";
 import { changeDivStatus } from "./changeDivStatus.tsx";
 import {
   currentlyWalking,
   walkTowardsMapBlock,
 } from "./walkTowardsMapBlock.tsx";
-import { playAnimation, stopAnimation } from "./playAnimation.tsx";
+import {
+  animationsRegistry,
+  playAnimation,
+  stopAnimation,
+} from "./playAnimation.tsx";
 import { loopPerSecond, startFight } from "./startFight.tsx";
 import {
   playerAnimationQueue,
@@ -20,6 +31,8 @@ import {
 import { prototype } from "stats.js";
 import { spawnEnemy } from "./spawnEnemy.tsx";
 import { drawHealthBar } from "./draw/drawHealthbar.tsx";
+import { attack } from "./attack.tsx";
+import { removeEnemyFromAllArrays } from "./removeEnemyFromArrays.tsx";
 
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
 
@@ -53,22 +66,6 @@ import { drawHealthBar } from "./draw/drawHealthbar.tsx";
 export const canvas = document.getElementById("myCanvas");
 export const ctx = canvas.getContext("2d");
 
-export type Enemy = {
-  maxHealth: number;
-  health: number;
-  name: string;
-  pos: {
-    x: number;
-    y: number;
-  };
-  size: {
-    x: number;
-    y: number;
-  };
-  id: number;
-  startAnimation: Function;
-};
-
 export type Block = {
   row: number;
   column: number;
@@ -83,6 +80,10 @@ export const pathBlocks: Block[] = [];
 
 export const generateMap = () => {
   (async () => {
+    // initializePlayerTarget();
+    // console.log("playertarget", player);
+
+    entities.push(player);
     for (let row = 0; row <= 5; row++) {
       for (let column = 0; column <= 8; column++) {
         let colorHex: string = "#009900";
@@ -168,7 +169,7 @@ const animationCheck = [];
   // startFight(prototype);
 
   // runAnimation();
-  spawnEnemy([slimeEnemy, slimeEnemy]);
+  // spawnEnemy([slimeEnemy, slimeEnemy]);
 })();
 
 export const drawmap = () => {
@@ -212,10 +213,6 @@ export const drawmap = () => {
 
     button.addEventListener("click", () => {
       if (pathBlocks.includes(block) && !currentlyWalking) {
-        // playerAnimationQueue.length = 0;
-        // stopAnimation("player");
-        // playerAnimationQueue.push(runAnimation);
-        // processAnimationQueue();
         overwritePlayerAnimation(runAnimation);
 
         walkTowardsMapBlock(player.currentBlock, block);
@@ -228,42 +225,100 @@ export const drawmap = () => {
 
 export let attackDelay = 0;
 
-//const gameLoop = setInterval(() => {}, 1000 / loopPerSecond);
 document.addEventListener("keydown", function (event) {
-  console.log(event.code);
+  // console.log(event.code);
 
   if (attackDelay <= 0) {
     if (event.code === "KeyD") {
       overwritePlayerAnimation(attackAnimation);
       attackDelay = loopPerSecond;
+
+      attack(player, player.target, player.sword.damage);
     }
     if (event.code === "Space") {
       overwritePlayerAnimation(protectAnimation);
       attackDelay = loopPerSecond * 1.5;
     }
+
+    if (event.code === "ArrowUp") {
+      player.target = player.possibleTargets[player.targetId + 1];
+    }
+    if (event.code === "ArrowDown") {
+      player.target = player.possibleTargets[player.targetId + 1];
+    }
   }
 });
 
-setInterval(() => {
+const gameLoop = () => {
+  const now = performance.now();
+
   attackDelay--;
+  console.log(attackDelay);
 
-  enemies.forEach((enemy) => {
-    const offsetX = enemy.size.x / 2;
-    drawHealthBar(
-      ctx,
-      enemy.pos.x - offsetX,
-      enemy.pos.y + enemy.size.y * 1.3,
-      enemy.size.x * 1.8,
-      enemy.size.y / 5,
-      enemy.health,
-      enemy.maxHealth
-    );
-  });
-}, 1000 / loopPerSecond);
+  for (const entityId in animationsRegistry) {
+    const animation = animationsRegistry[entityId];
+    if (!animation.active && animation.loopsLeft <= 0) {
+      continue;
+    }
 
-// const processAnimationQueue = () => {
-//   if (playerAnimationQueue.length > 0) {
-//     const nextAnimation = playerAnimationQueue.shift(); // Hämta och ta bort den första animationen i kön
-//     nextAnimation(); // Kör animationen
-//   }
-// };
+    const {
+      spriteImage,
+      currentFrame,
+      frameWidth,
+      spriteHeight,
+      pos,
+      size,
+      parts,
+      frameRate,
+      isPlayer,
+    } = animation;
+
+    if (!spriteImage.complete) continue;
+
+    const frameDuration = 1000 / frameRate;
+    if (now - animation.lastFrameTime >= frameDuration) {
+      animation.lastFrameTime = now;
+
+      // Clear area
+      ctx.clearRect(
+        pos.x - size.x / 2,
+        pos.y - size.y / 2,
+        frameWidth + size.x,
+        spriteHeight + size.y
+      );
+
+      // Draw sprite
+      ctx.drawImage(
+        spriteImage,
+        currentFrame * frameWidth,
+        0,
+        frameWidth,
+        spriteHeight,
+        pos.x - size.x / 2,
+        pos.y - size.y / 2,
+        frameWidth + size.x,
+        spriteHeight + size.y
+      );
+
+      animation.currentFrame = (animation.currentFrame + 1) % parts;
+
+      // Done
+      if (animation.currentFrame === 0) {
+        animation.loopsLeft--;
+
+        if (animation.loopsLeft === 0 && !animation.isPlayer) {
+          stopAnimation(entityId);
+
+          if (animation.whenDone) {
+            animation.whenDone();
+          }
+          continue;
+        }
+      }
+    }
+  }
+
+  requestAnimationFrame(gameLoop);
+};
+
+gameLoop();

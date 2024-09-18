@@ -45,7 +45,7 @@ export const idleAnimation = () => {
   playAnimation(
     "/Idle.png",
     4,
-    0.4,
+    4,
     1,
     "myCanvas",
     player.pos,
