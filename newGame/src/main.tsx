@@ -27,6 +27,8 @@ import {
   protectAnimation,
   runAnimation,
   overwritePlayerAnimation,
+  idleAnimation,
+  playerAppearance,
 } from "./playerAnimations.tsx";
 import { prototype } from "stats.js";
 import { spawnEnemy } from "./spawnEnemy.tsx";
@@ -164,6 +166,7 @@ const animationCheck = [];
 
 (async () => {
   createMenu();
+  playerAppearance();
   // createCredits();
   // generateMap();
   // startFight(prototype);
@@ -176,6 +179,10 @@ export const drawmap = () => {
   const div = document.getElementById("mapDiv");
   if (!div) return;
   div.innerHTML = "";
+
+  // idleAnimation();
+  // runAnimation();
+  // playerAppearance();
 
   mapBlocks.forEach((block) => {
     if (block === player.currentBlock) {
@@ -253,7 +260,13 @@ const gameLoop = () => {
   const now = performance.now();
 
   attackDelay--;
-  console.log(attackDelay);
+  // console.log(attackDelay);
+
+  enemies.forEach((enemy, i) => {
+    if (enemy.health <= 0) {
+      enemies.splice(i);
+    }
+  });
 
   for (const entityId in animationsRegistry) {
     const animation = animationsRegistry[entityId];
@@ -278,6 +291,17 @@ const gameLoop = () => {
     const frameDuration = 1000 / frameRate;
     if (now - animation.lastFrameTime >= frameDuration) {
       animation.lastFrameTime = now;
+
+      if (animation.oldPos.x !== pos.x || animation.oldPos.y !== pos.y) {
+        ctx.clearRect(
+          animation.oldPos.x - size.x / 2,
+          animation.oldPos.y - size.y / 2,
+          frameWidth + size.x,
+          spriteHeight + size.y
+        );
+        // Uppdatera den gamla positionen till den nya
+        animation.oldPos = { ...pos };
+      }
 
       // Clear area
       ctx.clearRect(

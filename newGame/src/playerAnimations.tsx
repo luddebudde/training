@@ -1,6 +1,8 @@
+import { world } from "./basics";
 import { playAnimation, stopAnimation } from "./playAnimation";
 import { player } from "./player";
-import { currentlyWalking } from "./walkTowardsMapBlock";
+import { loopPerSecond } from "./startFight";
+import { changeIsWalking, currentlyWalking } from "./walkTowardsMapBlock";
 
 export const playerAnimationQueue = [];
 
@@ -51,7 +53,11 @@ export const idleAnimation = () => {
     player.pos,
     player.size,
     "player",
+    // () => {
+    // checkWalking();
+
     checkNextPlayerAnimation
+    // }
   );
 };
 
@@ -95,4 +101,19 @@ export const overwritePlayerAnimation = (playAnimation) => {
   stopAnimation("player");
   playerAnimationQueue.push(playAnimation);
   processAnimationQueue();
+};
+
+export const playerAppearance = () => {
+  changeIsWalking(true);
+  runAnimation();
+
+  const playerWalk = setInterval(() => {
+    if (player.pos.x > world.width / 5 - player.size.x) {
+      console.log(world.width / 300);
+
+      clearInterval(playerWalk);
+      changeIsWalking(false);
+    }
+    player.pos.x += 5;
+  }, 1000 / loopPerSecond);
 };

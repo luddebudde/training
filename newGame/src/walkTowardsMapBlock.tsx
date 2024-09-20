@@ -11,6 +11,10 @@ const findBlockIndex = (block: Block): number => {
 
 export let currentlyWalking = false;
 
+export const changeIsWalking = (mode: boolean) => {
+  currentlyWalking = mode;
+};
+
 const timeouts = [];
 
 const walk = (speed: number, startIndex: number, endIndex: number) => {

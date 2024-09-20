@@ -27,6 +27,11 @@ export type Player = {
   };
 };
 
+const playerSize = {
+  x: 100,
+  y: 100,
+};
+
 export const player: Player = {
   maxHealth: 100,
   health: 100,
@@ -39,7 +44,7 @@ export const player: Player = {
     infested: false,
   },
   pos: {
-    x: 150,
+    x: -playerSize.x * 1.5,
     y: world.height / 2,
   },
   id: generateUniqueId(),
@@ -47,8 +52,8 @@ export const player: Player = {
   target: null,
   targetId: 0,
   size: {
-    x: 100,
-    y: 100,
+    x: playerSize.x,
+    y: playerSize.y,
   },
   sword: {
     damage: 50,

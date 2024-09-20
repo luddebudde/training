@@ -1,5 +1,9 @@
 import { checkAlive, Enemy } from "./enemyTypes";
-import { playAnimation } from "../playAnimation";
+import {
+  animationsRegistry,
+  playAnimation,
+  stopAnimation,
+} from "../playAnimation";
 import { player } from "../player";
 
 export const blueSlimeIdle = (enemy) => {
@@ -18,6 +22,12 @@ export const blueSlimeIdle = (enemy) => {
         // console.log("idle");
 
         blueSlimeIdle(enemy);
+        // for (let i = 0; i < 100; i++) {
+        //   setTimeout(() => {
+        //     enemy.pos.x -= 1;
+        //     console.log(enemy.pos);
+        //   }, i * 10);
+        // }
       } else {
         // console.log("attack");
 
@@ -40,6 +50,28 @@ export const blueSlimeHurt = (enemy) => {
     () => {
       if (!checkAlive) return;
       blueSlimeIdle(enemy);
+    }
+  );
+};
+export const blueSlimeDeath = (enemy) => {
+  playAnimation(
+    "/Slime Enemy/blue/death.png",
+    14,
+    5,
+    1,
+    "myCanvas",
+    enemy.pos,
+    enemy.size,
+    `slime-${enemy.id}`, // Unik id för varje fiende
+    () => {
+      console.log(animationsRegistry, "1");
+
+      // Stoppa och ta bort animationen korrekt
+      stopAnimation(`slime-${enemy.id}`, () => {
+        console.log(animationsRegistry, "2");
+        // Nästa steg efter att animationen är stoppad, exempelvis byta till en skadad animation
+        blueSlimeHurt(enemy);
+      });
     }
   );
 };

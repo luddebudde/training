@@ -13,18 +13,10 @@ export const startFight = (infestation) => {
     div.innerHTML = "";
   }
 
-  // mapBlocks.splice(0, mapBlocks.length)
-  // pathBlocks.splice(0, pathBlocks.length)
-
   clearArray(mapBlocks);
   clearArray(pathBlocks);
 
   changeDivStatus("mapDiv", "display", "none");
 
-  // playAnimation('/gothic-hero-jump.png', 5, 10, 'spriteContainer')
-
   spawnEnemy(infestation);
-  // const battleInterval = setInterval((index) => {
-  //   // console.log("Loop körs");
-  // }, 1000 / loopPerSecond);
 };
