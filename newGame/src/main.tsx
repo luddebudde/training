@@ -1,42 +1,38 @@
-import { createCredits } from "./createCredits.tsx";
+// Fix enemy targeting
+// Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
+
 import { createMenu } from "./createMenu.tsx";
 import {
-  changeEnemyArray,
   enemies,
   Enemy,
   entities as entities,
   randomBoss,
   randomEnemy,
 } from "./enemies/enemyTypes.tsx";
-import { slimeEnemy } from "./enemies/slimeEnemy.tsx";
-import { initializePlayerTarget, player } from "./player.tsx";
 import { changeDivStatus } from "./changeDivStatus.tsx";
 import {
   currentlyWalking,
   walkTowardsMapBlock,
 } from "./walkTowardsMapBlock.tsx";
+import { animationsRegistry, stopAnimation } from "./playAnimation.tsx";
+import { loopPerSecond } from "./startFight.tsx";
 import {
-  animationsRegistry,
-  playAnimation,
-  stopAnimation,
-} from "./playAnimation.tsx";
-import { loopPerSecond, startFight } from "./startFight.tsx";
-import {
-  playerAnimationQueue,
   attackAnimation,
   protectAnimation,
   runAnimation,
   overwritePlayerAnimation,
-  idleAnimation,
   playerAppearance,
 } from "./playerAnimations.tsx";
-import { prototype } from "stats.js";
-import { spawnEnemy } from "./spawnEnemy.tsx";
 import { drawHealthBar } from "./draw/drawHealthbar.tsx";
 import { attack } from "./attack.tsx";
-import { removeEnemyFromAllArrays } from "./removeEnemyFromArrays.tsx";
+import { player } from "./player.tsx";
 
-// Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
 
 // const deletion = `
 //   <ul>
@@ -246,13 +242,15 @@ document.addEventListener("keydown", function (event) {
       overwritePlayerAnimation(protectAnimation);
       attackDelay = loopPerSecond * 1.5;
     }
+  }
 
-    if (event.code === "ArrowUp") {
-      player.target = player.possibleTargets[player.targetId + 1];
-    }
-    if (event.code === "ArrowDown") {
-      player.target = player.possibleTargets[player.targetId + 1];
-    }
+  if (event.code === "ArrowUp") {
+    player.target = player.possibleTargets[player.targetId + 1];
+    console.log(player.target);
+  }
+  if (event.code === "ArrowDown") {
+    player.target = player.possibleTargets[player.targetId];
+    console.log(player.target);
   }
 });
 
@@ -260,13 +258,6 @@ const gameLoop = () => {
   const now = performance.now();
 
   attackDelay--;
-  // console.log(attackDelay);
-
-  enemies.forEach((enemy, i) => {
-    if (enemy.health <= 0) {
-      enemies.splice(i);
-    }
-  });
 
   for (const entityId in animationsRegistry) {
     const animation = animationsRegistry[entityId];
@@ -304,12 +295,7 @@ const gameLoop = () => {
       }
 
       // Clear area
-      ctx.clearRect(
-        pos.x - size.x / 2,
-        pos.y - size.y / 2,
-        frameWidth + size.x,
-        spriteHeight + size.y
-      );
+      ctx.clearRect(pos.x, pos.y, size.x, size.y);
 
       // Draw sprite
       ctx.drawImage(
@@ -318,11 +304,14 @@ const gameLoop = () => {
         0,
         frameWidth,
         spriteHeight,
-        pos.x - size.x / 2,
-        pos.y - size.y / 2,
-        frameWidth + size.x,
-        spriteHeight + size.y
+        pos.x, // Centrerar bilden horisontellt
+        pos.y, // Centrerar bilden vertikalt
+        size.x, // Använd `size.x` för bildens bredd
+        size.y // Använd `size.y` för bildens höjd
       );
+
+      ctx.rect(pos.x, pos.y, size.x, size.y);
+      ctx.stroke();
 
       animation.currentFrame = (animation.currentFrame + 1) % parts;
 
@@ -341,6 +330,45 @@ const gameLoop = () => {
       }
     }
   }
+
+  enemies.forEach((enemy) => {
+    const sizeX = enemy.size.x;
+    const sizeY = enemy.size.y;
+    const xPos = enemy.pos.x;
+    const yPos = enemy.pos.y;
+
+    drawHealthBar(
+      ctx,
+      xPos,
+      yPos + sizeY * 1.2,
+      sizeX,
+      sizeY / 4,
+      enemy.health,
+      enemy.maxHealth
+    );
+
+    if (enemy === player.target) {
+      ctx.rect(enemy.pos.x, enemy.pos.y, enemy.size.x, enemy.size.y);
+      ctx.strokeStyle = "red";
+      ctx.stroke();
+      ctx.strokeStyle = "black";
+    }
+  });
+
+  // console.log("player", player.health, player.maxHealth, player.id);
+
+  // console.log(player);
+
+  // Rita ut spelarens hälsomätare separat
+  drawHealthBar(
+    ctx,
+    player.pos.x,
+    player.pos.y + player.size.y,
+    player.size.x,
+    player.size.y / 10,
+    player.health,
+    player.maxHealth
+  );
 
   requestAnimationFrame(gameLoop);
 };

@@ -51,7 +51,7 @@ export const playAnimation = (
       whenDone,
       active: true,
       lastFrameTime: performance.now(),
-      oldPos: { ...pos }, // Lagra den gamla positionen
+      oldPos: { ...pos },
     };
   };
 
@@ -60,25 +60,10 @@ export const playAnimation = (
   };
 };
 
-// export const stopAnimation = (entityId, whenDone = () => {}) => {
-//   if (animationsRegistry[entityId]) {
-//     // console.log(animationsRegistry);
-
-//     const animation = animationsRegistry[entityId];
-//     const { pos, size, frameWidth, spriteHeight } = animation;
-
-//     // delete animationsRegistry[entityId]; // Ta bort animationen från registret
-
-//     if (typeof whenDone === "function") {
-//       whenDone();
-//     }
-//   }
-// };
-
 export const stopAnimation = (entityId, whenDone = () => {}) => {
   if (animationsRegistry[entityId]) {
     const animation = animationsRegistry[entityId];
-    const { pos, size, frameWidth, spriteHeight } = animation;
+    // const { pos, size, frameWidth, spriteHeight } = animation;
 
     // Rensa det område där animationen var ritad
     // ctx.clearRect(

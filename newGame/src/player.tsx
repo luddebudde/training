@@ -18,7 +18,7 @@ export type Player = {
     x: number;
     y: number;
   };
-
+  targetId: number;
   target: Enemy | undefined;
   possibleTargets: Enemy[];
 
@@ -28,13 +28,13 @@ export type Player = {
 };
 
 const playerSize = {
-  x: 100,
-  y: 100,
+  x: 200,
+  y: 200,
 };
 
 export const player: Player = {
-  maxHealth: 100,
-  health: 100,
+  maxHealth: 150,
+  health: 150,
   currentBlock: {
     row: 0,
     column: 0,
@@ -56,7 +56,7 @@ export const player: Player = {
     y: playerSize.y,
   },
   sword: {
-    damage: 50,
+    damage: 25,
   },
 };
 

@@ -4,6 +4,7 @@ import { slimeEnemy } from "./slimeEnemy";
 export type Enemy = {
   maxHealth: number;
   health: number;
+  damage: number;
   name: string;
   pos: {
     x: number;

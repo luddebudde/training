@@ -1,3 +1,4 @@
+import { enemies } from "./enemies/enemyTypes";
 import { blueSlimeDeath } from "./enemies/slimeEnemy";
 import { animationsRegistry, stopAnimation } from "./playAnimation";
 
@@ -10,13 +11,20 @@ export const attack = (attacker, target, damage) => {
 
   if (target.health <= 0) {
     console.log("Dead!");
-    console.log(attacker.possibleTargets);
+    // console.log("player targets array", attacker.possibleTargets);
 
-    attacker.target = attacker.possibleTargets[0];
-    console.log(attacker.target);
+    // console.log("new target", attacker.target);
 
     // delete animationsRegistry[target?.id];
     blueSlimeDeath(target);
+
+    const index = enemies.indexOf(target);
+
+    if (index !== -1) {
+      enemies.splice(index, 1);
+    }
+    attacker.target = attacker.possibleTargets[0];
+    console.log("player targets array", enemies);
   }
   // console.log("Attack", target, attack);
 

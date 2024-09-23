@@ -5,6 +5,7 @@ import {
   stopAnimation,
 } from "../playAnimation";
 import { player } from "../player";
+import { attack } from "../attack";
 
 export const blueSlimeIdle = (enemy) => {
   playAnimation(
@@ -19,8 +20,6 @@ export const blueSlimeIdle = (enemy) => {
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
-        // console.log("idle");
-
         blueSlimeIdle(enemy);
         // for (let i = 0; i < 100; i++) {
         //   setTimeout(() => {
@@ -29,8 +28,6 @@ export const blueSlimeIdle = (enemy) => {
         //   }, i * 10);
         // }
       } else {
-        // console.log("attack");
-
         slimeAttack(enemy);
       }
     }
@@ -91,6 +88,7 @@ export const slimeAttack = (enemy) => {
         if (!checkAlive) return;
         // console.log("HIT!");
         blueSlimeSecondAttack(enemy);
+
         // blueSlimeIdle(enemy);
       }
     );
@@ -109,6 +107,11 @@ export const slimeAttack = (enemy) => {
       () => {
         // console.log("second attakc ht");
         if (!checkAlive) return;
+
+        attack(enemy, enemy.target, enemy.damage);
+
+        console.log("enemy:", enemy.target, "damage", enemy.damage);
+
         blueSlimeIdle(enemy);
       }
     );
@@ -139,6 +142,7 @@ const slimeMaxHP = 100;
 export const slimeEnemy: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
+  damage: 40,
   name: "Slime",
 
   possibleTargets: player,
@@ -149,8 +153,8 @@ export const slimeEnemy: Enemy = {
     y: 0,
   },
   size: {
-    x: 50,
-    y: 50,
+    x: 100,
+    y: 100,
   },
   id: 0,
 
