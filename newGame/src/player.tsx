@@ -3,12 +3,20 @@ import { enemies } from "./enemies/enemyTypes";
 import { generateUniqueId } from "./generateAnimationId";
 import { Block, pathBlocks } from "./main";
 import { Enemy } from "./enemies/enemyTypes";
+import { runAnimation } from "./playerAnimations";
 
 export type Player = {
+  name: string;
+
   maxHealth: number;
   health: number;
-  currentBlock: Block;
+  maxMana: number;
+  mana: number;
 
+  isBlocking: boolean;
+  attackDelay: number;
+
+  currentBlock: Block;
   pos: {
     x: number;
     y: number;
@@ -32,9 +40,19 @@ const playerSize = {
   y: 200,
 };
 
+export const players = [];
+
 export const player: Player = {
+  name: "player",
+
   maxHealth: 150,
   health: 150,
+  maxMana: 100,
+  mana: 100,
+
+  isBlocking: false,
+  attackDelay: 0,
+
   currentBlock: {
     row: 0,
     column: 0,
@@ -43,11 +61,17 @@ export const player: Player = {
     image: "",
     infested: false,
   },
+  // pos: {
+  //   x: -playerSize.x * 1.5,
+  //   y: world.height / 2,
+  // },
   pos: {
-    x: -playerSize.x * 1.5,
+    x: 500,
     y: world.height / 2,
   },
-  id: generateUniqueId(),
+  // id: generateUniqueId(),
+  id: "player",
+  // deathAnimation: runAnimation(),
   possibleTargets: null,
   target: null,
   targetId: 0,
@@ -60,9 +84,6 @@ export const player: Player = {
   },
 };
 
-// export const initializePlayerTarget = () => {
-//   // if (enemies.length > 0) {
-//   player.possibleTargets = enemies;
-//   player.target = player.possibleTargets[0];
-//   // }
-// };
+console.log("player");
+
+// players.push(player);

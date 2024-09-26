@@ -1,5 +1,14 @@
 // Fix enemy targeting
 // Rewrite map generation but with pathBlocks.includes(neighbor) instead, maybe.
+// Randomize player start position on map
+
+// Turn already downloaded sprites to enemies
+// Add bosses and after fight screen
+// Some sort of progression or way to impact your gameplay, wheneter or not it includes coins or upgrades I dont know
+// More weapons/moves
+// SPELLS!
+// Maybe change player sprite
+// Change Beatle sprites to acutal game sprites
 
 import { createMenu } from "./createMenu.tsx";
 import {
@@ -26,40 +35,7 @@ import {
 import { drawHealthBar } from "./draw/drawHealthbar.tsx";
 import { attack } from "./attack.tsx";
 import { player } from "./player.tsx";
-
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-
-// const deletion = `
-//   <ul>
-//     <li>BANANANA</li>
-//     <li>APPPLEEE</li>
-//   </ul>`;
-
-// const a = `
-// <button
-//   style="
-//     background-color: red;
-//     color: green;
-//     font-size: 30px;
-//     padding: 50px;
-//     padding-bottom: 20px;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//   "
-//   onclick="deleteList()"
-// >
-//   DELETE
-// </button>
-// `;
-
-// document.body.insertAdjacentHTML('beforeend', deletion);
-// document.body.insertAdjacentHTML('beforeend', a);
+import { world } from "./basics.tsx";
 
 export const canvas = document.getElementById("myCanvas");
 export const ctx = canvas.getContext("2d");
@@ -78,9 +54,6 @@ export const pathBlocks: Block[] = [];
 
 export const generateMap = () => {
   (async () => {
-    // initializePlayerTarget();
-    // console.log("playertarget", player);
-
     entities.push(player);
     for (let row = 0; row <= 5; row++) {
       for (let column = 0; column <= 8; column++) {
@@ -90,8 +63,6 @@ export const generateMap = () => {
         if (row === 5 && column === 4) {
           colorHex = "#FFB266";
         }
-
-        // const colorRgb = hexToRgb(colorHex);
 
         const currentBlock: Block = {
           row: row,
@@ -162,12 +133,12 @@ const animationCheck = [];
 
 (async () => {
   createMenu();
-  playerAppearance();
+  // playerAppearance();
   // createCredits();
   // generateMap();
   // startFight(prototype);
 
-  // runAnimation();
+  runAnimation();
   // spawnEnemy([slimeEnemy, slimeEnemy]);
 })();
 
@@ -202,8 +173,6 @@ export const drawmap = () => {
 
     const img = document.createElement("img");
     img.src = block.image;
-    // img.style.width = "160px";
-    // img.style.height = "160px";
     img.style.width = "6.25vw";
     img.style.height = "6.25vw";
     img.style.display = "block";
@@ -226,21 +195,19 @@ export const drawmap = () => {
   });
 };
 
-export let attackDelay = 0;
-
 document.addEventListener("keydown", function (event) {
-  // console.log(event.code);
-
-  if (attackDelay <= 0) {
+  if (player.attackDelay <= 0) {
     if (event.code === "KeyD") {
       overwritePlayerAnimation(attackAnimation);
-      attackDelay = loopPerSecond;
+      player.attackDelay = loopPerSecond * 4;
 
       attack(player, player.target, player.sword.damage);
     }
     if (event.code === "Space") {
       overwritePlayerAnimation(protectAnimation);
-      attackDelay = loopPerSecond * 1.5;
+
+      player.isBlocking = true;
+      player.attackDelay = loopPerSecond * 3;
     }
   }
 
@@ -255,9 +222,10 @@ document.addEventListener("keydown", function (event) {
 });
 
 const gameLoop = () => {
+  ctx.clearRect(0, 0, 1000, 50);
   const now = performance.now();
 
-  attackDelay--;
+  player.attackDelay--;
 
   for (const entityId in animationsRegistry) {
     const animation = animationsRegistry[entityId];
@@ -280,7 +248,7 @@ const gameLoop = () => {
     if (!spriteImage.complete) continue;
 
     const frameDuration = 1000 / frameRate;
-    if (now - animation.lastFrameTime >= frameDuration) {
+    if (now - animation.lastFrameTime >= frameDuration || currentFrame === 0) {
       animation.lastFrameTime = now;
 
       if (animation.oldPos.x !== pos.x || animation.oldPos.y !== pos.y) {
@@ -290,7 +258,6 @@ const gameLoop = () => {
           frameWidth + size.x,
           spriteHeight + size.y
         );
-        // Uppdatera den gamla positionen till den nya
         animation.oldPos = { ...pos };
       }
 
@@ -304,10 +271,10 @@ const gameLoop = () => {
         0,
         frameWidth,
         spriteHeight,
-        pos.x, // Centrerar bilden horisontellt
-        pos.y, // Centrerar bilden vertikalt
-        size.x, // Använd `size.x` för bildens bredd
-        size.y // Använd `size.y` för bildens höjd
+        pos.x,
+        pos.y,
+        size.x,
+        size.y
       );
 
       ctx.rect(pos.x, pos.y, size.x, size.y);
@@ -353,22 +320,44 @@ const gameLoop = () => {
       ctx.stroke();
       ctx.strokeStyle = "black";
     }
+    if (player === enemy.target) {
+      ctx.rect(enemy.pos.x, enemy.pos.y, enemy.size.x, enemy.size.y);
+      ctx.strokeStyle = "red";
+      ctx.stroke();
+      ctx.strokeStyle = "black";
+    }
   });
 
-  // console.log("player", player.health, player.maxHealth, player.id);
+  // Draw Healthbar
+  const playerBarSize = player.size.y / 4;
 
-  // console.log(player);
-
-  // Rita ut spelarens hälsomätare separat
   drawHealthBar(
     ctx,
-    player.pos.x,
-    player.pos.y + player.size.y,
-    player.size.x,
-    player.size.y / 10,
+    10,
+    10,
+    player.size.x * 5,
+    playerBarSize,
     player.health,
     player.maxHealth
   );
+
+  // Draw Manabar
+  drawHealthBar(
+    ctx,
+    10,
+    20 + playerBarSize,
+    player.size.x * 2,
+    playerBarSize,
+    player.mana,
+    player.maxMana,
+    { filledColor: "blue" }
+  );
+
+  if (player.health < 0) {
+    player.attackDelay = 10000;
+  }
+
+  console.log(player.isBlocking);
 
   requestAnimationFrame(gameLoop);
 };

@@ -4,7 +4,7 @@ import {
   playAnimation,
   stopAnimation,
 } from "../playAnimation";
-import { player } from "../player";
+import { player, players } from "../player";
 import { attack } from "../attack";
 
 export const blueSlimeIdle = (enemy) => {
@@ -16,17 +16,11 @@ export const blueSlimeIdle = (enemy) => {
     "myCanvas",
     enemy.pos,
     enemy.size,
-    `slime-${enemy.id}`, // Unik id för varje fiende
+    `slime-${enemy.id}`,
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
         blueSlimeIdle(enemy);
-        // for (let i = 0; i < 100; i++) {
-        //   setTimeout(() => {
-        //     enemy.pos.x -= 1;
-        //     console.log(enemy.pos);
-        //   }, i * 10);
-        // }
       } else {
         slimeAttack(enemy);
       }
@@ -43,7 +37,7 @@ export const blueSlimeHurt = (enemy) => {
     "myCanvas",
     enemy.pos,
     enemy.size,
-    `slime-${enemy.id}`, // Unik id för varje fiende
+    `slime-${enemy.id}`,
     () => {
       if (!checkAlive) return;
       blueSlimeIdle(enemy);
@@ -59,14 +53,12 @@ export const blueSlimeDeath = (enemy) => {
     "myCanvas",
     enemy.pos,
     enemy.size,
-    `slime-${enemy.id}`, // Unik id för varje fiende
+    `slime-${enemy.id}`,
     () => {
       console.log(animationsRegistry, "1");
 
-      // Stoppa och ta bort animationen korrekt
       stopAnimation(`slime-${enemy.id}`, () => {
         console.log(animationsRegistry, "2");
-        // Nästa steg efter att animationen är stoppad, exempelvis byta till en skadad animation
         blueSlimeHurt(enemy);
       });
     }
@@ -83,13 +75,10 @@ export const slimeAttack = (enemy) => {
       "myCanvas",
       enemy.pos,
       enemy.size,
-      `slime-${enemy.id}`, // Unik id för varje fiende
+      `slime-${enemy.id}`,
       () => {
         if (!checkAlive) return;
-        // console.log("HIT!");
         blueSlimeSecondAttack(enemy);
-
-        // blueSlimeIdle(enemy);
       }
     );
   };
@@ -103,14 +92,16 @@ export const slimeAttack = (enemy) => {
       "myCanvas",
       enemy.pos,
       enemy.size,
-      `slime-${enemy.id}`, // Unik id för varje fiende
+      `slime-${enemy.id}`,
       () => {
-        // console.log("second attakc ht");
         if (!checkAlive) return;
+
+        enemy.target = player;
+        // console.log("enemy:", enemy.target, "damage", enemy.damage);
 
         attack(enemy, enemy.target, enemy.damage);
 
-        console.log("enemy:", enemy.target, "damage", enemy.damage);
+        // console.log("enemy:", enemy.target, "damage", enemy.damage);
 
         blueSlimeIdle(enemy);
       }
@@ -129,7 +120,7 @@ export const blueSlimeAttack = (enemy) => {
     "myCanvas",
     enemy.pos,
     enemy.size,
-    `slime-${enemy.id}`, // Unik id för varje fiende
+    `slime-${enemy.id}`,
     () => {
       if (!checkAlive) return;
       blueSlimeIdle(enemy);
@@ -159,4 +150,7 @@ export const slimeEnemy: Enemy = {
   id: 0,
 
   startAnimation: blueSlimeIdle,
+  deathAnimation: (enemy) => {
+    blueSlimeDeath(enemy);
+  },
 };

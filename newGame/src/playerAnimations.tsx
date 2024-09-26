@@ -1,5 +1,9 @@
 import { world } from "./basics";
-import { playAnimation, stopAnimation } from "./playAnimation";
+import {
+  animationsRegistry,
+  playAnimation,
+  stopAnimation,
+} from "./playAnimation";
 import { player } from "./player";
 import { loopPerSecond } from "./startFight";
 import { changeIsWalking, currentlyWalking } from "./walkTowardsMapBlock";
@@ -7,16 +11,10 @@ import { changeIsWalking, currentlyWalking } from "./walkTowardsMapBlock";
 export const playerAnimationQueue = [];
 
 export const checkNextPlayerAnimation = () => {
-  // console.log(animationQueue);
-
   if (playerAnimationQueue[0] === undefined) {
-    // console.log("tjena");
-
     idleAnimation();
     return;
   } else {
-    // console.log("benfh");
-
     playerAnimationQueue[0]();
     playerAnimationQueue.splice(0);
   }
@@ -53,11 +51,7 @@ export const idleAnimation = () => {
     player.pos,
     player.size,
     "player",
-    // () => {
-    // checkWalking();
-
     checkNextPlayerAnimation
-    // }
   );
 };
 
@@ -70,7 +64,7 @@ export const attackAnimation = () => {
     "myCanvas",
     player.pos,
     player.size,
-    "player", // unique entityId
+    "player",
     checkNextPlayerAnimation
   );
 };
@@ -79,27 +73,41 @@ export const protectAnimation = () => {
   playAnimation(
     "/Protect.png",
     2,
-    2,
+    1,
     1,
     "myCanvas",
     player.pos,
     player.size,
     "player",
-    checkNextPlayerAnimation
+    // protectAnimation
+    () => {
+      player.isBlocking = false;
+      checkNextPlayerAnimation();
+    }
   );
 };
 
 const processAnimationQueue = () => {
   if (playerAnimationQueue.length > 0) {
     const nextAnimation = playerAnimationQueue.shift();
+
+    console.log("next");
+
     nextAnimation();
   }
 };
 
 export const overwritePlayerAnimation = (playAnimation) => {
+  console.log(playerAnimationQueue);
+
+  player.isBlocking = false;
   playerAnimationQueue.length = 0;
-  stopAnimation("player");
   playerAnimationQueue.push(playAnimation);
+
+  console.log(animationsRegistry, "1");
+  stopAnimation(player.id, playAnimation);
+  console.log(animationsRegistry, "2");
+
   processAnimationQueue();
 };
 

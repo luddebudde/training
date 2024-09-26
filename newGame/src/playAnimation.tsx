@@ -14,8 +14,7 @@ const resizeCanvas = () => {
 window.addEventListener("load", resizeCanvas);
 window.addEventListener("resize", resizeCanvas);
 
-export const animationsRegistry = {}; // För att hålla reda på aktiva animationer
-const fps = 60; // Antalet gånger loopen ska köras per sekund
+export const animationsRegistry = {};
 
 export const playAnimation = (
   picture,
@@ -61,24 +60,20 @@ export const playAnimation = (
 };
 
 export const stopAnimation = (entityId, whenDone = () => {}) => {
+  // console.log(animationsRegistry[0]);
+  // console.log(animationsRegistry[entityId]);
+  // console.log(animationsRegistry);
+
   if (animationsRegistry[entityId]) {
     const animation = animationsRegistry[entityId];
-    // const { pos, size, frameWidth, spriteHeight } = animation;
 
-    // Rensa det område där animationen var ritad
-    // ctx.clearRect(
-    //   pos.x - size.x / 2,
-    //   pos.y - size.y / 2,
-    //   frameWidth + size.x,
-    //   spriteHeight + size.y
-    // );
-
-    // Avaktivera animationen och ta bort den från registret
     animation.active = false;
-    delete animationsRegistry[entityId]; // Ta bort animationen från registret
+    delete animationsRegistry[entityId];
 
     if (typeof whenDone === "function") {
       whenDone();
     }
+
+    // console.log(entityId, "2");
   }
 };
