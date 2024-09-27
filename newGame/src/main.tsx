@@ -36,6 +36,8 @@ import { drawHealthBar } from "./draw/drawHealthbar.tsx";
 import { attack } from "./attack.tsx";
 import { player } from "./player.tsx";
 import { world } from "./basics.tsx";
+import { skeleton, skeletonHurt } from "./enemies/skeleton.tsx";
+import { spawnEnemy } from "./spawnEnemy.tsx";
 
 export const canvas = document.getElementById("myCanvas");
 export const ctx = canvas.getContext("2d");
@@ -139,7 +141,7 @@ const animationCheck = [];
   // startFight(prototype);
 
   runAnimation();
-  // spawnEnemy([slimeEnemy, slimeEnemy]);
+  // spawnEnemy([skeleton]);
 })();
 
 export const drawmap = () => {
@@ -199,7 +201,7 @@ document.addEventListener("keydown", function (event) {
   if (player.attackDelay <= 0) {
     if (event.code === "KeyD") {
       overwritePlayerAnimation(attackAnimation);
-      player.attackDelay = loopPerSecond * 4;
+      player.attackDelay = loopPerSecond * 2;
 
       attack(player, player.target, player.sword.damage);
     }
@@ -207,7 +209,7 @@ document.addEventListener("keydown", function (event) {
       overwritePlayerAnimation(protectAnimation);
 
       player.isBlocking = true;
-      player.attackDelay = loopPerSecond * 3;
+      player.attackDelay = loopPerSecond * 5;
     }
   }
 
@@ -265,17 +267,20 @@ const gameLoop = () => {
       ctx.clearRect(pos.x, pos.y, size.x, size.y);
 
       // Draw sprite
+      ctx.save();
+      ctx.scale(-1, 1);
       ctx.drawImage(
         spriteImage,
         currentFrame * frameWidth,
         0,
         frameWidth,
         spriteHeight,
-        pos.x,
+        -pos.x - size.x,
         pos.y,
         size.x,
         size.y
       );
+      ctx.restore();
 
       ctx.rect(pos.x, pos.y, size.x, size.y);
       ctx.stroke();
@@ -357,7 +362,7 @@ const gameLoop = () => {
     player.attackDelay = 10000;
   }
 
-  console.log(player.isBlocking);
+  // console.log(player.isBlocking);
 
   requestAnimationFrame(gameLoop);
 };

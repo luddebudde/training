@@ -1,4 +1,5 @@
 import { Player } from "../player";
+import { skeleton, skeletonHurt } from "./skeleton";
 import { slimeEnemy } from "./slimeEnemy";
 
 export type Enemy = {
@@ -50,7 +51,7 @@ const basher: Enemy = {
   animations: [],
 };
 
-export const enemyTypesOnFloor = [[slimeEnemy, slimeEnemy]];
+export const enemyTypesOnFloor = [[slimeEnemy, skeleton]];
 export const bossTypesOnFloor = [giganian, basher];
 
 export const randomEnemy = () => {

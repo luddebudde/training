@@ -7,7 +7,7 @@ import {
 import { player, players } from "../player";
 import { attack } from "../attack";
 
-export const blueSlimeIdle = (enemy) => {
+export const skeletonIdle = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/idle.png",
     7,
@@ -20,15 +20,31 @@ export const blueSlimeIdle = (enemy) => {
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
-        blueSlimeIdle(enemy);
+        skeletonIdle(enemy);
       } else {
-        slimeAttack(enemy);
+        skeletonAttack(enemy);
       }
     }
   );
 };
 
-export const blueSlimeHurt = (enemy) => {
+// export const skeletonRun = (enemy) => {
+//   playAnimation(
+//     "/enemies/skeletonAttack.png",
+//     7,
+//     3,
+//     2,
+//     "myCanvas",
+//     enemy.pos,
+//     enemy.size,
+//     `slime-${enemy.id}`,
+//     () => {
+//       skeletonRun(enemy);
+//     }
+//   );
+// };
+
+export const skeletonHurt = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/hurt.png",
     6,
@@ -40,11 +56,11 @@ export const blueSlimeHurt = (enemy) => {
     `slime-${enemy.id}`,
     () => {
       if (!checkAlive) return;
-      blueSlimeIdle(enemy);
+      skeletonIdle(enemy);
     }
   );
 };
-export const blueSlimeDeath = (enemy) => {
+export const skeletonDeath = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/death.png",
     14,
@@ -59,61 +75,52 @@ export const blueSlimeDeath = (enemy) => {
 
       stopAnimation(`slime-${enemy.id}`, () => {
         console.log(animationsRegistry, "2");
-        blueSlimeHurt(enemy);
+        skeletonHurt(enemy);
       });
     }
   );
 };
 
-export const slimeAttack = (enemy) => {
-  const blueSlimeFirstAttack = () => {
+export const skeletonAttack = (enemy) => {
+  const skeletonFirstAttack = () => {
     playAnimation(
-      "/enemies/slime-blue/attack-firstNew.png",
-      9,
-      10,
+      "/enemies/skeletonAttack.png",
+      7,
+      5,
       1,
       "myCanvas",
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
       () => {
-        if (!checkAlive) return;
-        blueSlimeSecondAttack(enemy);
+        skeletonSecondAttack();
       }
     );
   };
 
-  const blueSlimeSecondAttack = () => {
+  const skeletonSecondAttack = () => {
     playAnimation(
-      "/enemies/slime-blue/attack-second.png",
+      "/enemies/secondSkeletonAttack.png",
       6,
-      10,
+      5,
       1,
       "myCanvas",
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
       () => {
-        if (!checkAlive) return;
-
-        enemy.target = player;
-        // console.log("enemy:", enemy.target, "damage", enemy.damage);
-
-        attack(enemy, enemy.target, enemy.damage);
-
-        // console.log("enemy:", enemy.target, "damage", enemy.damage);
-
-        blueSlimeIdle(enemy);
+        // skeletonIdle(enemy);
+        skeletonAttack(enemy);
       }
     );
   };
 
-  blueSlimeFirstAttack();
+  skeletonFirstAttack();
 };
 
 const slimeMaxHP = 100;
 
-export const slimeEnemy: Enemy = {
+export const skeleton: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
   damage: 40,
@@ -127,13 +134,13 @@ export const slimeEnemy: Enemy = {
     y: 0,
   },
   size: {
-    x: 100,
-    y: 100,
+    x: 200,
+    y: 200,
   },
   id: 0,
 
-  startAnimation: blueSlimeIdle,
+  startAnimation: skeletonAttack,
   deathAnimation: (enemy) => {
-    blueSlimeDeath(enemy);
+    skeletonDeath(enemy);
   },
 };

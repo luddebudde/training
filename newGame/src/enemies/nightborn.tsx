@@ -6,8 +6,9 @@ import {
 } from "../playAnimation";
 import { player, players } from "../player";
 import { attack } from "../attack";
+import { skeletonRun } from "./skeleton";
 
-export const blueSlimeIdle = (enemy) => {
+export const nightbornIdle = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/idle.png",
     7,
@@ -20,11 +21,29 @@ export const blueSlimeIdle = (enemy) => {
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
-        blueSlimeIdle(enemy);
+        nightbornIdle(enemy);
       } else {
-        slimeAttack(enemy);
+        nightbornAttack(enemy);
       }
     }
+  );
+};
+
+export const nightbornRun = (enemy) => {
+  playAnimation(
+    "/enemies/NightBorne-run.png",
+    7,
+    10,
+    2,
+    "myCanvas",
+    enemy.pos,
+    enemy.size,
+    `slime-${enemy.id}`,
+    () => {
+      nightbornRun(enemy);
+    }
+    // nightbornRun
+    // }
   );
 };
 
@@ -40,11 +59,11 @@ export const blueSlimeHurt = (enemy) => {
     `slime-${enemy.id}`,
     () => {
       if (!checkAlive) return;
-      blueSlimeIdle(enemy);
+      nightbornIdle(enemy);
     }
   );
 };
-export const blueSlimeDeath = (enemy) => {
+export const nightbornDeath = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/death.png",
     14,
@@ -65,8 +84,8 @@ export const blueSlimeDeath = (enemy) => {
   );
 };
 
-export const slimeAttack = (enemy) => {
-  const blueSlimeFirstAttack = () => {
+export const nightbornAttack = (enemy) => {
+  const nightbornFirstAttack = () => {
     playAnimation(
       "/enemies/slime-blue/attack-firstNew.png",
       9,
@@ -78,12 +97,12 @@ export const slimeAttack = (enemy) => {
       `slime-${enemy.id}`,
       () => {
         if (!checkAlive) return;
-        blueSlimeSecondAttack(enemy);
+        nightbornSecondAttack(enemy);
       }
     );
   };
 
-  const blueSlimeSecondAttack = () => {
+  const nightbornSecondAttack = () => {
     playAnimation(
       "/enemies/slime-blue/attack-second.png",
       6,
@@ -103,17 +122,34 @@ export const slimeAttack = (enemy) => {
 
         // console.log("enemy:", enemy.target, "damage", enemy.damage);
 
-        blueSlimeIdle(enemy);
+        nightbornIdle(enemy);
       }
     );
   };
 
-  blueSlimeFirstAttack();
+  nightbornFirstAttack();
+};
+
+export const nightbornHurt = (enemy) => {
+  playAnimation(
+    "/enemies/slime-blue/hurt.png",
+    6,
+    5,
+    1,
+    "myCanvas",
+    enemy.pos,
+    enemy.size,
+    `slime-${enemy.id}`,
+    () => {
+      if (!checkAlive) return;
+      nightbornIdle(enemy);
+    }
+  );
 };
 
 const slimeMaxHP = 100;
 
-export const slimeEnemy: Enemy = {
+export const skeleton: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
   damage: 40,
@@ -127,13 +163,13 @@ export const slimeEnemy: Enemy = {
     y: 0,
   },
   size: {
-    x: 100,
-    y: 100,
+    x: 300,
+    y: 300,
   },
   id: 0,
 
-  startAnimation: blueSlimeIdle,
+  startAnimation: nightbornRun,
   deathAnimation: (enemy) => {
-    blueSlimeDeath(enemy);
+    nightbornDeath(enemy);
   },
 };

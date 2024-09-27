@@ -29,7 +29,7 @@ export const checkWalking = () => {
 
 export const runAnimation = () => {
   playAnimation(
-    "/run.png",
+    "/player/run.png",
     7,
     10,
     1,
@@ -43,7 +43,7 @@ export const runAnimation = () => {
 
 export const idleAnimation = () => {
   playAnimation(
-    "/Idle.png",
+    "/player/Idle.png",
     4,
     4,
     1,
@@ -57,7 +57,7 @@ export const idleAnimation = () => {
 
 export const attackAnimation = () => {
   playAnimation(
-    "/attack.png",
+    "/player/attack.png",
     5,
     5,
     1,
@@ -71,7 +71,7 @@ export const attackAnimation = () => {
 
 export const protectAnimation = () => {
   playAnimation(
-    "/Protect.png",
+    "/player/Protect.png",
     2,
     1,
     1,
