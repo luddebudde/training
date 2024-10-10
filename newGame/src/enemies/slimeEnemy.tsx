@@ -17,6 +17,7 @@ export const blueSlimeIdle = (enemy) => {
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    false,
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
@@ -38,6 +39,7 @@ export const blueSlimeHurt = (enemy) => {
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    false,
     () => {
       if (!checkAlive) return;
       blueSlimeIdle(enemy);
@@ -54,6 +56,7 @@ export const blueSlimeDeath = (enemy) => {
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    false,
     () => {
       console.log(animationsRegistry, "1");
 
@@ -76,6 +79,7 @@ export const slimeAttack = (enemy) => {
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
+      false,
       () => {
         if (!checkAlive) return;
         blueSlimeSecondAttack(enemy);
@@ -93,6 +97,7 @@ export const slimeAttack = (enemy) => {
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
+      false,
       () => {
         if (!checkAlive) return;
 

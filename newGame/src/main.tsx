@@ -203,7 +203,7 @@ document.addEventListener("keydown", function (event) {
       overwritePlayerAnimation(attackAnimation);
       player.attackDelay = loopPerSecond * 2;
 
-      attack(player, player.target, player.sword.damage);
+      // attack(player, player.target, player.sword.damage);
     }
     if (event.code === "Space") {
       overwritePlayerAnimation(protectAnimation);
@@ -244,7 +244,7 @@ const gameLoop = () => {
       size,
       parts,
       frameRate,
-      isPlayer,
+      flip,
     } = animation;
 
     if (!spriteImage.complete) continue;
@@ -268,23 +268,36 @@ const gameLoop = () => {
 
       // Draw sprite
       ctx.save();
-      ctx.scale(-1, 1);
-      ctx.drawImage(
-        spriteImage,
-        currentFrame * frameWidth,
-        0,
-        frameWidth,
-        spriteHeight,
-        -pos.x - size.x,
-        pos.y,
-        size.x,
-        size.y
-      );
-      ctx.restore();
+      if (flip) {
+        ctx.scale(-1, 1);
+        ctx.drawImage(
+          spriteImage,
+          currentFrame * frameWidth,
+          0,
+          frameWidth,
+          spriteHeight,
+          -pos.x - size.x,
+          pos.y,
+          size.x,
+          size.y
+        );
+      } else {
+        ctx.drawImage(
+          spriteImage,
+          currentFrame * frameWidth,
+          0,
+          frameWidth,
+          spriteHeight,
+          pos.x,
+          pos.y,
+          size.x,
+          size.y
+        );
+      }
 
       ctx.rect(pos.x, pos.y, size.x, size.y);
       ctx.stroke();
-
+      ctx.restore(); // Återställ canvasens tillstånd
       animation.currentFrame = (animation.currentFrame + 1) % parts;
 
       // Done

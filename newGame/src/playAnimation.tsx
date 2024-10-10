@@ -25,6 +25,7 @@ export const playAnimation = (
   pos,
   size,
   entityId,
+  flip: boolean,
   whenDone
 ) => {
   let loopsLeft = loopTimes;
@@ -48,6 +49,7 @@ export const playAnimation = (
       parts,
       frameRate,
       whenDone,
+      flip,
       active: true,
       lastFrameTime: performance.now(),
       oldPos: { ...pos },

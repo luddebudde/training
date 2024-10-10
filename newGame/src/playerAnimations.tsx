@@ -1,3 +1,4 @@
+import { attack } from "./attack";
 import { world } from "./basics";
 import {
   animationsRegistry,
@@ -37,6 +38,7 @@ export const runAnimation = () => {
     player.pos,
     player.size,
     "player",
+    false,
     checkWalking
   );
 };
@@ -51,6 +53,7 @@ export const idleAnimation = () => {
     player.pos,
     player.size,
     "player",
+    false,
     checkNextPlayerAnimation
   );
 };
@@ -65,7 +68,11 @@ export const attackAnimation = () => {
     player.pos,
     player.size,
     "player",
-    checkNextPlayerAnimation
+    false,
+    () => {
+      attack(player, player.target, player.sword.damage);
+      checkNextPlayerAnimation();
+    }
   );
 };
 
@@ -79,6 +86,7 @@ export const protectAnimation = () => {
     player.pos,
     player.size,
     "player",
+    false,
     // protectAnimation
     () => {
       player.isBlocking = false;

@@ -51,7 +51,16 @@ const basher: Enemy = {
   animations: [],
 };
 
-export const enemyTypesOnFloor = [[slimeEnemy, skeleton]];
+// export const enemyTypesOnFloor = [[slimeEnemy, skeleton]];
+
+const array = [];
+
+for (let x = 0; x < 10; x++) {
+  array.push(skeleton);
+}
+
+export const enemyTypesOnFloor = [array];
+
 export const bossTypesOnFloor = [giganian, basher];
 
 export const randomEnemy = () => {

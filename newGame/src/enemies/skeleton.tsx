@@ -9,14 +9,15 @@ import { attack } from "../attack";
 
 export const skeletonIdle = (enemy) => {
   playAnimation(
-    "/enemies/slime-blue/idle.png",
-    7,
-    10,
+    "/enemies/skeleton/skeletonIdle.png",
+    4,
+    3,
     2,
     "myCanvas",
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    true,
     () => {
       if (!checkAlive) return;
       if (Math.random() > 0.5) {
@@ -28,22 +29,6 @@ export const skeletonIdle = (enemy) => {
   );
 };
 
-// export const skeletonRun = (enemy) => {
-//   playAnimation(
-//     "/enemies/skeletonAttack.png",
-//     7,
-//     3,
-//     2,
-//     "myCanvas",
-//     enemy.pos,
-//     enemy.size,
-//     `slime-${enemy.id}`,
-//     () => {
-//       skeletonRun(enemy);
-//     }
-//   );
-// };
-
 export const skeletonHurt = (enemy) => {
   playAnimation(
     "/enemies/slime-blue/hurt.png",
@@ -54,6 +39,7 @@ export const skeletonHurt = (enemy) => {
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    true,
     () => {
       if (!checkAlive) return;
       skeletonIdle(enemy);
@@ -62,14 +48,15 @@ export const skeletonHurt = (enemy) => {
 };
 export const skeletonDeath = (enemy) => {
   playAnimation(
-    "/enemies/slime-blue/death.png",
-    14,
-    5,
+    "/enemies/skeleton/skeletonDeath.png",
+    13,
+    7,
     1,
     "myCanvas",
     enemy.pos,
     enemy.size,
     `slime-${enemy.id}`,
+    true,
     () => {
       console.log(animationsRegistry, "1");
 
@@ -84,7 +71,7 @@ export const skeletonDeath = (enemy) => {
 export const skeletonAttack = (enemy) => {
   const skeletonFirstAttack = () => {
     playAnimation(
-      "/enemies/skeletonAttack.png",
+      "/enemies/skeleton/firstAttack.png",
       7,
       5,
       1,
@@ -92,7 +79,9 @@ export const skeletonAttack = (enemy) => {
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
+      true,
       () => {
+        attack(enemy, skeleton.target, skeleton.attacks.first);
         skeletonSecondAttack();
       }
     );
@@ -100,7 +89,7 @@ export const skeletonAttack = (enemy) => {
 
   const skeletonSecondAttack = () => {
     playAnimation(
-      "/enemies/secondSkeletonAttack.png",
+      "/enemies/skeleton/secondAttack.png",
       6,
       5,
       1,
@@ -108,14 +97,30 @@ export const skeletonAttack = (enemy) => {
       enemy.pos,
       enemy.size,
       `slime-${enemy.id}`,
+      true,
       () => {
-        // skeletonIdle(enemy);
-        skeletonAttack(enemy);
+        attack(enemy, skeleton.target, skeleton.attacks.second);
+        skeletonIdle(enemy);
       }
     );
   };
 
   skeletonFirstAttack();
+
+  // playAnimation(
+  //   "/enemies/skeleton/allSkeletonAttack.png",
+  //   13,
+  //   5,
+  //   1,
+  //   "myCanvas",
+  //   enemy.pos,
+  //   enemy.size,
+  //   `slime-${enemy.id}`,
+  //   true,
+  //   () => {
+  //     skeletonIdle(enemy);
+  //   }
+  // );
 };
 
 const slimeMaxHP = 100;
@@ -123,7 +128,11 @@ const slimeMaxHP = 100;
 export const skeleton: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
-  damage: 40,
+  // damage: 40,
+  attacks: {
+    first: 20,
+    second: 40,
+  },
   name: "Slime",
 
   possibleTargets: player,
@@ -139,7 +148,7 @@ export const skeleton: Enemy = {
   },
   id: 0,
 
-  startAnimation: skeletonAttack,
+  startAnimation: skeletonIdle,
   deathAnimation: (enemy) => {
     skeletonDeath(enemy);
   },
