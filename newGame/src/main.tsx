@@ -12,6 +12,7 @@
 
 import { createMenu } from "./createMenu.tsx";
 import {
+  bosses,
   enemies,
   Enemy,
   entities as entities,
@@ -317,6 +318,9 @@ const gameLoop = () => {
   }
 
   enemies.forEach((enemy) => {
+    enemy.attackDelay--;
+    // console.log(enemy.attackDelay);
+
     const sizeX = enemy.size.x;
     const sizeY = enemy.size.y;
     const xPos = enemy.pos.x;
@@ -370,6 +374,19 @@ const gameLoop = () => {
     player.maxMana,
     { filledColor: "blue" }
   );
+
+  // Draw boss healthbar
+  bosses.forEach((boss, i) => {
+    drawHealthBar(
+      ctx,
+      10,
+      world.height - 10 * (i + 1),
+      world.width - 20,
+      -50,
+      boss.health,
+      boss.maxHealth
+    );
+  });
 
   if (player.health < 0) {
     player.attackDelay = 10000;

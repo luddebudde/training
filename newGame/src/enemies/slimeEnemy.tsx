@@ -136,9 +136,11 @@ export const slimeEnemy: Enemy = {
     y: 100,
   },
   id: 0,
+  attackDelay: 0,
 
   startAnimation: blueSlimeIdle,
   deathAnimation: (enemy) => {
     blueSlimeDeath(enemy);
   },
+  attackAnimation: slimeAttack,
 };

@@ -37,13 +37,9 @@ const walk = (speed: number, startIndex: number, endIndex: number) => {
         currentlyWalking = false;
 
         if (enemyTypesOnFloor.includes(currentBlock.infested)) {
-          // console.log("ENEMEY FIHGHT!", currentBlock.infested);
-          // currentBlock.color = '#FFB266'
-          // currentBlock.infested = false
           console.log(currentBlock.infested);
 
           startFight(currentBlock.infested);
-          // drawmap()
         } else {
           console.log("BOSS FIGHT", currentBlock.infested);
 
@@ -55,7 +51,6 @@ const walk = (speed: number, startIndex: number, endIndex: number) => {
 
           generateMap();
         }
-        // console.log("Walking interrupted due to infestation, currentlyWalking:", currentlyWalking);
       }
 
       drawmap();
@@ -63,7 +58,6 @@ const walk = (speed: number, startIndex: number, endIndex: number) => {
       if (i === walkCheck) {
         setTimeout(() => {
           currentlyWalking = false;
-          // console.log("Walking finished, currentlyWalking:", currentlyWalking);
         }, 500);
       }
     }, delay * Math.abs(i / speed));

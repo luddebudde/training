@@ -1,8 +1,11 @@
-import { enemies } from "./enemies/enemyTypes";
-import { blueSlimeDeath } from "./enemies/slimeEnemy";
-import { player } from "./player";
+import { enemies, Enemy } from "./enemies/enemyTypes";
+import { player, type Player } from "./player";
 
-export const attack = (attacker, target, damage) => {
+type Entity = Player | Enemy;
+
+export const attack = (attacker: Entity, target: Entity, damage: number) => {
+  console.log(attacker);
+
   if (target.isBlocking === undefined || target.isBlocking === false) {
     target.health -= damage;
   } else {

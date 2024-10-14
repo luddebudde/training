@@ -133,7 +133,7 @@ export const skeleton: Enemy = {
     first: 20,
     second: 40,
   },
-  name: "Slime",
+  name: "Skeleton",
 
   possibleTargets: player,
   target: player,
@@ -147,9 +147,11 @@ export const skeleton: Enemy = {
     y: 200,
   },
   id: 0,
+  attackDelay: 0,
 
   startAnimation: skeletonIdle,
   deathAnimation: (enemy) => {
     skeletonDeath(enemy);
   },
+  attackAnimation: skeletonAttack,
 };

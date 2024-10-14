@@ -1,9 +1,6 @@
 import { world } from "./basics";
-import { enemies } from "./enemies/enemyTypes";
-import { generateUniqueId } from "./generateAnimationId";
-import { Block, pathBlocks } from "./main";
+import { Block } from "./main";
 import { Enemy } from "./enemies/enemyTypes";
-import { runAnimation } from "./playerAnimations";
 
 export type Player = {
   name: string;
@@ -80,7 +77,8 @@ export const player: Player = {
     y: playerSize.y,
   },
   sword: {
-    damage: 25,
+    // damage: 25,
+    damage: 250,
   },
 };
 

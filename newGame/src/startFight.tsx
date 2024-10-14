@@ -2,7 +2,7 @@ import { changeDivStatus } from "./changeDivStatus";
 import { clearArray } from "./clearArray";
 import { mapBlocks, pathBlocks } from "./main";
 import { player } from "./player";
-import { spawnEnemy } from "./spawnEnemy";
+import { spawnBoss, spawnEnemy } from "./spawnEnemy";
 
 export const loopPerSecond = 60;
 
@@ -22,5 +22,6 @@ export const startFight = (infestation) => {
 
   changeDivStatus("mapDiv", "display", "none");
 
-  spawnEnemy(infestation);
+  // spawnEnemy(infestation);
+  spawnBoss(infestation);
 };

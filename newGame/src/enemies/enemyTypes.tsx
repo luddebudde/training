@@ -1,4 +1,6 @@
 import { Player } from "../player";
+import { funguy } from "./funguy";
+import { gatekeeper } from "./gatekeeper";
 import { skeleton, skeletonHurt } from "./skeleton";
 import { slimeEnemy } from "./slimeEnemy";
 
@@ -51,17 +53,14 @@ const basher: Enemy = {
   animations: [],
 };
 
-// export const enemyTypesOnFloor = [[slimeEnemy, skeleton]];
+// export const enemyTypesOnFloor = [[slimeEnemy, funguy, funguy]];
+export const enemyTypesOnFloor = [
+  // [funguy, funguy, funguy, funguy, funguy, funguy, funguy, funguy],
+  // [gatekeeper],
+  [skeleton],
+];
 
-const array = [];
-
-for (let x = 0; x < 10; x++) {
-  array.push(skeleton);
-}
-
-export const enemyTypesOnFloor = [array];
-
-export const bossTypesOnFloor = [giganian, basher];
+export const bossTypesOnFloor = [[gatekeeper]];
 
 export const randomEnemy = () => {
   return enemyTypesOnFloor[

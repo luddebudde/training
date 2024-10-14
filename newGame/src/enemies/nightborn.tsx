@@ -153,7 +153,7 @@ export const skeleton: Enemy = {
   maxHealth: slimeMaxHP,
   health: slimeMaxHP,
   damage: 40,
-  name: "Slime",
+  name: "Nightborne",
 
   possibleTargets: player,
   target: player,
@@ -167,9 +167,11 @@ export const skeleton: Enemy = {
     y: 300,
   },
   id: 0,
+  attackDelay: 0,
 
   startAnimation: nightbornRun,
   deathAnimation: (enemy) => {
     nightbornDeath(enemy);
   },
+  attackAnimation: nightbornAttack,
 };
