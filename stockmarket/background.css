@@ -1,0 +1,41 @@
+/* Shared for all DIVS in example */
+ol,
+li {
+  margin: 0;
+  padding: 0;
+}
+li {
+  margin-bottom: 12px;
+}
+div {
+  background-image: url(starsolid.gif);
+  width: 160px;
+  height: 70px;
+}
+
+/* Background repeats */
+.one {
+  background-repeat: no-repeat;
+}
+.two {
+  background-repeat: repeat;
+}
+.three {
+  background-repeat: repeat-x;
+}
+.four {
+  background-repeat: repeat-y;
+}
+.five {
+  background-repeat: space;
+}
+.six {
+  background-repeat: round;
+}
+
+/* Multiple images */
+.seven {
+  background-image: url(starsolid.gif), url(favicon32.png);
+  background-repeat: repeat-x, repeat-y;
+  height: 144px;
+}
