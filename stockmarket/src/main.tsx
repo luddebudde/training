@@ -1,3 +1,7 @@
+import { createCanvasElement } from "three";
+import { IronMark } from "./bank";
+import { createSpeedButtons, xOffSetIncrease } from "./createSpeedButtons";
+
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
@@ -10,23 +14,30 @@ let points: Vector[] = [];
 
 const maxNodes = 20;
 
-const world = {
-  width: 4000,
-  height: 2000,
+const graphBox = {
+  width: canvas.clientWidth,
+  height: canvas.clientHeight,
 };
 
+console.log(graphBox);
+
 let xOffSet = 0;
-const distance = world.width / maxNodes;
+const distance = graphBox.width / maxNodes;
+
+export let highestPoint: Vector = {
+  x: 100000,
+  y: 100000,
+};
 
 for (let i = 0; i < maxNodes; i++) {
   const point: Vector = {
     x: i * distance + 50,
-    y: Math.random() * 300,
+    y: graphBox.height - IronMark.currentValue,
   };
   points.push(point);
 }
 
-const drawPoints = () => {
+const drawGraph = () => {
   points.forEach((point, index) => {
     let previusPoint: Vector = {
       x: 0,
@@ -51,66 +62,100 @@ const drawPoints = () => {
     ctx.arc(xShift, point.y, 10, 0, 2 * Math.PI);
     ctx.fill();
 
-    // console.log(point, previusPoint, index);
-    //   console.log(points[index - 1]);
+    ctx.beginPath();
+    ctx.moveTo(0, highestPoint.y);
+    ctx.lineTo(graphBox.width, highestPoint.y);
+    ctx.strokeStyle = "red";
+
+    // Draw the Path
+    ctx.stroke();
+    ctx.strokeStyle = "black";
   });
 };
 
-drawPoints();
+drawGraph();
+// Reset
+let speedButton = document.getElementById("resetPoint");
+speedButton.onclick = () => {
+  highestPoint = points[points.length - 1];
+  console.log("his");
+};
 
-export let speedModifier = 1;
-const standardxOffsetIncrease = 15;
-let xOffSetIncrease = standardxOffsetIncrease * speedModifier;
+const ironmarkElement = document.getElementById("ironmark");
 
-{
-  /* <body>worldDiv.setSpeedOne.onClick = () => {
-  speedModifier = 3;
-}; </body> */
+// Lägg till värdet direkt efter texten
+ironmarkElement.textContent += ` ${IronMark.currentValue}`;
+
+// Skapa en lista för att lägga till poster under "Ironmark"
+const subList = document.createElement("ul");
+ironmarkElement.appendChild(subList);
+
+function updateIronmarkText() {
+  ironmarkElement.textContent = `Ironmark ${Math.round(
+    graphBox.height - IronMark.currentValue
+  )}`;
+
+  for (const [key, value] of Object.entries(IronMark)) {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${key}: ${value}`;
+    // subList.appendChild(listItem);
+    console.log("key:", key, "value:", value);
+  }
+
+  // Lägg till listan tillbaka (eftersom `textContent` rensar innehållet)
+  ironmarkElement.appendChild(subList);
+  updateSubList();
 }
 
-let speedButton = document.getElementById("setSpeedOne");
+function updateSubList() {
+  subList.innerHTML = ""; // Rensa tidigare lista
+  for (const [key, value] of Object.entries(IronMark)) {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${key}: ${Math.round(value)}`;
+    subList.appendChild(listItem);
+    console.log("key:", key, "value:", value);
+  }
+}
 
-speedButton.onclick = () => {
-  speedModifier = 1;
-  console.log("speeeeeeeeeeding", speedModifier);
-  xOffSetIncrease = standardxOffsetIncrease * speedModifier;
-};
+for (const [key, value] of Object.entries(IronMark)) {
+  const listItem = document.createElement("li");
+  listItem.textContent = `${key}: ${value}`;
+  subList.appendChild(listItem);
+  console.log("key:", key, "value:", value);
+}
 
-speedButton = document.getElementById("setSpeedTwo");
-
-speedButton.onclick = () => {
-  speedModifier = 2;
-  console.log("speeeeeeeeeeding", speedModifier);
-  xOffSetIncrease = standardxOffsetIncrease * speedModifier;
-};
-
-speedButton = document.getElementById("setSpeedThree");
-
-speedButton.onclick = () => {
-  speedModifier = 3;
-  console.log("speeeeeeeeeeding", speedModifier);
-  xOffSetIncrease = standardxOffsetIncrease * speedModifier;
-};
+setTimeout(() => {
+  createSpeedButtons();
+}, 100);
 
 setInterval(() => {
-  ctx.clearRect(0, 0, 5000, 4000);
-  //   if (xOffSet % distance === 0) {
+  ctx.clearRect(0, 0, graphBox.width, graphBox.height);
   if (xOffSet % distance < xOffSetIncrease) {
     const point: Vector = {
       x: points[points.length - 1].x + distance,
-      //   x: points[0].x + world.width,
       y: points[points.length - 1].y * (Math.random() + 0.6),
     };
+
+    if (point.y < highestPoint.y) {
+      highestPoint = point;
+    }
+
+    if (point.y > graphBox.height) {
+      point.y = graphBox.height - 50;
+    }
+
+    IronMark.currentValue = graphBox.height - point.y;
 
     points.push(point);
   }
 
   xOffSet += xOffSetIncrease;
 
-  if (points.length > maxNodes + 1 || points[0].x < 0 - xOffSet) {
+  if (points[0].x - xOffSet < 0) {
     points.shift();
   }
 
-  drawPoints();
-  //   console.log(points);
+  updateIronmarkText();
+
+  drawGraph();
 }, 15);

@@ -20,7 +20,7 @@
     </style>
   </head>
   <body>
-    <canvas
+    <!-- <canvas
       id="myCanvas"
       style="
         background-color: red;
@@ -29,16 +29,39 @@
 
         /* background-image: url('/public/john lennon.jpg'); */
       "
-    ></canvas>
-    <div id="worldDiv">
+    ></canvas> -->
+
+    <div id="worldDiv" style="background-color: white">
       <canvas
         id="canvas"
-        width="12000"
+        width="1200"
         height="1000"
         ;
         style="border-style: solid"
       >
       </canvas>
+
+      <ul id="stockValue" style="position: absolute; right: 900px; top: 0px">
+        <li id="ironmark" value="5">Ironmark</li>
+      </ul>
+
+      <!-- <ul style="line-height: 120%">
+        <li>Coffee</li>
+        <li>Tea</li>
+        <li>Milk</li>
+      </ul> -->
+
+      <button
+        id="pause"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        0x
+      </button>
       <button
         id="setSpeedOne"
         style="
@@ -71,6 +94,40 @@
         "
       >
         3x
+      </button>
+      <button
+        id="resetPoint"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        RE
+      </button>
+
+      <button
+        id="buyMax"
+        style="
+          background-color: rgb(82, 228, 15);
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        BUY
+      </button>
+      <button
+        id="sellMax"
+        style="
+          background-color: rgb(214, 236, 15);
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        SELL
       </button>
     </div>
   </body>
