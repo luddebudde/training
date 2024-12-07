@@ -1,20 +1,32 @@
 import { createCanvasElement } from "three";
 import { IronMark } from "./bank";
-import { createSpeedButtons, xOffSetIncrease } from "./createSpeedButtons";
+import { createSpeedButtons, xOffSetIncrease } from "./createButtons";
+import { updateIronmarkText, updateMoneyText } from "./updateIronmarkText";
+import { updateDayCounter } from "./updateDayCounter";
+import { calculateStockIncrease } from "./calculateStockIncrease";
+import {
+  eventAdd,
+  eventMult,
+  printEventSelections,
+  selectEvent,
+} from "./events";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-type Vector = {
+ctx.translate(0, canvas.height); // Flyttar origo till botten av canvasen
+ctx.scale(1, -1); // Inverterar y-axeln så att den går uppåt
+
+export type Vector = {
   x: number;
   y: number;
 };
 
-let points: Vector[] = [];
+export let points: Vector[] = [];
 
 const maxNodes = 20;
 
-const graphBox = {
+export const graphBox = {
   width: canvas.clientWidth,
   height: canvas.clientHeight,
 };
@@ -22,17 +34,17 @@ const graphBox = {
 console.log(graphBox);
 
 let xOffSet = 0;
-const distance = graphBox.width / maxNodes;
+export const distance = graphBox.width / maxNodes;
 
 export let highestPoint: Vector = {
-  x: 100000,
-  y: 100000,
+  x: 0,
+  y: 0,
 };
 
 for (let i = 0; i < maxNodes; i++) {
   const point: Vector = {
     x: i * distance + 50,
-    y: graphBox.height - IronMark.currentValue,
+    y: IronMark.currentValue,
   };
   points.push(point);
 }
@@ -43,6 +55,8 @@ const drawGraph = () => {
       x: 0,
       y: 0,
     };
+
+    // console.log("hihge");
 
     if (index !== 0) {
       previusPoint = points[index - 1];
@@ -69,6 +83,14 @@ const drawGraph = () => {
 
     // Draw the Path
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.lineTo(graphBox.width, 10);
+    ctx.strokeStyle = "green";
+
+    // Draw the Path
+    ctx.stroke();
     ctx.strokeStyle = "black";
   });
 };
@@ -78,73 +100,50 @@ drawGraph();
 let speedButton = document.getElementById("resetPoint");
 speedButton.onclick = () => {
   highestPoint = points[points.length - 1];
-  console.log("his");
 };
-
-const ironmarkElement = document.getElementById("ironmark");
-
-// Lägg till värdet direkt efter texten
-ironmarkElement.textContent += ` ${IronMark.currentValue}`;
-
-// Skapa en lista för att lägga till poster under "Ironmark"
-const subList = document.createElement("ul");
-ironmarkElement.appendChild(subList);
-
-function updateIronmarkText() {
-  ironmarkElement.textContent = `Ironmark ${Math.round(
-    graphBox.height - IronMark.currentValue
-  )}`;
-
-  for (const [key, value] of Object.entries(IronMark)) {
-    const listItem = document.createElement("li");
-    listItem.textContent = `${key}: ${value}`;
-    // subList.appendChild(listItem);
-    console.log("key:", key, "value:", value);
-  }
-
-  // Lägg till listan tillbaka (eftersom `textContent` rensar innehållet)
-  ironmarkElement.appendChild(subList);
-  updateSubList();
-}
-
-function updateSubList() {
-  subList.innerHTML = ""; // Rensa tidigare lista
-  for (const [key, value] of Object.entries(IronMark)) {
-    const listItem = document.createElement("li");
-    listItem.textContent = `${key}: ${Math.round(value)}`;
-    subList.appendChild(listItem);
-    console.log("key:", key, "value:", value);
-  }
-}
-
-for (const [key, value] of Object.entries(IronMark)) {
-  const listItem = document.createElement("li");
-  listItem.textContent = `${key}: ${value}`;
-  subList.appendChild(listItem);
-  console.log("key:", key, "value:", value);
-}
 
 setTimeout(() => {
   createSpeedButtons();
+  // for (let i = 0; i < 100; i++) {
+  // selectEvent();
+  // }
+  // printEventSelections();
 }, 100);
 
 setInterval(() => {
   ctx.clearRect(0, 0, graphBox.width, graphBox.height);
+  // selectEvent();
   if (xOffSet % distance < xOffSetIncrease) {
+    updateDayCounter();
+
+    const oldP = points[points.length - 1];
+
+    // const point = calculateStockIncrease(IronMark);
+    // points.push(point);
+    const distanceToMiddle = graphBox.height / 2 - points[points.length - 1].y;
+
+    const stability = IronMark.stability / 5;
+
     const point: Vector = {
-      x: points[points.length - 1].x + distance,
-      y: points[points.length - 1].y * (Math.random() + 0.6),
+      x: oldP.x + distance,
+      // y: points[points.length - 1].y * (Math.random() + 0.6),
+      // y: points[points.length - 1].y * (0.5 + stability + Math.random()),
+      y:
+        oldP.y -
+        (0.5 - Math.random()) * 100 * IronMark.stability * eventMult +
+        eventAdd,
     };
 
-    if (point.y < highestPoint.y) {
+    if (point.y < 50) {
+      point.y = 50;
+    }
+
+    if (point.y > highestPoint.y) {
       highestPoint = point;
     }
 
-    if (point.y > graphBox.height) {
-      point.y = graphBox.height - 50;
-    }
-
-    IronMark.currentValue = graphBox.height - point.y;
+    // IronMark.currentValue = Math.round((graphBox.height - point.y) / 100);
+    IronMark.currentValue = Math.round(point.y / 100);
 
     points.push(point);
   }
@@ -156,6 +155,7 @@ setInterval(() => {
   }
 
   updateIronmarkText();
+  updateMoneyText();
 
   drawGraph();
 }, 15);

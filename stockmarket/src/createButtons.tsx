@@ -1,4 +1,4 @@
-import { bankAccount, IronMark } from "./bank";
+import { bankAccount, IronMark, modifiers } from "./bank";
 import { highestPoint } from "./main";
 
 export const standardxOffsetIncrease = 5;
@@ -58,18 +58,20 @@ export const createSpeedButtons = () => {
   speedButton = document.getElementById("buyMax");
   speedButton.onclick = () => {
     IronMark.owned += Math.floor(bankAccount.value / IronMark.currentValue);
-    bankAccount.value = bankAccount.value % IronMark.currentValue;
-    console.log("speeeeeeeeeeding", speedModifier);
+    bankAccount.value = Math.round(bankAccount.value % IronMark.currentValue);
+    console.log(`Bought!, and got ${IronMark.owned} Ironmarks!`);
     xOffSetIncrease = standardxOffsetIncrease * speedModifier;
   };
 
   // Sell Max
-  speedButton = document.getElementById("sellMax");
-  speedButton.onclick = () => {
-    // speedModifier = 3;
-    bankAccount.value = IronMark.owned * IronMark.currentValue;
+  let maxSellButton = document.getElementById("sellMax");
+  maxSellButton.onclick = () => {
+    bankAccount.value += Math.round(
+      IronMark.owned * IronMark.currentValue * modifiers.taxes
+    );
     IronMark.owned = 0;
-    console.log("speeeeeeeeeeding", speedModifier);
+    console.log(`Sold!, for a profit of ${bankAccount.value}$!`);
+
     xOffSetIncrease = standardxOffsetIncrease * speedModifier;
   };
 };
