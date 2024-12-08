@@ -1,5 +1,11 @@
 import { createCanvasElement } from "three";
-import { bankAccount, IronMark, modifiers } from "./bank";
+import {
+  bankAccount,
+  Cryptalon,
+  currencies,
+  IronMark,
+  modifiers,
+} from "./bank";
 import { createSpeedButtons, xOffSetIncrease } from "./createButtons";
 import { updateIronmarkText, updateMoneyText } from "./updateIronmarkText";
 import { updateDayCounter } from "./updateDayCounter";
@@ -11,6 +17,7 @@ import {
   selectEvent,
 } from "./events";
 import { minStockValueAdd } from "./upgrades";
+import { PointToPointConstraint } from "cannon";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
@@ -23,7 +30,8 @@ export type Vector = {
   y: number;
 };
 
-export let points: Vector[] = [];
+export let points = [[], []];
+const pointsColor = ["black", "blue"];
 
 const maxNodes = 20;
 
@@ -42,65 +50,78 @@ export let highestPoint: Vector = {
   y: 0,
 };
 
-for (let i = 0; i < maxNodes; i++) {
-  const point: Vector = {
-    x: i * distance + 50,
-    y: IronMark.currentValue,
-  };
-  points.push(point);
-}
+points.forEach((pointArray) => {
+  for (let i = 0; i < maxNodes; i++) {
+    const point: Vector = {
+      x: i * distance + 50,
+      y: IronMark.currentValue,
+    };
+    pointArray.push(point);
+  }
+  // console.log(points);
+});
 
 const drawGraph = () => {
-  points.forEach((point, index) => {
-    let previusPoint: Vector = {
-      x: 0,
-      y: 0,
-    };
+  points.forEach((pointsArray, arrayIndex) => {
+    // console.log(points);
 
-    // console.log("hihge");
+    pointsArray.forEach((point, index) => {
+      let previusPoint: Vector = {
+        x: 0,
+        y: 0,
+      };
 
-    if (index !== 0) {
-      previusPoint = points[index - 1];
-    }
+      // console.log("hihge");
 
-    // const xShift = index * distance;
-    const xShift = point.x - xOffSet;
+      if (index !== 0) {
+        previusPoint = pointsArray[index - 1];
+      }
 
-    ctx.beginPath();
-    ctx.moveTo(previusPoint.x - xOffSet, previusPoint.y);
-    ctx.lineTo(xShift, point.y);
+      // const xShift = index * distance;
+      const xShift = point.x - xOffSet;
 
-    // Draw the Path
-    ctx.stroke();
+      const lineColor = pointsColor[arrayIndex];
 
-    ctx.beginPath();
-    ctx.arc(xShift, point.y, 10, 0, 2 * Math.PI);
-    ctx.fill();
+      // Line Between Points
+      ctx.beginPath();
+      ctx.moveTo(previusPoint.x - xOffSet, previusPoint.y);
+      ctx.lineTo(xShift, point.y);
+      ctx.strokeStyle = lineColor;
+      ctx.stroke();
 
-    ctx.beginPath();
-    ctx.moveTo(0, highestPoint.y);
-    ctx.lineTo(graphBox.width, highestPoint.y);
-    ctx.strokeStyle = "red";
+      // console.log(lineColor);
 
-    // Draw the Path
-    ctx.stroke();
+      // Circle
+      ctx.beginPath();
+      ctx.arc(xShift, point.y, 10, 0, 2 * Math.PI);
+      ctx.fillStyle = lineColor;
+      ctx.fill();
 
-    ctx.beginPath();
-    ctx.moveTo(0, 10);
-    ctx.lineTo(graphBox.width, 10);
-    ctx.strokeStyle = "green";
+      ctx.beginPath();
+      ctx.moveTo(0, highestPoint.y);
+      ctx.lineTo(graphBox.width, highestPoint.y);
+      ctx.strokeStyle = "red";
 
-    // Draw the Path
-    ctx.stroke();
+      // Draw the Path
+      ctx.stroke();
 
-    ctx.beginPath();
-    ctx.moveTo(0, minStockValueAdd);
-    ctx.lineTo(graphBox.width, minStockValueAdd);
-    ctx.strokeStyle = "purple";
+      ctx.beginPath();
+      ctx.moveTo(0, 10);
+      ctx.lineTo(graphBox.width, 10);
+      ctx.strokeStyle = "green";
 
-    // Draw the Path
-    ctx.stroke();
-    ctx.strokeStyle = "black";
+      // Draw the Path
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(0, minStockValueAdd);
+      ctx.lineTo(graphBox.width, minStockValueAdd);
+      ctx.strokeStyle = "purple";
+
+      // Draw the Path
+      ctx.stroke();
+      ctx.strokeStyle = "black";
+    });
   });
 };
 
@@ -144,40 +165,47 @@ setTimeout(() => {
 setInterval(() => {
   ctx.clearRect(0, 0, graphBox.width, graphBox.height);
   // selectEvent();
-  if (xOffSet % distance < xOffSetIncrease) {
-    updateDayCounter();
-    const oldP = points[points.length - 1];
-
-    const point: Vector = {
-      x: oldP.x + distance,
-      y:
-        oldP.y -
-        (0.5 - Math.random()) * 100 * IronMark.stability * eventMult +
-        eventAdd,
-    };
-
-    if (point.y < minStockValueAdd) {
-      point.y = minStockValueAdd;
-    }
-
-    if (point.y > graphBox.height - 50) {
-      point.y = graphBox.height - 50;
-    }
-
-    if (point.y > highestPoint.y) {
-      highestPoint = point;
-    }
-
-    IronMark.currentValue = Math.round(point.y / 100);
-
-    points.push(point);
-  }
-
+  updateDayCounter();
   xOffSet += xOffSetIncrease;
+  points.forEach((pointArray, index) => {
+    if (xOffSet % distance < xOffSetIncrease) {
+      const oldP = pointArray[pointArray.length - 1];
 
-  if (points[0].x - xOffSet < 0) {
-    points.shift();
-  }
+      const point: Vector = {
+        x: oldP.x + distance,
+        y:
+          oldP.y -
+          (0.5 - Math.random()) * 100 * IronMark.stability * eventMult +
+          eventAdd,
+      };
+
+      // console.log(point.y);
+
+      const lowestValue = currencies[index].lowestPoint + minStockValueAdd;
+
+      console.log(lowestValue);
+
+      if (point.y < lowestValue) {
+        point.y = lowestValue;
+      }
+
+      if (point.y > graphBox.height - 50) {
+        point.y = graphBox.height - 50;
+      }
+
+      if (point.y > highestPoint.y) {
+        highestPoint = point;
+      }
+
+      IronMark.currentValue = Math.round(point.y / 100);
+
+      pointArray.push(point);
+    }
+
+    if (pointArray[0].x - xOffSet < 0) {
+      pointArray.shift();
+    }
+  });
 
   // updateIronmarkText();
   // updateMoneyText();

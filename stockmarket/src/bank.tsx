@@ -16,7 +16,7 @@ export const IronMark = {
 export const Cryptalon = {
   htmlId: "cryptalon",
   lowestPoint: 5,
-  currentValue: 100,
+  currentValue: 5,
   stability: 2,
   owned: 0,
   totalSpent: 0,
