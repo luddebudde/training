@@ -57,8 +57,14 @@ export const createSpeedButtons = () => {
   // Buy Max
   speedButton = document.getElementById("buyMax");
   speedButton.onclick = () => {
+    const oldBankValue = bankAccount.value;
+
     IronMark.owned += Math.floor(bankAccount.value / IronMark.currentValue);
     bankAccount.value = Math.round(bankAccount.value % IronMark.currentValue);
+
+    IronMark.totalSpent += oldBankValue - bankAccount.value;
+    IronMark.averageSpent = Math.round(IronMark.totalSpent / IronMark.owned);
+
     console.log(`Bought!, and got ${IronMark.owned} Ironmarks!`);
     xOffSetIncrease = standardxOffsetIncrease * speedModifier;
   };
@@ -66,11 +72,18 @@ export const createSpeedButtons = () => {
   // Sell Max
   let maxSellButton = document.getElementById("sellMax");
   maxSellButton.onclick = () => {
+    const oldBankValue =
+      bankAccount.value + IronMark.owned * IronMark.averageSpent;
+
     bankAccount.value += Math.round(
       IronMark.owned * IronMark.currentValue * modifiers.taxes
     );
     IronMark.owned = 0;
     console.log(`Sold!, for a profit of ${bankAccount.value}$!`);
+
+    IronMark.totalSpent = 0;
+    IronMark.totalEarned += bankAccount.value - oldBankValue;
+    IronMark.averageSpent = Math.round(IronMark.totalSpent / IronMark.owned);
 
     xOffSetIncrease = standardxOffsetIncrease * speedModifier;
   };

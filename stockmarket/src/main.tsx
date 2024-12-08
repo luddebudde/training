@@ -1,5 +1,5 @@
 import { createCanvasElement } from "three";
-import { IronMark } from "./bank";
+import { bankAccount, IronMark, modifiers } from "./bank";
 import { createSpeedButtons, xOffSetIncrease } from "./createButtons";
 import { updateIronmarkText, updateMoneyText } from "./updateIronmarkText";
 import { updateDayCounter } from "./updateDayCounter";
@@ -10,11 +10,12 @@ import {
   printEventSelections,
   selectEvent,
 } from "./events";
+import { minStockValueAdd } from "./upgrades";
 
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-ctx.translate(0, canvas.height); // Flyttar origo till botten av canvasen
+ctx.translate(0, canvas.clientHeight); // Flyttar origo till botten av canvasen
 ctx.scale(1, -1); // Inverterar y-axeln så att den går uppåt
 
 export type Vector = {
@@ -91,6 +92,14 @@ const drawGraph = () => {
 
     // Draw the Path
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, minStockValueAdd);
+    ctx.lineTo(graphBox.width, minStockValueAdd);
+    ctx.strokeStyle = "purple";
+
+    // Draw the Path
+    ctx.stroke();
     ctx.strokeStyle = "black";
   });
 };
@@ -102,12 +111,34 @@ speedButton.onclick = () => {
   highestPoint = points[points.length - 1];
 };
 
+let updateButtons;
+
 setTimeout(() => {
   createSpeedButtons();
   // for (let i = 0; i < 100; i++) {
   // selectEvent();
   // }
   // printEventSelections();
+  updateButtons = () => {
+    updateIronmarkText();
+    // updateMoneyText();
+
+    // Money
+    const moneyElement = document.getElementById("bank");
+    moneyElement.textContent = `MONEY: ${bankAccount.value}`;
+
+    // Sell
+    const sellElement = document.getElementById("sellMax");
+    sellElement.textContent = `SELL: ${Math.round(
+      IronMark.owned * IronMark.currentValue * modifiers.taxes
+    )}$`;
+
+    // Buy
+    const buyElement = document.getElementById("buyMax");
+    buyElement.textContent = `BUY: ${Math.floor(
+      bankAccount.value / IronMark.currentValue
+    )}st`;
+  };
 }, 100);
 
 setInterval(() => {
@@ -115,34 +146,28 @@ setInterval(() => {
   // selectEvent();
   if (xOffSet % distance < xOffSetIncrease) {
     updateDayCounter();
-
     const oldP = points[points.length - 1];
-
-    // const point = calculateStockIncrease(IronMark);
-    // points.push(point);
-    const distanceToMiddle = graphBox.height / 2 - points[points.length - 1].y;
-
-    const stability = IronMark.stability / 5;
 
     const point: Vector = {
       x: oldP.x + distance,
-      // y: points[points.length - 1].y * (Math.random() + 0.6),
-      // y: points[points.length - 1].y * (0.5 + stability + Math.random()),
       y:
         oldP.y -
         (0.5 - Math.random()) * 100 * IronMark.stability * eventMult +
         eventAdd,
     };
 
-    if (point.y < 50) {
-      point.y = 50;
+    if (point.y < minStockValueAdd) {
+      point.y = minStockValueAdd;
+    }
+
+    if (point.y > graphBox.height - 50) {
+      point.y = graphBox.height - 50;
     }
 
     if (point.y > highestPoint.y) {
       highestPoint = point;
     }
 
-    // IronMark.currentValue = Math.round((graphBox.height - point.y) / 100);
     IronMark.currentValue = Math.round(point.y / 100);
 
     points.push(point);
@@ -154,8 +179,9 @@ setInterval(() => {
     points.shift();
   }
 
-  updateIronmarkText();
-  updateMoneyText();
+  // updateIronmarkText();
+  // updateMoneyText();
+  updateButtons();
 
   drawGraph();
 }, 15);

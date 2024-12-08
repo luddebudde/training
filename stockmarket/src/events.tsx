@@ -7,18 +7,22 @@ export let eventAdd = 0;
 let resetEffect = () => {};
 
 const eventIncrease = () => {
-  eventMult *= 1.2;
+  // eventMult *= 1.2;
+  eventAdd += 3;
 
   resetEffect = () => {
-    eventMult = 1;
+    // eventMult = 1;
+    eventAdd = 1;
   };
 };
 
 const eventDecrease = () => {
-  eventMult *= 0.8;
+  // eventMult *= 0.8;
+  eventAdd -= 3;
 
   resetEffect = () => {
-    eventMult = 1;
+    // eventMult = 1;
+    eventAdd = 1;
   };
 };
 
@@ -35,45 +39,54 @@ const eventIncreaseStability = () => {
 };
 
 const eventLargeIncrease = () => {
-  eventMult *= 1.5;
+  // eventMult *= 1.5;
+  eventAdd += 5;
 
   resetEffect = () => {
-    eventMult = 1;
+    // eventMult = 1;
+    eventAdd = 1;
   };
 };
 
 const eventLargeDecrease = () => {
-  eventMult *= 0.5;
+  // eventMult *= 0.5;
+  eventAdd -= 5;
 
   resetEffect = () => {
     eventMult = 1;
+    eventAdd = 0;
   };
 };
 
 const eventDipp = () => {
   currencies.forEach((currency) => {
-    currency.currentValue -= 3;
+    currency.currentValue -= 5;
     // points[points.length - 1].y -= 100;
   });
 
   resetEffect = () => {
+    // Make Up For It
     eventMult = 1.1;
   };
 };
 
 const eventXLargeIncrease = () => {
-  eventMult *= 3;
+  // eventMult *= 3;
+  eventAdd += 10;
 
   resetEffect = () => {
-    eventMult = 1;
+    // eventMult = 1;
+    eventAdd = 1;
   };
 };
 
 const eventXLargeDecrease = () => {
-  eventMult *= 0.01;
+  // eventMult *= 0.01;
+  eventAdd -= 10;
 
   resetEffect = () => {
-    eventMult = 1;
+    // eventMult = 1;
+    eventAdd = 1;
   };
 };
 

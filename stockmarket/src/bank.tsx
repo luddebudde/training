@@ -4,9 +4,24 @@ export const bankAccount = {
 
 export const IronMark = {
   htmlId: "ironmark",
+  lowestPoint: 50,
   currentValue: 100,
   stability: 1,
-  owned: 10,
+  owned: 0,
+  totalSpent: 0,
+  averageSpent: 0,
+  totalEarned: 0,
+};
+
+export const Cryptalon = {
+  htmlId: "cryptalon",
+  lowestPoint: 5,
+  currentValue: 100,
+  stability: 2,
+  owned: 0,
+  totalSpent: 0,
+  averageSpent: 0,
+  totalEarned: 0,
 };
 
 export const modifiers = {
@@ -14,4 +29,4 @@ export const modifiers = {
   rent: 0,
 };
 
-export const currencies = [IronMark];
+export const currencies = [IronMark, Cryptalon];
