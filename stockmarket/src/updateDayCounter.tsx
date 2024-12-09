@@ -86,5 +86,5 @@ export function updateDayCounter() {
       ]
     );
   }
-  console.log("");
+  // console.log("");
 }

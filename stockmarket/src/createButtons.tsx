@@ -1,7 +1,7 @@
 import { bankAccount, IronMark, modifiers } from "./bank";
 import { highestPoint } from "./main";
 
-export const standardxOffsetIncrease = 5;
+export const standardxOffsetIncrease = 2;
 export let speedModifier = 1;
 export let xOffSetIncrease = standardxOffsetIncrease * speedModifier;
 

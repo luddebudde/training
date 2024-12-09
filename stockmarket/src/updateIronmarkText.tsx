@@ -134,8 +134,6 @@ export function updateIronmarkText() {
 function updateSubList(currency, subList) {
   subList.innerHTML = "";
 
-  // console.log(currency.htmlId, subList);
-
   for (const [key, value] of Object.entries(currency)) {
     const listItem = document.createElement("li");
     listItem.textContent = `${key}: ${Math.round(value)}`;

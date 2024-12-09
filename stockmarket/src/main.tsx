@@ -50,11 +50,12 @@ export let highestPoint: Vector = {
   y: 0,
 };
 
-points.forEach((pointArray) => {
+points.forEach((pointArray, index) => {
+  const currentCurrency = currencies[index];
   for (let i = 0; i < maxNodes; i++) {
     const point: Vector = {
       x: i * distance + 50,
-      y: IronMark.currentValue,
+      y: currentCurrency.currentValue,
     };
     pointArray.push(point);
   }
@@ -160,16 +161,22 @@ setTimeout(() => {
       bankAccount.value / IronMark.currentValue
     )}st`;
   };
-}, 100);
+}, 5);
 
 setInterval(() => {
   ctx.clearRect(0, 0, graphBox.width, graphBox.height);
   // selectEvent();
-  updateDayCounter();
+
   xOffSet += xOffSetIncrease;
   points.forEach((pointArray, index) => {
     if (xOffSet % distance < xOffSetIncrease) {
+      updateDayCounter();
       const oldP = pointArray[pointArray.length - 1];
+
+      const currentCurrency = currencies[index];
+      const middleP = currentCurrency.middlePoint;
+      const distToMiddle = middleP - oldP.y;
+      const strenghtToMiddle = currentCurrency.strenghtToMiddle;
 
       const point: Vector = {
         x: oldP.x + distance,
@@ -177,13 +184,15 @@ setInterval(() => {
           oldP.y -
           (0.5 - Math.random()) * 100 * IronMark.stability * eventMult +
           eventAdd,
+        //  +
+        // distToMiddle * strenghtToMiddle,
       };
 
       // console.log(point.y);
 
-      const lowestValue = currencies[index].lowestPoint + minStockValueAdd;
+      const lowestValue = currentCurrency.lowestPoint + minStockValueAdd;
 
-      console.log(lowestValue);
+      // console.log(lowestValue);
 
       if (point.y < lowestValue) {
         point.y = lowestValue;
@@ -197,7 +206,7 @@ setInterval(() => {
         highestPoint = point;
       }
 
-      IronMark.currentValue = Math.round(point.y / 100);
+      currentCurrency.currentValue = point.y / 10;
 
       pointArray.push(point);
     }
