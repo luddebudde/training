@@ -1,13 +1,15 @@
 import { createCanvasElement } from "three";
 import {
+  allCurrencies,
   bankAccount,
   Cryptalon,
   currencies,
   IronMark,
   modifiers,
 } from "./bank";
+import { updateUI } from "./stockSell";
 import { createSpeedButtons, xOffSetIncrease } from "./createButtons";
-import { updateIronmarkText, updateMoneyText } from "./updateIronmarkText";
+import { updateIronmarkText } from "./updateIronmarkText";
 import { updateDayCounter } from "./updateDayCounter";
 import { calculateStockIncrease } from "./calculateStockIncrease";
 import {
@@ -30,7 +32,7 @@ export type Vector = {
   y: number;
 };
 
-export let points = [[], []];
+export let points = [[]];
 const pointsColor = ["black", "blue"];
 
 const maxNodes = 20;
@@ -50,17 +52,24 @@ export let highestPoint: Vector = {
   y: 0,
 };
 
-points.forEach((pointArray, index) => {
-  const currentCurrency = currencies[index];
-  for (let i = 0; i < maxNodes; i++) {
-    const point: Vector = {
-      x: i * distance + 50,
-      y: currentCurrency.currentValue,
-    };
-    pointArray.push(point);
-  }
-  // console.log(points);
-});
+// points.forEach((pointArray, index) => {
+//   console.log(points);
+
+//   // if (currencies === undefined) {
+//   //   return;
+//   // }
+//   // console.log(currencies);
+
+//   // const currentCurrency = currencies[index];
+//   for (let i = 0; i < maxNodes; i++) {
+//     const point: Vector = {
+//       x: i * distance + 50,
+//       y: 50,
+//     };
+//     pointArray.push(point);
+//   }
+//   // console.log(points);
+// });
 
 const drawGraph = () => {
   points.forEach((pointsArray, arrayIndex) => {
@@ -133,7 +142,44 @@ speedButton.onclick = () => {
   highestPoint = points[points.length - 1];
 };
 
+export const pushCurrency = () => {
+  const newCurrency = allCurrencies[currencies.length];
+
+  console.log(newCurrency);
+
+  const point: Vector = {
+    x: 100 + 50,
+    y: 50,
+  };
+
+  currencies.push(newCurrency);
+  points.push([point]);
+
+  // updateUI(currencies);
+};
+
 let updateButtons;
+
+pushCurrency();
+
+points.forEach((pointArray, index) => {
+  console.log(points);
+
+  // if (currencies === undefined) {
+  //   return;
+  // }
+  // console.log(currencies);
+
+  // const currentCurrency = currencies[index];
+  for (let i = 0; i < maxNodes; i++) {
+    const point: Vector = {
+      x: i * distance + 50,
+      y: 50,
+    };
+    pointArray.push(point);
+  }
+  // console.log(points);
+});
 
 setTimeout(() => {
   createSpeedButtons();
@@ -219,6 +265,7 @@ setInterval(() => {
   // updateIronmarkText();
   // updateMoneyText();
   updateButtons();
-
+  // updateIronmarkText();
   drawGraph();
+  updateUI(currencies);
 }, 15);

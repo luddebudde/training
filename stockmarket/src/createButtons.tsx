@@ -1,7 +1,7 @@
 import { bankAccount, IronMark, modifiers } from "./bank";
 import { highestPoint } from "./main";
 
-export const standardxOffsetIncrease = 2;
+export const standardxOffsetIncrease = 1.5;
 export let speedModifier = 1;
 export let xOffSetIncrease = standardxOffsetIncrease * speedModifier;
 
@@ -49,6 +49,7 @@ export const createSpeedButtons = () => {
   // Speed Three
   speedButton = document.getElementById("setSpeedThree");
   speedButton.onclick = () => {
+    5;
     speedModifier = 3;
     console.log("speeeeeeeeeeding", speedModifier);
     xOffSetIncrease = standardxOffsetIncrease * speedModifier;
