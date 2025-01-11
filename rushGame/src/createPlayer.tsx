@@ -4,7 +4,8 @@ import { world } from "./basics";
 export type Player = {
   name: string;
   health: number;
-  damage: number;
+  maxHealth: number;
+  contactDamage: number;
   pos: {
     x: number;
     y: number;
@@ -17,6 +18,7 @@ export type Player = {
   color: string;
   mass: number;
   speed: number;
+  attackDelay: number;
   team: string;
   unlockedAbilities: {
     dash: boolean;
@@ -25,11 +27,14 @@ export type Player = {
   airFriction: true;
 };
 
+const health = 100;
+
 export const createPlayer = (): any => {
   const player: Player = {
     name: "player",
-    health: 100,
-    damage: 0,
+    health: health,
+    maxHealth: health,
+    contactDamage: 0,
     pos: {
       x: world.width / 2,
       y: world.height / 2,
@@ -43,8 +48,9 @@ export const createPlayer = (): any => {
     mass: 0.1,
     speed: 1,
     team: "player",
+    attackDelay: 50,
     unlockedAbilities: {
-      dash: false,
+      dash: true,
       bounceable: false,
     },
     airFriction: true,

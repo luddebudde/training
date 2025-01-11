@@ -6,7 +6,8 @@ import { entities } from "../arrays";
 
 export type Enemy = {
   health: number;
-  damage: number;
+  maxHealth: number;
+  contactDamage: number;
   pos: {
     x: number;
     y: number;
@@ -27,7 +28,7 @@ export type Enemy = {
 export const createChaser = () => {
   const enemy: Enemy = {
     health: 100,
-    damage: 10,
+    contactDamage: 10,
     pos: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,

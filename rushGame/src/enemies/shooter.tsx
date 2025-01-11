@@ -9,7 +9,7 @@ import { createBullet } from "../createBullet";
 export const createSniper = () => {
   const enemy: Enemy = {
     health: 40,
-    damage: 10,
+    contactDamage: 10,
     pos: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,

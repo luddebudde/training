@@ -9,10 +9,17 @@ import "./test2";
 import { createChaser } from "./enemies/chaser";
 import { world } from "./basics";
 import { player } from "./createPlayer";
-import { bullets, checkArrayRemoval, entities, spawnBoss } from "./arrays";
+import {
+  bullets,
+  checkArrayRemoval,
+  entities,
+  liveBosses,
+  spawnBoss,
+} from "./arrays";
 import { createSniper } from "./enemies/shooter";
 import { createRamper } from "./enemies/ramper";
 import { generateRewards } from "./generateRewards";
+import { drawHealthBar } from "./drawHealthbar";
 
 console.log("main");
 
@@ -96,8 +103,6 @@ export const isKeyDown = keyDownTracker();
 
 // console.log(entities);
 
-for (let i = 0; i < 5; i++) {}
-
 const airResistanceConstant = 0.95;
 
 let dashCooldown = 10;
@@ -118,7 +123,7 @@ function init() {
 document.addEventListener("DOMContentLoaded", init);
 
 setTimeout(() => {
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
     spawnBoss();
@@ -160,13 +165,13 @@ const update = () => {
     }
     if (entity.pos.y < entity.radius) {
       entity.vel.y = -entity.vel.y;
-      entity.pos.y += entity.radius;
+      entity.pos.y = entity.radius;
     }
 
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
         if (entity.team !== secondEntity.team) {
-          secondEntity.health -= entity.damage;
+          secondEntity.health -= entity.contactDamage;
         }
 
         const newVel = handleCollision(entity, secondEntity);
@@ -175,7 +180,7 @@ const update = () => {
       }
     });
 
-    entity?.update?.();
+    entity?.update?.(ctx);
 
     ctx.beginPath();
     ctx.arc(entity.pos.x, entity.pos.y, entity.radius, 0, 2 * Math.PI);
@@ -201,6 +206,7 @@ const update = () => {
     if (bullet.pos.x > world.width - bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.x = -bullet.vel.x;
+        bullet.damage = 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -208,6 +214,7 @@ const update = () => {
     if (bullet.pos.x < bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.x = -bullet.vel.x;
+        bullet.damage = 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -215,6 +222,7 @@ const update = () => {
     if (bullet.pos.y > world.height - bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.y = -bullet.vel.y;
+        bullet.damage = 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -222,11 +230,22 @@ const update = () => {
     if (bullet.pos.y < bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.y = -bullet.vel.y;
+        bullet.damage = 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
     }
   });
+
+  drawHealthBar(
+    ctx,
+    player.pos.x - player.radius,
+    player.pos.y + player.radius + 10,
+    player.radius * 2,
+    20,
+    player.health,
+    player.maxHealth
+  );
 
   if (isKeyDown("KeyW")) {
     player.vel.y += -player.speed;
@@ -250,18 +269,19 @@ const update = () => {
     dashCooldown = 100;
   }
 
-  if (isKeyDown("Space") && dashCooldown < 0) {
-    generateRewards();
+  if (isKeyDown("Space") && player.attackDelay < 0) {
+    // generateRewards();
     // const direction = makeDirection(player.pos, mousePos);
     createBullet(bullets, player, mousePos, 10, 50, {
       bounceable: player.unlockedAbilities.bounceable,
     });
 
-    dashCooldown = 10;
+    player.attackDelay = 10;
   }
   dashCooldown--;
+  player.attackDelay--;
 
-  checkArrayRemoval();
+  checkArrayRemoval(ctx);
 
   requestAnimationFrame(update);
 };

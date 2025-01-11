@@ -16,14 +16,16 @@ type Bullet = {
   mass: number;
   radius: number;
   color: string;
-  team: number;
+  team: string;
   airFriction: boolean;
-  bouncable: boolean;
+  bounceable: boolean;
+  bounceDamageLoss: number;
 };
 
 type Mods = {
   bounceable: boolean;
   airFriction: boolean;
+  bounceDamageLoss: number;
 };
 
 export const createBullet = (
@@ -35,22 +37,32 @@ export const createBullet = (
   mods: Mods = {
     bounceable: false,
     airFriction: false,
+    bounceDamageLoss: 0.3,
+  },
+  advanced = {
+    startPos: {
+      x: 0,
+      y: 0,
+    },
+    team: "",
   }
 ) => {
-  //   if (shooter.pos.x >) {
-  //     return;
-  //   }
+  const startPos = shooter !== undefined ? shooter.pos : advanced.startPos;
+  const bulletTeam = shooter !== undefined ? shooter.team : advanced.team;
 
-  const direction = makeDirection(shooter.pos, target);
+  const direction = makeDirection(startPos, target);
+
+  console.log(target);
+
   const newVel = multVar(direction, speed);
 
-  console.log(shooter.pos);
+  // console.log(shooter.pos);
 
   const bullet: Bullet = {
     damage: damage,
     pos: {
-      x: shooter.pos.x,
-      y: shooter.pos.y,
+      x: startPos.x,
+      y: startPos.y,
     },
     vel: {
       x: newVel.x,
@@ -59,12 +71,63 @@ export const createBullet = (
     mass: 1,
     radius: 10,
     color: "green",
-    team: shooter.team,
+    team: bulletTeam,
     airFriction: mods.airFriction,
     bounceable: mods.bounceable,
+    bounceDamageLoss: mods.bounceDamageLoss,
   };
-
-  // console.log(bullet);
-
+  // console.log(newVel);
   bullets.push(bullet);
+};
+
+export const createWaveShoot = (
+  bullets: Bullet[],
+  shooter: Enemy | Player,
+  target: Vec2,
+  damage: number,
+  speed: number,
+  waveWidth: number,
+  bulletsCount: number,
+  mods: Mods = {
+    bounceable: false,
+    airFriction: false,
+    bounceDamageLoss: 0.3,
+  }
+) => {
+  const baseDirection = makeDirection(shooter.pos, target);
+  const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
+
+  // Beräkna avståndet mellan skotten i vågen
+  const stepAngle = waveWidth / (bulletsCount - 1);
+
+  for (let i = 0; i < bulletsCount; i++) {
+    const waveOffset = -waveWidth / 2 + i * stepAngle; // Fördela vinklar jämnt över vågen
+    const shootAngle = baseAngle + waveOffset;
+    const direction = {
+      x: Math.cos(shootAngle),
+      y: Math.sin(shootAngle),
+    };
+    const newVel = multVar(direction, speed);
+
+    const bullet: Bullet = {
+      damage: damage,
+      pos: {
+        x: shooter.pos.x,
+        y: shooter.pos.y,
+      },
+      vel: {
+        x: newVel.x,
+        y: newVel.y,
+      },
+      mass: 1,
+      radius: 10,
+      color: "green",
+      team: shooter.team,
+      airFriction: mods.airFriction,
+      bounceable: mods.bounceable,
+      bounceDamageLoss: mods.bounceDamageLoss,
+    };
+
+    bullets.push(bullet);
+  }
 };
