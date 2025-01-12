@@ -5,9 +5,12 @@ import { player } from "../createPlayer";
 import { entities } from "../arrays";
 import { Enemy } from "./chaser";
 
-export const createCharger = () => {
+const health = 100;
+
+export const createRamper = () => {
   const enemy: Enemy = {
-    health: 100,
+    health: health,
+    maxHealth: health,
     contactDamage: 40,
     pos: {
       x: Math.random() * world.width,
@@ -35,5 +38,7 @@ export const createCharger = () => {
     },
   };
 
-  entities.push(enemy);
+  return enemy;
+
+  // entities.push(enemy);
 };

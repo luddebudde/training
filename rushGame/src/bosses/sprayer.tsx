@@ -3,12 +3,13 @@ import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { Enemy } from "../enemies/chaser";
+import { goTo } from "../goTo";
 import { makeDirection } from "../makeDirection";
 import { add, mult, multVar, sub, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
 const cornerDelay = 50;
-const health = 15;
+const health = 1500;
 
 export const createSprayerBoss = () => {
   const sprayer = {
@@ -54,7 +55,7 @@ export const createSprayerBoss = () => {
 
       if (sprayer.phaseCounter < 0) {
         const movementNumber = Math.floor(Math.random() * 3);
-        // const movementNumber = 2;
+        // const movementNumber = 1;
 
         if (movementNumber === 0) {
           console.log("shooter");
@@ -132,13 +133,10 @@ export const createSprayerBoss = () => {
 
               const index = cornerArray.indexOf(chosenCorner);
 
-              let direction = makeDirection(sprayer.pos, chosenCorner);
-              const distanceVec = sub(sprayer.pos, chosenCorner);
-              const distance = Math.sqrt(
-                distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y
-              );
-
-              sprayer.vel = multVar(direction, distance / cornerDelay);
+              goTo(sprayer, chosenCorner, {
+                time: cornerDelay,
+                speed: undefined,
+              });
 
               if (index !== -1) {
                 cornerArray.splice(index, 1);
@@ -179,18 +177,9 @@ export const createSprayerBoss = () => {
               let moveTime = sprayer.spreadOutPhase.shootDelay;
               let changeTime = sprayer.spreadOutPhase.changePhaseDelay;
 
-              const moveTo: Vec2 = { x: world.width / 2, y: world.height / 2 };
+              const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 
-              let direction = makeDirection(sprayer.pos, moveTo);
-              const distanceVec = sub(sprayer.pos, moveTo);
-              const distance = Math.sqrt(
-                distanceVec.x * distanceVec.x + distanceVec.y * distanceVec.y
-              );
-
-              sprayer.vel = multVar(direction, distance / moveTime);
-
-              if (changeTime !== sprayer.spreadOutPhase.shootDelay) {
-              }
+              goTo(sprayer, place, { time: moveTime, speed: undefined });
             }
 
             if (
@@ -273,6 +262,7 @@ export const createSprayerBoss = () => {
     airFriction: true,
   };
 
-  entities.push(sprayer);
-  liveBosses.push(sprayer);
+  return sprayer;
+  // entities.push(sprayer);
+  // liveBosses.push(sprayer);
 };

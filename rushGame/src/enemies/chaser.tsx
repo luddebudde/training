@@ -25,9 +25,12 @@ export type Enemy = {
   airFriction: boolean;
 };
 
+const health = 100;
+
 export const createChaser = () => {
   const enemy: Enemy = {
-    health: 100,
+    health: health,
+    maxHealth: health,
     contactDamage: 10,
     pos: {
       x: Math.random() * world.width,
@@ -51,5 +54,7 @@ export const createChaser = () => {
     airFriction: true,
   };
 
-  entities.push(enemy);
+  return enemy;
+
+  // entities.push(enemy);
 };

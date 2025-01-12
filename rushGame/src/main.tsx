@@ -4,8 +4,6 @@ import { add, addVar, multVar } from "./math";
 import { doCirclesOverlap } from "./doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
-import "./test";
-import "./test2";
 import { createChaser } from "./enemies/chaser";
 import { world } from "./basics";
 import { player } from "./createPlayer";
@@ -20,8 +18,6 @@ import { createSniper } from "./enemies/shooter";
 import { createRamper } from "./enemies/ramper";
 import { generateRewards } from "./generateRewards";
 import { drawHealthBar } from "./drawHealthbar";
-
-console.log("main");
 
 // import React from "https://esm.sh/react";
 // import ReactDOM from "https://esm.sh/react-dom";
@@ -152,18 +148,22 @@ const update = () => {
     }
 
     if (entity.pos.x > world.width - entity.radius) {
+      entity?.onWallBounce?.();
       entity.vel.x = -entity.vel.x;
       entity.pos.x = world.width - entity.radius;
     }
     if (entity.pos.x < entity.radius) {
+      entity?.onWallBounce?.();
       entity.vel.x = -entity.vel.x;
       entity.pos.x = entity.radius;
     }
     if (entity.pos.y > world.height - entity.radius) {
+      entity?.onWallBounce?.();
       entity.vel.y = -entity.vel.y;
       entity.pos.y = world.height - entity.radius;
     }
     if (entity.pos.y < entity.radius) {
+      entity?.onWallBounce?.();
       entity.vel.y = -entity.vel.y;
       entity.pos.y = entity.radius;
     }

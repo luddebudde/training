@@ -61,5 +61,3 @@ export const createPlayer = (): any => {
 };
 
 export const player = createPlayer();
-
-console.log(player);

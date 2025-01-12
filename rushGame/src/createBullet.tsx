@@ -52,11 +52,7 @@ export const createBullet = (
 
   const direction = makeDirection(startPos, target);
 
-  console.log(target);
-
   const newVel = multVar(direction, speed);
-
-  // console.log(shooter.pos);
 
   const bullet: Bullet = {
     damage: damage,
@@ -76,7 +72,6 @@ export const createBullet = (
     bounceable: mods.bounceable,
     bounceDamageLoss: mods.bounceDamageLoss,
   };
-  // console.log(newVel);
   bullets.push(bullet);
 };
 
@@ -97,11 +92,10 @@ export const createWaveShoot = (
   const baseDirection = makeDirection(shooter.pos, target);
   const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
 
-  // Beräkna avståndet mellan skotten i vågen
   const stepAngle = waveWidth / (bulletsCount - 1);
 
   for (let i = 0; i < bulletsCount; i++) {
-    const waveOffset = -waveWidth / 2 + i * stepAngle; // Fördela vinklar jämnt över vågen
+    const waveOffset = -waveWidth / 2 + i * stepAngle;
     const shootAngle = baseAngle + waveOffset;
     const direction = {
       x: Math.cos(shootAngle),

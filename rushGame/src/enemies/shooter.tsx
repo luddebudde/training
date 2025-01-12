@@ -6,9 +6,12 @@ import { bullets, entities } from "../arrays";
 import { Enemy } from "./chaser";
 import { createBullet } from "../createBullet";
 
+const health = 100;
+
 export const createSniper = () => {
   const enemy: Enemy = {
-    health: 40,
+    health: health,
+    maxHealth: health,
     contactDamage: 10,
     pos: {
       x: Math.random() * world.width,
@@ -43,5 +46,6 @@ export const createSniper = () => {
     airFriction: true,
   };
 
-  entities.push(enemy);
+  return enemy;
+  // entities.push(enemy);
 };
