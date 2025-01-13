@@ -15,7 +15,7 @@ export let entities = [];
 export let bullets = [];
 
 // const firstWave = [createSprayerBoss];
-const firstWave = [createChargerBoss];
+const firstWave = [createSprayerBoss];
 const secondWave = [createChaser, createSniper];
 const waveOrder = [firstWave, secondWave];
 
@@ -25,9 +25,11 @@ export let bossPool = [...waveOrder[currentWaveIndex]];
 
 export let liveBosses = [];
 
-export const spawnDelay = 30000;
+export const spawnDelay = 30;
 
 export const checkArrayRemoval = (ctx) => {
+  entities = entities.filter((entity) => entity.health > 0);
+
   liveBosses.forEach((boss, index) => {
     drawHealthBar(
       ctx,
@@ -49,7 +51,6 @@ export const checkArrayRemoval = (ctx) => {
       liveBosses.splice(index, 1);
 
       setTimeout(() => {
-        entities = entities.filter((entity) => entity.health > 0);
         spawnBoss();
       }, spawnDelay);
     }
@@ -58,6 +59,8 @@ export const checkArrayRemoval = (ctx) => {
 
 export const spawnBoss = () => {
   const nextboss = randomArrayElementSplice(bossPool);
+
+  console.log(nextboss);
 
   if (nextboss === undefined) {
     currentWaveIndex++;

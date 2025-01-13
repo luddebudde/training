@@ -8,8 +8,11 @@ import { makeDirection } from "../makeDirection";
 import { add, mult, multVar, sub, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
-const cornerDelay = 50;
-const health = 1500;
+const cornerDelay = 25;
+const health = 1000;
+
+// TODO make sprayer shoot at last corner
+// Make it lose all movement when stoping "corner phase"
 
 export const createSprayerBoss = () => {
   const sprayer = {
@@ -29,11 +32,12 @@ export const createSprayerBoss = () => {
     speed: 0.3,
     team: "enemy",
     mass: 1000,
+    reacheadHalfPoint: false,
 
     // Pahses
     phaseCounter: 10,
     shooterPhase: {
-      attackDelay: 10,
+      attackDelay: 5,
       spreadShotCounter: 0,
     },
     cornerPhase: {
@@ -126,39 +130,45 @@ export const createSprayerBoss = () => {
           };
           const cornerArray = [upLeft, upLRight, downLeft, downRight];
 
+          const originalCorners = [upLeft, upLRight, downLeft, downRight];
+          let remainingCorners = [...originalCorners];
+
           sprayer.aiMovement = () => {
             if (sprayer.cornerPhase.counter < 0) {
-              const chosenCorner = randomArrayElement(cornerArray);
-              console.log(cornerArray);
+              const currentTarget = remainingCorners[0];
+              const distanceToTarget = Math.sqrt(
+                Math.pow(currentTarget.x - sprayer.pos.x, 2) +
+                  Math.pow(currentTarget.y - sprayer.pos.y, 2)
+              );
 
-              const index = cornerArray.indexOf(chosenCorner);
-
-              goTo(sprayer, chosenCorner, {
-                time: cornerDelay,
-                speed: undefined,
-              });
-
-              if (index !== -1) {
-                cornerArray.splice(index, 1);
+              if (distanceToTarget < sprayer.radius) {
+                remainingCorners.shift();
               }
 
-              if (cornerArray.length === 0) {
+              if (remainingCorners.length > 0) {
+                const nextCorner = remainingCorners[0];
+                goTo(sprayer, nextCorner, {
+                  time: cornerDelay,
+                  speed: undefined,
+                });
+
+                createWaveShoot(
+                  bullets,
+                  sprayer,
+                  player.pos,
+                  10,
+                  5,
+                  Math.PI / 4,
+                  5,
+                  { bounceable: false, airFriction: false }
+                );
+              } else {
                 sprayer.phaseCounter = 0;
               }
 
-              createWaveShoot(
-                bullets,
-                sprayer,
-                player.pos,
-                10,
-                5,
-                Math.PI / 4,
-                5,
-                { bounceable: false, airFriction: false } // Mods
-              );
-
               sprayer.cornerPhase.counter = cornerDelay;
             }
+
             sprayer.cornerPhase.counter--;
           };
 

@@ -50,7 +50,7 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: 50,
     unlockedAbilities: {
-      dash: true,
+      dash: false,
       bounceable: false,
     },
     airFriction: true,
