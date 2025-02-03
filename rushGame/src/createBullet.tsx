@@ -1,4 +1,4 @@
-import { Player } from "./createPlayer";
+import { player, Player } from "./createPlayer";
 import { Enemy } from "./enemies/chaser";
 import { makeDirection } from "./makeDirection";
 import { multVar, Vec2 } from "./math";
@@ -28,6 +28,8 @@ type Mods = {
   bounceDamageLoss: number;
 };
 
+export let bulletsShot = 0;
+
 export const createBullet = (
   bullets: Bullet[],
   shooter: Enemy | Player,
@@ -49,6 +51,10 @@ export const createBullet = (
 ) => {
   const startPos = shooter !== undefined ? shooter.pos : advanced.startPos;
   const bulletTeam = shooter !== undefined ? shooter.team : advanced.team;
+
+  if (bulletTeam === player.team) {
+    bulletsShot++;
+  }
 
   const direction = makeDirection(startPos, target);
 

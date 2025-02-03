@@ -8,8 +8,8 @@ import { makeDirection } from "../makeDirection";
 import { add, mult, multVar, sub, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
-const cornerDelay = 25;
-const health = 1000;
+const cornerDelay = 50;
+const health = 100;
 
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"
@@ -271,6 +271,9 @@ export const createSprayerBoss = () => {
     },
     airFriction: true,
   };
+
+  entities.push(sprayer);
+  liveBosses.push(sprayer);
 
   return sprayer;
   // entities.push(sprayer);

@@ -1,103 +1,19 @@
 import { keyDownTracker } from "./keyDownTracker";
-import { makeDirection } from "./makeDirection";
-import { add, addVar, multVar } from "./math";
+import { add, multVar } from "./math";
 import { doCirclesOverlap } from "./doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
-import { createChaser } from "./enemies/chaser";
 import { world } from "./basics";
 import { player } from "./createPlayer";
-import {
-  bullets,
-  checkArrayRemoval,
-  entities,
-  liveBosses,
-  spawnBoss,
-} from "./arrays";
-import { createSniper } from "./enemies/shooter";
-import { createRamper } from "./enemies/ramper";
-import { generateRewards } from "./generateRewards";
+import { bullets, checkArrayRemoval, entities, spawnBoss } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
-
-// import React from "https://esm.sh/react";
-// import ReactDOM from "https://esm.sh/react-dom";
-
-// const App = () => <h1>Hello, React!</h1>;
-// ReactDOM.render(<App />, document.getElementById("root"));
-
-// import React from "react";
-// import ReactDOM from "react-dom";
-// import App from "./0./App";
-
-// Ta bort eller kommentera ut nedan rad
-// import React.StrictMode från React
-// import { StrictMode } from 'react';
-
-// Eller använd enbart
-// ReactDOM.render(<App />, document.getElementById("root"));
-
-// import { createRoot } from "react-dom/client";
-
-// Clear the existing HTML content
-// document.body.innerHTML = '<div id="app"></div>';
-
-// // Render your React component instead
-// const root = createRoot(document.getElementById("app"));
-// // root.render(<h1>Hello, world</h1>);
+import { loseScreen } from "./loseScreen";
+import { damageDealt, dealDamage } from "./dealDamage";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
 export const isKeyDown = keyDownTracker();
-
-// export const mainArrays = [entities, bullets];
-
-// export type NormalEnemy = {
-//   health: number;
-//   damage: number;
-//   pos: {
-//     x: number;
-//     y: number;
-//   };
-//   vel: {
-//     x: number;
-//     y: number;
-//   };
-//   radius: number;
-//   color: string;
-//   speed: number;
-//   team: string;
-//   mass: number;
-//   update: () => {};
-// };
-
-// export type Player = {
-//   name: string,
-//   health: number,
-//   pos: {
-//     x: number,
-//     y: number,
-//   },
-//   vel: {
-//     x: number,
-//     y: number,
-//   },
-//   radius: number,
-//   color: string,
-//   speed: number,
-//   team: string,
-//   mass: number,
-//   unlockedAbilities: string[],
-// };
-
-// return player;
-// };
-
-// console.log(entities);
-
-// const player = createPlayer();
-
-// console.log(entities);
 
 const airResistanceConstant = 0.95;
 
@@ -123,6 +39,7 @@ setTimeout(() => {
     // createChaser();
     // createSniper();
     spawnBoss();
+    // loseScreen();
   }
 }, 10);
 
@@ -171,7 +88,8 @@ const update = () => {
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
         if (entity.team !== secondEntity.team) {
-          secondEntity.health -= entity.contactDamage;
+          dealDamage(entity, secondEntity, entity.contactDamage);
+          // secondEntity.health -= entity.contactDamage;
         }
 
         const newVel = handleCollision(entity, secondEntity);
@@ -193,7 +111,8 @@ const update = () => {
 
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity) && bullet.team !== entity.team) {
-        entity.health -= bullet.damage;
+        dealDamage(bullet, entity);
+        // entity.health -= bullet.damage;
         bullets.splice(index, 1);
       }
 
@@ -206,7 +125,7 @@ const update = () => {
     if (bullet.pos.x > world.width - bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.x = -bullet.vel.x;
-        bullet.damage = 1 - bullet.bounceDamageLoss;
+        bullet.damage *= 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -214,7 +133,7 @@ const update = () => {
     if (bullet.pos.x < bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.x = -bullet.vel.x;
-        bullet.damage = 1 - bullet.bounceDamageLoss;
+        bullet.damage *= 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -222,7 +141,7 @@ const update = () => {
     if (bullet.pos.y > world.height - bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.y = -bullet.vel.y;
-        bullet.damage = 1 - bullet.bounceDamageLoss;
+        bullet.damage *= 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -230,7 +149,7 @@ const update = () => {
     if (bullet.pos.y < bullet.radius) {
       if (bullet.bounceable) {
         bullet.vel.y = -bullet.vel.y;
-        bullet.damage = 1 - bullet.bounceDamageLoss;
+        bullet.damage *= 1 - bullet.bounceDamageLoss;
         return;
       }
       bullets.splice(index, 1);
@@ -274,6 +193,8 @@ const update = () => {
     // const direction = makeDirection(player.pos, mousePos);
     createBullet(bullets, player, mousePos, 10, 50, {
       bounceable: player.unlockedAbilities.bounceable,
+      bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+      airFriction: false,
     });
 
     player.attackDelay = 10;
@@ -283,7 +204,20 @@ const update = () => {
 
   checkArrayRemoval(ctx);
 
-  requestAnimationFrame(update);
+  if (player.health > 0) {
+    requestAnimationFrame(update);
+  } else {
+    if (player.unlockedAbilities.bonusLife === true) {
+      player.health = player.maxHealth / 2;
+      entities.push(player);
+
+      requestAnimationFrame(update);
+      player.unlockedAbilities.bonusLife = false;
+    } else {
+      // console.log("hej");
+      loseScreen();
+    }
+  }
 };
 
 export const mousePos = {

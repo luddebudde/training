@@ -63,6 +63,69 @@
         padding: 0px;
         font-size: 1em;
       }
+
+      #loseScreen {
+        background-color: darkgray;
+        color: red;
+        border-style: solid;
+        border-color: black;
+        display: flex;
+        height: 80vh;
+        width: 50vw;
+        align-items: center;
+        justify-content: center;
+        padding: 0px;
+        font-size: 1em;
+        visibility: hidden;
+
+        display: flex;
+        position: absolute;
+        top: 150px;
+        left: 50vw;
+        text-align: center;
+        flex-direction: column;
+        transform: translate(-50%, 0%);
+      }
+
+      #statistic {
+        background-color: green;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        top: 10%;
+        height: 80%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 0px;
+        font-size: 1em;
+      }
+
+      #bosses-killed,
+      #damage-taken,
+      #damage-dealt,
+      #bullets-shot,
+      #mistakes-made {
+        color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 75px;
+        padding: 10px;
+        /* font-size: 1em; */
+      }
+
+      #stat {
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 75px;
+        padding: 10px;
+      }
+
+      /* #loseTitle; */
     </style>
     <!-- <script type="module" src="src/main.tsx" defer>
            <React.StrictMode >
@@ -72,6 +135,7 @@
     <div id="root"></div>
     <script type="module" src="src/main.tsx"></script>
     <script type="module" src="src/test2.tsx"></script>
+
     <!-- <base href="/training/survival"/> -->
     <style>
       body {
@@ -85,6 +149,35 @@
       id="worldDiv"
       style="background-color: black; width: 100vw; height: 1000vh"
     > -->
+
+    <div id="loseScreen">
+      <div
+        id="loseTitle"
+        style="
+          background-color: blue;
+          height: 20%;
+          width: 100%;
+          position: absolute;
+          top: 10%;
+          text-align: center;
+          font-size: 200px;
+          transform: translate(0%, -50%);
+        "
+      >
+        YOU DIED
+      </div>
+      <div id="statistic">
+        <div id="stat" style="color: red; font-size: 100px">Time Survived:</div>
+        <div id="bosses-killed">Bosses killed:</div>
+        <div id="damage-taken">Damage taken:</div>
+        <div id="damage-dealt">Damage dealt:</div>
+        <div id="bullets-shot">Bullets shot:</div>
+        <div id="mistakes-made">Mistakes made:</div>
+        <div id="stat" style="padding: 40px; font-size: 100px">
+          How to improve? Don't Die
+        </div>
+      </div>
+    </div>
 
     <div
       id="Menu"
@@ -128,7 +221,7 @@
             <div id="image">
               <img
                 src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAwwDW5.img?h=630&w=1200&m=6&q=60&o=t&l=f&f=jpg&x=1715&y=1336"
-                alt="Bildbeskrivning"
+                alt="Här ser du en ytterst sannerligen bild"
               />
             </div>
             <div id="description">Beskrivning 2</div>
@@ -137,10 +230,7 @@
           <div id="option3">
             <div id="title" style="background-color: green">Titel 3</div>
             <div id="image">
-              <img
-                src="https://via.placeholder.com/150"
-                alt="Bildbeskrivning"
-              />
+              <img src="https://via.placeholder.com/150" alt="CRAHHHH" />
             </div>
             <div id="description">Beskrivning 3</div>
           </div>

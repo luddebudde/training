@@ -23,6 +23,8 @@ export type Player = {
   unlockedAbilities: {
     dash: boolean;
     bounceable: boolean;
+    bounceDamageLoss: number;
+    bonusLife: boolean;
   };
   airFriction: true;
 };
@@ -51,7 +53,9 @@ export const createPlayer = (): any => {
     attackDelay: 50,
     unlockedAbilities: {
       dash: false,
-      bounceable: false,
+      bounceable: true,
+      bounceDamageLoss: 0.3,
+      bonusLife: false,
     },
     airFriction: true,
   };
