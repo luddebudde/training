@@ -49,11 +49,12 @@ export const checkArrayRemoval = (ctx) => {
     if (boss.health <= 0) {
       boss?.deathAnimation?.(ctx, liveBosses, index);
 
+      liveBosses.splice(index, 1);
+
       bullets = bullets.filter((bullet) => bullet.team === "player");
 
       console.log("splcie");
 
-      liveBosses.splice(index, 1);
       bossesKilled++;
 
       player.health = player.maxHealth;
@@ -63,6 +64,19 @@ export const checkArrayRemoval = (ctx) => {
       }, spawnDelay);
     }
   });
+  // if (liveBosses.length === 0) {
+  //   bullets = bullets.filter((bullet) => bullet.team === "player");
+
+  //   console.log("splcie");
+
+  //   bossesKilled++;
+
+  //   player.health = player.maxHealth;
+
+  //   setTimeout(() => {
+  //     spawnBoss();
+  //   }, spawnDelay);
+  // }
 };
 
 export const spawnBoss = () => {

@@ -4,6 +4,7 @@ import { makeDirection } from "./makeDirection";
 import { multVar, Vec2 } from "./math";
 
 type Bullet = {
+  shooter: Enemy | Player;
   damage: number;
   pos: {
     x: number;
@@ -24,8 +25,15 @@ type Bullet = {
 
 type Mods = {
   bounceable: boolean;
-  airFriction: boolean;
+  airFriction: number;
   bounceDamageLoss: number;
+};
+
+type Advanced = {
+  startPos: Vec2;
+  team: string;
+  bulletRadius: number;
+  onHit: (entity, bullet) => {};
 };
 
 export let bulletsShot = 0;
@@ -38,29 +46,32 @@ export const createBullet = (
   speed: number,
   mods: Mods = {
     bounceable: false,
-    airFriction: false,
+    airFriction: 0,
     bounceDamageLoss: 0.3,
   },
-  advanced = {
+  advanced: Advanced = {
     startPos: {
       x: 0,
       y: 0,
     },
     team: "",
+    bulletRadius: 20,
+    onHit: (entity, bullet) => {},
   }
 ) => {
   const startPos = shooter !== undefined ? shooter.pos : advanced.startPos;
   const bulletTeam = shooter !== undefined ? shooter.team : advanced.team;
+  const bulletRadius =
+    advanced.bulletRadius !== undefined ? advanced.bulletRadius : 20;
 
   if (bulletTeam === player.team) {
     bulletsShot++;
   }
-
   const direction = makeDirection(startPos, target);
-
   const newVel = multVar(direction, speed);
 
   const bullet: Bullet = {
+    shooter: shooter,
     damage: damage,
     pos: {
       x: startPos.x,
@@ -71,12 +82,16 @@ export const createBullet = (
       y: newVel.y,
     },
     mass: 1,
-    radius: 10,
+    radius: bulletRadius,
     color: "green",
     team: bulletTeam,
     airFriction: mods.airFriction,
     bounceable: mods.bounceable,
     bounceDamageLoss: mods.bounceDamageLoss,
+
+    onHit: (entity, bullet) => {
+      advanced.onHit(entity, bullet);
+    },
   };
   bullets.push(bullet);
 };
@@ -93,6 +108,9 @@ export const createWaveShoot = (
     bounceable: false,
     airFriction: false,
     bounceDamageLoss: 0.3,
+  },
+  advanced: Advanced = {
+    onHit: (entity, bullet) => {},
   }
 ) => {
   const baseDirection = makeDirection(shooter.pos, target);
@@ -110,6 +128,7 @@ export const createWaveShoot = (
     const newVel = multVar(direction, speed);
 
     const bullet: Bullet = {
+      shooter: shooter,
       damage: damage,
       pos: {
         x: shooter.pos.x,
@@ -126,6 +145,10 @@ export const createWaveShoot = (
       airFriction: mods.airFriction,
       bounceable: mods.bounceable,
       bounceDamageLoss: mods.bounceDamageLoss,
+
+      onHit: (entity, bullet) => {
+        advanced.onHit(entity, bullet);
+      },
     };
 
     bullets.push(bullet);

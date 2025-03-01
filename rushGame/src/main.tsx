@@ -15,7 +15,7 @@ const ctx = canvas.getContext("2d");
 
 export const isKeyDown = keyDownTracker();
 
-const airResistanceConstant = 0.95;
+const airResistanceConstant = 0.05;
 
 let dashCooldown = 10;
 
@@ -57,10 +57,10 @@ const update = () => {
 
     entity.pos = add(entity.pos, entity.vel);
 
-    if (entity.airFriction == true) {
+    if (entity.airFriction !== false) {
       entity.vel = multVar(
         entity.vel,
-        airResistanceConstant * entity.airFriction
+        1 - airResistanceConstant * entity.airFriction
       );
     }
 
@@ -110,10 +110,15 @@ const update = () => {
     bullet.pos = add(bullet.pos, bullet.vel);
 
     entities.forEach((entity) => {
-      if (doCirclesOverlap(bullet, entity) && bullet.team !== entity.team) {
-        dealDamage(bullet, entity);
-        // entity.health -= bullet.damage;
-        bullets.splice(index, 1);
+      if (doCirclesOverlap(bullet, entity)) {
+        if (bullet.team !== entity.team) {
+          dealDamage(bullet, entity);
+
+          bullets.splice(index, 1);
+        }
+        if (bullet.shooter !== entity) {
+          bullet.onHit(entity, bullet);
+        }
       }
 
       ctx.beginPath();

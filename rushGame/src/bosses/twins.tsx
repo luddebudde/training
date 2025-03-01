@@ -2,24 +2,25 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
+import { dealDamage } from "../dealDamage";
 import { makeDirection } from "../makeDirection";
-import { multVar } from "../math";
+import { addVar, mult, multVar } from "../math";
 
 const ourakHealth = 500;
 const ourakRadius = 80;
-const ourakCounterReset = 5;
+const attackerCounterReset = 50;
 
-const selberHealth = 500;
-const selberRadius = 60;
-const selberCounterReset = 15;
+const shooterTwinHealth = 500;
+const shooterTwinRadius = 60;
+const shooterCounterReset = 50;
 
 let turnIndex = 0;
 
 export const createTwinBoss = () => {
-  const ourak = {
+  const attackerTwin = {
     maxHealth: ourakHealth,
     health: ourakHealth,
-    contactDamage: 60,
+    contactDamage: 0,
     pos: {
       x: ourakRadius + 1,
       y: ourakRadius + 1,
@@ -30,51 +31,86 @@ export const createTwinBoss = () => {
     },
     radius: ourakRadius,
     color: "red",
-    speed: 0,
+    speed: 25,
     team: "enemy",
-    mass: 1000,
+    mass: 10000,
 
     // Pahses
-    phaseCounter: ourakCounterReset,
+    phaseCounter: attackerCounterReset,
     airFriction: false,
+
+    bulletOnHit: (entity, bullet) => {
+      if (entity.team === bullet.team) {
+        console.log("same team");
+      } else {
+        console.log("not same team");
+
+        attackerTwin.phaseCounter = 100;
+
+        const direction = makeDirection(attackerTwin.pos, shooterTwin.pos);
+        attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
+      }
+    },
 
     aiMovement: () => {},
     update: (ctx): void => {
+      ctx.beginPath();
+      ctx.moveTo(attackerTwin.pos.x, attackerTwin.pos.y);
+      ctx.lineTo(shooterTwin.pos.x, shooterTwin.pos.y);
+      ctx.stroke();
+
       if (turnIndex % 2 === 1) {
         return;
       }
-      ourak.aiMovement();
+      attackerTwin.aiMovement();
 
-      ourak.phaseCounter--;
+      attackerTwin.phaseCounter--;
 
-      if (ourak.phaseCounter < 0) {
-        const direction = makeDirection(ourak.pos, player.pos);
+      if (attackerTwin.phaseCounter < 0) {
+        const direction = makeDirection(attackerTwin.pos, player.pos);
 
-        ourak.vel = multVar(direction, ourak.speed);
+        attackerTwin.vel = multVar(direction, attackerTwin.speed);
 
-        console.log("go");
+        // console.log("go");
 
         // ourak.phaseCounter = 10000;
 
-        ourak.phaseCounter = 10;
+        attackerTwin.phaseCounter = 1000;
         turnIndex++;
       }
     },
     onWallBounce: () => {
-      ourak.phaseCounter = ourakCounterReset;
+      attackerTwin.phaseCounter = attackerCounterReset;
 
-      ourak.vel = { x: 0, y: 0 };
+      attackerTwin.vel = { x: 0, y: 0 };
 
-      turnIndex++;
+      createBullet(
+        bullets,
+        attackerTwin,
+        shooterTwin.pos,
+        -20,
+        20,
+        {},
+        {
+          bulletRadius: 20,
+          onHit: (entity, bullet) => {
+            attackerTwin.bulletOnHit(entity, bullet);
+          },
+        }
+      );
+
+      attackerTwin.phaseCounter = 50;
+
+      //   turnIndex++;
     },
   };
 
-  entities.push(ourak);
-  liveBosses.push(ourak);
+  entities.push(attackerTwin);
+  liveBosses.push(attackerTwin);
 
-  const selber = {
-    maxHealth: selberHealth,
-    health: selberHealth,
+  const shooterTwin = {
+    maxHealth: shooterTwinHealth,
+    health: shooterTwinHealth,
     contactDamage: 60,
     // pos: {
     //   x: world.width - selberRadius,
@@ -88,66 +124,101 @@ export const createTwinBoss = () => {
       x: 0,
       y: 0,
     },
-    radius: selberRadius,
+    radius: shooterTwinRadius,
     color: "purple",
     speed: 50,
     team: "enemy",
-    mass: 1000,
+    mass: 100,
+    airFriction: 0.5,
 
     // Pahses
-    phaseCounter: selberCounterReset,
+    phaseCounter: shooterCounterReset,
     shootValue: 1,
+    attackIndex: 0,
+
+    mineDelay: 0,
 
     aiMovement: () => {},
     update: (ctx): void => {
+      if (shooterTwin.vel.x > 10 || shooterTwin.vel.y > 10) {
+        if (shooterTwin.mineDelay < 0) {
+          createBullet(
+            bullets,
+            shooterTwin,
+            shooterTwin.pos,
+            5,
+            0,
+            {},
+            { bulletRadius: 10, onHit: (entity, bullet) => {} }
+          );
+
+          shooterTwin.mineDelay = 5;
+        }
+      }
+      shooterTwin.mineDelay--;
       if (turnIndex % 2 === 0) {
         return;
       }
 
-      selber.aiMovement();
+      shooterTwin.aiMovement();
 
-      selber.phaseCounter--;
+      shooterTwin.phaseCounter--;
 
-      if (selber.phaseCounter < 0) {
-        const direction = makeDirection(ourak.pos, player.pos);
+      if (shooterTwin.phaseCounter < 0) {
+        const direction = makeDirection(attackerTwin.pos, player.pos);
 
-        console.log("go");
+        if (shooterTwin.attackIndex % 2 === 0) {
+          console.log("go");
 
-        // createBullet(bullets, selber, player.pos, 40, 20);
-        for (let i = 0; i < Math.floor(selber.shootValue / 10); i++) {
-          setTimeout(() => {
-            createWaveShoot(
-              bullets,
-              selber,
-              player.pos,
-              4,
-              10,
-              Math.PI / 4,
-              selber.shootValue % 11
-            );
-          }, 50 * i);
+          // createBullet(bullets, selber, player.pos, 40, 20);
+          for (
+            let i = 0;
+            i < Math.floor(shooterTwin.shootValue / 10 + 1);
+            i++
+          ) {
+            setTimeout(() => {
+              createWaveShoot(
+                bullets,
+                shooterTwin,
+                player.pos,
+                4,
+                10,
+                Math.PI / 4,
+                shooterTwin.shootValue % 11,
+                {},
+                {
+                  onHit: (entity, bullet) => {
+                    // console.log(entity, bullet);
+                  },
+                }
+              );
+            }, 50 * i);
+          }
+          shooterTwin.shootValue += 2;
+        } else if (shooterTwin.attackIndex % 2 === 1) {
+          createBullet(
+            bullets,
+            shooterTwin,
+            player.pos,
+            40,
+            10,
+            {},
+            {
+              bulletRadius: 20,
+              onHit: (entity, bullet) => {
+                attackerTwin.bulletOnHit(entity, bullet);
+              },
+            }
+          );
         }
 
-        selber.phaseCounter = selberCounterReset;
+        shooterTwin.attackIndex++;
+        shooterTwin.phaseCounter = shooterCounterReset;
         turnIndex++;
-        selber.shootValue += 2;
       }
     },
   };
 
-  entities.push(selber);
-  liveBosses.push(selber);
-
-  //   const twins = [ourak, selber];
-
-  //   const ai = (ctx) => {
-  //     // twins.forEach((twin) => {
-  //     //   twin.update(ctx);
-  //     // });
-  //     console.log(twins[turnIndex % 2]);
-
-  //     twins[turnIndex % twins.length].update(ctx);
-  //   };
-
-  //   return ai;
+  entities.push(shooterTwin);
+  liveBosses.push(shooterTwin);
 };
