@@ -2,7 +2,7 @@ import { world } from "../basics";
 import { makeDirection } from "../makeDirection";
 import { add, multVar } from "../math";
 import { player } from "../createPlayer";
-import { entities } from "../arrays";
+import { entities, liveBosses } from "../arrays";
 import { Enemy } from "./chaser";
 
 const health = 100;
@@ -38,7 +38,8 @@ export const createRamper = () => {
     },
   };
 
-  return enemy;
+  // return enemy;
 
-  // entities.push(enemy);
+  entities.push(enemy);
+  liveBosses.push(enemy);
 };

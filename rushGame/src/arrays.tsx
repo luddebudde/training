@@ -28,9 +28,33 @@ let currentWaveIndex = 0;
 export let bossPool = [...waveOrder[currentWaveIndex]];
 export let liveBosses = [];
 
-export const spawnDelay = 30;
+export const spawnDelay = 1000;
 
 export let bossesKilled = 0;
+
+export const spawnBoss = () => {
+  let nextboss = randomArrayElementSplice(bossPool);
+  console.log(waveOrder[currentWaveIndex], "jhas");
+
+  if (nextboss === undefined) {
+    currentWaveIndex++;
+    console.log(currentWaveIndex, waveOrder[currentWaveIndex]);
+
+    bossPool = [...waveOrder[currentWaveIndex]];
+    console.log(bossPool);
+
+    nextboss = randomArrayElementSplice(bossPool);
+  }
+
+  // setTimeout(() => {
+  const boss = nextboss();
+  console.log(nextboss);
+  // }, spawnDelay);
+  // nextboss();
+
+  // entities.push(boss);
+  // liveBosses.push(boss);
+};
 
 export const checkArrayRemoval = (ctx) => {
   entities = entities.filter((entity) => entity.health > 0);
@@ -51,19 +75,22 @@ export const checkArrayRemoval = (ctx) => {
 
       liveBosses.splice(index, 1);
 
-      bullets = bullets.filter((bullet) => bullet.team === "player");
+      if (liveBosses.length === 0) {
+        bullets = bullets.filter((bullet) => bullet.team === "player");
 
-      console.log("splcie");
+        console.log("splcie");
 
-      bossesKilled++;
+        bossesKilled++;
 
-      player.health = player.maxHealth;
+        player.health = player.maxHealth;
 
-      setTimeout(() => {
-        spawnBoss();
-      }, spawnDelay);
+        setTimeout(() => {
+          generateRewards();
+        }, spawnDelay);
+      }
     }
   });
+
   // if (liveBosses.length === 0) {
   //   bullets = bullets.filter((bullet) => bullet.team === "player");
 
@@ -77,25 +104,4 @@ export const checkArrayRemoval = (ctx) => {
   //     spawnBoss();
   //   }, spawnDelay);
   // }
-};
-
-export const spawnBoss = () => {
-  const nextboss = randomArrayElementSplice(bossPool);
-
-  console.log(nextboss);
-
-  if (nextboss === undefined) {
-    currentWaveIndex++;
-    console.log("rteun");
-
-    bossPool = [...waveOrder[currentWaveIndex]];
-    console.log(bossPool);
-
-    generateRewards();
-  }
-
-  const boss = nextboss();
-
-  // entities.push(boss);
-  // liveBosses.push(boss);
 };

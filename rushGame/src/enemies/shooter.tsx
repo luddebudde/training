@@ -2,7 +2,7 @@ import { world } from "../basics";
 import { makeDirection } from "../makeDirection";
 import { add, multVar } from "../math";
 import { player } from "../createPlayer";
-import { bullets, entities } from "../arrays";
+import { bullets, entities, liveBosses } from "../arrays";
 import { Enemy } from "./chaser";
 import { createBullet } from "../createBullet";
 
@@ -46,6 +46,7 @@ export const createSniper = () => {
     airFriction: true,
   };
 
-  return enemy;
-  // entities.push(enemy);
+  // return enemy;
+  entities.push(enemy);
+  liveBosses.push(enemy);
 };

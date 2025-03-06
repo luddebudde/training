@@ -2,7 +2,7 @@ import { world } from "../basics";
 import { makeDirection } from "../makeDirection";
 import { add, multVar } from "../math";
 import { player } from "../createPlayer";
-import { entities } from "../arrays";
+import { entities, liveBosses } from "../arrays";
 
 export type Enemy = {
   health: number;
@@ -54,7 +54,8 @@ export const createChaser = () => {
     airFriction: true,
   };
 
-  return enemy;
+  // return enemy;
 
-  // entities.push(enemy);
+  entities.push(enemy);
+  liveBosses.push(enemy);
 };

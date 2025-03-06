@@ -47,7 +47,5 @@ export const generateRewards = () => {
         child.style.visibility = "hidden";
       });
     };
-
-    console.log(element);
   }
 };

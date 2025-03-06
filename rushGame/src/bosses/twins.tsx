@@ -3,24 +3,70 @@ import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { dealDamage } from "../dealDamage";
+import { doCirclesOverlap } from "../doCirlceOverlap";
 import { makeDirection } from "../makeDirection";
-import { addVar, mult, multVar } from "../math";
+import { add, addVar, div, divVar, mult, multVar } from "../math";
+import { isPlayerBetweenEnemies } from "./isPlayerBetweenEnemies";
 
-const ourakHealth = 500;
+const ourakHealth = 100;
 const ourakRadius = 80;
-const attackerCounterReset = 50;
+let attackerCounterReset = 50;
 
-const shooterTwinHealth = 500;
+const shooterTwinHealth = 100;
 const shooterTwinRadius = 60;
-const shooterCounterReset = 50;
+let shooterCounterReset = 50;
 
 let turnIndex = 0;
+
+const lineBetween = (ctx, attackerTwin, shooterTwin) => {
+  ctx.beginPath();
+  ctx.moveTo(attackerTwin.pos.x, attackerTwin.pos.y);
+  ctx.lineTo(shooterTwin.pos.x, shooterTwin.pos.y);
+  ctx.stroke();
+
+  if (isPlayerBetweenEnemies(attackerTwin, shooterTwin, player)) {
+    const direction = makeDirection(attackerTwin.pos, shooterTwin.pos);
+
+    attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
+    attackerTwin.phaseCounter = 10000;
+  }
+};
+
+const attackerCollideShooter = (attackerTwin, shooterTwin) => {
+  if (
+    doCirclesOverlap(attackerTwin, shooterTwin) &&
+    Math.abs(shooterTwin.vel.x) + Math.abs(shooterTwin.vel.y) <
+      shooterTwin.speed / 5 &&
+    shooterTwin.health > 0 &&
+    attackerTwin.health > 0
+  ) {
+    console.log("colldiering atacker and shooteert win");
+
+    const maxI = 10;
+    const angleStep = (Math.PI * 2) / maxI;
+    const speed = 20;
+
+    for (let i = 0; i < maxI; i++) {
+      const angle = i * angleStep;
+      const target = {
+        x: Math.cos(angle) * 100 + shooterTwin.pos.x,
+        y: Math.sin(angle) * 100 + shooterTwin.pos.y,
+      };
+
+      createBullet(bullets, shooterTwin, target, 3, speed, {
+        bounceable: false,
+        airFriction: false,
+        bounceDamageLoss: 0.3,
+      });
+    }
+  }
+};
 
 export const createTwinBoss = () => {
   const attackerTwin = {
     maxHealth: ourakHealth,
     health: ourakHealth,
-    contactDamage: 0,
+    contactDamage: 10,
     pos: {
       x: ourakRadius + 1,
       y: ourakRadius + 1,
@@ -31,37 +77,78 @@ export const createTwinBoss = () => {
     },
     radius: ourakRadius,
     color: "red",
-    speed: 25,
+    speed: 15,
     team: "enemy",
-    mass: 10000,
+    mass: 1000,
 
     // Pahses
     phaseCounter: attackerCounterReset,
     airFriction: false,
+    activatedSmallObject: false,
+    rageMode: false,
 
-    bulletOnHit: (entity, bullet) => {
-      if (entity.team === bullet.team) {
-        console.log("same team");
-      } else {
-        console.log("not same team");
-
-        attackerTwin.phaseCounter = 100;
-
-        const direction = makeDirection(attackerTwin.pos, shooterTwin.pos);
-        attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
-      }
+    smallObject: {
+      health: 10000,
+      maxHealth: 10000,
+      contactDamage: 10,
+      pos: {
+        x: world.width / 2,
+        y: world.height / 2,
+      },
+      vel: {
+        x: 0,
+        y: 0,
+      },
+      radius: 30,
+      color: "purple",
+      speed: 40,
+      team: "enemy",
+      mass: 100,
+      airFriction: false,
+      update: () => {
+        const smallObject = attackerTwin.smallObject;
+        if (
+          (Math.abs(smallObject.vel.x) + Math.abs(smallObject.vel.y) <
+            smallObject.speed) *
+          1.5
+        ) {
+          const direction = makeDirection(attackerTwin.pos, player.pos);
+          smallObject.vel = multVar(direction, smallObject.speed);
+        }
+      },
     },
 
     aiMovement: () => {},
     update: (ctx): void => {
-      ctx.beginPath();
-      ctx.moveTo(attackerTwin.pos.x, attackerTwin.pos.y);
-      ctx.lineTo(shooterTwin.pos.x, shooterTwin.pos.y);
-      ctx.stroke();
-
-      if (turnIndex % 2 === 1) {
-        return;
+      if (shooterTwin.health > 0) {
+        lineBetween(ctx, attackerTwin, shooterTwin);
+      } else if (!attackerTwin.rageMode) {
+        attackerTwin.rageMode = true;
+        attackerTwin.speed *= 2;
+        attackerTwin.radius *= 1.5;
+        attackerTwin.color = "#9e1919";
+        attackerCounterReset *= 0.3;
       }
+
+      attackerCollideShooter(attackerTwin, shooterTwin);
+
+      if (
+        attackerTwin.health < attackerTwin.maxHealth / 2 &&
+        !attackerTwin.activatedSmallObject
+      ) {
+        const smallObject = attackerTwin.smallObject;
+
+        const direction = makeDirection(smallObject.pos, player.pos);
+        smallObject.vel = multVar(direction, smallObject.speed);
+
+        entities.push(smallObject);
+
+        attackerTwin.activatedSmallObject = true;
+      }
+
+      // if (turnIndex % liveBosses.length === 1) {
+      //   return;
+      // }
       attackerTwin.aiMovement();
 
       attackerTwin.phaseCounter--;
@@ -71,11 +158,7 @@ export const createTwinBoss = () => {
 
         attackerTwin.vel = multVar(direction, attackerTwin.speed);
 
-        // console.log("go");
-
-        // ourak.phaseCounter = 10000;
-
-        attackerTwin.phaseCounter = 1000;
+        attackerTwin.phaseCounter = 10000;
         turnIndex++;
       }
     },
@@ -83,25 +166,6 @@ export const createTwinBoss = () => {
       attackerTwin.phaseCounter = attackerCounterReset;
 
       attackerTwin.vel = { x: 0, y: 0 };
-
-      createBullet(
-        bullets,
-        attackerTwin,
-        shooterTwin.pos,
-        -20,
-        20,
-        {},
-        {
-          bulletRadius: 20,
-          onHit: (entity, bullet) => {
-            attackerTwin.bulletOnHit(entity, bullet);
-          },
-        }
-      );
-
-      attackerTwin.phaseCounter = 50;
-
-      //   turnIndex++;
     },
   };
 
@@ -112,10 +176,6 @@ export const createTwinBoss = () => {
     maxHealth: shooterTwinHealth,
     health: shooterTwinHealth,
     contactDamage: 60,
-    // pos: {
-    //   x: world.width - selberRadius,
-    //   y: selberRadius,
-    // },
     pos: {
       x: world.width / 3,
       y: world.height / 3,
@@ -126,7 +186,7 @@ export const createTwinBoss = () => {
     },
     radius: shooterTwinRadius,
     color: "purple",
-    speed: 50,
+    speed: 0.5,
     team: "enemy",
     mass: 100,
     airFriction: 0.5,
@@ -135,42 +195,81 @@ export const createTwinBoss = () => {
     phaseCounter: shooterCounterReset,
     shootValue: 1,
     attackIndex: 0,
+    bullet: {
+      shotgun: {
+        damage: 4,
+        speed: 10,
+      },
+      normal: {
+        damage: 40,
+        speed: 10,
+      },
+    },
+    changedPhase: false,
 
+    mineDelayReset: 5,
     mineDelay: 0,
 
     aiMovement: () => {},
     update: (ctx): void => {
       if (shooterTwin.vel.x > 10 || shooterTwin.vel.y > 10) {
         if (shooterTwin.mineDelay < 0) {
-          createBullet(
-            bullets,
-            shooterTwin,
-            shooterTwin.pos,
-            5,
-            0,
-            {},
-            { bulletRadius: 10, onHit: (entity, bullet) => {} }
-          );
+          createBullet(bullets, shooterTwin, shooterTwin.pos, 5, 0);
 
-          shooterTwin.mineDelay = 5;
+          shooterTwin.mineDelay = shooterTwin.mineDelayReset;
         }
       }
-      shooterTwin.mineDelay--;
-      if (turnIndex % 2 === 0) {
-        return;
+
+      if (
+        !shooterTwin.changedPhase &&
+        shooterTwin.health < shooterTwin.maxHealth / 2
+      ) {
+        // shooterCounterReset *= 0.5;
+
+        // shooterTwin.bullet.shotgun.speed *= 1.5;
+        // shooterTwin.bullet.normal.speed *= 2.5;
+        // shooterTwin.mineDelayReset = 50;
+
+        shooterTwin.color = "green";
+
+        shooterTwin.changedPhase = true;
       }
+
+      const force = 0.5;
+
+      if (shooterTwin.changedPhase) {
+        const diff = {
+          x: shooterTwin.pos.x - player.pos.x,
+          y: shooterTwin.pos.y - player.pos.y,
+        };
+        const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
+        const direction = {
+          x: -diff.x / (dist + 0.001),
+          y: -diff.y / (dist + 0.001),
+        };
+
+        const unitVectorX = diff.x / dist;
+        const unitVectorY = diff.y / dist;
+
+        // Applicera kraften på spelarens position (ändra spelarens hastighet)
+        player.vel.x += unitVectorX * force;
+        player.vel.y += unitVectorY * force;
+
+        console.log(unitVectorX);
+      }
+
+      shooterTwin.mineDelay--;
+      // if (turnIndex % liveBosses.length === 0) {
+      //   return;
+      // }
 
       shooterTwin.aiMovement();
 
       shooterTwin.phaseCounter--;
 
       if (shooterTwin.phaseCounter < 0) {
-        const direction = makeDirection(attackerTwin.pos, player.pos);
-
+        const bulletsStat = shooterTwin.bullet;
         if (shooterTwin.attackIndex % 2 === 0) {
-          console.log("go");
-
-          // createBullet(bullets, selber, player.pos, 40, 20);
           for (
             let i = 0;
             i < Math.floor(shooterTwin.shootValue / 10 + 1);
@@ -181,15 +280,13 @@ export const createTwinBoss = () => {
                 bullets,
                 shooterTwin,
                 player.pos,
-                4,
-                10,
+                bulletsStat.shotgun.damage,
+                bulletsStat.shotgun.speed,
                 Math.PI / 4,
                 shooterTwin.shootValue % 11,
                 {},
                 {
-                  onHit: (entity, bullet) => {
-                    // console.log(entity, bullet);
-                  },
+                  onHit: (entity, bullet) => {},
                 }
               );
             }, 50 * i);
@@ -200,15 +297,8 @@ export const createTwinBoss = () => {
             bullets,
             shooterTwin,
             player.pos,
-            40,
-            10,
-            {},
-            {
-              bulletRadius: 20,
-              onHit: (entity, bullet) => {
-                attackerTwin.bulletOnHit(entity, bullet);
-              },
-            }
+            bulletsStat.normal.damage,
+            bulletsStat.normal.speed
           );
         }
 
@@ -217,6 +307,7 @@ export const createTwinBoss = () => {
         turnIndex++;
       }
     },
+    onWallBounce: () => {},
   };
 
   entities.push(shooterTwin);

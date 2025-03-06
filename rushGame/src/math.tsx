@@ -33,6 +33,11 @@ export const div = (firstVec: Vec2, secondVec: Vec2) => ({
   y: firstVec.y / secondVec.y,
 });
 
+export const divVar = (firstVec: Vec2, secondValue: number) => ({
+  x: firstVec.x / secondValue,
+  y: firstVec.y / secondValue,
+});
+
 export const dot = (firstObj: Vec2, secondObj: Vec2) => {
   return firstObj.x * secondObj.x + firstObj.y * secondObj.y;
 };

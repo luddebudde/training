@@ -25,7 +25,7 @@ type Bullet = {
 
 type Mods = {
   bounceable: boolean;
-  airFriction: number;
+  airFriction: number | false;
   bounceDamageLoss: number;
 };
 
@@ -49,7 +49,7 @@ export const createBullet = (
     airFriction: 0,
     bounceDamageLoss: 0.3,
   },
-  advanced: Advanced = {
+  advanced: Advanced | undefined = {
     startPos: {
       x: 0,
       y: 0,

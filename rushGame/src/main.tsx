@@ -85,6 +85,8 @@ const update = () => {
       entity.pos.y = entity.radius;
     }
 
+    entity?.update?.(ctx);
+
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
         if (entity.team !== secondEntity.team) {
@@ -97,8 +99,6 @@ const update = () => {
         secondEntity.vel = newVel.v2;
       }
     });
-
-    entity?.update?.(ctx);
 
     ctx.beginPath();
     ctx.arc(entity.pos.x, entity.pos.y, entity.radius, 0, 2 * Math.PI);
