@@ -4,16 +4,19 @@ import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { dealDamage } from "../dealDamage";
 import { doCirclesOverlap } from "../doCirlceOverlap";
+import { createChargerEnemy } from "../enemies/chargerEnemy";
+import { createChaser } from "../enemies/chaser";
 import { makeDirection } from "../makeDirection";
 import { add, addVar, div, divVar, mult, multVar } from "../math";
-import { isPlayerBetweenEnemies } from "./isPlayerBetweenEnemies";
+import { createChargerBoss } from "./charger";
+import { isPlayerBetweenEnemies } from "../isPlayerBetweenEnemies";
 
-const ourakHealth = 100;
-const ourakRadius = 80;
+const attackerHealth = 12;
+const attackerRadius = 80;
 let attackerCounterReset = 50;
 
-const shooterTwinHealth = 100;
-const shooterTwinRadius = 60;
+const shooterHealth = 8;
+const shooterRadius = 60;
 let shooterCounterReset = 50;
 
 let turnIndex = 0;
@@ -64,22 +67,23 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
 
 export const createTwinBoss = () => {
   const attackerTwin = {
-    maxHealth: ourakHealth,
-    health: ourakHealth,
-    contactDamage: 10,
+    maxHealth: attackerHealth,
+    health: attackerHealth,
+    contactDamage: 30,
     pos: {
-      x: ourakRadius + 1,
-      y: ourakRadius + 1,
+      x: attackerRadius + 1,
+      y: attackerRadius + 1,
     },
     vel: {
       x: 0,
       y: 0,
     },
-    radius: ourakRadius,
+    radius: attackerRadius,
     color: "red",
     speed: 15,
     team: "enemy",
     mass: 1000,
+    collision: true,
 
     // Pahses
     phaseCounter: attackerCounterReset,
@@ -90,7 +94,7 @@ export const createTwinBoss = () => {
     smallObject: {
       health: 10000,
       maxHealth: 10000,
-      contactDamage: 10,
+      contactDamage: 5,
       pos: {
         x: world.width / 2,
         y: world.height / 2,
@@ -103,8 +107,10 @@ export const createTwinBoss = () => {
       color: "purple",
       speed: 40,
       team: "enemy",
-      mass: 100,
+      mass: 150,
       airFriction: false,
+      collision: true,
+      // smallObjects: [],
       update: () => {
         const smallObject = attackerTwin.smallObject;
         if (
@@ -128,20 +134,32 @@ export const createTwinBoss = () => {
         attackerTwin.radius *= 1.5;
         attackerTwin.color = "#9e1919";
         attackerCounterReset *= 0.3;
+
+        const smallObject = attackerTwin.smallObject;
+
+        const direction = makeDirection(smallObject.pos, player.pos);
+        smallObject.speed *= 2;
+        smallObject.vel = multVar(direction, smallObject.speed);
       }
 
       attackerCollideShooter(attackerTwin, shooterTwin);
 
       if (
-        attackerTwin.health < attackerTwin.maxHealth / 2 &&
+        attackerTwin.health <= attackerTwin.maxHealth / 2 &&
         !attackerTwin.activatedSmallObject
       ) {
         const smallObject = attackerTwin.smallObject;
 
+        smallObject.pos = {
+          x: world.width / 2,
+          y: world.height / 2,
+        };
         const direction = makeDirection(smallObject.pos, player.pos);
         smallObject.vel = multVar(direction, smallObject.speed);
 
         entities.push(smallObject);
+
+        attackerTwin.color = "#a80000";
 
         attackerTwin.activatedSmallObject = true;
       }
@@ -173,9 +191,9 @@ export const createTwinBoss = () => {
   liveBosses.push(attackerTwin);
 
   const shooterTwin = {
-    maxHealth: shooterTwinHealth,
-    health: shooterTwinHealth,
-    contactDamage: 60,
+    maxHealth: shooterHealth,
+    health: shooterHealth,
+    contactDamage: 20,
     pos: {
       x: world.width / 3,
       y: world.height / 3,
@@ -184,12 +202,13 @@ export const createTwinBoss = () => {
       x: 0,
       y: 0,
     },
-    radius: shooterTwinRadius,
+    radius: shooterRadius,
     color: "purple",
     speed: 0.5,
     team: "enemy",
     mass: 100,
     airFriction: 0.5,
+    collision: true,
 
     // Pahses
     phaseCounter: shooterCounterReset,
@@ -197,40 +216,46 @@ export const createTwinBoss = () => {
     attackIndex: 0,
     bullet: {
       shotgun: {
-        damage: 4,
+        damage: 2,
         speed: 10,
       },
       normal: {
-        damage: 40,
+        damage: 20,
         speed: 10,
       },
     },
     changedPhase: false,
 
-    mineDelayReset: 5,
     mineDelay: 0,
+    mineDelayReset: 8,
+
+    chargerSpawnDelay: 150,
+    chargerSpawnDelayReset: 300,
 
     aiMovement: () => {},
     update: (ctx): void => {
       if (shooterTwin.vel.x > 10 || shooterTwin.vel.y > 10) {
         if (shooterTwin.mineDelay < 0) {
-          createBullet(bullets, shooterTwin, shooterTwin.pos, 5, 0);
+          createBullet(bullets, shooterTwin, shooterTwin.pos, 3, 0);
 
           shooterTwin.mineDelay = shooterTwin.mineDelayReset;
         }
       }
 
+      if (attackerTwin.health <= 0) {
+        shooterTwin.chargerSpawnDelay--;
+
+        if (shooterTwin.chargerSpawnDelay <= 0) {
+          createChaser(shooterTwin.pos, false);
+          shooterTwin.chargerSpawnDelay = shooterTwin.chargerSpawnDelayReset;
+        }
+      }
+
       if (
         !shooterTwin.changedPhase &&
-        shooterTwin.health < shooterTwin.maxHealth / 2
+        shooterTwin.health <= shooterTwin.maxHealth / 2
       ) {
-        // shooterCounterReset *= 0.5;
-
-        // shooterTwin.bullet.shotgun.speed *= 1.5;
-        // shooterTwin.bullet.normal.speed *= 2.5;
-        // shooterTwin.mineDelayReset = 50;
-
-        shooterTwin.color = "green";
+        shooterTwin.color = "#4a014a";
 
         shooterTwin.changedPhase = true;
       }
@@ -251,7 +276,6 @@ export const createTwinBoss = () => {
         const unitVectorX = diff.x / dist;
         const unitVectorY = diff.y / dist;
 
-        // Applicera kraften på spelarens position (ändra spelarens hastighet)
         player.vel.x += unitVectorX * force;
         player.vel.y += unitVectorY * force;
 
@@ -259,9 +283,6 @@ export const createTwinBoss = () => {
       }
 
       shooterTwin.mineDelay--;
-      // if (turnIndex % liveBosses.length === 0) {
-      //   return;
-      // }
 
       shooterTwin.aiMovement();
 

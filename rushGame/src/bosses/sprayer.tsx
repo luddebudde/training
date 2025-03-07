@@ -9,7 +9,7 @@ import { add, mult, multVar, sub, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
 const cornerDelay = 50;
-const health = 100;
+const health = 10;
 
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"
@@ -33,6 +33,7 @@ export const createSprayerBoss = () => {
     team: "enemy",
     mass: 1000,
     reacheadHalfPoint: false,
+    collision: true,
 
     // Pahses
     phaseCounter: 10,

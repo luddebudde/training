@@ -7,14 +7,14 @@ import { Enemy } from "./chaser";
 
 const health = 100;
 
-export const createRamper = () => {
+export const createChargerEnemy = (pos) => {
   const enemy: Enemy = {
     health: health,
     maxHealth: health,
     contactDamage: 40,
     pos: {
-      x: Math.random() * world.width,
-      y: Math.random() * world.height,
+      x: pos.x,
+      y: pos.y,
     },
     vel: {
       x: 0,
@@ -26,14 +26,14 @@ export const createRamper = () => {
     team: "enemy",
     mass: 100,
     airFriction: false,
-    chargeMeter: 300,
+    chargeMeter: 100,
     update: (): void => {
       enemy.chargeMeter--;
 
       if (enemy.chargeMeter < 0) {
         const direction = makeDirection(enemy.pos, player.pos);
         enemy.vel = multVar(direction, 50);
-        enemy.chargeMeter = 300;
+        enemy.chargeMeter = 100;
       }
     },
   };
@@ -41,5 +41,5 @@ export const createRamper = () => {
   // return enemy;
 
   entities.push(enemy);
-  liveBosses.push(enemy);
+  // liveBosses.push(enemy);
 };

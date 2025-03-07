@@ -15,7 +15,7 @@ export const createChargerBoss = () => {
   const charger = {
     maxHealth: health,
     health: health,
-    contactDamage: 60,
+    contactDamage: 20,
     pos: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,
@@ -29,6 +29,7 @@ export const createChargerBoss = () => {
     speed: 50,
     team: "enemy",
     mass: 1000,
+    collision: true,
 
     // Pahses
     phaseCounter: 100,

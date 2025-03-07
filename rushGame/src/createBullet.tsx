@@ -59,6 +59,15 @@ export const createBullet = (
     onHit: (entity, bullet) => {},
   }
 ) => {
+  const defaultAdvanced: Advanced = {
+    startPos: { x: 0, y: 0 },
+    team: "",
+    bulletRadius: 20,
+    onHit: (entity, bullet) => {},
+  };
+
+  const finalAdvanced = { ...defaultAdvanced, ...advanced };
+
   const startPos = shooter !== undefined ? shooter.pos : advanced.startPos;
   const bulletTeam = shooter !== undefined ? shooter.team : advanced.team;
   const bulletRadius =
@@ -90,7 +99,7 @@ export const createBullet = (
     bounceDamageLoss: mods.bounceDamageLoss,
 
     onHit: (entity, bullet) => {
-      advanced.onHit(entity, bullet);
+      finalAdvanced.onHit(entity, bullet);
     },
   };
   bullets.push(bullet);

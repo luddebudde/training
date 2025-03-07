@@ -5,7 +5,7 @@ import { createTwinBoss } from "./bosses/twins";
 import { player } from "./createPlayer";
 import { drawHealthBar } from "./drawHealthbar";
 import { createChaser } from "./enemies/chaser";
-import { createRamper } from "./enemies/ramper";
+import { createChargerEnemy } from "./enemies/chargerEnemy";
 import { createSniper } from "./enemies/shooter";
 import { generateRewards } from "./generateRewards";
 import {
@@ -17,10 +17,7 @@ export let entities = [];
 export let bullets = [];
 
 // const firstWave = [createSprayerBoss];
-const firstWave = [
-  createTwinBoss,
-  // createSprayerBoss, createChargerBoss
-];
+const firstWave = [createTwinBoss, createSprayerBoss, createChargerBoss];
 const secondWave = [createChaser, createSniper];
 const waveOrder = [firstWave, secondWave];
 
@@ -28,32 +25,37 @@ let currentWaveIndex = 0;
 export let bossPool = [...waveOrder[currentWaveIndex]];
 export let liveBosses = [];
 
-export const spawnDelay = 1000;
+export const spawnDelay = 1500;
 
 export let bossesKilled = 0;
 
-export const spawnBoss = () => {
-  let nextboss = randomArrayElementSplice(bossPool);
+export const nextBoss = () => {
+  // generateRewards();
+  let boss = randomArrayElementSplice(bossPool);
   console.log(waveOrder[currentWaveIndex], "jhas");
 
-  if (nextboss === undefined) {
-    currentWaveIndex++;
-    console.log(currentWaveIndex, waveOrder[currentWaveIndex]);
+  if (boss === undefined) {
+    nextFloorBoss();
+  }
+  boss();
+  // generateRewards();
+  // console.log(nextboss);
+};
 
-    bossPool = [...waveOrder[currentWaveIndex]];
-    console.log(bossPool);
+const nextFloorBoss = () => {
+  currentWaveIndex++;
 
-    nextboss = randomArrayElementSplice(bossPool);
+  bossPool = [...waveOrder[currentWaveIndex]];
+
+  if (bossPool === undefined) {
+    console.log("YOU WON");
+
+    player.size = 154;
+    player.speed = -player.speed;
   }
 
-  // setTimeout(() => {
-  const boss = nextboss();
-  console.log(nextboss);
-  // }, spawnDelay);
-  // nextboss();
-
-  // entities.push(boss);
-  // liveBosses.push(boss);
+  // nextboss = randomArrayElementSplice(bossPool);
+  generateRewards();
 };
 
 export const checkArrayRemoval = (ctx) => {
@@ -77,6 +79,7 @@ export const checkArrayRemoval = (ctx) => {
 
       if (liveBosses.length === 0) {
         bullets = bullets.filter((bullet) => bullet.team === "player");
+        entities = entities.filter((entity) => entity.team === "player");
 
         console.log("splcie");
 
@@ -84,8 +87,15 @@ export const checkArrayRemoval = (ctx) => {
 
         player.health = player.maxHealth;
 
+        const abilities = player.unlockedAbilities;
+
+        abilities.lifeUpgradeCount +=
+          abilities.lifeUpgrade === true && abilities.bonusLifeCount === 0
+            ? 1
+            : 0;
+
         setTimeout(() => {
-          generateRewards();
+          nextBoss();
         }, spawnDelay);
       }
     }

@@ -23,18 +23,22 @@ export type Enemy = {
   mass: number;
   update: () => void;
   airFriction: boolean;
+  collision: boolean;
 };
 
 const health = 100;
 
-export const createChaser = () => {
+export const createChaser = (
+  pos = { x: Math.random() * world.width, y: Math.random() * world.height },
+  collision = true
+) => {
   const enemy: Enemy = {
     health: health,
     maxHealth: health,
-    contactDamage: 10,
+    contactDamage: 2,
     pos: {
-      x: Math.random() * world.width,
-      y: Math.random() * world.height,
+      x: pos.x,
+      y: pos.y,
     },
     vel: {
       x: 0,
@@ -52,6 +56,7 @@ export const createChaser = () => {
       );
     },
     airFriction: true,
+    collision: collision,
   };
 
   // return enemy;

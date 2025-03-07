@@ -1,15 +1,54 @@
-import { spawnBoss, spawnDelay } from "./arrays";
+import { nextBoss, spawnDelay } from "./arrays";
 import { player } from "./createPlayer";
 import {
   randomArrayElement,
   randomArrayElementSplice,
 } from "./randomArrayElement";
 
+type UpgradeRewards = {
+  title: string;
+  description: string;
+  id: string;
+  changeTo: boolean | number;
+};
+
+const dashUpgrade = {
+  title: "Dash",
+  description: "Adds dash ability",
+  id: "dash",
+  changeTo: true,
+  // unlocks:
+};
+
+const bouncyBulletsUpgrade = {
+  title: "Bouncy",
+  description: "Bouncy bullets!",
+  id: "bounceable",
+  changeTo: true,
+  // unlocks:
+};
+
+const extraLifeUpgrade = {
+  title: "Extra Life",
+  description: "+1 life",
+  id: "bonusLife",
+  changeTo: true,
+  // unlocks:
+};
+
+const adrenalineUpgrade = {
+  title: "Adrenaline",
+  description: "Blood is pumping when at low HP!",
+  id: "adrenaline",
+  changeTo: 0.5,
+  // unlocks:
+};
+
 const rewardPool = [
-  ["Dash", "Adds dash ability", "dash"],
-  ["Bouncy", "Bouncy bullets!", "bounceable"],
-  ["Savior", "+1 life", "bonusLife"],
-  ["bb", "Bouncy bullets!", "bounceable"],
+  dashUpgrade,
+  bouncyBulletsUpgrade,
+  extraLifeUpgrade,
+  adrenalineUpgrade,
 ];
 
 export const generateRewards = () => {
@@ -19,7 +58,6 @@ export const generateRewards = () => {
   let possibleRewards = structuredClone(rewardPool);
   for (let i = 1; i < 4; i++) {
     const reward = randomArrayElementSplice(possibleRewards);
-    // possibleRewards[Math.floor(Math.random() * possibleRewards.length)];
 
     const element = document.getElementById(`option${i}`);
     const children = element.children; // Hämtar alla barn
@@ -30,15 +68,15 @@ export const generateRewards = () => {
     const secondChild = children[1];
     const thirdChild = children[2];
 
-    firstChild.textContent = reward[0];
-    thirdChild.textContent = reward[1];
+    firstChild.textContent = reward.title;
+    thirdChild.textContent = reward.description;
 
     element.onclick = () => {
-      player.unlockedAbilities[reward[2]] = true;
+      player.unlockedAbilities[reward.id] = reward.changeTo;
       console.log(player.unlockedAbilities);
 
       setTimeout(() => {
-        spawnBoss();
+        nextBoss();
       }, spawnDelay * 2);
 
       selectionDiv.style.visibility = "hidden";

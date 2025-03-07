@@ -5,7 +5,7 @@ import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
 import { world } from "./basics";
 import { player } from "./createPlayer";
-import { bullets, checkArrayRemoval, entities, spawnBoss } from "./arrays";
+import { bullets, checkArrayRemoval, entities, nextBoss } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { damageDealt, dealDamage } from "./dealDamage";
@@ -19,26 +19,11 @@ const airResistanceConstant = 0.05;
 
 let dashCooldown = 10;
 
-let initialized = false;
-
-function init() {
-  if (initialized) {
-    console.log("Init har redan körts!");
-    return;
-  }
-  initialized = true;
-
-  console.log("Init körs för första gången!");
-  // Din initialiseringskod här
-}
-
-document.addEventListener("DOMContentLoaded", init);
-
 setTimeout(() => {
   for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
-    spawnBoss();
+    nextBoss();
     // loseScreen();
   }
 }, 10);
@@ -49,7 +34,13 @@ const update = () => {
   ctx.fillStyle = "white";
   ctx.fill();
 
-  // console.log(mainArrays);
+  player.speed =
+    player.standardspeed *
+    (1 +
+      player.unlockedAbilities.adrenaline *
+        (1 - player.health / player.maxHealth));
+
+  console.log(player.speed);
 
   // mainArrays.forEach((array) => {
   entities.forEach((entity, index) => {
@@ -94,9 +85,11 @@ const update = () => {
           // secondEntity.health -= entity.contactDamage;
         }
 
-        const newVel = handleCollision(entity, secondEntity);
-        entity.vel = newVel.v1;
-        secondEntity.vel = newVel.v2;
+        if (entity.collision === true && secondEntity.collision === true) {
+          const newVel = handleCollision(entity, secondEntity);
+          entity.vel = newVel.v1;
+          secondEntity.vel = newVel.v2;
+        }
       }
     });
 
@@ -202,7 +195,14 @@ const update = () => {
       airFriction: false,
     });
 
-    player.attackDelay = 10;
+    player.attackDelay =
+      player.standardAttackDelay *
+      (1 -
+        player.unlockedAbilities.adrenaline *
+          0.33 *
+          (1 - player.health / player.maxHealth));
+
+    console.log(player.attackDelay);
   }
   dashCooldown--;
   player.attackDelay--;
@@ -211,17 +211,19 @@ const update = () => {
 
   if (player.health > 0) {
     requestAnimationFrame(update);
-  } else {
-    if (player.unlockedAbilities.bonusLife === true) {
-      player.health = player.maxHealth / 2;
-      entities.push(player);
+  } else if (player.unlockedAbilities.bonusLifeCount > 0) {
+    console.log("death");
 
+    player.health = player.maxHealth / 2;
+    entities.push(player);
+
+    player.unlockedAbilities.bonusLifeCount--;
+
+    setTimeout(() => {
       requestAnimationFrame(update);
-      player.unlockedAbilities.bonusLife = false;
-    } else {
-      // console.log("hej");
-      loseScreen();
-    }
+    }, 1000);
+  } else {
+    loseScreen();
   }
 };
 

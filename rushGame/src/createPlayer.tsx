@@ -18,18 +18,27 @@ export type Player = {
   color: string;
   mass: number;
   speed: number;
+  standardspeed: number;
   attackDelay: number;
+  standardAttackDelay: number;
   team: string;
   unlockedAbilities: {
     dash: boolean;
     bounceable: boolean;
     bounceDamageLoss: number;
     bonusLife: boolean;
+    bonusLifeCount: number;
+    adrenaline: number;
   };
   airFriction: true;
+  collision: true;
 };
 
 const health = 100;
+
+const playerSpeed = 1;
+
+const playerAttackDelay = 10;
 
 export const createPlayer = (): any => {
   const player: Player = {
@@ -48,16 +57,21 @@ export const createPlayer = (): any => {
     radius: 50,
     color: "blue",
     mass: 0.1,
-    speed: 1,
+    speed: playerSpeed,
+    standardspeed: playerSpeed,
     team: "player",
-    attackDelay: 50,
+    attackDelay: playerAttackDelay,
+    standardAttackDelay: playerAttackDelay,
     unlockedAbilities: {
       dash: false,
-      bounceable: true,
+      bounceable: false,
+      adrenaline: 0.5,
       bounceDamageLoss: 0.3,
       bonusLife: false,
+      bonusLifeCount: 0,
     },
     airFriction: true,
+    collision: true,
   };
 
   entities.push(player);
