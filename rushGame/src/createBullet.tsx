@@ -31,6 +31,7 @@ type Mods = {
 
 type Advanced = {
   startPos: Vec2;
+  targetVec: Vec2;
   team: string;
   bulletRadius: number;
   onHit: (entity, bullet) => {};
@@ -40,8 +41,8 @@ export let bulletsShot = 0;
 
 export const createBullet = (
   bullets: Bullet[],
-  shooter: Enemy | Player,
-  target: Vec2,
+  shooter: Enemy | Player | undefined,
+  target: Vec2 | undefined,
   damage: number,
   speed: number,
   mods: Mods = {
@@ -51,6 +52,10 @@ export const createBullet = (
   },
   advanced: Advanced | undefined = {
     startPos: {
+      x: 0,
+      y: 0,
+    },
+    targetVec: {
       x: 0,
       y: 0,
     },
@@ -76,7 +81,9 @@ export const createBullet = (
   if (bulletTeam === player.team) {
     bulletsShot++;
   }
-  const direction = makeDirection(startPos, target);
+
+  const targetPos = target !== undefined ? target : advanced.targetVec;
+  const direction = makeDirection(startPos, targetPos);
   const newVel = multVar(direction, speed);
 
   const bullet: Bullet = {

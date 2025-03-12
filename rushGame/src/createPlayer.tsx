@@ -29,6 +29,7 @@ export type Player = {
     bonusLife: boolean;
     bonusLifeCount: number;
     adrenaline: number;
+    autoDamage: number;
   };
   airFriction: true;
   collision: true;
@@ -63,9 +64,10 @@ export const createPlayer = (): any => {
     attackDelay: playerAttackDelay,
     standardAttackDelay: playerAttackDelay,
     unlockedAbilities: {
-      dash: false,
+      dash: true,
       bounceable: false,
-      adrenaline: 0.5,
+      adrenaline: 0,
+      autoDamage: 0,
       bounceDamageLoss: 0.3,
       bonusLife: false,
       bonusLifeCount: 0,

@@ -12,48 +12,64 @@ type UpgradeRewards = {
   changeTo: boolean | number;
 };
 
-const dashUpgrade = {
+const decreasedDmgBounce = {
+  title: "More damage",
+  description: "Bouncy bullets lose less damage!",
+  id: "bounceDamageLoss",
+  changeTo: 0.5,
+  unlocks: [],
+};
+
+const dash = {
   title: "Dash",
   description: "Adds dash ability",
   id: "dash",
   changeTo: true,
-  // unlocks:
+  unlocks: [],
 };
 
-const bouncyBulletsUpgrade = {
+const bouncyBullets = {
   title: "Bouncy",
   description: "Bouncy bullets!",
   id: "bounceable",
   changeTo: true,
-  // unlocks:
+  unlocks: [decreasedDmgBounce],
 };
 
-const extraLifeUpgrade = {
+const extraLife = {
   title: "Extra Life",
   description: "+1 life",
   id: "bonusLife",
   changeTo: true,
-  // unlocks:
+  unlocks: [],
 };
 
-const adrenalineUpgrade = {
+const adrenaline = {
   title: "Adrenaline",
   description: "Blood is pumping when at low HP!",
   id: "adrenaline",
   changeTo: 0.5,
-  // unlocks:
+  unlocks: [],
 };
 
-const rewardPool = [
-  dashUpgrade,
-  bouncyBulletsUpgrade,
-  extraLifeUpgrade,
-  adrenalineUpgrade,
-];
+const autoDamage = {
+  title: "Auto Damage",
+  description: "Deal damage without shooting!",
+  id: "autoDamage",
+  changeTo: 0.05,
+  unlocks: [],
+};
+
+const rewardPool = [dash, bouncyBullets, extraLife, adrenaline, autoDamage];
 
 export const generateRewards = () => {
   const selectionDiv = document.getElementById("upgradeSelection");
   selectionDiv.style.visibility = "visible";
+
+  const children = selectionDiv.querySelectorAll("*");
+  children.forEach((child) => {
+    child.style.visibility = "visible";
+  });
 
   let possibleRewards = structuredClone(rewardPool);
   for (let i = 1; i < 4; i++) {
@@ -73,6 +89,9 @@ export const generateRewards = () => {
 
     element.onclick = () => {
       player.unlockedAbilities[reward.id] = reward.changeTo;
+      reward.unlocks.forEach((newAbility) => {
+        rewardPool.push(newAbility);
+      });
       console.log(player.unlockedAbilities);
 
       setTimeout(() => {
@@ -85,5 +104,6 @@ export const generateRewards = () => {
         child.style.visibility = "hidden";
       });
     };
+    console.log(selectionDiv);
   }
 };

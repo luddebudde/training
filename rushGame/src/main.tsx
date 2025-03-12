@@ -5,7 +5,13 @@ import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
 import { world } from "./basics";
 import { player } from "./createPlayer";
-import { bullets, checkArrayRemoval, entities, nextBoss } from "./arrays";
+import {
+  bullets,
+  checkArrayRemoval,
+  entities,
+  liveBosses,
+  nextBoss,
+} from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { damageDealt, dealDamage } from "./dealDamage";
@@ -39,8 +45,6 @@ const update = () => {
     (1 +
       player.unlockedAbilities.adrenaline *
         (1 - player.health / player.maxHealth));
-
-  console.log(player.speed);
 
   // mainArrays.forEach((array) => {
   entities.forEach((entity, index) => {
@@ -105,7 +109,7 @@ const update = () => {
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity)) {
         if (bullet.team !== entity.team) {
-          dealDamage(bullet, entity);
+          dealDamage(bullet, entity, bullet.damage);
 
           bullets.splice(index, 1);
         }
@@ -164,6 +168,11 @@ const update = () => {
     player.maxHealth
   );
 
+  // const autoDamage = player.unlockedAbilities.autoDamage;
+  if (liveBosses.length > 0) {
+    dealDamage(player, liveBosses[0], player.unlockedAbilities.autoDamage);
+  }
+
   if (isKeyDown("KeyW")) {
     player.vel.y += -player.speed;
   }
@@ -201,8 +210,6 @@ const update = () => {
         player.unlockedAbilities.adrenaline *
           0.33 *
           (1 - player.health / player.maxHealth));
-
-    console.log(player.attackDelay);
   }
   dashCooldown--;
   player.attackDelay--;

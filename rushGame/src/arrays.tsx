@@ -12,14 +12,25 @@ import {
   randomArrayElement,
   randomArrayElementSplice,
 } from "./randomArrayElement";
+import { createBonkerBoss } from "./bosses/bonker";
+import { createRainerBoss } from "./bosses/rainer";
 
 export let entities = [];
 export let bullets = [];
 
 // const firstWave = [createSprayerBoss];
-const firstWave = [createTwinBoss, createSprayerBoss, createChargerBoss];
-const secondWave = [createChaser, createSniper];
-const waveOrder = [firstWave, secondWave];
+const firstWave = [
+  // createBonkerBoss,
+  createRainerBoss,
+  // createRainerBoss,
+  // createTwinBoss,
+  //  createSprayerBoss,
+  // createChargerBoss,
+];
+const secondWave = [createChargerBoss];
+const thirdWave = [createChargerBoss];
+const fourthWave = [createChargerBoss];
+const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
 
 let currentWaveIndex = 0;
 export let bossPool = [...waveOrder[currentWaveIndex]];

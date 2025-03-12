@@ -3,6 +3,8 @@ export type Vec2 = {
   y: number;
 };
 
+export const origo = { x: 0, y: 0 };
+
 export const add = (firstVec: Vec2, secondVec: Vec2) => ({
   x: firstVec.x + secondVec.x,
   y: firstVec.y + secondVec.y,
