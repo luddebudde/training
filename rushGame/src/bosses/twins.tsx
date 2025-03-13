@@ -8,12 +8,13 @@ import { makeDirection } from "../makeDirection";
 import { multVar } from "../math";
 import { isPlayerBetweenEnemies } from "../isPlayerBetweenEnemies";
 
-const attackerHealth: number = 12;
-const attackerRadius: number = 80;
-let attackerCounterReset: number = 50;
+const attackerHealth: number = 1200;
+const shooterHealth: number = 800;
 
-const shooterHealth: number = 8;
+const attackerRadius: number = 80;
 const shooterRadius: number = 60;
+
+let attackerCounterReset: number = 50;
 let shooterCounterReset: number = 50;
 
 let turnIndex: number = 0;
@@ -36,12 +37,10 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
   if (
     doCirclesOverlap(attackerTwin, shooterTwin) &&
     Math.abs(shooterTwin.vel.x) + Math.abs(shooterTwin.vel.y) <
-      shooterTwin.speed / 5 &&
+      shooterTwin.speed * 10 &&
     shooterTwin.health > 0 &&
     attackerTwin.health > 0
   ) {
-    console.log("colldiering atacker and shooteert win");
-
     const maxI = 10;
     const angleStep = (Math.PI * 2) / maxI;
     const speed = 20;
@@ -106,7 +105,7 @@ type AttackerTwin = {
     mass: number;
     airFriction: false;
     collision: true;
-    update: () => void;
+    // update: () => void;
   };
 
   aiMovement: () => void;
@@ -208,16 +207,6 @@ export const createTwinBoss = () => {
       mass: 150,
       airFriction: false,
       collision: true,
-      update: () => {
-        const smallObject = attackerTwin.smallObject;
-        if (
-          Math.abs(smallObject.vel.x) + Math.abs(smallObject.vel.y) <
-          smallObject.speed * 1.5
-        ) {
-          const direction = makeDirection(attackerTwin.pos, player.pos);
-          smallObject.vel = multVar(direction, smallObject.speed);
-        }
-      },
     },
 
     aiMovement: () => {},
@@ -234,7 +223,7 @@ export const createTwinBoss = () => {
         const smallObject = attackerTwin.smallObject;
 
         const direction = makeDirection(smallObject.pos, player.pos);
-        smallObject.speed *= 2;
+        // smallObject.speed *= 2;
         smallObject.vel = multVar(direction, smallObject.speed);
       }
 
@@ -370,8 +359,6 @@ export const createTwinBoss = () => {
 
         player.vel.x += unitVectorX * force;
         player.vel.y += unitVectorY * force;
-
-        console.log(unitVectorX);
       }
 
       shooterTwin.mineDelay--;

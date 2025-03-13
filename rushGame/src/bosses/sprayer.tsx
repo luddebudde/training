@@ -7,7 +7,7 @@ import { makeDirection } from "../makeDirection";
 import { add, multVar, sub, Vec2 } from "../math";
 
 const cornerDelay = 50;
-const health = 10;
+const health = 1000;
 
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"

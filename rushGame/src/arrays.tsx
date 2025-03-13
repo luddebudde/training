@@ -8,28 +8,29 @@ import { createChaser } from "./enemies/chaser";
 import { createChargerEnemy } from "./enemies/chargerEnemy";
 import { createSniper } from "./enemies/sniper";
 import { generateRewards } from "./generateRewards";
-import {
-  randomArrayElement,
-  randomArrayElementSplice,
-} from "./randomArrayElement";
+import { randomArrayElementSplice } from "./randomArrayElement";
 import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
 
 export let entities = [];
 export let bullets = [];
 
-// const firstWave = [createSprayerBoss];
 const firstWave = [
-  // createBonkerBoss,
-  createRainerBoss,
-  // createRainerBoss,
-  // createTwinBoss,
-  //  createSprayerBoss,
+  // createSprayerBoss,
   // createChargerBoss,
+  // createRainerBoss,
+  // createBonkerBoss,
+  // createTwinBoss,
 ];
-const secondWave = [createChargerBoss];
-const thirdWave = [createChargerBoss];
-const fourthWave = [createChargerBoss];
+const secondWave = [
+  createSprayerBoss,
+  // createChargerBoss,
+  // createRainerBoss, createBonkerBoss
+];
+const thirdWave = [
+  // createTwinBoss
+];
+const fourthWave = [];
 const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
 
 let currentWaveIndex = 0;
@@ -41,16 +42,21 @@ export const spawnDelay = 1500;
 export let bossesKilled = 0;
 
 export const nextBoss = () => {
+  console.log(player.health, player.maxHealth);
+
   // generateRewards();
   let boss = randomArrayElementSplice(bossPool);
-  console.log(waveOrder[currentWaveIndex], "jhas");
 
   if (boss === undefined) {
     nextFloorBoss();
   }
+
+  const abilities = player.unlockedAbilities;
+
+  abilities.bonusLifeCount +=
+    abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
+
   boss();
-  // generateRewards();
-  // console.log(nextboss);
 };
 
 const nextFloorBoss = () => {
@@ -65,7 +71,6 @@ const nextFloorBoss = () => {
     player.speed = -player.speed;
   }
 
-  // nextboss = randomArrayElementSplice(bossPool);
   generateRewards();
 };
 
@@ -97,13 +102,6 @@ export const checkArrayRemoval = (ctx) => {
         bossesKilled++;
 
         player.health = player.maxHealth;
-
-        const abilities = player.unlockedAbilities;
-
-        abilities.lifeUpgradeCount +=
-          abilities.lifeUpgrade === true && abilities.bonusLifeCount === 0
-            ? 1
-            : 0;
 
         setTimeout(() => {
           nextBoss();

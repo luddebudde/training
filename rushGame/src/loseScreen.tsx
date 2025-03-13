@@ -13,7 +13,7 @@ export const loseScreen = () => {
     { id: "damage-dealt", value: Math.round(damageDealt) },
     { id: "damage-taken", value: Math.round(damageTaken) },
     { id: "bullets-shot", value: bulletsShot },
-    { id: "mistakes-made", value: Math.round(Math.random() * 150 + 6) },
+    { id: "mistakes-made", value: Math.round(Math.random() * 15 + 3) },
   ];
 
   // Använd forEach för att uppdatera varje stat

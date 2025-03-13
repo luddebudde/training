@@ -198,7 +198,7 @@ const update = () => {
   if (isKeyDown("Space") && player.attackDelay < 0) {
     // generateRewards();
     // const direction = makeDirection(player.pos, mousePos);
-    createBullet(bullets, player, mousePos, 10, 50, {
+    createBullet(bullets, player, mousePos, player.bulletDamage, 50, {
       bounceable: player.unlockedAbilities.bounceable,
       bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
       airFriction: false,
@@ -219,7 +219,7 @@ const update = () => {
   if (player.health > 0) {
     requestAnimationFrame(update);
   } else if (player.unlockedAbilities.bonusLifeCount > 0) {
-    console.log("death");
+    console.log("You have tricked death!");
 
     player.health = player.maxHealth / 2;
     entities.push(player);

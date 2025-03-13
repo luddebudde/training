@@ -21,6 +21,7 @@ export type Player = {
   standardspeed: number;
   attackDelay: number;
   standardAttackDelay: number;
+  bulletDamage: number;
   team: string;
   unlockedAbilities: {
     dash: boolean;
@@ -63,8 +64,9 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     standardAttackDelay: playerAttackDelay,
+    bulletDamage: 10,
     unlockedAbilities: {
-      dash: true,
+      dash: false,
       bounceable: false,
       adrenaline: 0,
       autoDamage: 0,
