@@ -14,7 +14,7 @@ import {
 } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
-import { damageDealt, dealDamage } from "./dealDamage";
+import { dealDamage } from "./dealDamage";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");

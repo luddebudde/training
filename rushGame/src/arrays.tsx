@@ -6,7 +6,7 @@ import { player } from "./createPlayer";
 import { drawHealthBar } from "./drawHealthbar";
 import { createChaser } from "./enemies/chaser";
 import { createChargerEnemy } from "./enemies/chargerEnemy";
-import { createSniper } from "./enemies/shooter";
+import { createSniper } from "./enemies/sniper";
 import { generateRewards } from "./generateRewards";
 import {
   randomArrayElement,
@@ -111,18 +111,4 @@ export const checkArrayRemoval = (ctx) => {
       }
     }
   });
-
-  // if (liveBosses.length === 0) {
-  //   bullets = bullets.filter((bullet) => bullet.team === "player");
-
-  //   console.log("splcie");
-
-  //   bossesKilled++;
-
-  //   player.health = player.maxHealth;
-
-  //   setTimeout(() => {
-  //     spawnBoss();
-  //   }, spawnDelay);
-  // }
 };

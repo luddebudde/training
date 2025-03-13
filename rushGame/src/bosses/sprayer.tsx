@@ -2,11 +2,9 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { Enemy } from "../enemies/chaser";
 import { goTo } from "../goTo";
 import { makeDirection } from "../makeDirection";
-import { add, mult, multVar, sub, Vec2 } from "../math";
-import { randomArrayElement } from "../randomArrayElement";
+import { add, multVar, sub, Vec2 } from "../math";
 
 const cornerDelay = 50;
 const health = 10;
@@ -14,8 +12,51 @@ const health = 10;
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"
 
+type Sprayer = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
+  collision: true;
+  airFriction: boolean;
+
+  // Pahses
+  phaseCounter: number;
+  shooterPhase: {
+    attackDelay: number;
+    spreadShotCounter: number;
+  };
+  cornerPhase: {
+    counter: number;
+  };
+  spreadOutPhase: {
+    shootDelay: number;
+    shootCounter: number;
+    changePhaseDelay: number;
+    changeCounter: number;
+  };
+
+  reacheadHalfPoint: boolean;
+
+  aiMovement: () => void;
+  update: (ctx) => void;
+  deathAnimation: (ctx, liveBosses, bossIndex) => void;
+};
+
 export const createSprayerBoss = () => {
-  const sprayer = {
+  const sprayer: Sprayer = {
     maxHealth: health,
     health: health,
     contactDamage: 0,
@@ -32,7 +73,7 @@ export const createSprayerBoss = () => {
     speed: 0.3,
     team: "enemy",
     mass: 1000,
-    reacheadHalfPoint: false,
+
     collision: true,
 
     // Pahses
@@ -51,8 +92,10 @@ export const createSprayerBoss = () => {
       changeCounter: 0,
     },
 
+    reacheadHalfPoint: false,
+
     aiMovement: () => {},
-    update: (ctx): void => {
+    update: (): void => {
       sprayer.aiMovement();
 
       //   sprayer.attackDelay--;
@@ -129,10 +172,9 @@ export const createSprayerBoss = () => {
             x: world.width - sprayer.radius,
             y: world.height - sprayer.radius,
           };
-          const cornerArray = [upLeft, upLRight, downLeft, downRight];
 
-          const originalCorners = [upLeft, upLRight, downLeft, downRight];
-          let remainingCorners = [...originalCorners];
+          const cornerArray = [upLeft, upLRight, downLeft, downRight];
+          let remainingCorners = [...cornerArray];
 
           sprayer.aiMovement = () => {
             if (sprayer.cornerPhase.counter < 0) {
@@ -186,7 +228,6 @@ export const createSprayerBoss = () => {
               sprayer.spreadOutPhase.shootCounter = 0;
               sprayer.phaseCounter = 1000;
               let moveTime = sprayer.spreadOutPhase.shootDelay;
-              let changeTime = sprayer.spreadOutPhase.changePhaseDelay;
 
               const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 

@@ -1,20 +1,44 @@
 import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
-import { createBullet, createWaveShoot } from "../createBullet";
+import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { Enemy } from "../enemies/chaser";
-import { goTo } from "../goTo";
 import { makeDirection } from "../makeDirection";
-import { add, div, divVar, mult, multVar, origo, sub, Vec2 } from "../math";
-import { randomArrayElement } from "../randomArrayElement";
+import { multVar, origo } from "../math";
 
 const health = 150;
 const speed = 35;
 const radius = 120;
 const bounceThreashold = 10;
 
+type Bonker = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
+  collision: true;
+  airFriction: false;
+
+  // Pahses
+  phaseCounter: number;
+  bounceCounter: number;
+
+  onWallBounce: () => void;
+};
+
 export const createBonkerBoss = () => {
-  const bonker = {
+  const bonker: Bonker = {
     maxHealth: health,
     health: health,
     contactDamage: 10,
@@ -32,14 +56,12 @@ export const createBonkerBoss = () => {
     team: "enemy",
     mass: 1000,
     collision: true,
+    airFriction: false,
 
     // Pahses
     phaseCounter: 100,
     bounceCounter: -1,
 
-    aiMovement: () => {},
-    update: (ctx): void => {},
-    deathAnimation: (ctx, liveBosses, bossIndex) => {},
     onWallBounce: () => {
       bonker.bounceCounter++;
 
@@ -71,7 +93,6 @@ export const createBonkerBoss = () => {
         console.log("irogo");
       }
     },
-    airFriction: false,
   };
 
   entities.push(bonker);

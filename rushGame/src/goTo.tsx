@@ -1,6 +1,4 @@
-import { world } from "./basics";
-import { makeDirection } from "./makeDirection";
-import { multVar, sub, Vec2 } from "./math";
+import { multVar, sub } from "./math";
 
 export const goTo = (
   entity,

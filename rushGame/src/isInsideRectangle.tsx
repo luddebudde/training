@@ -1,10 +1,10 @@
 export const isPointInsideArea = (
-  pointX,
-  pointY,
-  areaX,
-  areaY,
-  areaWidth,
-  areaHeight
+  pointX: number,
+  pointY: number,
+  areaX: number,
+  areaY: number,
+  areaWidth: number,
+  areaHeight: number
 ) => {
   return (
     pointX >= areaX &&

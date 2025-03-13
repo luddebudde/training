@@ -1,15 +1,31 @@
 import { world } from "../basics";
 import { makeDirection } from "../makeDirection";
-import { add, multVar } from "../math";
+import { add, multVar, Vec2 } from "../math";
 import { player } from "../createPlayer";
 import { bullets, entities, liveBosses } from "../arrays";
-import { Enemy } from "./chaser";
 import { createBullet } from "../createBullet";
 
 const health = 100;
 
+type SniperEnemy = {
+  health: number;
+  maxHealth: number;
+  contactDamage: number;
+  pos: Vec2;
+  vel: Vec2;
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
+  attackDelay: number;
+  airFriction: boolean;
+  collision: boolean;
+  update: () => void;
+};
+
 export const createSniper = () => {
-  const enemy: Enemy = {
+  const enemy: SniperEnemy = {
     health: health,
     maxHealth: health,
     contactDamage: 10,
@@ -27,13 +43,14 @@ export const createSniper = () => {
     team: "enemy",
     mass: 1,
     attackDelay: 10,
+    airFriction: true,
+    collision: true,
+
     update: (): void => {
       enemy.vel = add(
         enemy.vel,
         multVar(makeDirection(enemy.pos, player.pos), enemy.speed)
       );
-
-      //   console.log(enemy.attackDelay);
 
       enemy.attackDelay--;
 
@@ -43,10 +60,8 @@ export const createSniper = () => {
         enemy.attackDelay = 100;
       }
     },
-    airFriction: true,
   };
 
-  // return enemy;
   entities.push(enemy);
   liveBosses.push(enemy);
 };

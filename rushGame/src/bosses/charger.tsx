@@ -1,18 +1,42 @@
-import { bullets, entities, liveBosses } from "../arrays";
+import { entities, liveBosses } from "../arrays";
 import { world } from "../basics";
-import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { Enemy } from "../enemies/chaser";
-import { goTo } from "../goTo";
-import { makeDirection } from "../makeDirection";
-import { add, mult, multVar, sub, Vec2 } from "../math";
-import { randomArrayElement } from "../randomArrayElement";
 
-const cornerDelay = 50;
+import { makeDirection } from "../makeDirection";
+import { multVar } from "../math";
+
 const health = 15;
 
+type Charger = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
+  collision: true;
+  airFriction: boolean;
+
+  // Pahses
+  phaseCounter: number;
+
+  update: () => void;
+  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
+  onWallBounce: () => void;
+};
+
 export const createChargerBoss = () => {
-  const charger = {
+  const charger: Charger = {
     maxHealth: health,
     health: health,
     contactDamage: 20,
@@ -30,14 +54,12 @@ export const createChargerBoss = () => {
     team: "enemy",
     mass: 1000,
     collision: true,
+    airFriction: false,
 
     // Pahses
     phaseCounter: 100,
 
-    aiMovement: () => {},
-    update: (ctx): void => {
-      charger.aiMovement();
-
+    update: (): void => {
       charger.phaseCounter--;
 
       if (charger.phaseCounter < 0) {
@@ -49,20 +71,17 @@ export const createChargerBoss = () => {
         charger.phaseCounter = 10000;
       }
     },
-    deathAnimation: (ctx, liveBosses, bossIndex) => {},
+    // deathAnimation: (ctx, liveBosses, bossIndex) => {},
     onWallBounce: () => {
       //   charger.vel = { x: 0, y: 0 };
       charger.airFriction = true;
 
       charger.phaseCounter = 100;
     },
-    airFriction: false,
   };
 
   entities.push(charger);
   liveBosses.push(charger);
 
   return charger;
-  // entities.push(sprayer);
-  // liveBosses.push(sprayer);
 };

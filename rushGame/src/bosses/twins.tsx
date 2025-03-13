@@ -2,24 +2,21 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { dealDamage } from "../dealDamage";
 import { doCirclesOverlap } from "../doCirlceOverlap";
-import { createChargerEnemy } from "../enemies/chargerEnemy";
 import { createChaser } from "../enemies/chaser";
 import { makeDirection } from "../makeDirection";
-import { add, addVar, div, divVar, mult, multVar } from "../math";
-import { createChargerBoss } from "./charger";
+import { multVar } from "../math";
 import { isPlayerBetweenEnemies } from "../isPlayerBetweenEnemies";
 
-const attackerHealth = 12;
-const attackerRadius = 80;
-let attackerCounterReset = 50;
+const attackerHealth: number = 12;
+const attackerRadius: number = 80;
+let attackerCounterReset: number = 50;
 
-const shooterHealth = 8;
-const shooterRadius = 60;
-let shooterCounterReset = 50;
+const shooterHealth: number = 8;
+const shooterRadius: number = 60;
+let shooterCounterReset: number = 50;
 
-let turnIndex = 0;
+let turnIndex: number = 0;
 
 const lineBetween = (ctx, attackerTwin, shooterTwin) => {
   ctx.beginPath();
@@ -65,8 +62,109 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
   }
 };
 
+type AttackerTwin = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: String;
+  mass: number;
+  collision: true;
+  airFriction: false;
+
+  // Pahses
+  phaseCounter: number;
+  activatedSmallObject: boolean;
+  rageMode: boolean;
+
+  smallObject: {
+    health: number;
+    maxHealth: number;
+    contactDamage: number;
+    pos: {
+      x: number;
+      y: number;
+    };
+    vel: {
+      x: number;
+      y: number;
+    };
+    radius: number;
+    color: string;
+    speed: number;
+    team: string;
+    mass: number;
+    airFriction: false;
+    collision: true;
+    update: () => void;
+  };
+
+  aiMovement: () => void;
+  update: (ctx) => void;
+  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
+  onWallBounce: () => void;
+};
+
+type ShooterTwin = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: String;
+  mass: number;
+  collision: true;
+  airFriction: number | boolean;
+
+  // Pahses
+  phaseCounter: number;
+  shootValue: number;
+  attackIndex: number;
+  bullet: {
+    shotgun: {
+      damage: number;
+      speed: number;
+    };
+    normal: {
+      damage: number;
+      speed: number;
+    };
+  };
+  changedPhase: boolean;
+
+  mineDelay: number;
+  mineDelayReset: number;
+
+  chargerSpawnDelay: number;
+  chargerSpawnDelayReset: number;
+
+  aiMovement: () => void;
+  update: (ctx) => void;
+  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
+  onWallBounce: () => void;
+};
+
 export const createTwinBoss = () => {
-  const attackerTwin = {
+  const attackerTwin: AttackerTwin = {
     maxHealth: attackerHealth,
     health: attackerHealth,
     contactDamage: 30,
@@ -110,13 +208,11 @@ export const createTwinBoss = () => {
       mass: 150,
       airFriction: false,
       collision: true,
-      // smallObjects: [],
       update: () => {
         const smallObject = attackerTwin.smallObject;
         if (
-          (Math.abs(smallObject.vel.x) + Math.abs(smallObject.vel.y) <
-            smallObject.speed) *
-          1.5
+          Math.abs(smallObject.vel.x) + Math.abs(smallObject.vel.y) <
+          smallObject.speed * 1.5
         ) {
           const direction = makeDirection(attackerTwin.pos, player.pos);
           smallObject.vel = multVar(direction, smallObject.speed);
@@ -190,7 +286,7 @@ export const createTwinBoss = () => {
   entities.push(attackerTwin);
   liveBosses.push(attackerTwin);
 
-  const shooterTwin = {
+  const shooterTwin: ShooterTwin = {
     maxHealth: shooterHealth,
     health: shooterHealth,
     contactDamage: 20,
@@ -233,7 +329,7 @@ export const createTwinBoss = () => {
     chargerSpawnDelayReset: 300,
 
     aiMovement: () => {},
-    update: (ctx): void => {
+    update: (): void => {
       if (shooterTwin.vel.x > 10 || shooterTwin.vel.y > 10) {
         if (shooterTwin.mineDelay < 0) {
           createBullet(bullets, shooterTwin, shooterTwin.pos, 3, 0);
@@ -268,10 +364,6 @@ export const createTwinBoss = () => {
           y: shooterTwin.pos.y - player.pos.y,
         };
         const dist = Math.sqrt(diff.x * diff.x + diff.y * diff.y);
-        const direction = {
-          x: -diff.x / (dist + 0.001),
-          y: -diff.y / (dist + 0.001),
-        };
 
         const unitVectorX = diff.x / dist;
         const unitVectorY = diff.y / dist;
@@ -304,11 +396,7 @@ export const createTwinBoss = () => {
                 bulletsStat.shotgun.damage,
                 bulletsStat.shotgun.speed,
                 Math.PI / 4,
-                shooterTwin.shootValue % 11,
-                {},
-                {
-                  onHit: (entity, bullet) => {},
-                }
+                shooterTwin.shootValue % 11
               );
             }, 50 * i);
           }

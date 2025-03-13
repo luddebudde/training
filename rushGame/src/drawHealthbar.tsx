@@ -1,4 +1,12 @@
-export const drawHealthBar = (ctx, x, y, width, height, health, maxHealth) => {
+export const drawHealthBar = (
+  ctx,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  health: number,
+  maxHealth: number
+) => {
   ctx.beginPath();
   ctx.rect(x, y, width, height);
   ctx.fillStyle = "#fd151b";

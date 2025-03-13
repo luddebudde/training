@@ -1,14 +1,29 @@
-import { world } from "../basics";
 import { makeDirection } from "../makeDirection";
-import { add, multVar } from "../math";
+import { multVar, Vec2 } from "../math";
 import { player } from "../createPlayer";
-import { entities, liveBosses } from "../arrays";
-import { Enemy } from "./chaser";
+import { entities } from "../arrays";
 
 const health = 100;
 
+type ChargerEnemy = {
+  health: number;
+  maxHealth: number;
+  contactDamage: number;
+  pos: Vec2;
+  vel: Vec2;
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
+  airFriction: false;
+  collision: true;
+  chargeMeter: number;
+  update: () => void;
+};
+
 export const createChargerEnemy = (pos) => {
-  const enemy: Enemy = {
+  const enemy: ChargerEnemy = {
     health: health,
     maxHealth: health,
     contactDamage: 40,
@@ -26,8 +41,10 @@ export const createChargerEnemy = (pos) => {
     team: "enemy",
     mass: 100,
     airFriction: false,
+    collision: true,
+
     chargeMeter: 100,
-    update: (): void => {
+    update: () => {
       enemy.chargeMeter--;
 
       if (enemy.chargeMeter < 0) {
@@ -38,8 +55,5 @@ export const createChargerEnemy = (pos) => {
     },
   };
 
-  // return enemy;
-
   entities.push(enemy);
-  // liveBosses.push(enemy);
 };

@@ -1,18 +1,16 @@
 import { nextBoss, spawnDelay } from "./arrays";
 import { player } from "./createPlayer";
-import {
-  randomArrayElement,
-  randomArrayElementSplice,
-} from "./randomArrayElement";
+import { randomArrayElementSplice } from "./randomArrayElement";
 
-type UpgradeRewards = {
+type Upgrades = {
   title: string;
   description: string;
   id: string;
   changeTo: boolean | number;
+  unlocks: Upgrades[];
 };
 
-const decreasedDmgBounce = {
+const decreasedDmgBounce: Upgrades = {
   title: "More damage",
   description: "Bouncy bullets lose less damage!",
   id: "bounceDamageLoss",
@@ -20,7 +18,7 @@ const decreasedDmgBounce = {
   unlocks: [],
 };
 
-const dash = {
+const dash: Upgrades = {
   title: "Dash",
   description: "Adds dash ability",
   id: "dash",
@@ -28,7 +26,7 @@ const dash = {
   unlocks: [],
 };
 
-const bouncyBullets = {
+const bouncyBullets: Upgrades = {
   title: "Bouncy",
   description: "Bouncy bullets!",
   id: "bounceable",
@@ -36,7 +34,7 @@ const bouncyBullets = {
   unlocks: [decreasedDmgBounce],
 };
 
-const extraLife = {
+const extraLife: Upgrades = {
   title: "Extra Life",
   description: "+1 life",
   id: "bonusLife",
@@ -44,7 +42,7 @@ const extraLife = {
   unlocks: [],
 };
 
-const adrenaline = {
+const adrenaline: Upgrades = {
   title: "Adrenaline",
   description: "Blood is pumping when at low HP!",
   id: "adrenaline",
@@ -52,7 +50,7 @@ const adrenaline = {
   unlocks: [],
 };
 
-const autoDamage = {
+const autoDamage: Upgrades = {
   title: "Auto Damage",
   description: "Deal damage without shooting!",
   id: "autoDamage",
@@ -60,7 +58,13 @@ const autoDamage = {
   unlocks: [],
 };
 
-const rewardPool = [dash, bouncyBullets, extraLife, adrenaline, autoDamage];
+const rewardPool: Upgrades[] = [
+  dash,
+  bouncyBullets,
+  extraLife,
+  adrenaline,
+  autoDamage,
+];
 
 export const generateRewards = () => {
   const selectionDiv = document.getElementById("upgradeSelection");
@@ -73,7 +77,7 @@ export const generateRewards = () => {
 
   let possibleRewards = structuredClone(rewardPool);
   for (let i = 1; i < 4; i++) {
-    const reward = randomArrayElementSplice(possibleRewards);
+    const reward: Upgrades = randomArrayElementSplice(possibleRewards);
 
     const element = document.getElementById(`option${i}`);
     const children = element.children; // Hämtar alla barn

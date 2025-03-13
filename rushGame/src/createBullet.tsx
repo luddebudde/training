@@ -1,10 +1,9 @@
-import { player, Player } from "./createPlayer";
-import { Enemy } from "./enemies/chaser";
+import { player } from "./createPlayer";
 import { makeDirection } from "./makeDirection";
 import { multVar, Vec2 } from "./math";
 
 type Bullet = {
-  shooter: Enemy | Player;
+  shooter: any;
   damage: number;
   pos: {
     x: number;
@@ -18,9 +17,10 @@ type Bullet = {
   radius: number;
   color: string;
   team: string;
-  airFriction: boolean;
+  airFriction: boolean | number;
   bounceable: boolean;
   bounceDamageLoss: number;
+  onHit: (entity, bullet: Bullet) => void;
 };
 
 type Mods = {
@@ -34,55 +34,49 @@ type Advanced = {
   targetVec: Vec2;
   team: string;
   bulletRadius: number;
-  onHit: (entity, bullet) => {};
+  onHit: (entity, bullet) => void;
 };
 
 export let bulletsShot = 0;
 
 export const createBullet = (
   bullets: Bullet[],
-  shooter: Enemy | Player | undefined,
+  shooter: any,
   target: Vec2 | undefined,
   damage: number,
   speed: number,
-  mods: Mods = {
-    bounceable: false,
-    airFriction: 0,
-    bounceDamageLoss: 0.3,
-  },
-  advanced: Advanced | undefined = {
-    startPos: {
-      x: 0,
-      y: 0,
-    },
-    targetVec: {
-      x: 0,
-      y: 0,
-    },
-    team: "",
-    bulletRadius: 20,
-    onHit: (entity, bullet) => {},
-  }
+  mods: Mods | {} = {},
+  advanced: Advanced | {} = {}
 ) => {
-  const defaultAdvanced: Advanced = {
+  const finalAdvanced = {
     startPos: { x: 0, y: 0 },
     team: "",
     bulletRadius: 20,
-    onHit: (entity, bullet) => {},
+    targetVec: {
+      x: player.pos.x,
+      y: player.pos.y,
+    },
+    onHit: () => {},
+    ...advanced,
   };
 
-  const finalAdvanced = { ...defaultAdvanced, ...advanced };
+  const finalMods: Mods = {
+    bounceable: false,
+    airFriction: 0,
+    bounceDamageLoss: 0.3,
+    ...mods,
+  };
 
-  const startPos = shooter !== undefined ? shooter.pos : advanced.startPos;
-  const bulletTeam = shooter !== undefined ? shooter.team : advanced.team;
+  const startPos = shooter !== undefined ? shooter.pos : finalAdvanced.startPos;
+  const bulletTeam = shooter !== undefined ? shooter.team : finalAdvanced.team;
   const bulletRadius =
-    advanced.bulletRadius !== undefined ? advanced.bulletRadius : 20;
+    finalAdvanced.bulletRadius !== undefined ? finalAdvanced.bulletRadius : 20;
 
   if (bulletTeam === player.team) {
     bulletsShot++;
   }
 
-  const targetPos = target !== undefined ? target : advanced.targetVec;
+  const targetPos = target !== undefined ? target : finalAdvanced.targetVec;
   const direction = makeDirection(startPos, targetPos);
   const newVel = multVar(direction, speed);
 
@@ -101,9 +95,9 @@ export const createBullet = (
     radius: bulletRadius,
     color: "green",
     team: bulletTeam,
-    airFriction: mods.airFriction,
-    bounceable: mods.bounceable,
-    bounceDamageLoss: mods.bounceDamageLoss,
+    airFriction: finalMods.airFriction,
+    bounceable: finalMods.bounceable,
+    bounceDamageLoss: finalMods.bounceDamageLoss,
 
     onHit: (entity, bullet) => {
       finalAdvanced.onHit(entity, bullet);
@@ -114,21 +108,34 @@ export const createBullet = (
 
 export const createWaveShoot = (
   bullets: Bullet[],
-  shooter: Enemy | Player,
+  shooter: any,
   target: Vec2,
   damage: number,
   speed: number,
   waveWidth: number,
   bulletsCount: number,
-  mods: Mods = {
-    bounceable: false,
-    airFriction: false,
-    bounceDamageLoss: 0.3,
-  },
-  advanced: Advanced = {
-    onHit: (entity, bullet) => {},
-  }
+  mods: Mods | {} = {},
+  advanced: Advanced | {} = {}
 ) => {
+  const finalAdvanced = {
+    startPos: { x: 0, y: 0 },
+    team: "",
+    bulletRadius: 20,
+    targetVec: {
+      x: player.pos.x,
+      y: player.pos.y,
+    },
+    onHit: () => {},
+    ...advanced,
+  };
+
+  const finalMods: Mods = {
+    bounceable: false,
+    airFriction: 0,
+    bounceDamageLoss: 0.3,
+    ...mods,
+  };
+
   const baseDirection = makeDirection(shooter.pos, target);
   const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
 
@@ -158,12 +165,12 @@ export const createWaveShoot = (
       radius: 10,
       color: "green",
       team: shooter.team,
-      airFriction: mods.airFriction,
-      bounceable: mods.bounceable,
-      bounceDamageLoss: mods.bounceDamageLoss,
+      airFriction: finalMods.airFriction,
+      bounceable: finalMods.bounceable,
+      bounceDamageLoss: finalMods.bounceDamageLoss,
 
       onHit: (entity, bullet) => {
-        advanced.onHit(entity, bullet);
+        finalAdvanced.onHit(entity, bullet);
       },
     };
 
