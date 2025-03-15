@@ -66,7 +66,7 @@ export const createPlayer = (): any => {
     standardAttackDelay: playerAttackDelay,
     bulletDamage: 10,
     unlockedAbilities: {
-      dash: false,
+      dash: true,
       bounceable: false,
       adrenaline: 0,
       autoDamage: 0,

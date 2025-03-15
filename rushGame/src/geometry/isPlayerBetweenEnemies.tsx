@@ -1,14 +1,17 @@
+import { Player } from "../createPlayer";
+import { Vec2 } from "../math";
+
 export function isPlayerBetweenEnemies(
-  enemy1: Entity,
-  enemy2: Entity,
-  player: Entity
+  enemy1: Vec2,
+  enemy2: Vec2,
+  player: Player
 ): boolean {
-  const dx = enemy2.pos.x - enemy1.pos.x;
-  const dy = enemy2.pos.y - enemy1.pos.y;
+  const dx = enemy2.x - enemy1.x;
+  const dy = enemy2.y - enemy1.y;
 
   // Vector från enemy1 till spelaren
-  const fx = player.pos.x - enemy1.pos.x;
-  const fy = player.pos.y - enemy1.pos.y;
+  const fx = player.pos.x - enemy1.x;
+  const fy = player.pos.y - enemy1.y;
 
   // Projektion av (fx, fy) på (dx, dy) för att hitta närmsta punkt på fiendelinjen
   const t = (fx * dx + fy * dy) / (dx * dx + dy * dy);
@@ -17,8 +20,8 @@ export function isPlayerBetweenEnemies(
   const tClamped = Math.max(0, Math.min(1, t));
 
   // Närmaste punkt på segmentet
-  const closestX = enemy1.pos.x + tClamped * dx;
-  const closestY = enemy1.pos.y + tClamped * dy;
+  const closestX = enemy1.x + tClamped * dx;
+  const closestY = enemy1.y + tClamped * dy;
 
   // Beräkna avståndet från spelarens cirkel till närmaste punkt på linjen
   const distSquared =

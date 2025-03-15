@@ -2,8 +2,8 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
+import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { makeDirection } from "../makeDirection";
 import { add, multVar, sub, Vec2 } from "../math";
 
 const cornerDelay = 50;
@@ -95,7 +95,7 @@ export const createSprayerBoss = () => {
     reacheadHalfPoint: false,
 
     aiMovement: () => {},
-    update: (): void => {
+    update: (ctx, deltaTime): void => {
       sprayer.aiMovement();
 
       //   sprayer.attackDelay--;
@@ -190,10 +190,15 @@ export const createSprayerBoss = () => {
 
               if (remainingCorners.length > 0) {
                 const nextCorner = remainingCorners[0];
-                goTo(sprayer, nextCorner, {
-                  time: cornerDelay,
-                  speed: undefined,
-                });
+                goTo(
+                  sprayer,
+                  nextCorner,
+                  {
+                    time: cornerDelay,
+                    speed: undefined,
+                  },
+                  deltaTime
+                );
 
                 createWaveShoot(
                   bullets,
@@ -222,16 +227,21 @@ export const createSprayerBoss = () => {
 
           sprayer.aiMovement = () => {
             sprayer.spreadOutPhase.shootCounter++;
-            // console.log(sprayer.spreadOutPhase.shootCounter);
 
             if (sprayer.phaseCounter < 0) {
               sprayer.spreadOutPhase.shootCounter = 0;
               sprayer.phaseCounter = 1000;
               let moveTime = sprayer.spreadOutPhase.shootDelay;
+              console.log("move time:", moveTime);
 
               const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 
-              goTo(sprayer, place, { time: moveTime, speed: undefined });
+              goTo(
+                sprayer,
+                place,
+                { time: moveTime, speed: undefined },
+                deltaTime
+              );
             }
 
             if (
@@ -240,20 +250,20 @@ export const createSprayerBoss = () => {
             ) {
               for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
-                  const angle = (i / 50) * Math.PI * 2; // Cirkulär fördelning av vinklar
+                  const angle = (i / 50) * Math.PI * 2;
                   const target: Vec2 = {
-                    x: sprayer.pos.x + Math.cos(angle) * 100, // Radie på 100 enheter
+                    x: sprayer.pos.x + Math.cos(angle) * 100,
                     y: sprayer.pos.y + Math.sin(angle) * 100,
                   };
                   if (i !== 49) {
                     createBullet(bullets, sprayer, target, 10, 20);
                   } else {
-                    const numShots = 5; // Antal skott per riktning
-                    const angleStep = (Math.PI * 2) / numShots; // Steg mellan varje skott
+                    const numShots = 5;
+                    const angleStep = (Math.PI * 2) / numShots;
                     for (let i = 0; i < numShots; i++) {
-                      const angle = i * angleStep; // Beräkna vinkeln för varje skott
+                      const angle = i * angleStep;
                       const target: Vec2 = {
-                        x: sprayer.pos.x + Math.cos(angle) * 100, // Radie på 100 enheter
+                        x: sprayer.pos.x + Math.cos(angle) * 100,
                         y: sprayer.pos.y + Math.sin(angle) * 100,
                       };
                       createBullet(bullets, sprayer, target, 20, 10, {
@@ -279,25 +289,25 @@ export const createSprayerBoss = () => {
     },
     deathAnimation: () => {
       console.log("death aniamtion: ACTIVATE");
-      const maxI = 200; // Antal kulor
-      const angleStep = (Math.PI * 2) / maxI; // Steg mellan vinklar för att täcka en cirkel
-      const speed = 50; // Hastighet för kulorna
+      const maxI = 200;
+      const angleStep = (Math.PI * 2) / maxI;
+      const speed = 50;
 
       for (let i = 0; i < maxI; i++) {
-        const angle = i * angleStep; // Vinkel för den aktuella kulan
+        const angle = i * angleStep;
         const target = {
-          x: Math.cos(angle) * 100 + sprayer.pos.x, // Punkt utåt baserad på vinkel
+          x: Math.cos(angle) * 100 + sprayer.pos.x,
           y: Math.sin(angle) * 100 + sprayer.pos.y,
         };
 
         createBullet(
           bullets,
-          undefined, // Ingen specifik "shooter"
-          target, // Målet baserat på vinkeln
-          3, // Skadevärde
-          speed, // Hastighet
+          undefined,
+          target,
+          3,
+          speed,
           {
-            bounceable: false, // Mods
+            bounceable: false,
             airFriction: false,
             bounceDamageLoss: 0.3,
           },
@@ -318,6 +328,4 @@ export const createSprayerBoss = () => {
   liveBosses.push(sprayer);
 
   return sprayer;
-  // entities.push(sprayer);
-  // liveBosses.push(sprayer);
 };

@@ -1,15 +1,12 @@
 import { nextBoss, spawnDelay } from "./arrays";
-import { player } from "./createPlayer";
-import {
-  randomArrayElement,
-  randomArrayElementSplice,
-} from "./randomArrayElement";
+import { Player, player } from "./createPlayer";
+import { randomArrayElementSplice } from "./randomArrayElement";
 
 type Upgrades = {
   title: string;
   description: string;
   id: string;
-  change: (player) => {};
+  change: (player: Player) => void;
   unlockRequirement: () => Upgrades[];
 };
 
@@ -119,8 +116,8 @@ export const generateRewards = () => {
     child.style.visibility = "visible";
   });
   const rewardPool = totalRewardPool.filter((reward) => {
-    const requirements = reward.unlockRequirement(); // Hämta kraven för belöningen
-    return requirements.every((req) => usedRewards.includes(req)); // Kolla om ALLA krav finns i usedRewards
+    const requirements = reward.unlockRequirement();
+    return requirements.every((req) => usedRewards.includes(req));
   });
 
   let possibleRewards = rewardPool.filter(
@@ -133,7 +130,7 @@ export const generateRewards = () => {
     const reward: Upgrades = randomArrayElementSplice(possibleRewards);
 
     const element = document.getElementById(`option${i}`);
-    const children = element.children; // Hämtar alla barn
+    const children = element.children;
 
     element.style.visibility = "visible";
 
@@ -145,7 +142,6 @@ export const generateRewards = () => {
     thirdChild.textContent = reward.description;
 
     element.onclick = () => {
-      // player.unlockedAbilities[reward.id] = reward.change;
       reward.change(player);
       usedRewards.push(reward);
 

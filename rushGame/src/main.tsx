@@ -1,6 +1,6 @@
 import { keyDownTracker } from "./keyDownTracker";
 import { add, multVar } from "./math";
-import { doCirclesOverlap } from "./doCirlceOverlap";
+import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
 import { world } from "./basics";
@@ -11,10 +11,12 @@ import {
   entities,
   liveBosses,
   nextBoss,
+  squares,
 } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { dealDamage } from "./dealDamage";
+import { isPointInsideArea } from "./geometry/isInsideRectangle";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -34,11 +36,33 @@ setTimeout(() => {
   }
 }, 10);
 
+let currentTime = Date.now(); // Starttid vid första kallelsen
+let startTime = 0; // Om du har en starttidsstämpel
+
+export const calculateFPS = () => {
+  const now = Date.now();
+  const deltaTime = now - currentTime; // Tid mellan senaste och nuvarande frame
+
+  // Beräkna FPS
+  const fps = 1000 / deltaTime;
+
+  // Uppdatera currentTime för nästa frame
+  currentTime = now;
+
+  return [fps, deltaTime];
+};
+
+export let fps;
+export let deltaTime;
+
 const update = () => {
   ctx.beginPath();
   ctx.rect(0, 0, world.width, world.height);
   ctx.fillStyle = "white";
   ctx.fill();
+
+  [fps, deltaTime] = calculateFPS();
+  // console.log(fps, deltaTime);
 
   player.speed =
     player.standardspeed *
@@ -46,10 +70,7 @@ const update = () => {
       player.unlockedAbilities.adrenaline *
         (1 - player.health / player.maxHealth));
 
-  // mainArrays.forEach((array) => {
   entities.forEach((entity, index) => {
-    // console.log(entity.airFriction);
-
     entity.pos = add(entity.pos, entity.vel);
 
     if (entity.airFriction !== false) {
@@ -80,13 +101,12 @@ const update = () => {
       entity.pos.y = entity.radius;
     }
 
-    entity?.update?.(ctx);
+    entity?.update?.(ctx, deltaTime);
 
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
         if (entity.team !== secondEntity.team) {
           dealDamage(entity, secondEntity, entity.contactDamage);
-          // secondEntity.health -= entity.contactDamage;
         }
 
         if (entity.collision === true && secondEntity.collision === true) {
@@ -158,6 +178,24 @@ const update = () => {
     }
   });
 
+  // squares.forEach((rect) => {
+  //   if (
+  //     isPointInsideArea(
+  //       player.pos.x,
+  //       player.pos.y,
+  //       rect.pos.x,
+  //       rect.pos.y,
+  //       rect.width,
+  //       rect.height
+  //     ) === true
+  //   ) {
+  //     player.vel = multVar(player.vel, -1);
+  //   }
+  //   ctx.beginPath();
+  //   ctx.rect(rect.pos.x, rect.pos.y, rect.width, rect.height);
+  //   ctx.stroke();
+  // });
+
   drawHealthBar(
     ctx,
     player.pos.x - player.radius,
@@ -168,7 +206,6 @@ const update = () => {
     player.maxHealth
   );
 
-  // const autoDamage = player.unlockedAbilities.autoDamage;
   if (liveBosses.length > 0) {
     dealDamage(player, liveBosses[0], player.unlockedAbilities.autoDamage);
   }
@@ -196,8 +233,6 @@ const update = () => {
   }
 
   if (isKeyDown("Space") && player.attackDelay < 0) {
-    // generateRewards();
-    // const direction = makeDirection(player.pos, mousePos);
     createBullet(bullets, player, mousePos, player.bulletDamage, 50, {
       bounceable: player.unlockedAbilities.bounceable,
       bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
@@ -242,8 +277,6 @@ export const mousePos = {
 document.addEventListener("mousemove", (event) => {
   mousePos.x = event.clientX;
   mousePos.y = event.clientY;
-
-  // console.log(`Musposition: (${mousePos.x}, ${mousePos.y})`);
 });
 
 update();

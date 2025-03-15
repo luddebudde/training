@@ -2,11 +2,13 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { doCirclesOverlap } from "../doCirlceOverlap";
+import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { createChaser } from "../enemies/chaser";
-import { makeDirection } from "../makeDirection";
+import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
-import { isPlayerBetweenEnemies } from "../isPlayerBetweenEnemies";
+import { lineBetween } from "../geometry/lineBetween";
+import { drawLineBetween } from "../drawLine";
+import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
 
 const attackerHealth: number = 1200;
 const shooterHealth: number = 800;
@@ -18,20 +20,6 @@ let attackerCounterReset: number = 50;
 let shooterCounterReset: number = 50;
 
 let turnIndex: number = 0;
-
-const lineBetween = (ctx, attackerTwin, shooterTwin) => {
-  ctx.beginPath();
-  ctx.moveTo(attackerTwin.pos.x, attackerTwin.pos.y);
-  ctx.lineTo(shooterTwin.pos.x, shooterTwin.pos.y);
-  ctx.stroke();
-
-  if (isPlayerBetweenEnemies(attackerTwin, shooterTwin, player)) {
-    const direction = makeDirection(attackerTwin.pos, shooterTwin.pos);
-
-    attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
-    attackerTwin.phaseCounter = 10000;
-  }
-};
 
 const attackerCollideShooter = (attackerTwin, shooterTwin) => {
   if (
@@ -212,7 +200,13 @@ export const createTwinBoss = () => {
     aiMovement: () => {},
     update: (ctx): void => {
       if (shooterTwin.health > 0) {
-        lineBetween(ctx, attackerTwin, shooterTwin);
+        drawLineBetween(ctx, attackerTwin.pos, shooterTwin.pos);
+
+        if (isPlayerBetweenEnemies(attackerTwin.pos, shooterTwin.pos, player)) {
+          const direction = makeDirection(attackerTwin.pos, attackerTwin.pos);
+          attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
+          attackerTwin.phaseCounter = 10000;
+        }
       } else if (!attackerTwin.rageMode) {
         attackerTwin.rageMode = true;
         attackerTwin.speed *= 2;

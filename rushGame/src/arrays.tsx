@@ -11,9 +11,11 @@ import { generateRewards } from "./generateRewards";
 import { randomArrayElementSplice } from "./randomArrayElement";
 import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
+import { createLineBreakerBoss } from "./bosses/lineBreaker";
 
 export let entities = [];
 export let bullets = [];
+export const squares = [];
 
 const firstWave = [
   // createSprayerBoss,
@@ -21,6 +23,7 @@ const firstWave = [
   // createRainerBoss,
   // createBonkerBoss,
   // createTwinBoss,
+  createLineBreakerBoss,
 ];
 const secondWave = [
   createSprayerBoss,
@@ -110,3 +113,11 @@ export const checkArrayRemoval = (ctx) => {
     }
   });
 };
+
+// goTo.tsx:29 timeToReach 100
+// goTo.tsx:30 newSpeed 9.859287146093175
+// goTo.tsx:31 Time in sek 100000
+
+// timeToReach 100
+// goTo.tsx:30 newSpeed 5.8
+// goTo.tsx:31 Time in sek 100000

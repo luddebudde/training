@@ -1,4 +1,4 @@
-import { dot, sub } from "./math";
+import { dot, sub } from "../math";
 
 export function doCirclesOverlap(circle1, circle2) {
   const minDist = circle1.radius + circle2.radius;

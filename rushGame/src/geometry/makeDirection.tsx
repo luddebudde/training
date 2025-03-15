@@ -1,4 +1,4 @@
-import { Vec2 } from "./math";
+import { Vec2 } from "../math";
 
 export const makeDirection = (mainObject: Vec2, secondObject: Vec2) => {
   const diff = {

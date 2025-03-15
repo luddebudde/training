@@ -2,7 +2,7 @@ import { entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { player } from "../createPlayer";
 
-import { makeDirection } from "../makeDirection";
+import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
 
 const health = 15;

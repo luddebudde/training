@@ -1,5 +1,5 @@
 import { player } from "./createPlayer";
-import { makeDirection } from "./makeDirection";
+import { makeDirection } from "./geometry/makeDirection";
 import { multVar, Vec2 } from "./math";
 
 type Bullet = {
