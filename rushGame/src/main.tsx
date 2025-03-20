@@ -17,6 +17,8 @@ import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { dealDamage } from "./dealDamage";
 import { isPointInsideArea } from "./geometry/isInsideRectangle";
+import { drawCircle } from "./draw/drawCircle";
+import { drawSquare } from "./draw/drawSquare";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -55,6 +57,18 @@ export const calculateFPS = () => {
 export let fps;
 export let deltaTime;
 
+const square = {
+  x: 800,
+  y: 800,
+  width: 200,
+  height: 200,
+  color: "red",
+};
+
+const squares = [];
+
+squares.push(square);
+
 const update = () => {
   ctx.beginPath();
   ctx.rect(0, 0, world.width, world.height);
@@ -63,6 +77,16 @@ const update = () => {
 
   [fps, deltaTime] = calculateFPS();
   // console.log(fps, deltaTime);
+
+  squares.forEach((square) => {
+    // ctx.rotate((20 * Math.PI) / 180);
+    drawSquare(ctx, square);
+    // ctx.rotate(-(20 * Math.PI) / 180);
+    if (isPointInsideArea(player.pos, square, player.radius)) {
+      // console.log("is inside");
+      player.vel = multVar(player.vel, -1);
+    }
+  });
 
   player.speed =
     player.standardspeed *
@@ -101,7 +125,7 @@ const update = () => {
       entity.pos.y = entity.radius;
     }
 
-    entity?.update?.(ctx, deltaTime);
+    entity?.update?.(ctx);
 
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
@@ -117,10 +141,7 @@ const update = () => {
       }
     });
 
-    ctx.beginPath();
-    ctx.arc(entity.pos.x, entity.pos.y, entity.radius, 0, 2 * Math.PI);
-    ctx.fillStyle = entity.color;
-    ctx.fill();
+    drawCircle(ctx, entity);
   });
 
   bullets.forEach((bullet, index) => {
@@ -129,7 +150,7 @@ const update = () => {
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity)) {
         if (bullet.team !== entity.team) {
-          dealDamage(bullet, entity, bullet.damage);
+          dealDamage(bullet.shooter, entity, bullet.damage);
 
           bullets.splice(index, 1);
         }
@@ -138,10 +159,7 @@ const update = () => {
         }
       }
 
-      ctx.beginPath();
-      ctx.arc(bullet.pos.x, bullet.pos.y, bullet.radius, 0, 2 * Math.PI);
-      ctx.fillStyle = bullet.color;
-      ctx.fill();
+      drawCircle(ctx, bullet);
     });
 
     if (bullet.pos.x > world.width - bullet.radius) {
@@ -178,24 +196,6 @@ const update = () => {
     }
   });
 
-  // squares.forEach((rect) => {
-  //   if (
-  //     isPointInsideArea(
-  //       player.pos.x,
-  //       player.pos.y,
-  //       rect.pos.x,
-  //       rect.pos.y,
-  //       rect.width,
-  //       rect.height
-  //     ) === true
-  //   ) {
-  //     player.vel = multVar(player.vel, -1);
-  //   }
-  //   ctx.beginPath();
-  //   ctx.rect(rect.pos.x, rect.pos.y, rect.width, rect.height);
-  //   ctx.stroke();
-  // });
-
   drawHealthBar(
     ctx,
     player.pos.x - player.radius,
@@ -206,7 +206,7 @@ const update = () => {
     player.maxHealth
   );
 
-  if (liveBosses.length > 0) {
+  if (liveBosses.length > 0 && player.unlockedAbilities.autoDamage > 0) {
     dealDamage(player, liveBosses[0], player.unlockedAbilities.autoDamage);
   }
 

@@ -24,6 +24,10 @@ type Charger = {
   speed: number;
   team: string;
   mass: number;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   collision: true;
   airFriction: boolean;
 
@@ -53,6 +57,10 @@ export const createChargerBoss = () => {
     speed: 50,
     team: "enemy",
     mass: 1000,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     collision: true,
     airFriction: false,
 

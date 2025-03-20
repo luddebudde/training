@@ -29,6 +29,10 @@ type Sprayer = {
   speed: number;
   team: string;
   mass: number;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   collision: true;
   airFriction: boolean;
 
@@ -74,7 +78,11 @@ export const createSprayerBoss = () => {
     team: "enemy",
     mass: 1000,
 
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     collision: true,
+    airFriction: true,
 
     // Pahses
     phaseCounter: 10,
@@ -321,7 +329,6 @@ export const createSprayerBoss = () => {
         );
       }
     },
-    airFriction: true,
   };
 
   entities.push(sprayer);

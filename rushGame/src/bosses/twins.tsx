@@ -66,6 +66,10 @@ type AttackerTwin = {
   speed: number;
   team: String;
   mass: number;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   collision: true;
   airFriction: false;
 
@@ -91,6 +95,10 @@ type AttackerTwin = {
     speed: number;
     team: string;
     mass: number;
+
+    damageConflicted: number;
+    absorbedDamage: number;
+
     airFriction: false;
     collision: true;
     // update: () => void;
@@ -119,6 +127,10 @@ type ShooterTwin = {
   speed: number;
   team: String;
   mass: number;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   collision: true;
   airFriction: number | boolean;
 
@@ -168,11 +180,15 @@ export const createTwinBoss = () => {
     speed: 15,
     team: "enemy",
     mass: 1000,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     collision: true,
+    airFriction: false,
 
     // Pahses
     phaseCounter: attackerCounterReset,
-    airFriction: false,
     activatedSmallObject: false,
     rageMode: false,
 
@@ -193,6 +209,10 @@ export const createTwinBoss = () => {
       speed: 40,
       team: "enemy",
       mass: 150,
+
+      damageConflicted: 0,
+      absorbedDamage: 0,
+
       airFriction: false,
       collision: true,
     },
@@ -286,6 +306,10 @@ export const createTwinBoss = () => {
     speed: 0.5,
     team: "enemy",
     mass: 100,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     airFriction: 0.5,
     collision: true,
 

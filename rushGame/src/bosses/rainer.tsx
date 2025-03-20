@@ -46,6 +46,10 @@ type Rainer = {
   speed: number;
   team: string;
   mass: number;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   collision: true;
   airFriction: false;
 
@@ -78,6 +82,10 @@ export const createRainerBoss = () => {
     speed: speed,
     team: "enemy",
     mass: 1000,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     collision: true,
     airFriction: false,
 

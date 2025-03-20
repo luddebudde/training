@@ -12,6 +12,7 @@ import { randomArrayElementSplice } from "./randomArrayElement";
 import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
 import { createLineBreakerBoss } from "./bosses/lineBreaker";
+import { createLargeSquareBoss } from "./bosses/squareBoss";
 
 export let entities = [];
 export let bullets = [];
@@ -23,7 +24,8 @@ const firstWave = [
   // createRainerBoss,
   // createBonkerBoss,
   // createTwinBoss,
-  createLineBreakerBoss,
+  // createLineBreakerBoss,
+  createLargeSquareBoss,
 ];
 const secondWave = [
   createSprayerBoss,

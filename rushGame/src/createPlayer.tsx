@@ -23,6 +23,10 @@ export type Player = {
   standardAttackDelay: number;
   bulletDamage: number;
   team: string;
+
+  damageConflicted: number;
+  absorbedDamage: number;
+
   unlockedAbilities: {
     dash: boolean;
     bounceable: boolean;
@@ -32,6 +36,7 @@ export type Player = {
     adrenaline: number;
     autoDamage: number;
   };
+
   airFriction: true;
   collision: true;
 };
@@ -65,6 +70,10 @@ export const createPlayer = (): any => {
     attackDelay: playerAttackDelay,
     standardAttackDelay: playerAttackDelay,
     bulletDamage: 10,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
     unlockedAbilities: {
       dash: true,
       bounceable: false,
@@ -74,6 +83,7 @@ export const createPlayer = (): any => {
       bonusLife: false,
       bonusLifeCount: 0,
     },
+
     airFriction: true,
     collision: true,
   };

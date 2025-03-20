@@ -43,3 +43,7 @@ export const divVar = (firstVec: Vec2, secondValue: number) => ({
 export const dot = (firstObj: Vec2, secondObj: Vec2) => {
   return firstObj.x * secondObj.x + firstObj.y * secondObj.y;
 };
+
+export const useMathFunction = (vec: Vec2, round: () => void) => {
+  return { x: Math.round(vec.x), y: Math.round(vec.y) };
+};

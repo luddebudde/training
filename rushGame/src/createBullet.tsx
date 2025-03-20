@@ -49,8 +49,8 @@ export const createBullet = (
   advanced: Advanced | {} = {}
 ) => {
   const finalAdvanced = {
-    startPos: { x: 0, y: 0 },
-    team: "",
+    startPos: undefined,
+    team: undefined,
     bulletRadius: 20,
     targetVec: {
       x: player.pos.x,
@@ -67,8 +67,10 @@ export const createBullet = (
     ...mods,
   };
 
-  const startPos = shooter !== undefined ? shooter.pos : finalAdvanced.startPos;
-  const bulletTeam = shooter !== undefined ? shooter.team : finalAdvanced.team;
+  const startPos =
+    finalAdvanced.startPos === undefined ? shooter.pos : finalAdvanced.startPos;
+  const bulletTeam =
+    finalAdvanced.team === undefined ? shooter.team : finalAdvanced.team;
   const bulletRadius =
     finalAdvanced.bulletRadius !== undefined ? finalAdvanced.bulletRadius : 20;
 
@@ -77,8 +79,11 @@ export const createBullet = (
   }
 
   const targetPos = target !== undefined ? target : finalAdvanced.targetVec;
+
   const direction = makeDirection(startPos, targetPos);
   const newVel = multVar(direction, speed);
+
+  // console.log(bulletTeam);
 
   const bullet: Bullet = {
     shooter: shooter,

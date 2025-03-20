@@ -1,22 +1,24 @@
-import { bullets, entities, liveBosses, squares } from "../arrays";
+import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { dealDamage } from "../dealDamage";
 import { drawLineBetween as drawLine } from "../drawLine";
-import { isPointInsideArea } from "../geometry/isInsideRectangle";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
-import { lineBetween } from "../geometry/lineBetween";
-import { makeDirection } from "../geometry/makeDirection";
-import { goTo } from "../goTo";
-import { fps } from "../main";
-import { add, multVar } from "../math";
+
+import { add, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
-const health = 150;
+const health = 1500;
 const radius = 80;
 
-const XLine = {
+type Line = {
+  pos: Vec2;
+  endPos: Vec2;
+  color: string;
+  speed: number;
+};
+
+const XLine: Line = {
   pos: {
     x: 0,
     y: 0,
@@ -29,7 +31,7 @@ const XLine = {
   speed: 5,
 };
 
-const YLine = {
+const YLine: Line = {
   pos: {
     x: 0,
     y: 0,
@@ -42,112 +44,183 @@ const YLine = {
   speed: 5,
 };
 
-// type Charger = {
-//   maxHealth: number;
-//   health: number;
-//   contactDamage: number;
-//   pos: {
-//     x: number;
-//     y: number;
-//   };
-//   vel: {
-//     x: number;
-//     y: number;
-//   };
-//   radius: number;
-//   color: string;
-//   speed: number;
-//   team: string;
-//   mass: number;
-//   collision: true;
-//   airFriction: boolean;
+type LineBreaker = {
+  maxHealth: number;
+  health: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  color: string;
+  speed: number;
+  team: string;
+  mass: number;
 
-//   // Pahses
-//   phaseCounter: number;
+  damageConflicted: number;
+  absorbedDamage: number;
 
-//   update: () => void;
-//   // deathAnimation: (ctx, liveBosses, bossIndex) => void;
-//   onWallBounce: () => void;
-// };
+  collision: true;
+  airFriction: boolean;
 
-const aimAi = (ctx, braker) => {
-  XLine.pos.x = player.pos.x;
-  YLine.pos.y = player.pos.y;
+  // Pahses
+  phaseCounter: number;
+  linePhase: {
+    counter: number;
+  };
+  lines: Line[];
+  shootVecs: Vec2[];
+  shootingPhaseActive: boolean;
+  phaseList: [linePhase, patternPhase];
+  rageMode: boolean;
+  rageModeBulletCounter: number;
 
-  braker.shootVecs.forEach((position) => {
-    drawLine(ctx, add(braker.pos, position), player.pos);
-  });
+  ai: (ctx, braker) => void;
+  update: (ctx) => void;
+  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
+  onWallBounce: () => void;
 };
 
-const YLineAi = (ctx, braker) => {
-  // const currentLine = braker.YLine;
-  YLine.pos.y += YLine.speed;
+const linePhase = (ctx, braker): void => {
+  braker.lines.splice(0, braker.lines.length);
 
-  XLine.pos.x = player.pos.x;
+  const newXLine = { ...XLine };
+  const newYLine = { ...YLine };
+  braker.lines.push(newXLine);
+  braker.lines.push(newYLine);
 
-  drawLine(ctx, YLine.pos, {
-    x: world.width,
-    y: YLine.pos.y,
-  });
-  if (
-    isPlayerBetweenEnemies(
-      YLine.pos,
-      {
-        x: world.width,
-        y: YLine.pos.y,
-      },
-      player
-    )
-  ) {
-    braker.ai = aimAi;
+  braker.ai = () => {
+    const counter = braker.linePhase.counter;
+    if (counter === 0) {
+      // X Line
+      XLine.pos.x += XLine.speed;
+      if (
+        isPlayerBetweenEnemies(
+          XLine.pos,
+          {
+            x: XLine.pos.x,
+            y: world.height,
+          },
+          player
+        )
+      ) {
+        braker.linePhase.counter++;
+      }
+    } else if (counter === 1) {
+      // Y Line
+      YLine.pos.y += YLine.speed;
+      XLine.pos.x = player.pos.x;
 
-    // if (braker.hasShot === false) {
-    console.log(braker.hasShot);
-    braker.hasShot === true;
+      if (
+        isPlayerBetweenEnemies(
+          YLine.pos,
+          {
+            x: world.width,
+            y: YLine.pos.y,
+          },
+          player
+        )
+      ) {
+        braker.linePhase.counter++;
+      }
+    } else if (counter === 2) {
+      // Shooting Phase
+      XLine.pos.x = player.pos.x;
+      YLine.pos.y = player.pos.y;
+
+      braker.shootVecs.forEach((position) => {
+        drawLine(ctx, add(braker.pos, position), player.pos);
+      });
+
+      if (!braker.shootingPhaseActive) {
+        setTimeout(() => {
+          for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+              createBullet(bullets, braker, player.pos, 10, 40);
+
+              if (i === 19) {
+                XLine.pos.x = 0;
+                YLine.pos.y = 0;
+
+                braker.linePhase.counter = 0;
+                braker.ai = () => {};
+
+                setTimeout(() => {
+                  braker.phaseCounter = 0;
+                  braker.shootingPhaseActive = false;
+                }, 1000);
+              }
+            }, 150 * i);
+          }
+        }, 1000);
+      }
+      braker.shootingPhaseActive = true;
+    }
+  };
+};
+
+const patternPhase = (ctx, braker): void => {
+  // goTo(braker, { x: world.width / 2, y: world.height / 2 }, 100);
+  braker.lines.splice(0, braker.lines.length);
+
+  const scale = world.height / world.width;
+
+  const widthCount = 10;
+  const heightCount = widthCount * scale;
+
+  for (let x = 0; x < world.width / widthCount; x++) {
+    const newXLine = { ...XLine };
+    newXLine.pos = { x: (world.width / widthCount) * x, y: 0 };
+
+    braker.lines.push(newXLine);
+  }
+
+  for (let y = 0; y < world.height / heightCount; y++) {
+    const newYLine = { ...YLine };
+    newYLine.pos = { x: 0, y: (world.height / heightCount) * y };
+
+    braker.lines.push(newYLine);
+  }
+
+  const bulletSpeed = 21;
+
+  setTimeout(() => {
+    braker.lines.forEach((line) => {
+      console.log(line.endPos);
+      createBullet(
+        bullets,
+        braker,
+        add(line.pos, line.endPos),
+        30,
+        bulletSpeed,
+        {},
+        {
+          startPos: {
+            x: line.pos.x > 0 ? line.pos.x : 0,
+            y: line.pos.y > 0 ? line.pos.y : 0,
+          },
+        }
+      );
+    });
 
     setTimeout(() => {
-      for (let i = 0; i < 120; i++) {
-        setTimeout(() => {
-          createBullet(bullets, braker, player.pos, 10, 40);
-          console.log(250 * i - i * 6);
-        }, 150 * i);
-      }
-    }, 1000);
-    // }
-  }
-};
+      braker.phaseCounter = 0;
 
-const XLineAi = (ctx, braker) => {
-  // const currentLine = braker.XLine;
-  XLine.pos.x += XLine.speed;
-
-  // drawLine(ctx, XLine.pos, {
-  //   x: XLine.pos.x,
-  //   y: world.height,
-  // });
-  if (
-    isPlayerBetweenEnemies(
-      XLine.pos,
-      {
-        x: XLine.pos.x,
-        y: world.height,
-      },
-      player
-    )
-  ) {
-    braker.ai = YLineAi;
-  }
-};
-
-const shootPhase = (ctx, braker, fps) => {
-  goTo(braker, { x: world.width / 2, y: world.height / 2 }, 10, fps);
+      console.log(braker.lines);
+    }, (world.width / bulletSpeed) * 15);
+  }, 1000);
 };
 
 export const createLineBreakerBoss = () => {
-  const braker = {
+  const braker: LineBreaker = {
     maxHealth: health,
     health: health,
-    contactDamage: 0,
+    contactDamage: 5,
     pos: {
       x: world.width / 2,
       y: radius,
@@ -158,14 +231,21 @@ export const createLineBreakerBoss = () => {
     },
     radius: radius,
     color: "purple",
-    speed: 50,
+    speed: 25,
     team: "enemy",
     mass: 1000,
-    collision: false,
+
+    damageConflicted: 0,
+    absorbedDamage: 0,
+
+    collision: true,
     airFriction: false,
 
     // Pahses
-    phaseCounter: 10,
+    phaseCounter: 0,
+    linePhase: {
+      counter: 0,
+    },
     lines: [XLine, YLine],
     shootVecs: [
       // Up
@@ -177,35 +257,43 @@ export const createLineBreakerBoss = () => {
       // Right
       { x: -radius, y: 0 },
     ],
-    hasShot: false,
-    phaseList: [shootPhase],
+    shootingPhaseActive: false,
+    phaseList: [linePhase, patternPhase],
+    rageMode: false,
+    rageModeBulletCounter: 0,
 
     ai: (ctx, braker) => {},
-    update: (ctx, fps): void => {
-      braker.phaseCounter--;
-
+    update: (ctx): void => {
       braker.ai(ctx, braker);
+
+      if (braker.health < braker.maxHealth / 2) {
+        if (!braker.rageMode) {
+          braker.vel.x = braker.speed;
+          braker.rageMode = true;
+        }
+
+        braker.rageModeBulletCounter++;
+        if (braker.rageModeBulletCounter % 10 === 0) {
+          createBullet(
+            bullets,
+            braker,
+            { x: braker.pos.x, y: world.height },
+            6,
+            10
+          );
+        }
+      }
 
       braker.lines.forEach((line) => {
         drawLine(ctx, line.pos, add(line.endPos, line.pos));
       });
 
-      if (braker.phaseCounter < 0) {
-        randomArrayElement(braker.phaseList)(ctx, braker, fps);
+      if (braker.phaseCounter <= 0) {
+        randomArrayElement(braker.phaseList)(ctx, braker);
 
-        // braker.ai = XLineAi;
-        // nextPhase(ctx, braker);
-        braker.phaseCounter = 1000000000;
+        braker.phaseCounter = 100;
       }
     },
-
-    // deathAnimation: (ctx, liveBosses, bossIndex) => {},
-    // onWallBounce: () => {
-    //   //   charger.vel = { x: 0, y: 0 };
-    //   braker.airFriction = true;
-
-    //   braker.phaseCounter = 100;
-    // },
   };
 
   entities.push(braker);
