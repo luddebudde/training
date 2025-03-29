@@ -48,8 +48,8 @@ export const createLargeSquareBoss = () => {
     },
     // deathAnimation: (ctx, liveBosses, bossIndex) => {},
     onWallBounce: () => {
-      //   smallCube.airFriction = true;
-      //   smallCube.phaseCounter = 100;
+      // smallCube.airFriction = true;
+      // smallCube.phaseCounter = 50;
     },
   };
 

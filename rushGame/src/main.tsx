@@ -1,5 +1,5 @@
 import { keyDownTracker } from "./keyDownTracker";
-import { add, multVar } from "./math";
+import { add, mult, multVar } from "./math";
 import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
@@ -19,6 +19,7 @@ import { dealDamage } from "./dealDamage";
 import { isPointInsideArea } from "./geometry/isInsideRectangle";
 import { drawCircle } from "./draw/drawCircle";
 import { drawSquare } from "./draw/drawSquare";
+import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -63,6 +64,7 @@ const square = {
   width: 200,
   height: 200,
   color: "red",
+  rotation: 0.3 * Math.PI,
 };
 
 const squares = [];
@@ -77,16 +79,6 @@ const update = () => {
 
   [fps, deltaTime] = calculateFPS();
   // console.log(fps, deltaTime);
-
-  squares.forEach((square) => {
-    // ctx.rotate((20 * Math.PI) / 180);
-    drawSquare(ctx, square);
-    // ctx.rotate(-(20 * Math.PI) / 180);
-    if (isPointInsideArea(player.pos, square, player.radius)) {
-      // console.log("is inside");
-      player.vel = multVar(player.vel, -1);
-    }
-  });
 
   player.speed =
     player.standardspeed *
@@ -141,8 +133,30 @@ const update = () => {
       }
     });
 
+    squares.forEach((square) => {
+      drawSquare(ctx, square);
+
+      // isPointInsideArea(entity, square, entity.radius);
+
+      // console.log();
+
+      if (collideCircleWithRotatedRectangle(ctx, entity, square)) {
+        // entity.vel = multVar(entity.vel, -1);
+      }
+
+      // if (returnedObject.collision) {
+      //   entity.vel = mult(entity.vel, returnedObject);
+      //   // console.log(returnedObject);
+
+      //   // console.log("is inside");
+      //   // entity.vel = multVar(entity.vel, -1);
+      // }
+    });
+
     drawCircle(ctx, entity);
   });
+
+  // console.log(entities);
 
   bullets.forEach((bullet, index) => {
     bullet.pos = add(bullet.pos, bullet.vel);
