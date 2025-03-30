@@ -25,7 +25,7 @@ const firstWave = [
   // createBonkerBoss,
   // createTwinBoss,
   // createLineBreakerBoss,
-  createLargeSquareBoss,
+  // createLargeSquareBoss,
 ];
 const secondWave = [
   createSprayerBoss,

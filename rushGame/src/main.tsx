@@ -11,7 +11,6 @@ import {
   entities,
   liveBosses,
   nextBoss,
-  squares,
 } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
@@ -19,7 +18,10 @@ import { dealDamage } from "./dealDamage";
 import { isPointInsideArea } from "./geometry/isInsideRectangle";
 import { drawCircle } from "./draw/drawCircle";
 import { drawSquare } from "./draw/drawSquare";
-import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
+import {
+  changeDirection,
+  collideCircleWithRotatedRectangle,
+} from "./geometry/checkRotatedRectangleCollision";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -64,7 +66,7 @@ const square = {
   width: 200,
   height: 200,
   color: "red",
-  rotation: 0.3 * Math.PI,
+  rotation: 0.1 * Math.PI,
 };
 
 const squares = [];
@@ -134,7 +136,7 @@ const update = () => {
     });
 
     squares.forEach((square) => {
-      drawSquare(ctx, square);
+      // drawSquare(ctx, square);
 
       // isPointInsideArea(entity, square, entity.radius);
 
@@ -142,6 +144,7 @@ const update = () => {
 
       if (collideCircleWithRotatedRectangle(ctx, entity, square)) {
         // entity.vel = multVar(entity.vel, -1);
+        // changeDirection(ctx, entity, square);
       }
 
       // if (returnedObject.collision) {

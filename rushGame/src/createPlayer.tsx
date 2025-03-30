@@ -43,7 +43,7 @@ export type Player = {
 
 const health = 100;
 
-const playerSpeed = 0.5;
+const playerSpeed = 1;
 
 const playerAttackDelay = 10;
 

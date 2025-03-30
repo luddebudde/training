@@ -22,7 +22,7 @@ export const createLargeSquareBoss = () => {
       x: 0,
       y: 0,
     },
-    radius: 120,
+    radius: 1.2,
     color: "purple",
     speed: 50,
     team: "enemy",
