@@ -18,7 +18,7 @@ export type Player = {
   color: string;
   mass: number;
   speed: number;
-  standardspeed: number;
+  standardSpeed: number;
   attackDelay: number;
   standardAttackDelay: number;
   bulletDamage: number;
@@ -65,7 +65,7 @@ export const createPlayer = (): any => {
     color: "blue",
     mass: 0.1,
     speed: playerSpeed,
-    standardspeed: playerSpeed,
+    standardSpeed: playerSpeed,
     team: "player",
     attackDelay: playerAttackDelay,
     standardAttackDelay: playerAttackDelay,

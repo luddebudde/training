@@ -9,19 +9,18 @@ import {
   bullets,
   checkArrayRemoval,
   entities,
+  lines,
   liveBosses,
   nextBoss,
+  squares,
 } from "./arrays";
 import { drawHealthBar } from "./drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { dealDamage } from "./dealDamage";
-import { isPointInsideArea } from "./geometry/isInsideRectangle";
 import { drawCircle } from "./draw/drawCircle";
 import { drawSquare } from "./draw/drawSquare";
-import {
-  changeDirection,
-  collideCircleWithRotatedRectangle,
-} from "./geometry/checkRotatedRectangleCollision";
+import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
+import { drawLine } from "./draw/drawLine";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -65,13 +64,11 @@ const square = {
   y: 800,
   width: 200,
   height: 200,
-  color: "red",
-  rotation: 0.1 * Math.PI,
+  color: "white",
+  rotation: 0 * Math.PI,
 };
 
-const squares = [];
-
-squares.push(square);
+// squares.push(square);
 
 const update = () => {
   ctx.beginPath();
@@ -83,7 +80,7 @@ const update = () => {
   // console.log(fps, deltaTime);
 
   player.speed =
-    player.standardspeed *
+    player.standardSpeed *
     (1 +
       player.unlockedAbilities.adrenaline *
         (1 - player.health / player.maxHealth));
@@ -134,32 +131,20 @@ const update = () => {
         }
       }
     });
-
+    // console.log(squares);
     squares.forEach((square) => {
-      // drawSquare(ctx, square);
-
-      // isPointInsideArea(entity, square, entity.radius);
-
-      // console.log();
+      drawSquare(ctx, square);
 
       if (collideCircleWithRotatedRectangle(ctx, entity, square)) {
-        // entity.vel = multVar(entity.vel, -1);
-        // changeDirection(ctx, entity, square);
       }
-
-      // if (returnedObject.collision) {
-      //   entity.vel = mult(entity.vel, returnedObject);
-      //   // console.log(returnedObject);
-
-      //   // console.log("is inside");
-      //   // entity.vel = multVar(entity.vel, -1);
-      // }
     });
 
     drawCircle(ctx, entity);
   });
 
-  // console.log(entities);
+  lines.forEach((line) => {
+    drawLine(ctx, line.startPos, line.endPos, line.color);
+  });
 
   bullets.forEach((bullet, index) => {
     bullet.pos = add(bullet.pos, bullet.vel);

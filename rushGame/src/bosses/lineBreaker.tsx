@@ -2,7 +2,7 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { drawLineBetween as drawLine } from "../drawLine";
+import { drawLine as drawLine } from "../draw/drawLine";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
 
 import { add, Vec2 } from "../math";
@@ -134,7 +134,7 @@ const linePhase = (ctx, braker): void => {
       YLine.pos.y = player.pos.y;
 
       braker.shootVecs.forEach((position) => {
-        drawLine(ctx, add(braker.pos, position), player.pos);
+        drawLine(ctx, add(braker.pos, position), player.pos, "black");
       });
 
       if (!braker.shootingPhaseActive) {
@@ -285,7 +285,7 @@ export const createLineBreakerBoss = () => {
       }
 
       braker.lines.forEach((line) => {
-        drawLine(ctx, line.pos, add(line.endPos, line.pos));
+        drawLine(ctx, line.pos, add(line.endPos, line.pos), "black");
       });
 
       if (braker.phaseCounter <= 0) {

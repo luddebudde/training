@@ -1,12 +1,5 @@
-import { entities, liveBosses } from "../arrays";
-import { world } from "../basics";
-import { player } from "../createPlayer";
-
-import { makeDirection } from "../geometry/makeDirection";
-import { multVar } from "../math";
-
+// Boss 1
 const health = 15;
-
 export const createLargeSquareBoss = () => {
   for (let i = 0; i < 4; i++) {
     const smallCube = {
@@ -60,3 +53,27 @@ export const createLargeSquareBoss = () => {
     liveBosses.push(smallCube);
   }
 };
+
+
+// Boss 2
+for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const angle = (i / 50) * Math.PI * 2;
+          const target: Vec2 = {
+            x: rect4.x + Math.cos(angle) * 100,
+            y: rect4.y + Math.sin(angle) * 100,
+          };
+
+          // console.log(target);
+
+          createBullet(
+            bullets,
+            rect4,
+            target,
+            1,
+            20,
+            {},
+            { startPos: rectPos }
+          );
+        }, 150 * i);
+      }

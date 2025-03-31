@@ -56,67 +56,80 @@ export function collideCircleWithRotatedRectangle(ctx, circle, rect) {
   const pointA = { x: rectReferenceX, y: rectReferenceY };
   const pointB = { x: rect.width, y: rect.y };
   const pointC = { x: rect.x, y: rect.height };
-  const pointD = { x: rect.width, y: rect.height };
+  const pointD = {
+    x: rectReferenceX + rect.width,
+    y: rectReferenceY + rect.height,
+  };
 
   const points = [pointA, pointB, pointC, pointD];
 
-  ctx.beginPath();
-  ctx.arc(closestX, closestY, 10, 0, 2 * Math.PI);
-  ctx.fillStyle = "black";
-  ctx.fill();
-
   ctx.save();
-  ctx.translate(rectCenterX, rectCenterY);
+  ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
   ctx.rotate(-rect.rotation); // Rotation i radianer, utan att multiplicera med Math.PI / 180
 
-  ctx.beginPath();
-  ctx.rect(-rect.width / 2, -rect.height / 2, rect.width, rect.height);
-  ctx.fillStyle = "green";
-  ctx.fill();
-
   // ctx.beginPath();
-  // ctx.arc(
-  //   closestX - rect.x - rect.width / 2,
-  //   closestY - rect.y - rect.height / 2,
-  //   10,
-  //   0,
-  //   2 * Math.PI
-  // );
+  // ctx.arc(closestX, closestY, 10, 0, 2 * Math.PI);
   // ctx.fillStyle = "black";
   // ctx.fill();
 
-  isPointInsideArea(
-    ctx,
-    circle,
-    {
-      x: -rect.width / 2,
-      y: -rect.height / 2,
-      width: rect.width,
-      height: rect.height,
-      rotation: 1,
-    },
-    circle.radius
-  );
-
   ctx.beginPath();
-  ctx.arc(-rect.width / 2, -rect.height / 2, 10, 0, 2 * Math.PI);
+  ctx.arc(
+    closestX - rect.x - rect.width / 2,
+    closestY - rect.y - rect.height / 2,
+    10,
+    0,
+    2 * Math.PI
+  );
   ctx.fillStyle = "black";
   ctx.fill();
+
+  // isPointInsideArea(
+  //   ctx,
+  //   circle,
+  //   {
+  //     x: -rect.width / 2,
+  //     y: -rect.height / 2,
+  //     width: rect.width,
+  //     height: rect.height,
+  //     rotation: 1,
+  //   },
+  //   circle.radius
+  // );
+
+  // ctx.beginPath();
+  // ctx.arc(-rect.width / 2, -rect.height / 2, 10, 0, 2 * Math.PI);
+  // ctx.fillStyle = "black";
+  // ctx.fill();
 
   ctx.restore();
 
   if (distance < circle.radius) {
     collision = true;
+    // console.log("Colloding with rectangle");
+
+    // circle.vel = multVar(circle.vel, -1);
 
     let alpha: number;
 
     if (closestX === pointA.x || closestX === pointD.x) {
       // Horizontal === 1 (Horizontal)
-      alpha = -Math.PI * 0.5;
+      alpha = Math.PI * 1.5;
     } else {
       // Horizontal === 0 (Vertical)
       alpha = Math.PI * 0;
     }
+
+    // points.forEach((point) => {
+    //   if (point.x === closestX || point.y === closestY) {
+    //     if (Math.abs(circle.vel.y) < Math.abs(circle.vel.x)) {
+    //       alpha = Math.PI * 1.5;
+    //     } else {
+    //       alpha = Math.PI * 0;
+    //     }
+    //     // alpha =
+    //   }
+    // });
+
     const tmp: Vec2 = {
       x:
         Math.cos(rect.rotation + alpha) * circle.vel.x -
@@ -135,59 +148,11 @@ export function collideCircleWithRotatedRectangle(ctx, circle, rect) {
     circle.vel.y =
       Math.sin(-rect.rotation - alpha) * tmp.x +
       Math.cos(-rect.rotation - alpha) * tmp.y;
+
+    circle.pos = add(circle.pos, circle.vel);
   } else {
     collision = false;
   }
 
   return collision;
 }
-
-// export const changeDirection = (ctx, entity, rect) => {
-//   const tmp: Vec2 = {
-//     x:
-//       Math.cos(rect.rotation) * entity.vel.x -
-//       Math.sin(rect.rotation) * entity.vel.y,
-//     y:
-//       Math.sin(rect.rotation) * entity.vel.x +
-//       Math.cos(rect.rotation) * entity.vel.y,
-//   };
-
-//   tmp.y = -tmp.y;
-
-//   entity.vel.x =
-//     Math.cos(-rect.rotation) * tmp.x - Math.sin(-rect.rotation) * tmp.y;
-
-//   entity.vel.y =
-//     Math.sin(-rect.rotation) * tmp.x + Math.cos(-rect.rotation) * tmp.y;
-// };
-
-// export function bounceCircleWithAngle(circle, closestPoint) {
-//   // Beräkna infallsvinkeln utifrån cirkelns hastighet
-//   const incidenceAngle = Math.atan2(circle.vel.y, circle.vel.x);
-//   // Beräkna normalens vinkel från closestPoint till cirkelns centrum
-//   const normalAngle = Math.atan2(
-//     circle.pos.y - closestPoint.y,
-//     circle.pos.x - closestPoint.x
-//   );
-//   // Reflektionsvinkel: spegla infallsvinkeln kring normalen
-//   const reflectionAngle = 2 * normalAngle - incidenceAngle;
-
-//   // Behåll farten (magnituden)
-//   const speed = Math.sqrt(
-//     circle.vel.x * circle.vel.x + circle.vel.y * circle.vel.y
-//   );
-//   circle.vel.x = speed * Math.cos(reflectionAngle);
-//   circle.vel.y = speed * Math.sin(reflectionAngle);
-
-//   // Korrigera positionen så att cirkeln inte fastnar i rektangeln
-//   const normalX = circle.pos.x - closestPoint.x;
-//   const normalY = circle.pos.y - closestPoint.y;
-//   const dist = Math.sqrt(normalX * normalX + normalY * normalY);
-//   if (dist < circle.radius) {
-//     const penetration = circle.radius - dist;
-//     circle.pos.x += (normalX / dist) * (penetration + 0.1);
-//     circle.pos.y += (normalY / dist) * (penetration + 0.1);
-
-//     circle.pos = add(circle.pos, circle.vel);
-//   }
-// }

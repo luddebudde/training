@@ -17,6 +17,7 @@ import { createLargeSquareBoss } from "./bosses/squareBoss";
 export let entities = [];
 export let bullets = [];
 export const squares = [];
+export const lines = [];
 
 const firstWave = [
   // createSprayerBoss,
@@ -25,7 +26,7 @@ const firstWave = [
   // createBonkerBoss,
   // createTwinBoss,
   // createLineBreakerBoss,
-  // createLargeSquareBoss,
+  createLargeSquareBoss,
 ];
 const secondWave = [
   createSprayerBoss,

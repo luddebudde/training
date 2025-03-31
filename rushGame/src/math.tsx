@@ -47,3 +47,9 @@ export const dot = (firstObj: Vec2, secondObj: Vec2) => {
 export const useMathFunction = (vec: Vec2, round: () => void) => {
   return { x: Math.round(vec.x), y: Math.round(vec.y) };
 };
+
+export const normalize = (vector) => {
+  const length = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+  if (length === 0) return { x: 0, y: 0 }; // Undvik division med 0
+  return { x: vector.x / length, y: vector.y / length };
+};

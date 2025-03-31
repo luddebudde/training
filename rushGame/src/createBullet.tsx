@@ -52,11 +52,13 @@ export const createBullet = (
     startPos: undefined,
     team: undefined,
     bulletRadius: 20,
+    color: "green",
     targetVec: {
       x: player.pos.x,
       y: player.pos.y,
     },
     onHit: () => {},
+
     ...advanced,
   };
 
@@ -98,7 +100,7 @@ export const createBullet = (
     },
     mass: 1,
     radius: bulletRadius,
-    color: "green",
+    color: finalAdvanced.color,
     team: bulletTeam,
     airFriction: finalMods.airFriction,
     bounceable: finalMods.bounceable,
@@ -109,6 +111,8 @@ export const createBullet = (
     },
   };
   bullets.push(bullet);
+
+  return bullet;
 };
 
 export const createWaveShoot = (
@@ -126,6 +130,7 @@ export const createWaveShoot = (
     startPos: { x: 0, y: 0 },
     team: "",
     bulletRadius: 20,
+    color: "green",
     targetVec: {
       x: player.pos.x,
       y: player.pos.y,
@@ -141,7 +146,16 @@ export const createWaveShoot = (
     ...mods,
   };
 
-  const baseDirection = makeDirection(shooter.pos, target);
+  let bulletArray = [];
+
+  const startPos =
+    finalAdvanced.startPos === undefined ? shooter.pos : finalAdvanced.startPos;
+  const bulletTeam =
+    finalAdvanced.team === undefined ? shooter.team : finalAdvanced.team;
+  const bulletRadius =
+    finalAdvanced.bulletRadius !== undefined ? finalAdvanced.bulletRadius : 10;
+
+  const baseDirection = makeDirection(startPos, target);
   const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
 
   const stepAngle = waveWidth / (bulletsCount - 1);
@@ -159,17 +173,17 @@ export const createWaveShoot = (
       shooter: shooter,
       damage: damage,
       pos: {
-        x: shooter.pos.x,
-        y: shooter.pos.y,
+        x: startPos.x,
+        y: startPos.y,
       },
       vel: {
         x: newVel.x,
         y: newVel.y,
       },
       mass: 1,
-      radius: 10,
-      color: "green",
-      team: shooter.team,
+      radius: bulletRadius,
+      color: finalAdvanced.color,
+      team: bulletTeam,
       airFriction: finalMods.airFriction,
       bounceable: finalMods.bounceable,
       bounceDamageLoss: finalMods.bounceDamageLoss,
@@ -180,5 +194,8 @@ export const createWaveShoot = (
     };
 
     bullets.push(bullet);
+    bulletArray.push(bullet);
   }
+
+  return bulletArray;
 };

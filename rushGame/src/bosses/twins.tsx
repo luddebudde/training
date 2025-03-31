@@ -3,12 +3,11 @@ import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
-import { createChaser } from "../enemies/chaser";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
-import { lineBetween } from "../geometry/lineBetween";
-import { drawLineBetween } from "../drawLine";
+import { drawLine } from "../draw/drawLine";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
+import { createChaser } from "../enemies/chaser";
 
 const attackerHealth: number = 1200;
 const shooterHealth: number = 800;
@@ -220,11 +219,18 @@ export const createTwinBoss = () => {
     aiMovement: () => {},
     update: (ctx): void => {
       if (shooterTwin.health > 0) {
-        drawLineBetween(ctx, attackerTwin.pos, shooterTwin.pos);
+        drawLine(ctx, attackerTwin.pos, shooterTwin.pos, "black");
+
+        // console.log(
+        //   isPlayerBetweenEnemies(attackerTwin.pos, shooterTwin.pos, player)
+        // );
 
         if (isPlayerBetweenEnemies(attackerTwin.pos, shooterTwin.pos, player)) {
-          const direction = makeDirection(attackerTwin.pos, attackerTwin.pos);
+          const direction = makeDirection(attackerTwin.pos, shooterTwin.pos);
           attackerTwin.vel = multVar(direction, attackerTwin.speed * 2);
+
+          // console.log(direction);
+
           attackerTwin.phaseCounter = 10000;
         }
       } else if (!attackerTwin.rageMode) {

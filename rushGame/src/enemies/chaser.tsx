@@ -1,8 +1,8 @@
 import { world } from "../basics";
-import { makeDirection } from "../makeDirection";
 import { add, multVar, Vec2 } from "../math";
 import { player } from "../createPlayer";
 import { entities, liveBosses } from "../arrays";
+import { makeDirection } from "../geometry/makeDirection";
 
 type ChaserEnemy = {
   health: number;
