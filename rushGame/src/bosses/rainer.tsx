@@ -174,6 +174,4 @@ export const createRainerBoss = () => {
   liveBosses.push(rainer);
 
   return rainer;
-  // entities.push(sprayer);
-  // liveBosses.push(sprayer);
 };

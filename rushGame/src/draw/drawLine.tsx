@@ -9,6 +9,6 @@ export const drawLine = (
   ctx.beginPath();
   ctx.moveTo(startPos.x, startPos.y);
   ctx.lineTo(endPos.x, endPos.y);
-  ctx.fillStyle = color;
+  ctx.strokeStyle = color;
   ctx.stroke();
 };

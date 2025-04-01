@@ -18,9 +18,9 @@ export type Player = {
   color: string;
   mass: number;
   speed: number;
-  standardSpeed: number;
+  // standardSpeed: number;
   attackDelay: number;
-  standardAttackDelay: number;
+  // standardAttackDelay: number;
   bulletDamage: number;
   team: string;
 
@@ -65,10 +65,10 @@ export const createPlayer = (): any => {
     color: "blue",
     mass: 0.1,
     speed: playerSpeed,
-    standardSpeed: playerSpeed,
+    // standardSpeed: playerSpeed,
     team: "player",
     attackDelay: playerAttackDelay,
-    standardAttackDelay: playerAttackDelay,
+    // standardAttackDelay: playerAttackDelay,
     bulletDamage: 10,
 
     damageConflicted: 0,
@@ -93,3 +93,5 @@ export const createPlayer = (): any => {
 };
 
 export const player = createPlayer();
+
+export const standardPlayer = structuredClone(player);

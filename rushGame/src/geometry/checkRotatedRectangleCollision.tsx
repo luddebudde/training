@@ -5,7 +5,12 @@ import { add, multVar, Vec2 } from "../math";
 import { isPointInsideArea } from "./isInsideRectangle";
 import { getDistance } from "./makeDirection";
 
-export function collideCircleWithRotatedRectangle(ctx, circle, rect) {
+export function collideCircleWithRotatedRectangle(
+  ctx,
+  circle,
+  rect,
+  shouldBounce = true
+) {
   var rectCenterX = rect.x + rect.width / 2;
   var rectCenterY = rect.y + rect.height / 2;
 
@@ -63,93 +68,70 @@ export function collideCircleWithRotatedRectangle(ctx, circle, rect) {
 
   const points = [pointA, pointB, pointC, pointD];
 
-  ctx.save();
-  ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
-  ctx.rotate(-rect.rotation); // Rotation i radianer, utan att multiplicera med Math.PI / 180
+  // ctx.save();
+  // ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
+  // ctx.rotate(-rect.rotation); // Rotation i radianer, utan att multiplicera med Math.PI / 180
 
   // ctx.beginPath();
-  // ctx.arc(closestX, closestY, 10, 0, 2 * Math.PI);
-  // ctx.fillStyle = "black";
-  // ctx.fill();
-
-  ctx.beginPath();
-  ctx.arc(
-    closestX - rect.x - rect.width / 2,
-    closestY - rect.y - rect.height / 2,
-    10,
-    0,
-    2 * Math.PI
-  );
-  ctx.fillStyle = "black";
-  ctx.fill();
-
-  // isPointInsideArea(
-  //   ctx,
-  //   circle,
-  //   {
-  //     x: -rect.width / 2,
-  //     y: -rect.height / 2,
-  //     width: rect.width,
-  //     height: rect.height,
-  //     rotation: 1,
-  //   },
-  //   circle.radius
+  // ctx.arc(
+  //   closestX - rect.x - rect.width / 2,
+  //   closestY - rect.y - rect.height / 2,
+  //   10,
+  //   0,
+  //   2 * Math.PI
   // );
-
-  // ctx.beginPath();
-  // ctx.arc(-rect.width / 2, -rect.height / 2, 10, 0, 2 * Math.PI);
   // ctx.fillStyle = "black";
   // ctx.fill();
 
-  ctx.restore();
+  // ctx.restore();
 
   if (distance < circle.radius) {
     collision = true;
-    // console.log("Colloding with rectangle");
 
-    // circle.vel = multVar(circle.vel, -1);
+    if (shouldBounce === true) {
+      let alpha: number;
 
-    let alpha: number;
+      if (closestX === pointA.x || closestX === pointD.x) {
+        // Horizontal === 1 (Horizontal)
+        alpha = Math.PI * 1.5;
+      } else {
+        // Horizontal === 0 (Vertical)
+        alpha = Math.PI * 0;
+      }
 
-    if (closestX === pointA.x || closestX === pointD.x) {
-      // Horizontal === 1 (Horizontal)
-      alpha = Math.PI * 1.5;
-    } else {
-      // Horizontal === 0 (Vertical)
-      alpha = Math.PI * 0;
+      points.forEach((point) => {
+        if (point.x === closestX && point.y === closestY) {
+          circle.vel = multVar(circle.vel, -1);
+          // if (Math.abs(circle.vel.y) < Math.abs(circle.vel.x)) {
+          //   alpha = Math.PI * 1.5;
+          // } else {
+          //   alpha = Math.PI * 0;
+          // }
+          // alpha =
+        }
+      });
+
+      const tmp: Vec2 = {
+        x:
+          Math.cos(rect.rotation + alpha) * circle.vel.x -
+          Math.sin(rect.rotation + alpha) * circle.vel.y,
+        y:
+          Math.sin(rect.rotation + alpha) * circle.vel.x +
+          Math.cos(rect.rotation + alpha) * circle.vel.y,
+      };
+
+      tmp.y = -tmp.y;
+
+      circle.vel.x =
+        Math.cos(-rect.rotation - alpha) * tmp.x -
+        Math.sin(-rect.rotation - alpha) * tmp.y;
+
+      circle.vel.y =
+        Math.sin(-rect.rotation - alpha) * tmp.x +
+        Math.cos(-rect.rotation - alpha) * tmp.y;
+
+      circle.pos = add(circle.pos, circle.vel);
     }
-
-    // points.forEach((point) => {
-    //   if (point.x === closestX || point.y === closestY) {
-    //     if (Math.abs(circle.vel.y) < Math.abs(circle.vel.x)) {
-    //       alpha = Math.PI * 1.5;
-    //     } else {
-    //       alpha = Math.PI * 0;
-    //     }
-    //     // alpha =
-    //   }
-    // });
-
-    const tmp: Vec2 = {
-      x:
-        Math.cos(rect.rotation + alpha) * circle.vel.x -
-        Math.sin(rect.rotation + alpha) * circle.vel.y,
-      y:
-        Math.sin(rect.rotation + alpha) * circle.vel.x +
-        Math.cos(rect.rotation + alpha) * circle.vel.y,
-    };
-
-    tmp.y = -tmp.y;
-
-    circle.vel.x =
-      Math.cos(-rect.rotation - alpha) * tmp.x -
-      Math.sin(-rect.rotation - alpha) * tmp.y;
-
-    circle.vel.y =
-      Math.sin(-rect.rotation - alpha) * tmp.x +
-      Math.cos(-rect.rotation - alpha) * tmp.y;
-
-    circle.pos = add(circle.pos, circle.vel);
   } else {
     collision = false;
   }

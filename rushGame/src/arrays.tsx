@@ -16,8 +16,9 @@ import { createLargeSquareBoss } from "./bosses/squareBoss";
 
 export let entities = [];
 export let bullets = [];
-export const squares = [];
+export let squares = [];
 export const lines = [];
+export const blackholes = [];
 
 const firstWave = [
   // createSprayerBoss,
@@ -82,6 +83,9 @@ const nextFloorBoss = () => {
 
 export const checkArrayRemoval = (ctx) => {
   entities = entities.filter((entity) => entity.health > 0);
+  squares = squares.filter(
+    (square) => square.health >= 0 || square.health === undefined
+  );
 
   liveBosses.forEach((boss, index) => {
     drawHealthBar(

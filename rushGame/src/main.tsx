@@ -4,8 +4,9 @@ import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { createBullet } from "./createBullet";
 import { world } from "./basics";
-import { player } from "./createPlayer";
+import { player, standardPlayer } from "./createPlayer";
 import {
+  blackholes,
   bullets,
   checkArrayRemoval,
   entities,
@@ -80,10 +81,12 @@ const update = () => {
   // console.log(fps, deltaTime);
 
   player.speed =
-    player.standardSpeed *
+    standardPlayer.speed *
     (1 +
       player.unlockedAbilities.adrenaline *
         (1 - player.health / player.maxHealth));
+
+  player.radius = standardPlayer.radius;
 
   entities.forEach((entity, index) => {
     entity.pos = add(entity.pos, entity.vel);
@@ -120,9 +123,9 @@ const update = () => {
 
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
-        if (entity.team !== secondEntity.team) {
-          dealDamage(entity, secondEntity, entity.contactDamage);
-        }
+        // if (entity.team !== secondEntity.team) {
+        dealDamage(entity, secondEntity, entity.contactDamage);
+        // }
 
         if (entity.collision === true && secondEntity.collision === true) {
           const newVel = handleCollision(entity, secondEntity);
@@ -132,11 +135,42 @@ const update = () => {
       }
     });
     // console.log(squares);
-    squares.forEach((square) => {
-      drawSquare(ctx, square);
+    squares.forEach((rect) => {
+      const rotationAxis = {
+        x: rect.width / 2,
+        y: rect.height / 2,
+      };
+      drawSquare(ctx, rect, rotationAxis);
 
-      if (collideCircleWithRotatedRectangle(ctx, entity, square)) {
+      if (collideCircleWithRotatedRectangle(ctx, entity, rect, true)) {
       }
+    });
+
+    blackholes.forEach((blackhole, index) => {
+      blackhole.pos = add(blackhole.pos, blackhole.vel);
+
+      const dx = blackhole.pos.x - entity.pos.x;
+      const dy = blackhole.pos.y - entity.pos.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      const force = (blackhole.strength * entity.mass) / distance; // Använder strength istället för massan
+
+      const acceleration = force / entity.mass;
+
+      const angle = Math.atan2(dy, dx);
+      const ax = acceleration * Math.cos(angle);
+      const ay = acceleration * Math.sin(angle);
+
+      entity.vel.x += ax;
+      entity.vel.y += ay;
+
+      if (doCirclesOverlap(entity, blackhole) && entity.team !== "enemy") {
+        dealDamage(liveBosses[0], entity, 40);
+
+        blackholes.splice(index);
+      }
+
+      drawCircle(ctx, blackhole);
     });
 
     drawCircle(ctx, entity);
@@ -151,18 +185,58 @@ const update = () => {
 
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity)) {
-        if (bullet.team !== entity.team) {
+        if (bullet.shooter !== entity) {
+          // if (bullet.team !== entity.team) {
           dealDamage(bullet.shooter, entity, bullet.damage);
 
           bullets.splice(index, 1);
-        }
-        if (bullet.shooter !== entity) {
+          // }
+
           bullet.onHit(entity, bullet);
         }
       }
 
       drawCircle(ctx, bullet);
     });
+
+    squares.forEach((square) => {
+      if (collideCircleWithRotatedRectangle(ctx, bullet, square, false)) {
+        if (square.health !== undefined) {
+          dealDamage(bullet.shooter, square, bullet.damage);
+
+          if (bullet.team !== square.team) {
+            bullets.splice(index, 1);
+          }
+        }
+      }
+    });
+
+    // blackholes.forEach((blackhole, index) => {
+    //   // blackhole.pos = add(blackhole.pos, blackhole.vel);
+
+    //   const dx = blackhole.pos.x - bullet.pos.x;
+    //   const dy = blackhole.pos.y - bullet.pos.y;
+    //   const distance = Math.sqrt(dx * dx + dy * dy);
+
+    //   const force = (blackhole.strength * 2 * bullet.mass) / distance; // Använder strength istället för massan
+
+    //   const acceleration = force / bullet.mass;
+
+    //   const angle = Math.atan2(dy, dx);
+    //   const ax = acceleration * Math.cos(angle);
+    //   const ay = acceleration * Math.sin(angle);
+
+    //   bullet.vel.x += ax;
+    //   bullet.vel.y += ay;
+
+    //   // if (doCirclesOverlap(entity, blackhole) && entity.team !== "enemy") {
+    //   //   dealDamage(liveBosses[0], entity, 40);
+
+    //   //   blackholes.splice(index);
+    //   // }
+
+    //   drawCircle(ctx, blackhole);
+    // });
 
     if (bullet.pos.x > world.width - bullet.radius) {
       if (bullet.bounceable) {
@@ -242,7 +316,7 @@ const update = () => {
     });
 
     player.attackDelay =
-      player.standardAttackDelay *
+      standardPlayer.attackDelay *
       (1 -
         player.unlockedAbilities.adrenaline *
           0.33 *

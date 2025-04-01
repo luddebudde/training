@@ -156,6 +156,7 @@ export const createWaveShoot = (
     finalAdvanced.bulletRadius !== undefined ? finalAdvanced.bulletRadius : 10;
 
   const baseDirection = makeDirection(startPos, target);
+
   const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
 
   const stepAngle = waveWidth / (bulletsCount - 1);
