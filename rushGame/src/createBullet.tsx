@@ -200,3 +200,17 @@ export const createWaveShoot = (
 
   return bulletArray;
 };
+
+export const bulletBounce = (
+  bullets: Bullet[],
+  bullet: Bullet,
+  newVec: Vec2 = bullet.vel,
+  index: number
+) => {
+  bullet.vel = newVec;
+  bullet.damage *= 1 - bullet.bounceDamageLoss;
+
+  if (Math.abs(bullet.damage) < 0.5) {
+    bullets.splice(index, 1);
+  }
+};

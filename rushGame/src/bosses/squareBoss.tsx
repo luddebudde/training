@@ -1,6 +1,7 @@
 import {
   bossPool,
   bullets,
+  clearArray,
   entities,
   lines,
   liveBosses,
@@ -21,6 +22,7 @@ import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { multVar, origo, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
+import { createSprayerBoss } from "./sprayer";
 
 const health = 150;
 
@@ -73,6 +75,10 @@ const changeStandardPlayerCopy = (
 // Heavy attacker
 const rect1 = {
   name: "Damage dealer",
+  cornerPos: {
+    x: 0,
+    y: 0,
+  },
   gatherPos: {
     x: startPos.x - width / 2,
     y: startPos.y - height / 2,
@@ -102,7 +108,7 @@ const rect1 = {
   health: 100,
 
   // Phases
-  shootFromCorners: (ctx, cubeBoss) => {
+  shootFromCorners: () => {
     rect1.attackCounter--;
 
     if (rect1.attackCounter < 0) {
@@ -111,7 +117,7 @@ const rect1 = {
         y: rect1.y + rect1.height / 2,
       };
 
-      const bullet = createWaveShoot(
+      createWaveShoot(
         bullets,
         rect1,
         player.pos,
@@ -133,7 +139,7 @@ const rect1 = {
       rect1.attackCounter = 25;
     }
   },
-  gatherUp: (ctx, cubeBoss, rectPos: Vec2) => {
+  gatherUp: () => {
     rect1.attackCounter--;
 
     if (rect1.attackCounter < 0) {
@@ -144,21 +150,21 @@ const rect1 = {
         2,
         20,
         {},
-        { startPos: rectPos }
+        { startPos: { x: rect1.x, y: rect1.y } }
       );
 
       rect1.attackCounter = 25;
     }
   },
-  rotationPhase: (ctx, cubeBoss, rectPos: Vec2) => {
+  rotationPhase: (ctx, rectList, rectPos: Vec2) => {
     rect1.attackCounter--;
 
     if (rect1.attackCounter <= 0) {
       createBullet(
         bullets,
-        cubeBoss,
+        rect1,
         player.pos,
-        10,
+        5,
         25,
         {},
         {
@@ -174,6 +180,10 @@ const rect1 = {
 // Debuffer
 const rect2 = {
   name: "Debuffer",
+  cornerPos: {
+    x: world.width - width,
+    y: 0,
+  },
   gatherPos: {
     x: startPos.x + width / 2,
     y: startPos.y - height / 2,
@@ -203,7 +213,7 @@ const rect2 = {
   health: 100,
 
   // Phases
-  shootFromCorners: (ctx, cubeBoss) => {
+  shootFromCorners: () => {
     rect2.attackCounter--;
 
     const rectPos = {
@@ -224,7 +234,7 @@ const rect2 = {
             bulletRadius: 5,
             startPos: rectPos,
             onHit: (entity, bullet) => {
-              changeStandardPlayerCopy("speed", "*", 0.5, 1000); // Ändrar speed
+              changeStandardPlayerCopy("speed", "*", 0.5, 1000);
             },
             color: "purple",
             team: "enemy",
@@ -235,7 +245,7 @@ const rect2 = {
       rect2.attackCounter = 50;
     }
   },
-  gatherUp: (ctx, cubeBoss) => {
+  gatherUp: () => {
     rect2.attackCounter--;
 
     if (rect2.attackCounter < 0) {
@@ -255,13 +265,13 @@ const rect2 = {
       rect2.attackCounter = 75;
     }
   },
-  rotationPhase: (ctx, cubeBoss, rectPos: Vec2) => {
+  rotationPhase: (ctx, rectList, rectPos: Vec2) => {
     rect2.attackCounter--;
 
     if (rect2.attackCounter <= 0) {
       createWaveShoot(
         bullets,
-        cubeBoss,
+        rect2,
         player.pos,
         10,
         25,
@@ -283,6 +293,10 @@ const rect2 = {
 // Passive Support
 const rect3 = {
   name: "Healer",
+  cornerPos: {
+    x: 0,
+    y: world.height - height,
+  },
   gatherPos: {
     x: startPos.x - width / 2,
     y: startPos.y + height / 2,
@@ -312,10 +326,10 @@ const rect3 = {
   health: 100,
 
   // Phases
-  shootFromCorners: (ctx, cubeBoss) => {
+  shootFromCorners: (ctx, rectList) => {
     rect3.attackCounter--;
     if (rect3.attackCounter < 0) {
-      const randomRect = randomArrayElement(cubeBoss.rectangles);
+      const randomRect = randomArrayElement(rectList);
 
       const rectPos = {
         x: rect3.x + rect3.width / 2,
@@ -341,29 +355,31 @@ const rect3 = {
         }
       );
 
-      goTo(bullet, randomRectPos, 50, () => (cubeBoss.health += 20));
+      goTo(bullet, randomRectPos, 50, () => (randomRect.health += 20));
 
       rect3.attackCounter = 50;
     }
   },
-  gatherUp: (ctx, cubeBoss) => {
+  gatherUp: (ctx, rectList) => {
     rect3.attackCounter--;
 
     if (rect3.attackCounter < 0) {
-      cubeBoss.rectangles.forEach((rect) => {
+      rectList.forEach((rect) => {
         rect.health += 8;
+        player.health += 3;
       });
 
-      rect3.attackCounter = 25;
+      rect3.attackCounter = 75;
     }
   },
-  rotationPhase: (ctx, cubeBoss, rectPos: Vec2) => {
+  rotatePhaseHealCounter: 0,
+  rotationPhase: (ctx, rectList, rectPos: Vec2) => {
     rect3.attackCounter--;
 
     if (rect3.attackCounter <= 0) {
       createBullet(
         bullets,
-        cubeBoss,
+        rect3,
         player.pos,
         -10,
         -25,
@@ -374,6 +390,14 @@ const rect3 = {
         }
       );
       rect3.attackCounter = 200;
+
+      rect3.rotatePhaseHealCounter++;
+
+      if (rect3.rotatePhaseHealCounter % 2 === 0) {
+        rectList.forEach((rect) => {
+          rect.health += 20;
+        });
+      }
     }
   },
 };
@@ -381,6 +405,10 @@ const rect3 = {
 // Light Attacker / Attack support
 const rect4 = {
   name: "Support attacker",
+  cornerPos: {
+    x: world.width - width,
+    y: world.height - height,
+  },
   gatherPos: {
     x: startPos.x + width / 2,
     y: startPos.y + height / 2,
@@ -410,15 +438,16 @@ const rect4 = {
   health: 100,
 
   // Phases
-  shootFromCorners: (ctx, cubeBoss) => {
+  shootFromCorners: () => {
     rect4.attackCounter--;
-    const rectPos = {
-      x: rect4.x + rect4.width / 2,
-      y: rect4.y + rect4.height / 2,
-    };
 
     if (rect4.attackCounter < 0) {
       rect4.attackCounter = 500;
+
+      const rectPos = {
+        x: rect4.x + rect4.width / 2,
+        y: rect4.y + rect4.height / 2,
+      };
 
       const maxI = 50;
 
@@ -443,24 +472,38 @@ const rect4 = {
       }
     }
   },
-  gatherUpMeter: 0,
-  gatherUp: (ctx, cubeBoss) => {
-    rect4.gatherUpMeter++;
-    console.log(rect4.gatherUpMeter);
+  gatherUp: () => {
+    rect4.attackCounter--;
+
+    if (rect4.attackCounter < 0) {
+      createWaveShoot(
+        bullets,
+        rect3,
+        player.pos,
+        5,
+        15,
+        Math.PI * 0.5,
+        5,
+        {},
+        { startPos: { x: rect4.x, y: rect4.y }, team: rect4.team }
+      );
+
+      rect4.attackCounter = 75;
+    }
   },
-  rotationPhase: (ctx, cubeBoss, rectPos: Vec2) => {
+  rotationPhase: (ctx, rectList, rectPos: Vec2) => {
     rect4.attackCounter--;
 
     if (rect4.attackCounter <= 0) {
       createBullet(
         bullets,
-        cubeBoss,
+        rect4,
         player.pos,
         10,
         -25,
         {
           bounceable: true,
-          bounceDamageLoss: 0.5 + rect4.gatherUpMeter / 2000,
+          bounceDamageLoss: 0.5,
         },
         {
           startPos: rectPos,
@@ -473,68 +516,75 @@ const rect4 = {
   },
 };
 
-// Phases
-const moveToCorners = (ctx, cubeBoss) => {
-  cubeBoss.currentPhase = "moveToCorners";
-  const endPoseList = [
-    // Top Left
-    { x: 0, y: 0 },
-    // Top Right
-    { x: world.width - width, y: 0 },
-    // Bottom Left
-    { x: 0, y: world.height - height },
-    // Bottom Right
-    { x: world.width - width, y: world.height - height },
-  ];
+let rectList = [rect1, rect2, rect3, rect4];
 
+const updateRectList = () => {
+  rectList.forEach((cube) => {
+    cube.x = cube.x + cube.vel.x;
+    cube.y = cube.y + cube.vel.y;
+  });
+
+  rectList = rectList.filter((square) => square.health >= 0);
+
+  if (rectList.length > 0) {
+    requestAnimationFrame(updateRectList);
+  }
+};
+
+updateRectList();
+
+// Phases
+const moveToCorners = (ctx) => {
+  currentPhase = "gatherUp";
   let rectsReady = 0;
 
-  for (let i = 0; i < cubeBoss.rectangles.length; i++) {
-    const rect = cubeBoss.rectangles[i];
-    const target = endPoseList[i];
-
-    goTo(rect, target, 100, () => rectsReady++);
+  for (let i = 0; i < rectList.length; i++) {
+    const rect = rectList[i];
+    goTo(rect, rect.cornerPos, 100, () => rectsReady++);
   }
 
   setTimeout(() => {
-    shootFromCorners(ctx, cubeBoss);
+    // if (liveBosses.length === 0) {
+    shootFromCorners(ctx);
+    // }
   }, 1500);
 };
 
-const shootFromCorners = (ctx, cubeBoss) => {
-  cubeBoss.currentPhase = "shootFromCorners";
+const shootFromCorners = (ctx) => {
   const shootCornerMaxCount = 1000;
   // const shootCornerMaxCount = 100;
   for (let frameLoops = 0; frameLoops < shootCornerMaxCount; frameLoops++) {
     setTimeout(() => {
-      for (let i = 0; i < cubeBoss.rectangles.length; i++) {
-        const rect = cubeBoss.rectangles[i];
-        rect.shootFromCorners(ctx, cubeBoss);
+      for (let i = 0; i < rectList.length; i++) {
+        const rect = rectList[i];
+        rect.shootFromCorners(ctx, rectList);
       }
 
       if (frameLoops === shootCornerMaxCount - 1) {
-        gatherUp(ctx, cubeBoss);
+        gatherUp(ctx);
       }
     }, 10 * frameLoops);
   }
 };
 
-const gatherUp = (ctx, cubeBoss) => {
-  cubeBoss.currentPhase = "gatherUp";
+let currentPhase = "";
+let previusClosestRect;
 
-  cubeBoss.rectangles.forEach((rect) => {
+const gatherUp = (ctx) => {
+  currentPhase = "gatherUp";
+  rectList.forEach((rect) => {
     goTo(rect, rect.gatherPos, 100);
-  });
-
-  cubeBoss.rectangles.forEach((rect) => {
+    // });
+    // rectList.forEach((rect) => {
     rect.attackCounter = 10;
   });
 
   const drawLineToClosestRect = (ctx, closestRect, closestRectPos: Vec2) => {
     drawLine(ctx, player.pos, closestRectPos, closestRect.color);
+
     if (
-      cubeBoss.currentPhase === "gatherUp" &&
-      cubeBoss.closestRect === closestRect
+      (currentPhase === "gatherUp" && closestRect === previusClosestRect) ||
+      previusClosestRect === undefined
     ) {
       requestAnimationFrame(() =>
         drawLineToClosestRect(ctx, closestRect, closestRectPos)
@@ -542,51 +592,57 @@ const gatherUp = (ctx, cubeBoss) => {
     }
   };
 
-  const shootCornerMaxCount = 1000;
-  // const shootCornerMaxCount = 10;
+  const loopCount = 100;
   const loopDelay = 10;
   setTimeout(() => {
-    for (let frameLoops = 0; frameLoops < shootCornerMaxCount; frameLoops++) {
+    for (let frameLoops = 0; frameLoops < loopCount; frameLoops++) {
+      if (liveBosses.length === 0) {
+        console.log("All cubes are dead");
+
+        return;
+      } else {
+        console.log(rectList.length);
+      }
       setTimeout(() => {
         // Idea: The closest rectangle applies an effect or attack, depending on which one it is.
         // Heavy attacker: Shoots violently
         // Debuffer: Makes the player either larger, slower or deal less damage every X seconds
         // Healer: Increases health of the others
-        // Support damager: Attacks during the next phase (either faster or do it too)
+        // Support damager: Same as heavy
 
         // After these the next phase as the big square in the middle starts, with the effects above applied (except heavy attacker)
 
-        const closestRect = getClosestOfArray(player.pos, cubeBoss.rectangles);
-        const closestRectPos = {
-          x: closestRect.x + closestRect.width / 2,
-          y: closestRect.y + closestRect.height / 2,
+        const newClosestRect = getClosestOfArray(player.pos, rectList);
+        const newClosestRectPos = {
+          x: newClosestRect.x + newClosestRect.width / 2,
+          y: newClosestRect.y + newClosestRect.height / 2,
         };
 
-        if (cubeBoss.closestRect !== closestRect) {
-          cubeBoss.closestRect = closestRect;
-          drawLineToClosestRect(ctx, closestRect, closestRectPos);
+        if (previusClosestRect !== newClosestRect) {
+          previusClosestRect = newClosestRect;
+          drawLineToClosestRect(ctx, newClosestRect, newClosestRectPos);
         }
 
-        cubeBoss.rectangles.forEach((rect) => {
-          if (rect === closestRect) {
-            rect.gatherUp(ctx, cubeBoss, closestRectPos);
+        rectList.forEach((rect) => {
+          if (rect === previusClosestRect) {
+            rect.gatherUp(ctx, rectList);
           }
         });
         // console.log(frameLoops);
       }, loopDelay * frameLoops);
     }
     setTimeout(() => {
-      rotatePhase(ctx, cubeBoss, 0.01);
-    }, shootCornerMaxCount * loopDelay);
+      rotatePhase(ctx);
+    }, loopCount * loopDelay);
   }, 2000);
 };
 
-const rotatePhase = (ctx, cubeBoss, angle) => {
-  cubeBoss.currentPhase = "rotationPhase";
+const rotatePhase = (ctx) => {
+  currentPhase = "rotationPhase";
   let centerX = 0,
     centerY = 0;
-  const n = cubeBoss.rectangles.length;
-  cubeBoss.rectangles.forEach((rect) => {
+  const n = rectList.length;
+  rectList.forEach((rect) => {
     centerX += rect.x + rect.width / 2;
     centerY += rect.y + rect.height / 2;
   });
@@ -598,9 +654,25 @@ const rotatePhase = (ctx, cubeBoss, angle) => {
     y: centerY,
   };
 
-  for (let i = 0; i < 5000; i++) {
+  let blackholeCounter = 0;
+
+  const angle = 0.04;
+  const turns = 2;
+
+  const fullRotation = 2 * Math.PI;
+  const totalRotation = fullRotation * turns;
+  const requiredLoops = totalRotation / angle;
+
+  const delayPerLoop = 10; // ms
+  for (let i = 0; i < requiredLoops; i++) {
     setTimeout(() => {
-      cubeBoss.rectangles.forEach((rect) => {
+      if (rectList.length <= 0) {
+        console.log("All cubes are dead");
+
+        return;
+      }
+
+      rectList.forEach((rect) => {
         const rectCenter = {
           x: rect.x + rect.width / 2,
           y: rect.y + rect.height / 2,
@@ -618,83 +690,88 @@ const rotatePhase = (ctx, cubeBoss, angle) => {
         rect.y = newCenterY - rect.height / 2;
         rect.rotation += angle;
 
-        rect.rotationPhase(ctx, cubeBoss, rectCenter);
+        rect.rotationPhase(ctx, rectList, rectCenter);
       });
-      cubeBoss.largeAttackCounter--;
-      if (cubeBoss.largeAttackCounter <= 0) {
+
+      blackholeCounter--;
+      if (blackholeCounter <= 0) {
         createBlackhole(
           centerPos,
-          // origo,
           multVar(makeDirection(centerPos, player.pos), 3),
           50,
           250
         );
-        cubeBoss.largeAttackCounter = 350;
+        blackholeCounter = 350;
       }
-    }, 10 * i);
+    }, delayPerLoop * i);
   }
+
+  setTimeout(() => {
+    moveToCorners(ctx);
+  }, delayPerLoop * requiredLoops);
 };
 
-export const createLargeSquareBoss = () => {
-  const cubeBoss = {
-    maxHealth: health,
-    health: health,
-    contactDamage: 0,
-    pos: {
-      x: world.width / 2,
-      y: 400,
-    },
-    vel: {
-      x: 0,
-      y: 0,
-    },
-    radius: 1.2,
-    color: "purple",
-    speed: 50,
-    team: "enemy",
-    mass: 1000,
+export const createLargeSquareBoss = (ctx) => {
+  // const cubeBoss = {
+  //   maxHealth: health,
+  //   health: health,
+  //   contactDamage: 0,
+  //   pos: {
+  //     x: world.width / 2,
+  //     y: 400,
+  //   },
+  //   vel: {
+  //     x: 0,
+  //     y: 0,
+  //   },
+  //   radius: 1.2,
+  //   color: "purple",
+  //   speed: 50,
+  //   team: "enemy",
+  //   mass: 1000,
 
-    damageConflicted: 0,
-    absorbedDamage: 0,
+  //   damageConflicted: 0,
+  //   absorbedDamage: 0,
 
-    collision: false,
-    airFriction: 1,
+  //   collision: false,
+  //   airFriction: 1,
 
-    // Pahses
-    rectangles: [rect1, rect2, rect3, rect4],
-    phaseCounter: 0,
+  //   // Pahses
+  //   rectangles: [rect1, rect2, rect3, rect4],
+  //   phaseCounter: -1,
 
-    // phaseList: [moveToCorners],
-    phaseList: [gatherUp],
-    currentPhase: "",
-    closestRect: "",
-    largeAttackCounter: 0,
+  //   // phaseList: [moveToCorners],
+  //   phaseList: [gatherUp],
+  //   currentPhase: "",
+  //   closestRect: "",
+  //   largeAttackCounter: 0,
+  //   rectanglesLive: true,
 
-    update: (ctx): void => {
-      cubeBoss.rectangles.forEach((cube) => {
-        cube.x = cube.x + cube.vel.x;
-        cube.y = cube.y + cube.vel.y;
-      });
+  // update: (ctx): void => {
+  //   rectList.forEach((cube) => {
+  //     cube.x = cube.x + cube.vel.x;
+  //     cube.y = cube.y + cube.vel.y;
+  //   });
 
-      cubeBoss.rectangles = cubeBoss.rectangles.filter(
-        (square) => square.health >= 0
-      );
-      cubeBoss.phaseCounter--;
-      if (cubeBoss.phaseCounter < 0) {
-        const nextPhase = randomArrayElement(cubeBoss.phaseList);
+  //   console.log("!Dlkopösfxjvi9öoesyeflinwsuy3wl bku");
 
-        nextPhase(ctx, cubeBoss);
+  //   rectList = rectList.filter((square) => square.health >= 0);
 
-        cubeBoss.phaseCounter = 10000;
-      }
-    },
-    // deathAnimation: (ctx, liveBosses, bossIndex) => {},
-  };
+  //   if (cubeBoss.phaseCounter < 0) {
+  //     const nextPhase = randomArrayElement(cubeBoss.phaseList);
 
-  entities.push(cubeBoss);
+  //     nextPhase(ctx, cubeBoss);
+
+  //     cubeBoss.phaseCounter = 10000;
+  //   }
+  // },
+  //   // deathAnimation: (ctx, liveBosses, bossIndex) => {},
+  // };
+
+  // entities.push(cubeBoss);
   // liveBosses.push(cubeBoss);
 
-  cubeBoss.rectangles.forEach((rect) => {
+  rectList.forEach((rect) => {
     squares.push(rect);
     liveBosses.push(rect);
 
@@ -703,6 +780,5 @@ export const createLargeSquareBoss = () => {
       y: rect.y + rect.height / 2,
     };
   });
-
-  //   }
+  gatherUp(ctx);
 };

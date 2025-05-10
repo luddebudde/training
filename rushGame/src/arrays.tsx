@@ -48,14 +48,14 @@ export const spawnDelay = 1500;
 
 export let bossesKilled = 0;
 
-export const nextBoss = () => {
+export const nextBoss = (ctx) => {
   console.log(player.health, player.maxHealth);
 
   // generateRewards();
   let boss = randomArrayElementSplice(bossPool);
 
   if (boss === undefined) {
-    nextFloorBoss();
+    nextFloorBoss(ctx);
   }
 
   const abilities = player.unlockedAbilities;
@@ -63,10 +63,10 @@ export const nextBoss = () => {
   abilities.bonusLifeCount +=
     abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
 
-  boss();
+  boss(ctx);
 };
 
-const nextFloorBoss = () => {
+const nextFloorBoss = (ctx) => {
   currentWaveIndex++;
 
   bossPool = [...waveOrder[currentWaveIndex]];
@@ -78,7 +78,7 @@ const nextFloorBoss = () => {
     player.speed = -player.speed;
   }
 
-  generateRewards();
+  generateRewards(ctx);
 };
 
 export const checkArrayRemoval = (ctx) => {
@@ -114,7 +114,7 @@ export const checkArrayRemoval = (ctx) => {
         player.health = player.maxHealth;
 
         setTimeout(() => {
-          nextBoss();
+          nextBoss(ctx);
         }, spawnDelay);
       }
     }

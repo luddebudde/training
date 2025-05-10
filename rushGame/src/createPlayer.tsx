@@ -69,7 +69,7 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
-    bulletDamage: 10,
+    bulletDamage: 50,
 
     damageConflicted: 0,
     absorbedDamage: 0,

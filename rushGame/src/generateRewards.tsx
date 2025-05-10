@@ -107,7 +107,7 @@ const totalRewardPool: Upgrades[] = [
 
 const usedRewards: Upgrades[] = [];
 
-export const generateRewards = () => {
+export const generateRewards = (ctx) => {
   const selectionDiv = document.getElementById("upgradeSelection");
   selectionDiv.style.visibility = "visible";
 
@@ -146,7 +146,7 @@ export const generateRewards = () => {
       usedRewards.push(reward);
 
       setTimeout(() => {
-        nextBoss();
+        nextBoss(ctx);
       }, spawnDelay * 2);
 
       console.log(player.unlockedAbilities, reward.title);

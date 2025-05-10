@@ -2,7 +2,7 @@ import { keyDownTracker } from "./keyDownTracker";
 import { add, mult, multVar } from "./math";
 import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
-import { createBullet } from "./createBullet";
+import { bulletBounce, createBullet } from "./createBullet";
 import { world } from "./basics";
 import { player, standardPlayer } from "./createPlayer";
 import {
@@ -36,7 +36,7 @@ setTimeout(() => {
   for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
-    nextBoss();
+    nextBoss(ctx);
     // loseScreen();
   }
 }, 10);
@@ -211,61 +211,54 @@ const update = () => {
       }
     });
 
-    // blackholes.forEach((blackhole, index) => {
-    //   // blackhole.pos = add(blackhole.pos, blackhole.vel);
-
-    //   const dx = blackhole.pos.x - bullet.pos.x;
-    //   const dy = blackhole.pos.y - bullet.pos.y;
-    //   const distance = Math.sqrt(dx * dx + dy * dy);
-
-    //   const force = (blackhole.strength * 2 * bullet.mass) / distance; // Använder strength istället för massan
-
-    //   const acceleration = force / bullet.mass;
-
-    //   const angle = Math.atan2(dy, dx);
-    //   const ax = acceleration * Math.cos(angle);
-    //   const ay = acceleration * Math.sin(angle);
-
-    //   bullet.vel.x += ax;
-    //   bullet.vel.y += ay;
-
-    //   // if (doCirclesOverlap(entity, blackhole) && entity.team !== "enemy") {
-    //   //   dealDamage(liveBosses[0], entity, 40);
-
-    //   //   blackholes.splice(index);
-    //   // }
-
-    //   drawCircle(ctx, blackhole);
-    // });
-
     if (bullet.pos.x > world.width - bullet.radius) {
       if (bullet.bounceable) {
-        bullet.vel.x = -bullet.vel.x;
-        bullet.damage *= 1 - bullet.bounceDamageLoss;
+        bulletBounce(
+          bullets,
+          bullet,
+          { x: -bullet.vel.x, y: bullet.vel.y },
+          index
+        );
+
         return;
       }
       bullets.splice(index, 1);
     }
     if (bullet.pos.x < bullet.radius) {
       if (bullet.bounceable) {
-        bullet.vel.x = -bullet.vel.x;
-        bullet.damage *= 1 - bullet.bounceDamageLoss;
+        bulletBounce(
+          bullets,
+          bullet,
+          { x: -bullet.vel.x, y: bullet.vel.y },
+          index
+        );
+
         return;
       }
       bullets.splice(index, 1);
     }
     if (bullet.pos.y > world.height - bullet.radius) {
       if (bullet.bounceable) {
-        bullet.vel.y = -bullet.vel.y;
-        bullet.damage *= 1 - bullet.bounceDamageLoss;
+        bulletBounce(
+          bullets,
+          bullet,
+          { x: bullet.vel.x, y: -bullet.vel.y },
+          index
+        );
+
         return;
       }
       bullets.splice(index, 1);
     }
     if (bullet.pos.y < bullet.radius) {
       if (bullet.bounceable) {
-        bullet.vel.y = -bullet.vel.y;
-        bullet.damage *= 1 - bullet.bounceDamageLoss;
+        bulletBounce(
+          bullets,
+          bullet,
+          { x: bullet.vel.x, y: -bullet.vel.y },
+          index
+        );
+
         return;
       }
       bullets.splice(index, 1);
