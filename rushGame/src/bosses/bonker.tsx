@@ -5,8 +5,8 @@ import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar, origo } from "../math";
 
-const health = 1500;
-const speed = 35;
+const health = 1800;
+const speed = 50;
 const radius = 120;
 const bounceThreashold = 10;
 

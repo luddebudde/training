@@ -39,6 +39,7 @@ export type Player = {
 
   airFriction: true;
   collision: true;
+  blackholeEffected: boolean;
 };
 
 const health = 100;
@@ -69,13 +70,13 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
-    bulletDamage: 50,
+    bulletDamage: 20,
 
     damageConflicted: 0,
     absorbedDamage: 0,
 
     unlockedAbilities: {
-      dash: true,
+      dash: false,
       bounceable: false,
       adrenaline: 0,
       autoDamage: 0,
@@ -86,6 +87,7 @@ export const createPlayer = (): any => {
 
     airFriction: true,
     collision: true,
+    blackholeEffected: true,
   };
 
   entities.push(player);

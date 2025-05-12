@@ -7,7 +7,7 @@ import { goTo } from "../goTo";
 import { add, multVar, sub, Vec2 } from "../math";
 
 const cornerDelay = 50;
-const health = 1000;
+const health = 2500;
 
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"
@@ -111,7 +111,6 @@ export const createSprayerBoss = () => {
 
       if (sprayer.phaseCounter < 0) {
         const movementNumber = Math.floor(Math.random() * 3);
-        // const movementNumber = 1;
 
         if (movementNumber === 0) {
           console.log("shooter");
@@ -145,12 +144,12 @@ export const createSprayerBoss = () => {
                 createWaveShoot(
                   bullets,
                   sprayer,
-                  player.pos, // Målets position
-                  10, // Skada
-                  15, // Hastighet
-                  Math.PI / 4, // Vågens bredd (t.ex. 45 grader i radianer)
-                  15, // Antal skott
-                  { bounceable: false, airFriction: false } // Mods
+                  player.pos,
+                  10,
+                  15,
+                  Math.PI / 4,
+                  15,
+                  { bounceable: false, airFriction: false }
                 );
               } else {
                 createBullet(bullets, sprayer, player.pos, 30, 10);
@@ -164,7 +163,7 @@ export const createSprayerBoss = () => {
 
           sprayer.phaseCounter = 400;
         } else if (movementNumber === 1) {
-          console.log("coenr");
+          console.log("corner");
           sprayer.airFriction = false;
 
           const upLeft = { x: sprayer.radius, y: sprayer.radius };
@@ -198,15 +197,7 @@ export const createSprayerBoss = () => {
 
               if (remainingCorners.length > 0) {
                 const nextCorner = remainingCorners[0];
-                goTo(
-                  sprayer,
-                  nextCorner,
-                  {
-                    time: cornerDelay,
-                    speed: undefined,
-                  },
-                  deltaTime
-                );
+                goTo(sprayer, nextCorner, cornerDelay);
 
                 createWaveShoot(
                   bullets,
@@ -214,7 +205,7 @@ export const createSprayerBoss = () => {
                   player.pos,
                   10,
                   5,
-                  Math.PI / 4,
+                  Math.PI / 2,
                   5,
                   { bounceable: false, airFriction: false }
                 );
@@ -244,12 +235,7 @@ export const createSprayerBoss = () => {
 
               const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 
-              goTo(
-                sprayer,
-                place,
-                { time: moveTime, speed: undefined },
-                deltaTime
-              );
+              goTo(sprayer, place, moveTime);
             }
 
             if (

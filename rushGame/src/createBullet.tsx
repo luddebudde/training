@@ -76,16 +76,14 @@ export const createBullet = (
   const bulletRadius =
     finalAdvanced.bulletRadius !== undefined ? finalAdvanced.bulletRadius : 20;
 
-  if (bulletTeam === player.team) {
-    bulletsShot++;
-  }
-
   const targetPos = target !== undefined ? target : finalAdvanced.targetVec;
 
   const direction = makeDirection(startPos, targetPos);
   const newVel = multVar(direction, speed);
 
-  // console.log(bulletTeam);
+  if (bulletTeam === "player") {
+    bulletsShot++;
+  }
 
   const bullet: Bullet = {
     shooter: shooter,
@@ -127,7 +125,7 @@ export const createWaveShoot = (
   advanced: Advanced | {} = {}
 ) => {
   const finalAdvanced = {
-    startPos: { x: 0, y: 0 },
+    startPos: undefined,
     team: "",
     bulletRadius: 20,
     color: "green",
@@ -201,7 +199,7 @@ export const createWaveShoot = (
   return bulletArray;
 };
 
-export const bulletBounce = (
+export const handleBulletBounce = (
   bullets: Bullet[],
   bullet: Bullet,
   newVec: Vec2 = bullet.vel,

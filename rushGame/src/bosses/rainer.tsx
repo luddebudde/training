@@ -5,7 +5,7 @@ import { player } from "../createPlayer";
 import { origo, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
 
-const health: number = 1600;
+const health: number = 3200;
 const speed: number = 35;
 const radius: number = 120;
 const bulletRadius: number = 20;
@@ -149,7 +149,7 @@ export const createRainerBoss = () => {
 
           createBullet(
             bullets,
-            undefined,
+            rainer,
             undefined,
             4,
             10,

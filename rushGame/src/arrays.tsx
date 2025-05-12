@@ -12,7 +12,7 @@ import { randomArrayElementSplice } from "./randomArrayElement";
 import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
 import { createLineBreakerBoss } from "./bosses/lineBreaker";
-import { createLargeSquareBoss } from "./bosses/squareBoss";
+import { createSquareBosses } from "./bosses/squareBoss";
 
 export let entities = [];
 export let bullets = [];
@@ -23,20 +23,26 @@ export const blackholes = [];
 const firstWave = [
   // createSprayerBoss,
   // createChargerBoss,
+  // createLineBreakerBoss,
+
+  // createRainerBoss,
+
   // createRainerBoss,
   // createBonkerBoss,
   // createTwinBoss,
-  // createLineBreakerBoss,
-  createLargeSquareBoss,
+  createBonkerBoss,
+
+  // createCreateSquareBosses,
 ];
 const secondWave = [
-  createSprayerBoss,
+  // createSprayerBoss,
   // createChargerBoss,
-  // createRainerBoss, createBonkerBoss
+  createTwinBoss,
+  createBonkerBoss,
+  createRainerBoss,
+  // createBonkerBoss
 ];
-const thirdWave = [
-  // createTwinBoss
-];
+const thirdWave = [createTwinBoss, createSquareBosses];
 const fourthWave = [];
 const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
 
@@ -84,7 +90,7 @@ const nextFloorBoss = (ctx) => {
 export const checkArrayRemoval = (ctx) => {
   entities = entities.filter((entity) => entity.health > 0);
   squares = squares.filter(
-    (square) => square.health >= 0 || square.health === undefined
+    (square) => square.health > 0 || square.health === undefined
   );
 
   liveBosses.forEach((boss, index) => {

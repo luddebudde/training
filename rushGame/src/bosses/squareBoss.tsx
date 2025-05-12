@@ -1,28 +1,15 @@
-import {
-  bossPool,
-  bullets,
-  clearArray,
-  entities,
-  lines,
-  liveBosses,
-  squares,
-} from "../arrays";
+import { bullets, liveBosses, squares } from "../arrays";
 import { world } from "../basics";
-import { createBlackhole } from "../createBlackHole";
+import { createBlackhole } from "../createBlackhole";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player, standardPlayer } from "../createPlayer";
-import { dealDamage } from "../dealDamage";
-import { drawCircle } from "../draw/drawCircle";
+import { debuffPlayer } from "../debuffPlayer";
 import { drawLine } from "../draw/drawLine";
-import { drawSquare } from "../draw/drawSquare";
 import { getClosestOfArray } from "../geometry/getClosestOfArray";
-import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
-import { lineBetween } from "../geometry/lineBetween";
 import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { multVar, origo, Vec2 } from "../math";
+import { multVar, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
-import { createSprayerBoss } from "./sprayer";
 
 const health = 150;
 
@@ -34,45 +21,8 @@ const startPos = {
   y: world.height / 2 - height / 2,
 };
 
-let standardPlayerCopy;
-
-setTimeout(() => {
-  standardPlayerCopy = structuredClone(standardPlayer);
-}, 10);
-
-const changeStandardPlayerCopy = (
-  element: keyof typeof standardPlayer | number,
-  op: string,
-  value: number,
-  timePassedOut: number
-) => {
-  let key = (
-    typeof element === "string"
-      ? element
-      : Object.keys(standardPlayer).find(
-          (k) => standardPlayer[k as keyof typeof standardPlayer] === element
-        )
-  ) as keyof typeof standardPlayer;
-
-  if (!key) return console.error("Egenskap hittades inte.");
-
-  const operations: Record<string, (a: number, b: number) => number> = {
-    "+": (a, b) => a + b,
-    "-": (a, b) => a - b,
-    "*": (a, b) => a * b,
-    "/": (a, b) => (b !== 0 ? a / b : a),
-  };
-
-  if (!operations[op]) return console.error("Ogiltig operation.");
-
-  standardPlayer[key] = operations[op](standardPlayer[key], value);
-
-  setTimeout(() => {
-    standardPlayer[key] = standardPlayerCopy[key];
-  }, timePassedOut);
-};
-
 // Heavy attacker
+const heavyHealth = 2600;
 const rect1 = {
   name: "Damage dealer",
   cornerPos: {
@@ -102,10 +52,12 @@ const rect1 = {
   },
 
   team: "enemy",
+  damageConflicted: 0,
+  absorbedDamage: 0,
 
   attackCounter: 50,
-  maxHealth: 100,
-  health: 100,
+  maxHealth: heavyHealth,
+  health: heavyHealth,
 
   // Phases
   shootFromCorners: () => {
@@ -177,6 +129,7 @@ const rect1 = {
   },
 };
 
+const debufferHealth = 1400;
 // Debuffer
 const rect2 = {
   name: "Debuffer",
@@ -207,10 +160,12 @@ const rect2 = {
   },
 
   team: "enemy",
+  damageConflicted: 0,
+  absorbedDamage: 0,
 
   attackCounter: 50,
-  maxHealth: 100,
-  health: 100,
+  maxHealth: debufferHealth,
+  health: debufferHealth,
 
   // Phases
   shootFromCorners: () => {
@@ -234,7 +189,7 @@ const rect2 = {
             bulletRadius: 5,
             startPos: rectPos,
             onHit: (entity, bullet) => {
-              changeStandardPlayerCopy("speed", "*", 0.5, 1000);
+              debuffPlayer("speed", "*", 0.5, 1000);
             },
             color: "purple",
             team: "enemy",
@@ -252,13 +207,13 @@ const rect2 = {
       const randomNumber = Math.random();
 
       if (randomNumber <= 0.33) {
-        changeStandardPlayerCopy("speed", "*", 0.8, 12000);
+        debuffPlayer("speed", "*", 0.8, 12000);
         console.log("speed", player.speed);
       } else if (randomNumber <= 0.66) {
-        changeStandardPlayerCopy("attackDelay", "*", 1.2, 12000);
+        debuffPlayer("attackDelay", "*", 1.2, 12000);
         console.log("attackDelay", player.attackDelay);
       } else {
-        changeStandardPlayerCopy("radius", "+", 5, 12000);
+        debuffPlayer("radius", "+", 5, 12000);
         console.log("radius", player.radius);
       }
 
@@ -290,6 +245,7 @@ const rect2 = {
   },
 };
 
+const healerHealth = 800;
 // Passive Support
 const rect3 = {
   name: "Healer",
@@ -320,10 +276,12 @@ const rect3 = {
   },
 
   team: "enemy",
+  damageConflicted: 0,
+  absorbedDamage: 0,
 
   attackCounter: 50,
-  maxHealth: 100,
-  health: 100,
+  maxHealth: healerHealth,
+  health: healerHealth,
 
   // Phases
   shootFromCorners: (ctx, rectList) => {
@@ -402,6 +360,7 @@ const rect3 = {
   },
 };
 
+const supportHealth = 1200;
 // Light Attacker / Attack support
 const rect4 = {
   name: "Support attacker",
@@ -432,10 +391,12 @@ const rect4 = {
   },
 
   team: "enemy",
+  damageConflicted: 0,
+  absorbedDamage: 0,
 
   attackCounter: 50,
-  maxHealth: 100,
-  health: 100,
+  maxHealth: supportHealth,
+  health: supportHealth,
 
   // Phases
   shootFromCorners: () => {
@@ -524,7 +485,7 @@ const updateRectList = () => {
     cube.y = cube.y + cube.vel.y;
   });
 
-  rectList = rectList.filter((square) => square.health >= 0);
+  rectList = rectList.filter((square) => square.health > 0);
 
   if (rectList.length > 0) {
     requestAnimationFrame(updateRectList);
@@ -544,9 +505,7 @@ const moveToCorners = (ctx) => {
   }
 
   setTimeout(() => {
-    // if (liveBosses.length === 0) {
     shootFromCorners(ctx);
-    // }
   }, 1500);
 };
 
@@ -592,18 +551,16 @@ const gatherUp = (ctx) => {
     }
   };
 
-  const loopCount = 100;
+  const loopCount = 800;
   const loopDelay = 10;
   setTimeout(() => {
     for (let frameLoops = 0; frameLoops < loopCount; frameLoops++) {
       if (liveBosses.length === 0) {
-        console.log("All cubes are dead");
-
         return;
       } else {
-        console.log(rectList.length);
       }
       setTimeout(() => {
+        console.log(Math.floor(frameLoops / 100));
         // Idea: The closest rectangle applies an effect or attack, depending on which one it is.
         // Heavy attacker: Shoots violently
         // Debuffer: Makes the player either larger, slower or deal less damage every X seconds
@@ -654,10 +611,10 @@ const rotatePhase = (ctx) => {
     y: centerY,
   };
 
-  let blackholeCounter = 0;
+  let blackholeCreatorCounter = 0;
 
-  const angle = 0.04;
-  const turns = 2;
+  const angle = 0.02;
+  const turns = 4;
 
   const fullRotation = 2 * Math.PI;
   const totalRotation = fullRotation * turns;
@@ -693,15 +650,15 @@ const rotatePhase = (ctx) => {
         rect.rotationPhase(ctx, rectList, rectCenter);
       });
 
-      blackholeCounter--;
-      if (blackholeCounter <= 0) {
+      blackholeCreatorCounter--;
+      if (blackholeCreatorCounter <= 0) {
         createBlackhole(
           centerPos,
-          multVar(makeDirection(centerPos, player.pos), 3),
+          multVar(makeDirection(centerPos, player.pos), 5),
           50,
           250
         );
-        blackholeCounter = 350;
+        blackholeCreatorCounter = 350;
       }
     }, delayPerLoop * i);
   }
@@ -711,66 +668,7 @@ const rotatePhase = (ctx) => {
   }, delayPerLoop * requiredLoops);
 };
 
-export const createLargeSquareBoss = (ctx) => {
-  // const cubeBoss = {
-  //   maxHealth: health,
-  //   health: health,
-  //   contactDamage: 0,
-  //   pos: {
-  //     x: world.width / 2,
-  //     y: 400,
-  //   },
-  //   vel: {
-  //     x: 0,
-  //     y: 0,
-  //   },
-  //   radius: 1.2,
-  //   color: "purple",
-  //   speed: 50,
-  //   team: "enemy",
-  //   mass: 1000,
-
-  //   damageConflicted: 0,
-  //   absorbedDamage: 0,
-
-  //   collision: false,
-  //   airFriction: 1,
-
-  //   // Pahses
-  //   rectangles: [rect1, rect2, rect3, rect4],
-  //   phaseCounter: -1,
-
-  //   // phaseList: [moveToCorners],
-  //   phaseList: [gatherUp],
-  //   currentPhase: "",
-  //   closestRect: "",
-  //   largeAttackCounter: 0,
-  //   rectanglesLive: true,
-
-  // update: (ctx): void => {
-  //   rectList.forEach((cube) => {
-  //     cube.x = cube.x + cube.vel.x;
-  //     cube.y = cube.y + cube.vel.y;
-  //   });
-
-  //   console.log("!Dlkopösfxjvi9öoesyeflinwsuy3wl bku");
-
-  //   rectList = rectList.filter((square) => square.health >= 0);
-
-  //   if (cubeBoss.phaseCounter < 0) {
-  //     const nextPhase = randomArrayElement(cubeBoss.phaseList);
-
-  //     nextPhase(ctx, cubeBoss);
-
-  //     cubeBoss.phaseCounter = 10000;
-  //   }
-  // },
-  //   // deathAnimation: (ctx, liveBosses, bossIndex) => {},
-  // };
-
-  // entities.push(cubeBoss);
-  // liveBosses.push(cubeBoss);
-
+export const createSquareBosses = (ctx) => {
   rectList.forEach((rect) => {
     squares.push(rect);
     liveBosses.push(rect);
@@ -780,5 +678,5 @@ export const createLargeSquareBoss = (ctx) => {
       y: rect.y + rect.height / 2,
     };
   });
-  gatherUp(ctx);
+  shootFromCorners(ctx);
 };

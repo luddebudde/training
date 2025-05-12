@@ -5,7 +5,7 @@ import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
 
-const health = 15;
+const health = 1500;
 
 type Charger = {
   maxHealth: number;
