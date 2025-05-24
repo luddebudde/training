@@ -127,15 +127,15 @@ const update = () => {
     entity?.update?.(ctx);
 
     entities.forEach((secondEntity) => {
-      if (entity !== secondEntity && doCirclesOverlap(entity, secondEntity)) {
-        // if (entity.team !== secondEntity.team) {
-        dealDamage(entity, secondEntity, entity.contactDamage);
-        // }
+      if (entity !== secondEntity) {
+        if (doCirclesOverlap(entity, secondEntity)) {
+          dealDamage(entity, secondEntity, entity.contactDamage);
 
-        if (entity.collision === true && secondEntity.collision === true) {
-          const newVel = handleCollision(entity, secondEntity);
-          entity.vel = newVel.v1;
-          secondEntity.vel = newVel.v2;
+          if (entity.collision === true && secondEntity.collision === true) {
+            const newVel = handleCollision(entity, secondEntity);
+            entity.vel = newVel.v1;
+            secondEntity.vel = newVel.v2;
+          }
         }
       }
     });
@@ -188,12 +188,10 @@ const update = () => {
 
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity)) {
-        if (bullet.shooter !== entity) {
-          // if (bullet.team !== entity.team) {
+        if (bullet.team !== entity.team) {
           dealDamage(bullet.shooter, entity, bullet.damage);
 
           bullets.splice(index, 1);
-          // }
 
           bullet.onHit(entity, bullet);
         }
@@ -214,57 +212,33 @@ const update = () => {
       }
     });
 
-    if (bullet.pos.x > world.width - bullet.radius) {
-      if (bullet.bounceable) {
-        handleBulletBounce(
-          bullets,
-          bullet,
-          { x: -bullet.vel.x, y: bullet.vel.y },
-          index
-        );
+    // Bounces
+    if (
+      bullet.pos.x > world.width - bullet.radius ||
+      bullet.pos.x < bullet.radius
+    ) {
+      handleBulletBounce(
+        bullets,
+        bullet,
+        { x: -bullet.vel.x, y: bullet.vel.y },
+        index
+      );
 
-        return;
-      }
-      bullets.splice(index, 1);
+      return;
     }
-    if (bullet.pos.x < bullet.radius) {
-      if (bullet.bounceable) {
-        handleBulletBounce(
-          bullets,
-          bullet,
-          { x: -bullet.vel.x, y: bullet.vel.y },
-          index
-        );
 
-        return;
-      }
-      bullets.splice(index, 1);
-    }
-    if (bullet.pos.y > world.height - bullet.radius) {
-      if (bullet.bounceable) {
-        handleBulletBounce(
-          bullets,
-          bullet,
-          { x: bullet.vel.x, y: -bullet.vel.y },
-          index
-        );
+    if (
+      bullet.pos.y > world.height - bullet.radius ||
+      bullet.pos.y < bullet.radius
+    ) {
+      handleBulletBounce(
+        bullets,
+        bullet,
+        { x: bullet.vel.x, y: -bullet.vel.y },
+        index
+      );
 
-        return;
-      }
-      bullets.splice(index, 1);
-    }
-    if (bullet.pos.y < bullet.radius) {
-      if (bullet.bounceable) {
-        handleBulletBounce(
-          bullets,
-          bullet,
-          { x: bullet.vel.x, y: -bullet.vel.y },
-          index
-        );
-
-        return;
-      }
-      bullets.splice(index, 1);
+      return;
     }
   });
 
@@ -305,11 +279,18 @@ const update = () => {
   }
 
   if (isKeyDown("Space") && player.attackDelay < 0) {
-    createBullet(bullets, player, mousePos, player.bulletDamage, 50, {
-      bounceable: player.unlockedAbilities.bounceable,
-      bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
-      airFriction: false,
-    });
+    createBullet(
+      bullets,
+      player,
+      mousePos,
+      player.bulletDamage,
+      player.bulletSpeed,
+      {
+        bounceable: player.unlockedAbilities.bounceable,
+        bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+        airFriction: false,
+      }
+    );
 
     player.attackDelay =
       standardPlayer.attackDelay *

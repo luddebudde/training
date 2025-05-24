@@ -1,6 +1,6 @@
 export const dealDamage = (attacker, target, damage: number) => {
   // const attackerTeam = attacker === undefined ? "" : attacker.team;
-
+  target.health -= damage;
   if (
     attacker &&
     target &&
@@ -13,6 +13,5 @@ export const dealDamage = (attacker, target, damage: number) => {
   ) {
     attacker.damageConflicted += damage;
     target.absorbedDamage += damage;
-    target.health -= damage;
   }
 };

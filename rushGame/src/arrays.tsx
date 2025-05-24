@@ -13,6 +13,8 @@ import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
 import { createLineBreakerBoss } from "./bosses/lineBreaker";
 import { createSquareBosses } from "./bosses/squareBoss";
+import { createRandomerBoss } from "./bosses/randomer";
+import { createPacificBoss } from "./bosses/pacific";
 
 export let entities = [];
 export let bullets = [];
@@ -24,13 +26,15 @@ const firstWave = [
   // createSprayerBoss,
   // createChargerBoss,
   // createLineBreakerBoss,
+  // createRandomerBoss,
+  createPacificBoss,
 
   // createRainerBoss,
 
   // createRainerBoss,
   // createBonkerBoss,
   // createTwinBoss,
-  createBonkerBoss,
+  // createBonkerBoss,
 
   // createCreateSquareBosses,
 ];

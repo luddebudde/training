@@ -134,7 +134,6 @@
     </script> -->
     <div id="root"></div>
     <script type="module" src="src/main.tsx"></script>
-    <script type="module" src="src/test2.tsx"></script>
 
     <!-- <base href="/training/survival"/> -->
     <style>
@@ -252,5 +251,16 @@
       >
       </canvas>
     </div>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas(); // initial resize
+    </script>
   </body>
 </html>

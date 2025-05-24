@@ -97,8 +97,6 @@ export const createBonkerBoss = () => {
 
           bonker.vel = multVar(direction, bonker.speed);
         }, 1000);
-
-        console.log("irogo");
       }
     },
   };

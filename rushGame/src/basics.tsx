@@ -1,4 +1,8 @@
+const canvas = document.getElementById("myCanvas");
+
 export const world = {
-  width: screen.width,
-  height: screen.height,
+  width: canvas.width,
+  height: canvas.height,
 };
+
+console.log(screen.width, screen.height);

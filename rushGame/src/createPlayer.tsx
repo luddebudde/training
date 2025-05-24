@@ -22,6 +22,8 @@ export type Player = {
   attackDelay: number;
   // standardAttackDelay: number;
   bulletDamage: number;
+  bulletSpeed: number;
+
   team: string;
 
   damageConflicted: number;
@@ -71,6 +73,7 @@ export const createPlayer = (): any => {
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
     bulletDamage: 20,
+    bulletSpeed: 50,
 
     damageConflicted: 0,
     absorbedDamage: 0,
