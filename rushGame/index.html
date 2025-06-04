@@ -11,9 +11,9 @@
         visibility: hidden;
         background-color: blue;
         display: flex;
-        flex-direction: row; /* Placera element i rad */
+        flex-direction: row;
         height: 100%;
-        width: 100%; /* Se till att den fyller hela föräldern */
+        width: 100%;
       }
 
       #option1,
@@ -24,7 +24,7 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        width: 33.33%; /* Varje alternativ tar upp en tredjedel */
+        width: 33.33%;
         display: flex;
         padding: 0px;
         margin: 0px;
@@ -47,10 +47,9 @@
       #image img {
         margin: 0;
         padding: 0;
-        width: 100%; /* Bilden fyller bredden på föräldern */
-        height: 100%; /* Bilden fyller höjden på föräldern */
-        object-fit: contain; /* Bilden skalas så att den syns i sin helhet utan att bli förvrängd */
-        /* Alternativt kan du använda object-fit: cover; för att fylla hela området och klippa bort delar av bilden */
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
 
       #description {
@@ -113,7 +112,6 @@
         align-items: center;
         font-size: 75px;
         padding: 10px;
-        /* font-size: 1em; */
       }
 
       #stat {
@@ -124,18 +122,9 @@
         font-size: 75px;
         padding: 10px;
       }
-
-      /* #loseTitle; */
     </style>
-    <!-- <script type="module" src="src/main.tsx" defer>
-           <React.StrictMode >
-        <App />
-      </React.StrictMode>
-    </script> -->
     <div id="root"></div>
     <script type="module" src="src/main.tsx"></script>
-
-    <!-- <base href="/training/survival"/> -->
     <style>
       body {
         margin: 0;
@@ -144,11 +133,6 @@
     </style>
   </head>
   <body>
-    <!-- <div
-      id="worldDiv"
-      style="background-color: black; width: 100vw; height: 1000vh"
-    > -->
-
     <div id="loseScreen">
       <div
         id="loseTitle"
@@ -179,63 +163,63 @@
     </div>
 
     <div
-      id="Menu"
+      id="menu"
       style="
         display: flex;
         position: absolute;
-        top: 150px;
-        left: 50vw;
+        /* background-color: green; */
+        top: 0px;
+        left: 0vw;
         text-align: center;
-        height: 30vh;
-        width: 35vw;
-
+        height: 100vh;
+        width: 100vw;
+        pointer-events: none;
         flex-direction: column;
-        transform: translate(-50%, 0%);
       "
     >
-      <div
-        id="upgradeSelection"
-        style="
-          visibility: hidden;
-          background-color: blue;
-          flex-direction: row;
-          display: block;
-          height: 100%;
-        "
-      >
-        <div id="upgradeSelection" style="visibility: hidden">
-          <div id="option1">
-            <div id="title" style="background-color: red">Titel 1</div>
-            <div id="image" style="background-color: lime">
-              <img
-                src="https://www.maskinisten.net/userpix/12210_20110401300_1.jpg"
-                alt="Varför ser du detta? Är du schizo eller????"
-              />
-            </div>
-            <div id="description">Beskrivning 1</div>
+      <!-- <div
+      id="upgradeSelection"
+      style="
+        visibility: hidden;
+        background-color: blue;
+        flex-direction: row;
+        display: block;
+        height: 100%;
+      "
+    > -->
+      <div id="upgradeSelection" style="visibility: hidden">
+        <div id="option1">
+          <div id="title" style="background-color: red">Titel 1</div>
+          <div id="image" style="background-color: lime">
+            <img
+              src="https://www.maskinisten.net/userpix/12210_20110401300_1.jpg"
+              alt="Varför ser du detta? Är du schizo eller????"
+            />
           </div>
+          <div id="description">Beskrivning 1</div>
+        </div>
 
-          <div id="option2">
-            <div id="title" style="background-color: blue">Titel 2</div>
-            <div id="image">
-              <img
-                src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAwwDW5.img?h=630&w=1200&m=6&q=60&o=t&l=f&f=jpg&x=1715&y=1336"
-                alt="Här ser du en ytterst sannerligen bild"
-              />
-            </div>
-            <div id="description">Beskrivning 2</div>
+        <div id="option2">
+          <div id="title" style="background-color: blue">Titel 2</div>
+          <div id="image">
+            <img
+              src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAwwDW5.img?h=630&w=1200&m=6&q=60&o=t&l=f&f=jpg&x=1715&y=1336"
+              alt="Här ser du en ytterst sannerligen bild"
+            />
           </div>
+          <div id="description">Beskrivning 2</div>
+        </div>
 
-          <div id="option3">
-            <div id="title" style="background-color: green">Titel 3</div>
-            <div id="image">
-              <img src="https://via.placeholder.com/150" alt="CRAHHHH" />
-            </div>
-            <div id="description">Beskrivning 3</div>
+        <div id="option3">
+          <div id="title" style="background-color: green">Titel 3</div>
+          <div id="image">
+            <img src="https://via.placeholder.com/150" alt="CRAHHHH" />
           </div>
+          <div id="description">Beskrivning 3</div>
         </div>
       </div>
     </div>
+    <!-- </div> -->
 
     <div>
       <canvas

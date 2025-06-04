@@ -1,6 +1,7 @@
 import { bossesKilled } from "./arrays";
 import { bulletsShot } from "./createBullet";
 import { player } from "./createPlayer";
+import { changeIsPaused } from "./main";
 // import { bulletsShot } from "./main";
 
 export const loseScreen = () => {

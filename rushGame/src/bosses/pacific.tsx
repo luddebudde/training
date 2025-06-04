@@ -5,7 +5,7 @@ import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar, origo, Vec2 } from "../math";
 
-const health = 1500;
+const health = 15;
 
 type pacific = {
   maxHealth: number;
@@ -33,6 +33,7 @@ type pacific = {
 
   // Pahses
   changedBullets: Bullet[];
+  reachedHalfway: boolean;
 
   update: () => void;
   onWallBounce: () => void;
@@ -66,43 +67,63 @@ export const createPacificBoss = () => {
     // Pahses
     // phaseCounter: 100,
     changedBullets: [],
+    reachedHalfway: false,
 
     update: (): void => {
       const skipSet = new Set(pacific.changedBullets);
 
+      if (
+        pacific.reachedHalfway === false &&
+        pacific.health < pacific.maxHealth / 2
+      ) {
+        pacific.vel = multVar(pacific.vel, 1.5);
+        pacific.reachedHalfway = true;
+      }
+
       bullets.forEach((bullet) => {
-        if (skipSet.has(bullet)) return;
+        if (skipSet.has(bullet) || bullet.team === "enemy") return;
 
-        // if (Math.random() > 0.5) {
+        bullet.vel =
+          Math.random() < 0.1 ? multVar(bullet.vel, 0.5) : bullet.vel;
+
+        let damageNumber;
+        let colorString;
+
         bullet.bounceable = true;
-        bullet.onWallBounce = function (bullet, calculatedVec) {
-          if (bullet.hasBounced) return;
+        bullet.bounceDamageLoss = 1;
 
-          // createBullet(
-          //   bullets,
-          //   pacific,
-          //   undefined,
-          //   bullet.damage / 4,
-          //   0,
-          //   {},
-          //   {
-          //     bulletRadius: bullet.radius,
-          //     color: "red",
-          //     startPos: {
-          //       x: bullet.pos.x + calculatedVec.x,
-          //       y: bullet.pos.y + calculatedVec.y,
-          //     },
-          //     vel: multVar(calculatedVec, 0.5),
-          //   }
-          // );
+        if (Math.random() > 0.8) {
+          damageNumber = -bullet.damage;
+          colorString = "lime";
+        } else {
+          damageNumber = bullet.damage;
+          colorString = "red";
+        }
 
-          bullet.team = "enemy";
-          bullet.color = "red";
-          // bullet.vel =
+        // Ta bort funktionen
+        bullet.onWallBounce = (bullet, newVel) => {
+          bullet.color = "purple";
+          createBullet(
+            bullets,
+            pacific,
+            undefined,
+            damageNumber * 0.8,
+            bullet.speed,
+            { bounceDamageLoss: 0.3, bounceable: true },
+            {
+              startPos: {
+                x: bullet.pos.x + newVel.x,
+                y: bullet.pos.y + newVel.y,
+              },
+              vel: multVar(newVel, 0.5),
+              color: colorString,
+              team: "enemy",
+            }
+          );
 
-          // Ta bort funktionen
-          bullet.onWallBounce = () => {};
+          // bullets.splice(index, 1);
         };
+        // };
         // }
 
         pacific.changedBullets.push(bullet);

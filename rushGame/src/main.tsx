@@ -22,6 +22,13 @@ import { drawCircle } from "./draw/drawCircle";
 import { drawSquare } from "./draw/drawSquare";
 import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
 import { drawLine } from "./draw/drawLine";
+import App, { openMenu } from "./react/openMenu";
+import { StrictMode } from "react";
+import React, { useState } from "react";
+import { createRoot } from "react-dom/client";
+import { Menu } from "./react/menu";
+
+createRoot(document.getElementById("root")!).render(<App />);
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -69,9 +76,19 @@ const square = {
   rotation: 0 * Math.PI,
 };
 
+let isPaused: boolean = true;
+
+export const changeIsPaused = (changeTo: boolean) => {
+  isPaused = changeTo;
+};
+
 // squares.push(square);
 
 const update = () => {
+  if (isPaused === true) {
+    return;
+  }
+
   ctx.beginPath();
   ctx.rect(0, 0, world.width, world.height);
   ctx.fillStyle = "white";
@@ -279,47 +296,51 @@ const update = () => {
   }
 
   if (isKeyDown("Space") && player.attackDelay < 0) {
-    createBullet(
-      bullets,
-      player,
-      mousePos,
-      player.bulletDamage,
-      player.bulletSpeed,
-      {
-        bounceable: player.unlockedAbilities.bounceable,
-        bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
-        airFriction: false,
-      }
-    );
+    // createBullet(
+    //   bullets,
+    //   player,
+    //   mousePos,
+    //   player.bulletDamage,
+    //   player.bulletSpeed,
+    //   {
+    //     bounceable: player.unlockedAbilities.bounceable,
+    //     bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+    //     airFriction: false,
+    //   }
+    // );
 
-    player.attackDelay =
-      standardPlayer.attackDelay *
-      (1 -
-        player.unlockedAbilities.adrenaline *
-          0.33 *
-          (1 - player.health / player.maxHealth));
+    // player.attackDelay =
+    //   standardPlayer.attackDelay *
+    //   (1 -
+    //     player.unlockedAbilities.adrenaline *
+    //       0.33 *
+    //       (1 - player.health / player.maxHealth));
+    openMenu(changeIsPaused);
   }
   dashCooldown--;
   player.attackDelay--;
 
   checkArrayRemoval(ctx);
 
-  if (player.health > 0) {
-    requestAnimationFrame(update);
-  } else if (player.unlockedAbilities.bonusLifeCount > 0) {
-    console.log("You have tricked death!");
+  if (player.health < 0) {
+    changeIsPaused(true);
+    if (player.unlockedAbilities.bonusLifeCount > 0) {
+      console.log("You have tricked death!");
 
-    player.health = player.maxHealth / 2;
-    entities.push(player);
+      player.health = player.maxHealth / 2;
+      entities.push(player);
 
-    player.unlockedAbilities.bonusLifeCount--;
+      player.unlockedAbilities.bonusLifeCount--;
 
-    setTimeout(() => {
-      requestAnimationFrame(update);
-    }, 1000);
-  } else {
-    loseScreen();
+      setTimeout(() => {
+        requestAnimationFrame(update);
+      }, 1000);
+    } else {
+      loseScreen();
+    }
   }
+
+  requestAnimationFrame(update);
 };
 
 export const mousePos = {
@@ -332,4 +353,9 @@ document.addEventListener("mousemove", (event) => {
   mousePos.y = event.clientY;
 });
 
-update();
+// export const activateUpdateFunction = () => {
+//   update();
+// };
+
+// activateUpdateFunction();
+requestAnimationFrame(update);

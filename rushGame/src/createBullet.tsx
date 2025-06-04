@@ -65,7 +65,7 @@ export const createBullet = (
       y: undefined,
     },
     onHit: () => {},
-
+    onWallBounce: () => {},
     ...advanced,
   };
 
@@ -119,8 +119,10 @@ export const createBullet = (
     onHit: (entity, bullet) => {
       finalAdvanced.onHit(entity, bullet);
     },
+    onWallBounce: (bullet, newVec) => {
+      finalAdvanced.onHit(bullet, newVec);
+    },
   };
-  console.log(bullet.team);
 
   bullets.push(bullet);
 
@@ -205,7 +207,7 @@ export const createWaveShoot = (
       onHit: (entity, bullet) => {
         finalAdvanced.onHit(entity, bullet);
       },
-      onWallBounce: () => {},
+      onWallBounce: (bullet, newVec) => {},
     };
 
     bullets.push(bullet);
@@ -218,13 +220,13 @@ export const createWaveShoot = (
 export const handleBulletBounce = (
   bullets: Bullet[],
   bullet: Bullet,
-  newVec: Vec2 = bullet.vel,
+  newVel: Vec2 = bullet.vel,
   index: number
 ) => {
-  bullet?.onWallBounce?.(bullet, newVec);
+  bullet?.onWallBounce?.(bullet, newVel);
 
   if (bullet.bounceable) {
-    bullet.vel = newVec;
+    bullet.vel = newVel;
     bullet.damage *= 1 - bullet.bounceDamageLoss;
 
     if (Math.abs(bullet.damage) < 0.5) {

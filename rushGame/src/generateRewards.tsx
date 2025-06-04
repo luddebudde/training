@@ -124,7 +124,7 @@ export const generateRewards = (ctx) => {
     (loopReward) => !usedRewards.includes(loopReward)
   );
 
-  console.log(usedRewards, possibleRewards, rewardPool, "logging rewards");
+  // console.log(usedRewards, possibleRewards, rewardPool, "logging rewards");
 
   for (let i = 1; i < 4; i++) {
     const reward: Upgrades = randomArrayElementSplice(possibleRewards);
@@ -149,7 +149,7 @@ export const generateRewards = (ctx) => {
         nextBoss(ctx);
       }, spawnDelay * 2);
 
-      console.log(player.unlockedAbilities, reward.title);
+      // console.log(play er.unlockedAbilities, reward.title);
 
       selectionDiv.style.visibility = "hidden";
       const children = selectionDiv.querySelectorAll("*");
