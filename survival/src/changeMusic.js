@@ -89,8 +89,8 @@ export const changeVolume = (amount) => {
 export const normalMusic = {
   name: "normal",
   fileName: "public/sounds/gameMusic.mp3",
-  // volume: 0.7,
-  volume: 0,
+  volume: 0.7,
+  // volume: 0,
 };
 
 const funnyMusic = {
@@ -138,8 +138,8 @@ let originalVolume = normalMusic.volume;
 
 export const restoreMusicVolume = () => {
   stopFadin = true;
-  // normalMusic.volume = 0.6;
-  normalMusic.volume = 0;
+  normalMusic.volume = 0.6;
+  // normalMusic.volume = 0;
   funnyMusic.volume = 1.2;
   battleMusic.volume = 1;
   synthMusic.volume = 0.8;

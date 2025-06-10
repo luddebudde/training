@@ -41,14 +41,16 @@ const firstWave = [
 const secondWave = [
   // createSprayerBoss,
   // createChargerBoss,
-  createTwinBoss,
-  createBonkerBoss,
-  createRainerBoss,
+  // createTwinBoss,
+  // createBonkerBoss,
+  // createRainerBoss,
   // createBonkerBoss
 ];
-const thirdWave = [createTwinBoss, createSquareBosses];
-const fourthWave = [];
-const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
+const thirdWave = [
+  // createTwinBoss, createSquareBosses
+];
+// const fourthWave = [];
+const waveOrder = [firstWave, secondWave];
 
 let currentWaveIndex = 0;
 export let bossPool = [...waveOrder[currentWaveIndex]];
@@ -74,21 +76,23 @@ export const nextBoss = (ctx) => {
     abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
 
   boss(ctx);
+
+  console.log(boss, liveBosses);
 };
 
 const nextFloorBoss = (ctx) => {
   currentWaveIndex++;
 
-  bossPool = [...waveOrder[currentWaveIndex]];
-
-  if (bossPool === undefined) {
+  if (waveOrder.length < currentWaveIndex + 1) {
     console.log("YOU WON");
 
-    player.size = 154;
+    player.radius = 154;
     player.speed = -player.speed;
-  }
+  } else {
+    bossPool = [...waveOrder[currentWaveIndex]];
 
-  generateRewards(ctx);
+    generateRewards(ctx);
+  }
 };
 
 export const checkArrayRemoval = (ctx) => {

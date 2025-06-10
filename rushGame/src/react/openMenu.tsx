@@ -1,51 +1,55 @@
 import React, { useState } from "react";
-import { Menu } from "./menu";
+// import { Menu } from "./menu";
+import { nextBoss } from "../arrays";
 
-function App(changeIsPaused) {
-  const [menuOpen, setMenuOpen] = useState(false);
+function App() {
+  const canvas = document.getElementById("myCanvas");
+  const ctx = canvas.getContext("2d");
+
   const [gameName, setGameName] = useState("GAME NAME");
   return (
     <>
-      {gameName && <Menu />}
+      {/* {<Menu />} */}
       <div
+        id="menu"
         style={{
-          margin: 5,
+          // marginTop: 20,
           position: "absolute",
-          backgroundColor: "blue",
+          // backgroundColor: "green",sd
+          backgroundImage: "url(public/img.webp)",
           display: "flex",
-          width: "50%",
-          height: "70%",
+          width: "100%",
+          height: "100%",
           left: "50%",
           top: "0%",
           flexDirection: "column",
+          // justifyContent: "",
+          alignItems: "center",
           transform: "translate(-50%, 0%)",
+          padding: "40px",
         }}
       >
-        {/* <button
-          style={{ backgroundColor: "red", fontSize: 150, margin: 0 }}
-          onClick={() => setGameName(true)}
-        >
-          {gameName}
-        </button> */}
         <input
-          style={{ fontSize: 130, backgroundColor: "red", margin: 10 }}
+          style={{
+            fontSize: 130,
+            backgroundColor: "white",
+            marginBottom: 60,
+            width: "50%",
+            textAlign: "center",
+          }}
           value={gameName}
           onChange={(e) => setGameName(e.target.value)}
         />
+        {createButton("Play", "red", () => {
+          const menu = document.getElementById("menu");
+          menu.style.visibility = "hidden";
 
-        <button
-          style={{ backgroundColor: "red", fontSize: 50, margin: 40 }}
-          onClick={() => alert("hdeiu")}
-        >
-          Hello, React
-        </button>
-
-        <button
-          style={{ backgroundColor: "red", fontSize: 50, margin: 10 }}
-          onClick={() => alert("hdeiu")}
-        >
-          Hello, React
-        </button>
+          setTimeout(() => {
+            nextBoss(ctx);
+          }, 1500);
+        })}
+        {createButton("Practice", "green", () => {})}
+        {createButton("4 Dummies", "blue", () => {})}
       </div>
     </>
   );
@@ -53,17 +57,27 @@ function App(changeIsPaused) {
 
 export default App;
 
-export const openMenu = (changeIsPaused) => {
-  //   const [gameName, setGameName] = useState("GAME NAME");
-  changeIsPaused(true);
-  const container = document.getElementById("menu");
-  if (!container) {
-    console.error("Ingen element med id 'menu' hittades.");
-    return;
-  }
-  container.style.display = "flex";
-  //   const element = (
-  //   );
-  //   const root = createRoot(container);
-  //   root.render(element);
+const createButton = (text, backgroundColor, onClick) => (
+  <button
+    style={{
+      backgroundColor,
+      fontSize: 80,
+      width: "20%",
+      height: "10%",
+      margin: 40,
+    }}
+    onClick={onClick}
+  >
+    {text}
+  </button>
+);
+
+const closeMenu = () => {
+  const menu = document.getElementById("menu");
+  menu.style.display = "hidden";
+};
+
+const openMenu = () => {
+  const menu = document.getElementById("menu");
+  menu.style.display = "flex";
 };

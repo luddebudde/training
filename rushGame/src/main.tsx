@@ -27,11 +27,12 @@ import { StrictMode } from "react";
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "./react/menu";
-
-createRoot(document.getElementById("root")!).render(<App />);
+import { generateRewards } from "./generateRewards";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
+
+createRoot(document.getElementById("root")!).render(<App />);
 
 export const isKeyDown = keyDownTracker();
 
@@ -43,8 +44,9 @@ setTimeout(() => {
   for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
-    nextBoss(ctx);
+    // nextBoss(ctx);
     // loseScreen();
+    // generateRewards(ctx);
   }
 }, 10);
 
@@ -76,7 +78,7 @@ const square = {
   rotation: 0 * Math.PI,
 };
 
-let isPaused: boolean = true;
+let isPaused: boolean = false;
 
 export const changeIsPaused = (changeTo: boolean) => {
   isPaused = changeTo;
@@ -296,26 +298,24 @@ const update = () => {
   }
 
   if (isKeyDown("Space") && player.attackDelay < 0) {
-    // createBullet(
-    //   bullets,
-    //   player,
-    //   mousePos,
-    //   player.bulletDamage,
-    //   player.bulletSpeed,
-    //   {
-    //     bounceable: player.unlockedAbilities.bounceable,
-    //     bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
-    //     airFriction: false,
-    //   }
-    // );
-
-    // player.attackDelay =
-    //   standardPlayer.attackDelay *
-    //   (1 -
-    //     player.unlockedAbilities.adrenaline *
-    //       0.33 *
-    //       (1 - player.health / player.maxHealth));
-    openMenu(changeIsPaused);
+    createBullet(
+      bullets,
+      player,
+      mousePos,
+      player.bulletDamage,
+      player.bulletSpeed,
+      {
+        bounceable: player.unlockedAbilities.bounceable,
+        bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+        airFriction: false,
+      }
+    );
+    player.attackDelay =
+      standardPlayer.attackDelay *
+      (1 -
+        player.unlockedAbilities.adrenaline *
+          0.33 *
+          (1 - player.health / player.maxHealth));
   }
   dashCooldown--;
   player.attackDelay--;

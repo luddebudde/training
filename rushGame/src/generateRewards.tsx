@@ -111,51 +111,43 @@ export const generateRewards = (ctx) => {
   const selectionDiv = document.getElementById("upgradeSelection");
   selectionDiv.style.visibility = "visible";
 
-  const children = selectionDiv.querySelectorAll("*");
-  children.forEach((child) => {
-    child.style.visibility = "visible";
-  });
   const rewardPool = totalRewardPool.filter((reward) => {
     const requirements = reward.unlockRequirement();
     return requirements.every((req) => usedRewards.includes(req));
   });
 
-  let possibleRewards = rewardPool.filter(
+  let possibleRewards: Upgrades[] = rewardPool.filter(
     (loopReward) => !usedRewards.includes(loopReward)
   );
 
-  // console.log(usedRewards, possibleRewards, rewardPool, "logging rewards");
-
   for (let i = 1; i < 4; i++) {
     const reward: Upgrades = randomArrayElementSplice(possibleRewards);
+    const currentElement = document.getElementById(`option${i}`);
 
-    const element = document.getElementById(`option${i}`);
-    const children = element.children;
+    const subElements = currentElement.children;
 
-    element.style.visibility = "visible";
+    currentElement.style.visibility = "visible";
 
-    const firstChild = children[0];
-    const secondChild = children[1];
-    const thirdChild = children[2];
+    const titleElement = subElements[0]; // Select Title
+    const imageElement = subElements[1]; // Select Image
+    const descriptionElement = subElements[2]; // Select Description
 
-    firstChild.textContent = reward.title;
-    thirdChild.textContent = reward.description;
+    titleElement.textContent = reward.title;
+    descriptionElement.textContent = reward.description;
 
-    element.onclick = () => {
+    currentElement.onclick = () => {
       reward.change(player);
       usedRewards.push(reward);
-
-      setTimeout(() => {
-        nextBoss(ctx);
-      }, spawnDelay * 2);
-
-      // console.log(play er.unlockedAbilities, reward.title);
 
       selectionDiv.style.visibility = "hidden";
       const children = selectionDiv.querySelectorAll("*");
       children.forEach((child) => {
         child.style.visibility = "hidden";
       });
+
+      setTimeout(() => {
+        nextBoss(ctx);
+      }, spawnDelay * 2);
     };
   }
 };
