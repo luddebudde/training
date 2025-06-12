@@ -93,9 +93,11 @@ export const createBullet = (
   const yVel =
     finalAdvanced.vel.y !== undefined ? finalAdvanced.vel.y : undefined;
 
-  if (shooter.team === "player") {
+  if (bulletTeam === "player") {
     bulletsShot++;
   }
+
+  // console.log(bulletTeam);
 
   const bullet: Bullet = {
     shooter: shooter,

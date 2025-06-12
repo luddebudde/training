@@ -189,7 +189,6 @@ const update = () => {
 
         if (doCirclesOverlap(entity, blackhole) && entity.team !== "enemy") {
           dealDamage(liveBosses[0], entity, 40);
-
           blackholes.splice(index);
         }
       }
@@ -209,7 +208,7 @@ const update = () => {
       if (doCirclesOverlap(bullet, entity)) {
         if (bullet.team !== entity.team) {
           dealDamage(bullet.shooter, entity, bullet.damage);
-
+          // console.log(bullet.damage, bullet.shooter);
           bullets.splice(index, 1);
 
           bullet.onHit(entity, bullet);
@@ -222,10 +221,11 @@ const update = () => {
     squares.forEach((square) => {
       if (collideCircleWithRotatedRectangle(ctx, bullet, square, false)) {
         if (square.health !== undefined) {
-          dealDamage(bullet.shooter, square, bullet.damage);
+          // console.log(bullet.shooter);
 
           if (bullet.team !== square.team) {
             bullets.splice(index, 1);
+            dealDamage(bullet.shooter, square, bullet.damage);
           }
         }
       }
@@ -322,10 +322,10 @@ const update = () => {
 
   checkArrayRemoval(ctx);
 
-  if (player.health < 0) {
+  if (player.health <= 0) {
     changeIsPaused(true);
     if (player.unlockedAbilities.bonusLifeCount > 0) {
-      console.log("You have tricked death!");
+      console.log("You have trickeddeath !");
 
       player.health = player.maxHealth / 2;
       entities.push(player);
@@ -333,6 +333,7 @@ const update = () => {
       player.unlockedAbilities.bonusLifeCount--;
 
       setTimeout(() => {
+        changeIsPaused(false);
         requestAnimationFrame(update);
       }, 1000);
     } else {

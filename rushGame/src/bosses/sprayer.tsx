@@ -7,7 +7,7 @@ import { goTo } from "../goTo";
 import { add, multVar, sub, Vec2 } from "../math";
 
 const cornerDelay = 50;
-const health = 2500;
+const health = 25;
 
 // TODO make sprayer shoot at last corner
 // Make it lose all movement when stoping "corner phase"

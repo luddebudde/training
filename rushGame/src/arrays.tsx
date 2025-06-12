@@ -15,6 +15,8 @@ import { createLineBreakerBoss } from "./bosses/lineBreaker";
 import { createSquareBosses } from "./bosses/squareBoss";
 import { createRandomerBoss } from "./bosses/randomer";
 import { createPacificBoss } from "./bosses/pacific";
+import practiceMenu, { practiceModeActivated } from "./react/practiceMenu";
+import App from "./react/openMenu";
 
 export let entities = [];
 export let bullets = [];
@@ -22,12 +24,25 @@ export let squares = [];
 export const lines = [];
 export const blackholes = [];
 
+const sprayerArray = ["Sprayer", "", createSprayerBoss];
+const chargerArray = ["Charger", "", createChargerBoss];
+const lineBreakerArray = ["Line-breaker", "", createLineBreakerBoss];
+const randomerArray = ["Randomer", "", createRandomerBoss];
+const pacificArray = ["Pacific", "", createPacificBoss];
+const rainerArray = ["Rainer", "", createRainerBoss];
+const twinArray = ["The Twin Bros", "", createTwinBoss];
+const squareArray = ["Squa's gang", "", createSquareBosses];
+
 const firstWave = [
-  // createSprayerBoss,
+  sprayerArray,
+
+  lineBreakerArray,
+  randomerArray,
+  rainerArray,
   // createChargerBoss,
   // createLineBreakerBoss,
   // createRandomerBoss,
-  createPacificBoss,
+  // createPacificBoss,
 
   // createRainerBoss,
 
@@ -40,17 +55,18 @@ const firstWave = [
 ];
 const secondWave = [
   // createSprayerBoss,
-  // createChargerBoss,
+  sprayerArray,
+  chargerArray,
+  pacificArray,
+
   // createTwinBoss,
   // createBonkerBoss,
   // createRainerBoss,
-  // createBonkerBoss
+  // createBonkerBoss,
 ];
-const thirdWave = [
-  // createTwinBoss, createSquareBosses
-];
+const thirdWave = [twinArray, squareArray];
 // const fourthWave = [];
-const waveOrder = [firstWave, secondWave];
+export const waveOrder = [firstWave, secondWave, thirdWave];
 
 let currentWaveIndex = 0;
 export let bossPool = [...waveOrder[currentWaveIndex]];
@@ -61,6 +77,11 @@ export const spawnDelay = 1500;
 export let bossesKilled = 0;
 
 export const nextBoss = (ctx) => {
+  const abilities = player.unlockedAbilities;
+
+  abilities.bonusLifeCount +=
+    abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
+
   console.log(player.health, player.maxHealth);
 
   // generateRewards();
@@ -68,16 +89,11 @@ export const nextBoss = (ctx) => {
 
   if (boss === undefined) {
     nextFloorBoss(ctx);
+  } else {
+    setTimeout(() => {
+      boss[2](ctx);
+    }, 2000);
   }
-
-  const abilities = player.unlockedAbilities;
-
-  abilities.bonusLifeCount +=
-    abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
-
-  boss(ctx);
-
-  console.log(boss, liveBosses);
 };
 
 const nextFloorBoss = (ctx) => {

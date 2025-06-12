@@ -14,4 +14,6 @@ export const dealDamage = (attacker, target, damage: number) => {
     attacker.damageConflicted += damage;
     target.absorbedDamage += damage;
   }
+
+  // console.log(attacker);
 };
