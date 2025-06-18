@@ -15,8 +15,14 @@ import { createLineBreakerBoss } from "./bosses/lineBreaker";
 import { createSquareBosses } from "./bosses/squareBoss";
 import { createRandomerBoss } from "./bosses/randomer";
 import { createPacificBoss } from "./bosses/pacific";
-import practiceMenu, { practiceModeActivated } from "./react/practiceMenu";
-import App from "./react/openMenu";
+import practiceMenu, {
+  // changeMenuState,
+  practiceBoss,
+  showMenu,
+} from "./react/practiceMenu";
+import App from "./react/mainMenu";
+import { useMenu } from "./react/reactContext";
+import { meetBossIndex, statistics } from "./loseScreen";
 
 export let entities = [];
 export let bullets = [];
@@ -24,6 +30,9 @@ export let squares = [];
 export const lines = [];
 export const blackholes = [];
 
+// 1st is name
+// 2nd is image
+// 3rd is function
 const sprayerArray = ["Sprayer", "", createSprayerBoss];
 const chargerArray = ["Charger", "", createChargerBoss];
 const lineBreakerArray = ["Line-breaker", "", createLineBreakerBoss];
@@ -74,8 +83,6 @@ export let liveBosses = [];
 
 export const spawnDelay = 1500;
 
-export let bossesKilled = 0;
-
 export const nextBoss = (ctx) => {
   const abilities = player.unlockedAbilities;
 
@@ -92,7 +99,15 @@ export const nextBoss = (ctx) => {
   } else {
     setTimeout(() => {
       boss[2](ctx);
-    }, 2000);
+
+      liveBosses.forEach((boss) => {
+        if (!meetBossIndex.includes(boss)) {
+          meetBossIndex.push(boss);
+        }
+      });
+
+      // }, 2000);
+    }, 20);
   }
 };
 
@@ -128,18 +143,29 @@ export const checkArrayRemoval = (ctx) => {
       boss.maxHealth
     );
 
+    console.log(meetBossIndex);
+
     if (boss.health <= 0) {
       boss?.deathAnimation?.(ctx, liveBosses, index);
 
       liveBosses.splice(index, 1);
 
       if (liveBosses.length === 0) {
+        if (practiceBoss === true) {
+          setTimeout(() => {
+            if (window.onBossDeath) {
+              window.onBossDeath();
+            }
+          }, 3000);
+          return;
+        }
+
         bullets = bullets.filter((bullet) => bullet.team === "player");
         entities = entities.filter((entity) => entity.team === "player");
 
         console.log("splcie");
 
-        bossesKilled++;
+        statistics.bossesKilled++;
 
         player.health = player.maxHealth;
 

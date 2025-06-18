@@ -45,6 +45,7 @@ const YLine: Line = {
 };
 
 type LineBreaker = {
+  name: "line-breaker";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -63,7 +64,8 @@ type LineBreaker = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: boolean;
@@ -217,7 +219,8 @@ const patternPhase = (ctx, braker): void => {
 };
 
 export const createLineBreakerBoss = () => {
-  const braker: LineBreaker = {
+  const lineBreaker: LineBreaker = {
+    name: "line-breaker",
     maxHealth: health,
     health: health,
     contactDamage: 5,
@@ -236,7 +239,8 @@ export const createLineBreakerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     collision: true,
     airFriction: false,
@@ -264,40 +268,41 @@ export const createLineBreakerBoss = () => {
 
     ai: (ctx, braker) => {},
     update: (ctx): void => {
-      braker.ai(ctx, braker);
+      lineBreaker.ai(ctx, lineBreaker);
 
-      if (braker.health < braker.maxHealth / 2) {
-        if (!braker.rageMode) {
-          braker.vel.x = braker.speed;
-          braker.rageMode = true;
+      if (lineBreaker.health < lineBreaker.maxHealth / 2) {
+        if (!lineBreaker.rageMode) {
+          lineBreaker.vel.x = lineBreaker.speed;
+          lineBreaker.rageMode = true;
         }
 
-        braker.rageModeBulletCounter++;
-        if (braker.rageModeBulletCounter % 10 === 0) {
+        lineBreaker.rageModeBulletCounter++;
+        if (lineBreaker.rageModeBulletCounter % 10 === 0) {
           createBullet(
             bullets,
-            braker,
-            { x: braker.pos.x, y: world.height },
+            lineBreaker,
+            { x: lineBreaker.pos.x, y: world.height },
             6,
             10
           );
         }
       }
 
-      braker.lines.forEach((line) => {
+      lineBreaker.lines.forEach((line) => {
         drawLine(ctx, line.pos, add(line.endPos, line.pos), "black");
       });
 
-      if (braker.phaseCounter <= 0) {
-        randomArrayElement(braker.phaseList)(ctx, braker);
+      if (lineBreaker.phaseCounter <= 0) {
+        randomArrayElement(lineBreaker.phaseList)(ctx, lineBreaker);
 
-        braker.phaseCounter = 100;
+        lineBreaker.phaseCounter = 100;
       }
     },
+    onWallBounce: () => {},
   };
 
-  entities.push(braker);
-  liveBosses.push(braker);
+  entities.push(lineBreaker);
+  liveBosses.push(lineBreaker);
 
-  return braker;
+  return lineBreaker;
 };

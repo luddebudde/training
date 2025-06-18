@@ -28,6 +28,7 @@ export type Player = {
 
   damageConflicted: number;
   absorbedDamage: number;
+  bulletsShot: number;
 
   unlockedAbilities: {
     dash: boolean;
@@ -72,11 +73,12 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
-    bulletDamage: 20,
+    bulletDamage: 2000,
     bulletSpeed: 50,
 
     damageConflicted: 0,
     absorbedDamage: 0,
+    bulletsShot: 0,
 
     unlockedAbilities: {
       dash: false,

@@ -49,6 +49,7 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
 };
 
 type AttackerTwin = {
+  name: "[Twin] Charger";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -96,7 +97,8 @@ type AttackerTwin = {
     mass: number;
 
     damageConflicted: number;
-    absorbedDamage: number;
+    damageAbsorbed: number;
+    bulletsShot: number;
 
     airFriction: false;
     collision: true;
@@ -110,6 +112,7 @@ type AttackerTwin = {
 };
 
 type ShooterTwin = {
+  name: "[Twin] Shooter";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -128,7 +131,8 @@ type ShooterTwin = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: number | boolean;
@@ -163,6 +167,7 @@ type ShooterTwin = {
 
 export const createTwinBoss = () => {
   const attackerTwin: AttackerTwin = {
+    name: "[Twin] Charger",
     maxHealth: attackerHealth,
     health: attackerHealth,
     contactDamage: 30,
@@ -210,7 +215,8 @@ export const createTwinBoss = () => {
       mass: 150,
 
       damageConflicted: 0,
-      absorbedDamage: 0,
+      damageAbsorbed: 0,
+      bulletsShot: 0,
 
       airFriction: false,
       collision: true,
@@ -296,6 +302,7 @@ export const createTwinBoss = () => {
   liveBosses.push(attackerTwin);
 
   const shooterTwin: ShooterTwin = {
+    name: "[Twin] Shooter",
     maxHealth: shooterHealth,
     health: shooterHealth,
     contactDamage: 20,
@@ -314,7 +321,8 @@ export const createTwinBoss = () => {
     mass: 100,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     airFriction: 0.5,
     collision: true,

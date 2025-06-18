@@ -11,6 +11,8 @@ const radius = 120;
 const bounceThreashold = 10;
 
 type Bonker = {
+  name: "bonker";
+
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -29,7 +31,8 @@ type Bonker = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: false;
@@ -43,6 +46,7 @@ type Bonker = {
 
 export const createBonkerBoss = () => {
   const bonker: Bonker = {
+    name: "bonker",
     maxHealth: health,
     health: health,
     contactDamage: 10,
@@ -61,7 +65,8 @@ export const createBonkerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     collision: true,
     airFriction: false,

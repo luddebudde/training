@@ -8,6 +8,7 @@ import { multVar, origo, Vec2 } from "../math";
 const health = 15;
 
 type pacific = {
+  name: "pacific";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -26,7 +27,8 @@ type pacific = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: boolean;
@@ -41,6 +43,7 @@ type pacific = {
 
 export const createPacificBoss = () => {
   const pacific: pacific = {
+    name: "pacific",
     maxHealth: health,
     health: health,
     contactDamage: 20,
@@ -59,10 +62,11 @@ export const createPacificBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
 
     collision: true,
     airFriction: false,
+    bulletsShot: 0,
 
     // Pahses
     // phaseCounter: 100,

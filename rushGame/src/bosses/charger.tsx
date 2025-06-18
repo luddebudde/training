@@ -8,6 +8,7 @@ import { multVar } from "../math";
 const health = 1500;
 
 type Charger = {
+  name: "charger";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -26,7 +27,8 @@ type Charger = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: boolean;
@@ -41,6 +43,7 @@ type Charger = {
 
 export const createChargerBoss = () => {
   const charger: Charger = {
+    name: "charger",
     maxHealth: health,
     health: health,
     contactDamage: 20,
@@ -59,7 +62,8 @@ export const createChargerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     collision: true,
     airFriction: false,

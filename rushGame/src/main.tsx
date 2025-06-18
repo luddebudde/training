@@ -22,17 +22,24 @@ import { drawCircle } from "./draw/drawCircle";
 import { drawSquare } from "./draw/drawSquare";
 import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
 import { drawLine } from "./draw/drawLine";
-import App, { openMenu } from "./react/openMenu";
+import App from "./react/mainMenu";
 import { StrictMode } from "react";
 import React, { useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Menu } from "./react/menu";
 import { generateRewards } from "./generateRewards";
+import ReactDOM from "react-dom";
+import { MenuProvider } from "./react/reactContext";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = createRoot(document.getElementById("root")!);
+root.render(
+  <MenuProvider>
+    <App />
+  </MenuProvider>
+);
 
 export const isKeyDown = keyDownTracker();
 

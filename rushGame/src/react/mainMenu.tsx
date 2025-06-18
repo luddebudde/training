@@ -3,15 +3,17 @@ import React, { useState } from "react";
 import { nextBoss } from "../arrays";
 import practiceMenu from "./practiceMenu";
 import PracticeMenu from "./practiceMenu";
+import { useMenu } from "./reactContext";
+import StatisticsMenu from "./statisticsMenu";
 
 function App() {
   const [gameName, setGameName] = useState("GAME NAME");
-  const [menu, setMenu] = useState<"main" | "practice" | "none">("main");
+  const { currentMenu, setMenu } = useMenu();
 
   return (
     <>
       <div id="world">
-        {menu === "main" && (
+        {currentMenu === "main" && (
           <div
             id="mainMenu"
             style={{
@@ -56,12 +58,24 @@ function App() {
 
             {createButton("Practice", "green", () => {
               setMenu("practice");
+              console.log(currentMenu);
             })}
 
-            {createButton("4 Dummies", "blue", () => {})}
+            {createButton("4 nerds", "blue", () => {
+              setMenu("statistics");
+              console.log(currentMenu);
+            })}
+            {createButton("4 Dummies", "blue", () => {
+              setMenu("statistics");
+            })}
           </div>
         )}
-        {menu === "practice" && <PracticeMenu onBack={() => setMenu("main")} />}
+        {currentMenu === "practice" && (
+          <PracticeMenu onBack={() => setMenu("main")} />
+        )}
+        {currentMenu === "statistics" && (
+          <StatisticsMenu onBack={() => setMenu("main")} />
+        )}
       </div>
     </>
   );
@@ -83,13 +97,3 @@ const createButton = (text, backgroundColor, onClick) => (
     {text}
   </button>
 );
-
-const closeMenu = () => {
-  const menu = document.getElementById("menu");
-  menu.style.display = "hidden";
-};
-
-const openMenu = () => {
-  const menu = document.getElementById("menu");
-  menu.style.display = "flex";
-};

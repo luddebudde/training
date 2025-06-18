@@ -70,6 +70,7 @@ const shootRandomDirection = (randomer) => {
 };
 
 type randomer = {
+  name: "randomer";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -88,7 +89,8 @@ type randomer = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: boolean;
   airFriction: false;
@@ -108,6 +110,7 @@ type randomer = {
 
 export const createRandomerBoss = () => {
   const randomer: randomer = {
+    name: "randomer",
     maxHealth: health,
     health: health,
     contactDamage: Math.random(),
@@ -126,7 +129,8 @@ export const createRandomerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     collision: true,
     airFriction: false,

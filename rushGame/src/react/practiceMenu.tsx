@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { waveOrder } from "../arrays";
 import { world } from "../basics";
+import { useMenu } from "./reactContext";
 
-export let practiceModeActivated = false;
+declare global {
+  interface Window {
+    onBossDeath?: () => void;
+  }
+}
+
+export let practiceBoss = false;
 
 const PracticeMenu = ({ onBack }) => {
-  const [showMenu, changeMenuState] = useState(true);
-  practiceModeActivated = true;
+  const { currentMenu, setMenu } = useMenu();
+
+  useEffect(() => {
+    window.onBossDeath = () => {
+      setMenu("practice");
+    };
+  }, [setMenu]);
+
+  if (typeof window.onBossDeath === "function") {
+    window.onBossDeath();
+  }
 
   return (
     <div>
-      {showMenu && (
+      {currentMenu === "practice" && (
         <div
           style={{
             width: "100vw",
@@ -39,7 +55,8 @@ const PracticeMenu = ({ onBack }) => {
                 <button
                   key={colIndex}
                   onClick={() => {
-                    changeMenuState(false);
+                    practiceBoss = true;
+                    setMenu("none");
 
                     const canvas = document.getElementById("myCanvas");
                     const ctx = canvas.getContext("2d");
@@ -66,7 +83,6 @@ const PracticeMenu = ({ onBack }) => {
 
           <button
             onClick={() => {
-              practiceModeActivated = false;
               onBack();
             }}
             style={{

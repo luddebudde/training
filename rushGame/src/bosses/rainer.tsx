@@ -30,6 +30,7 @@ const possibleDirections: Array<() => Vec2> = [
 ];
 
 type Rainer = {
+  name: "rainer";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -48,7 +49,8 @@ type Rainer = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
 
   collision: true;
   airFriction: false;
@@ -66,6 +68,7 @@ type Rainer = {
 
 export const createRainerBoss = () => {
   const rainer: Rainer = {
+    name: "rainer",
     maxHealth: health,
     health: health,
     contactDamage: 10,
@@ -84,7 +87,8 @@ export const createRainerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
 
     collision: true,
     airFriction: false,

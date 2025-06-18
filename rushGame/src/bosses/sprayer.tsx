@@ -13,6 +13,7 @@ const health = 25;
 // Make it lose all movement when stoping "corner phase"
 
 type Sprayer = {
+  name: "sprayer";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -31,10 +32,11 @@ type Sprayer = {
   mass: number;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
 
   collision: true;
   airFriction: boolean;
+  bulletsShot: number;
 
   // Pahses
   phaseCounter: number;
@@ -61,6 +63,7 @@ type Sprayer = {
 
 export const createSprayerBoss = () => {
   const sprayer: Sprayer = {
+    name: "sprayer",
     maxHealth: health,
     health: health,
     contactDamage: 0,
@@ -79,10 +82,11 @@ export const createSprayerBoss = () => {
     mass: 1000,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
 
     collision: true,
     airFriction: true,
+    bulletsShot: 0,
 
     // Pahses
     phaseCounter: 10,

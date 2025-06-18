@@ -24,7 +24,7 @@ const startPos = {
 // Heavy attacker
 const heavyHealth = 2600;
 const rect1 = {
-  name: "Damage dealer",
+  name: "[RECT] Damager ",
   cornerPos: {
     x: 0,
     y: 0,
@@ -50,10 +50,11 @@ const rect1 = {
     x: 0,
     y: 0,
   },
-
   team: "enemy",
+
   damageConflicted: 0,
-  absorbedDamage: 0,
+  damageAbsorbed: 0,
+  bulletsShot: 0,
 
   attackCounter: 50,
   maxHealth: heavyHealth,
@@ -132,7 +133,7 @@ const rect1 = {
 const debufferHealth = 1400;
 // Debuffer
 const rect2 = {
-  name: "Debuffer",
+  name: "[RECT] Debuffer",
   cornerPos: {
     x: world.width - width,
     y: 0,
@@ -158,10 +159,11 @@ const rect2 = {
     x: 0,
     y: 0,
   },
-
   team: "enemy",
+
   damageConflicted: 0,
-  absorbedDamage: 0,
+  damageAbsorbed: 0,
+  bulletsShot: 0,
 
   attackCounter: 50,
   maxHealth: debufferHealth,
@@ -248,7 +250,7 @@ const rect2 = {
 const healerHealth = 800;
 // Passive Support
 const rect3 = {
-  name: "Healer",
+  name: "[RECT] Healer",
   cornerPos: {
     x: 0,
     y: world.height - height,
@@ -274,10 +276,11 @@ const rect3 = {
     x: 0,
     y: 0,
   },
-
   team: "enemy",
+
   damageConflicted: 0,
-  absorbedDamage: 0,
+  damageAbsorbed: 0,
+  bulletsShot: 0,
 
   attackCounter: 50,
   maxHealth: healerHealth,
@@ -363,7 +366,7 @@ const rect3 = {
 const supportHealth = 1200;
 // Light Attacker / Attack support
 const rect4 = {
-  name: "Support attacker",
+  name: "[RECT] Support attacker",
   cornerPos: {
     x: world.width - width,
     y: world.height - height,
@@ -389,10 +392,11 @@ const rect4 = {
     x: 0,
     y: 0,
   },
-
   team: "enemy",
+
   damageConflicted: 0,
-  absorbedDamage: 0,
+  damageAbsorbed: 0,
+  bulletsShot: 0,
 
   attackCounter: 50,
   maxHealth: supportHealth,

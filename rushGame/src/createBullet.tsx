@@ -1,5 +1,6 @@
 import { player } from "./createPlayer";
 import { makeDirection } from "./geometry/makeDirection";
+import { statistics } from "./loseScreen";
 import { multVar, Vec2 } from "./math";
 
 export type Bullet = {
@@ -94,9 +95,12 @@ export const createBullet = (
     finalAdvanced.vel.y !== undefined ? finalAdvanced.vel.y : undefined;
 
   if (bulletTeam === "player") {
-    bulletsShot++;
+    statistics.bulletsShot;
   }
 
+  if (shooter !== undefined) {
+    shooter.bulletsShot++;
+  }
   // console.log(bulletTeam);
 
   const bullet: Bullet = {
@@ -186,6 +190,10 @@ export const createWaveShoot = (
       y: Math.sin(shootAngle),
     };
     const newVel = multVar(direction, speed);
+
+    if (shooter !== undefined) {
+      shooter.bulletsShot++;
+    }
 
     const bullet: Bullet = {
       shooter: shooter,
