@@ -49,7 +49,7 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
 };
 
 type AttackerTwin = {
-  name: "[Twin] Charger";
+  name: "[Twin] Johnny";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -112,7 +112,7 @@ type AttackerTwin = {
 };
 
 type ShooterTwin = {
-  name: "[Twin] Shooter";
+  name: "[Twin] Ian";
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -167,7 +167,7 @@ type ShooterTwin = {
 
 export const createTwinBoss = () => {
   const attackerTwin: AttackerTwin = {
-    name: "[Twin] Charger",
+    name: "[Twin] Johnny",
     maxHealth: attackerHealth,
     health: attackerHealth,
     contactDamage: 30,
@@ -302,7 +302,7 @@ export const createTwinBoss = () => {
   liveBosses.push(attackerTwin);
 
   const shooterTwin: ShooterTwin = {
-    name: "[Twin] Shooter",
+    name: "[Twin] Ian",
     maxHealth: shooterHealth,
     health: shooterHealth,
     contactDamage: 20,

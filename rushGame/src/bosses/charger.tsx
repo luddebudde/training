@@ -8,7 +8,7 @@ import { multVar } from "../math";
 const health = 1500;
 
 type Charger = {
-  name: "charger";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -43,7 +43,7 @@ type Charger = {
 
 export const createChargerBoss = () => {
   const charger: Charger = {
-    name: "charger",
+    name: "Charger",
     maxHealth: health,
     health: health,
     contactDamage: 20,

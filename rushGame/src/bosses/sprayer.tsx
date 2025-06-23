@@ -13,7 +13,7 @@ const health = 25;
 // Make it lose all movement when stoping "corner phase"
 
 type Sprayer = {
-  name: "sprayer";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -63,7 +63,7 @@ type Sprayer = {
 
 export const createSprayerBoss = () => {
   const sprayer: Sprayer = {
-    name: "sprayer",
+    name: "Sprayer",
     maxHealth: health,
     health: health,
     contactDamage: 0,
@@ -235,7 +235,6 @@ export const createSprayerBoss = () => {
               sprayer.spreadOutPhase.shootCounter = 0;
               sprayer.phaseCounter = 1000;
               let moveTime = sprayer.spreadOutPhase.shootDelay;
-              console.log("move time:", moveTime);
 
               const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 

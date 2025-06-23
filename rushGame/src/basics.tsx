@@ -4,5 +4,8 @@ export const world = {
   width: canvas.width,
   height: canvas.height,
 };
+export let isPaused: boolean = false;
 
-console.log(screen.width, screen.height);
+export const changeIsPaused = (changeTo: boolean) => {
+  isPaused = changeTo;
+};

@@ -70,7 +70,7 @@ const shootRandomDirection = (randomer) => {
 };
 
 type randomer = {
-  name: "randomer";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -110,7 +110,7 @@ type randomer = {
 
 export const createRandomerBoss = () => {
   const randomer: randomer = {
-    name: "randomer",
+    name: "Randomer",
     maxHealth: health,
     health: health,
     contactDamage: Math.random(),

@@ -1,14 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import { Menu } from "./menu";
 import { nextBoss } from "../arrays";
 import practiceMenu from "./practiceMenu";
 import PracticeMenu from "./practiceMenu";
-import { useMenu } from "./reactContext";
+import { Menu, MenuProvider, useMenu } from "./reactContext";
 import StatisticsMenu from "./statisticsMenu";
+import { createRoot } from "react-dom/client";
+import { startGame } from "../startGame";
 
 function App() {
   const [gameName, setGameName] = useState("GAME NAME");
   const { currentMenu, setMenu } = useMenu();
+
+  useEffect(() => {
+    window.changeMenu = (changeTo: Menu) => {
+      setMenu(changeTo);
+    };
+
+    // Flytta anropet HIT:
+    window.changeMenu("main");
+  }, [setMenu]);
 
   return (
     <>
@@ -18,6 +29,7 @@ function App() {
             id="mainMenu"
             style={{
               // marginTop: 20,
+              opacity: "10%",
               position: "absolute",
               // backgroundColor: "green",sd
               backgroundImage: "url(public/img.webp)",
@@ -47,13 +59,12 @@ function App() {
             />
             {createButton("Play", "red", () => {
               setMenu("none");
+              const canvas = document.getElementById("myCanvas");
+              const ctx = canvas.getContext("2d");
 
-              setTimeout(() => {
-                const canvas = document.getElementById("myCanvas");
-                const ctx = canvas.getContext("2d");
-
-                nextBoss(ctx);
-              }, 1500);
+              // setTimeout(() => {
+              startGame(ctx);
+              // }, 1500);
             })}
 
             {createButton("Practice", "green", () => {

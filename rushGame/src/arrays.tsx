@@ -18,11 +18,10 @@ import { createPacificBoss } from "./bosses/pacific";
 import practiceMenu, {
   // changeMenuState,
   practiceBoss,
-  showMenu,
 } from "./react/practiceMenu";
 import App from "./react/mainMenu";
 import { useMenu } from "./react/reactContext";
-import { meetBossIndex, statistics } from "./loseScreen";
+import { foughtBosses, statistics } from "./loseScreen";
 
 export let entities = [];
 export let bullets = [];
@@ -43,31 +42,28 @@ const twinArray = ["The Twin Bros", "", createTwinBoss];
 const squareArray = ["Squa's gang", "", createSquareBosses];
 
 const firstWave = [
-  sprayerArray,
-
-  lineBreakerArray,
-  randomerArray,
-  rainerArray,
+  // sprayerArray,
+  // chargerArray,
+  // pacificArray,
+  // twinArray,
+  // lineBreakerArray,
+  // randomerArray,
+  // rainerArray,
   // createChargerBoss,
   // createLineBreakerBoss,
   // createRandomerBoss,
   // createPacificBoss,
-
   // createRainerBoss,
-
   // createRainerBoss,
   // createBonkerBoss,
   // createTwinBoss,
   // createBonkerBoss,
-
   // createCreateSquareBosses,
 ];
 const secondWave = [
-  // createSprayerBoss,
-  sprayerArray,
-  chargerArray,
-  pacificArray,
-
+  // sprayerArray,
+  // chargerArray,
+  // pacificArray,
   // createTwinBoss,
   // createBonkerBoss,
   // createRainerBoss,
@@ -77,11 +73,12 @@ const thirdWave = [twinArray, squareArray];
 // const fourthWave = [];
 export const waveOrder = [firstWave, secondWave, thirdWave];
 
-let currentWaveIndex = 0;
-export let bossPool = [...waveOrder[currentWaveIndex]];
+let waveIndex = 0;
+export let bossPool = [...waveOrder[waveIndex]];
 export let liveBosses = [];
 
-export const spawnDelay = 1500;
+// export const spawnDelay = 1500;
+export const spawnDelay = 15;
 
 export const nextBoss = (ctx) => {
   const abilities = player.unlockedAbilities;
@@ -89,9 +86,6 @@ export const nextBoss = (ctx) => {
   abilities.bonusLifeCount +=
     abilities.bonusLife === true && abilities.bonusLifeCount === 0 ? 1 : 0;
 
-  console.log(player.health, player.maxHealth);
-
-  // generateRewards();
   let boss = randomArrayElementSplice(bossPool);
 
   if (boss === undefined) {
@@ -99,10 +93,11 @@ export const nextBoss = (ctx) => {
   } else {
     setTimeout(() => {
       boss[2](ctx);
+      bullets = bullets.filter((bullet) => bullet.team === "player");
 
       liveBosses.forEach((boss) => {
-        if (!meetBossIndex.includes(boss)) {
-          meetBossIndex.push(boss);
+        if (!foughtBosses.includes(boss)) {
+          foughtBosses.push(boss);
         }
       });
 
@@ -112,15 +107,15 @@ export const nextBoss = (ctx) => {
 };
 
 const nextFloorBoss = (ctx) => {
-  currentWaveIndex++;
+  waveIndex++;
 
-  if (waveOrder.length < currentWaveIndex + 1) {
+  if (waveOrder.length < waveIndex + 1) {
     console.log("YOU WON");
 
     player.radius = 154;
     player.speed = -player.speed;
   } else {
-    bossPool = [...waveOrder[currentWaveIndex]];
+    bossPool = [...waveOrder[waveIndex]];
 
     generateRewards(ctx);
   }
@@ -143,7 +138,7 @@ export const checkArrayRemoval = (ctx) => {
       boss.maxHealth
     );
 
-    console.log(meetBossIndex);
+    // console.log(metBossIndex);
 
     if (boss.health <= 0) {
       boss?.deathAnimation?.(ctx, liveBosses, index);
@@ -153,8 +148,8 @@ export const checkArrayRemoval = (ctx) => {
       if (liveBosses.length === 0) {
         if (practiceBoss === true) {
           setTimeout(() => {
-            if (window.onBossDeath) {
-              window.onBossDeath();
+            if (window.changeMenu) {
+              window.changeMenu("practice");
             }
           }, 3000);
           return;
@@ -163,7 +158,7 @@ export const checkArrayRemoval = (ctx) => {
         bullets = bullets.filter((bullet) => bullet.team === "player");
         entities = entities.filter((entity) => entity.team === "player");
 
-        console.log("splcie");
+        // console.log("splcie");
 
         statistics.bossesKilled++;
 
@@ -175,6 +170,11 @@ export const checkArrayRemoval = (ctx) => {
       }
     }
   });
+};
+
+export const changeWaveIndex = (value: number) => {
+  waveIndex = value;
+  bossPool = [...waveOrder[waveIndex]];
 };
 
 // goTo.tsx:29 timeToReach 100

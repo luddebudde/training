@@ -45,7 +45,7 @@ const YLine: Line = {
 };
 
 type LineBreaker = {
-  name: "line-breaker";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -193,7 +193,6 @@ const patternPhase = (ctx, braker): void => {
 
   setTimeout(() => {
     braker.lines.forEach((line) => {
-      console.log(line.endPos);
       createBullet(
         bullets,
         braker,
@@ -212,15 +211,13 @@ const patternPhase = (ctx, braker): void => {
 
     setTimeout(() => {
       braker.phaseCounter = 0;
-
-      console.log(braker.lines);
     }, (world.width / bulletSpeed) * 15);
   }, 1000);
 };
 
 export const createLineBreakerBoss = () => {
   const lineBreaker: LineBreaker = {
-    name: "line-breaker",
+    name: "Line-breaker",
     maxHealth: health,
     health: health,
     contactDamage: 5,

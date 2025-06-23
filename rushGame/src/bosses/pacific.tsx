@@ -8,7 +8,7 @@ import { multVar, origo, Vec2 } from "../math";
 const health = 15;
 
 type pacific = {
-  name: "pacific";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -43,7 +43,7 @@ type pacific = {
 
 export const createPacificBoss = () => {
   const pacific: pacific = {
-    name: "pacific",
+    name: "Pacific",
     maxHealth: health,
     health: health,
     contactDamage: 20,

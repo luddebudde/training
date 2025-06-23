@@ -24,7 +24,7 @@ const startPos = {
 // Heavy attacker
 const heavyHealth = 2600;
 const rect1 = {
-  name: "[RECT] Damager ",
+  name: "[RECT] Damager",
   cornerPos: {
     x: 0,
     y: 0,
@@ -210,13 +210,13 @@ const rect2 = {
 
       if (randomNumber <= 0.33) {
         debuffPlayer("speed", "*", 0.8, 12000);
-        console.log("speed", player.speed);
+        // console.log("speed", player.speed);
       } else if (randomNumber <= 0.66) {
         debuffPlayer("attackDelay", "*", 1.2, 12000);
-        console.log("attackDelay", player.attackDelay);
+        // console.log("attackDelay", player.attackDelay);
       } else {
         debuffPlayer("radius", "+", 5, 12000);
-        console.log("radius", player.radius);
+        // console.log("radius", player.radius);
       }
 
       rect2.attackCounter = 75;
@@ -366,7 +366,7 @@ const rect3 = {
 const supportHealth = 1200;
 // Light Attacker / Attack support
 const rect4 = {
-  name: "[RECT] Support attacker",
+  name: "[RECT] Support",
   cornerPos: {
     x: world.width - width,
     y: world.height - height,
@@ -564,7 +564,7 @@ const gatherUp = (ctx) => {
       } else {
       }
       setTimeout(() => {
-        console.log(Math.floor(frameLoops / 100));
+        // console.log(Math.floor(frameLoops / 100));
         // Idea: The closest rectangle applies an effect or attack, depending on which one it is.
         // Heavy attacker: Shoots violently
         // Debuffer: Makes the player either larger, slower or deal less damage every X seconds
@@ -628,7 +628,7 @@ const rotatePhase = (ctx) => {
   for (let i = 0; i < requiredLoops; i++) {
     setTimeout(() => {
       if (rectList.length <= 0) {
-        console.log("All cubes are dead");
+        // console.log("All cubes are dead");
 
         return;
       }

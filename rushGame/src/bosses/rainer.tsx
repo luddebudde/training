@@ -30,7 +30,7 @@ const possibleDirections: Array<() => Vec2> = [
 ];
 
 type Rainer = {
-  name: "rainer";
+  name: string;
   maxHealth: number;
   health: number;
   contactDamage: number;
@@ -68,7 +68,7 @@ type Rainer = {
 
 export const createRainerBoss = () => {
   const rainer: Rainer = {
-    name: "rainer",
+    name: "Rainer",
     maxHealth: health,
     health: health,
     contactDamage: 10,

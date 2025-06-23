@@ -11,7 +11,7 @@ const radius = 120;
 const bounceThreashold = 10;
 
 type Bonker = {
-  name: "bonker";
+  name: string;
 
   maxHealth: number;
   health: number;
@@ -46,7 +46,7 @@ type Bonker = {
 
 export const createBonkerBoss = () => {
   const bonker: Bonker = {
-    name: "bonker",
+    name: "Bonker",
     maxHealth: health,
     health: health,
     contactDamage: 10,

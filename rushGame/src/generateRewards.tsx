@@ -105,7 +105,7 @@ const totalRewardPool: Upgrades[] = [
   tankie,
 ];
 
-const usedRewards: Upgrades[] = [];
+export const usedRewards: Upgrades[] = [];
 
 export const generateRewards = (ctx) => {
   const selectionDiv = document.getElementById("upgradeSelection");
@@ -134,6 +134,10 @@ export const generateRewards = (ctx) => {
 
     titleElement.textContent = reward.title;
     descriptionElement.textContent = reward.description;
+    const children = selectionDiv.querySelectorAll("*");
+    children.forEach((child) => {
+      child.style.visibility = "visible";
+    });
 
     currentElement.onclick = () => {
       reward.change(player);

@@ -1,28 +1,37 @@
 import React, { useEffect, useState } from "react";
 import { waveOrder } from "../arrays";
 import { world } from "../basics";
-import { useMenu } from "./reactContext";
-
-declare global {
-  interface Window {
-    onBossDeath?: () => void;
-  }
-}
+import { Menu, useMenu } from "./reactContext";
+import { allFoughtBosses } from "../loseScreen";
+import { player } from "../createPlayer";
 
 export let practiceBoss = false;
 
 const PracticeMenu = ({ onBack }) => {
   const { currentMenu, setMenu } = useMenu();
 
-  useEffect(() => {
-    window.onBossDeath = () => {
-      setMenu("practice");
+  const isBossFought = (waveBossName: string) => {
+    // Exempel: gruppnamn som matchar flera riktiga bossar
+    const aliasMap = {
+      "The Twin Bros": ["[Twin] Johnny", "[Twin] Ian"],
+      "Squa's gang": [
+        "[RECT] Damager",
+        "[RECT] Debuffer",
+        "[RECT] Healer",
+        "[RECT] Support",
+      ],
     };
-  }, [setMenu]);
 
-  if (typeof window.onBossDeath === "function") {
-    window.onBossDeath();
-  }
+    const realNames = aliasMap[waveBossName] || [waveBossName];
+
+    const allFoughtBosses = JSON.parse(
+      localStorage.getItem("allFoughtBosses") || "[]"
+    );
+
+    return allFoughtBosses.some((foughtBoss) =>
+      realNames.includes(foughtBoss.name)
+    );
+  };
 
   return (
     <div>
@@ -51,39 +60,40 @@ const PracticeMenu = ({ onBack }) => {
                 flexDirection: "row",
               }}
             >
-              {wave.map((bossArray, colIndex) => (
-                <button
-                  key={colIndex}
-                  onClick={() => {
-                    practiceBoss = true;
-                    setMenu("none");
+              {wave
+                .filter((bossArray) => isBossFought(bossArray[0]))
+                .map((bossArray, colIndex) => (
+                  <button
+                    key={colIndex}
+                    onClick={() => {
+                      practiceBoss = true;
+                      setMenu("none");
 
-                    const canvas = document.getElementById("myCanvas");
-                    const ctx = canvas.getContext("2d");
-                    bossArray[2](ctx);
-                  }}
-                  style={{
-                    padding: "40px 40px",
-                    fontSize: "30px",
-                    backgroundColor: "darkgreen",
-                    width: world.width / wave.length - wave.length * 20,
-                    height:
-                      world.height / waveOrder.length - waveOrder.length * 20,
-                    margin: 20,
-                    // gap: 20,
-                    color: "white",
-                    borderRadius: "10px",
-                  }}
-                >
-                  {bossArray[0]}
-                </button>
-              ))}
+                      const canvas = document.getElementById("myCanvas");
+                      const ctx = canvas.getContext("2d");
+                      bossArray[2](ctx);
+                    }}
+                    style={{
+                      padding: "40px 40px",
+                      fontSize: "30px",
+                      backgroundColor: "darkgreen",
+                      width: world.width / wave.length - wave.length * 20,
+                      height:
+                        world.height / waveOrder.length - waveOrder.length * 20,
+                      margin: 20,
+                      color: "white",
+                      borderRadius: "10px",
+                    }}
+                  >
+                    {bossArray[0]}
+                  </button>
+                ))}
             </div>
           ))}
 
           <button
             onClick={() => {
-              onBack();
+              setMenu("main");
             }}
             style={{
               marginTop: "60px",

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-type Menu = "main" | "practice" | "statistics" | "none";
+export type Menu = "main" | "practice" | "statistics" | "gameOver" | "none";
 
 type MenuContextType = {
   currentMenu: string;
@@ -10,9 +10,7 @@ type MenuContextType = {
 const MenuContext = createContext<MenuContextType | undefined>(undefined);
 
 export const MenuProvider = ({ children }) => {
-  const [currentMenu, setMenu] = useState<
-    "main" | "practice" | "statistics" | "none"
-  >("main");
+  const [currentMenu, setMenu] = useState<Menu>("main");
 
   return (
     <MenuContext.Provider
@@ -33,3 +31,9 @@ export const useMenu = () => {
   }
   return context;
 };
+
+declare global {
+  interface Window {
+    changeMenu?: (menu: Menu) => void;
+  }
+}

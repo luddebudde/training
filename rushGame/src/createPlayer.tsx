@@ -27,17 +27,22 @@ export type Player = {
   team: string;
 
   damageConflicted: number;
-  absorbedDamage: number;
+  damageAbsorbed: number;
   bulletsShot: number;
 
   unlockedAbilities: {
     dash: boolean;
     bounceable: boolean;
     bounceDamageLoss: number;
+
     bonusLife: boolean;
     bonusLifeCount: number;
+
     adrenaline: number;
     autoDamage: number;
+
+    rampOut: boolean;
+    rampOutValue: number;
   };
 
   airFriction: true;
@@ -45,14 +50,17 @@ export type Player = {
   blackholeEffected: boolean;
 };
 
-const health = 100;
+const health = 1;
 
 const playerSpeed = 1;
 
 const playerAttackDelay = 10;
 
+export let player: Player;
+export let standardPlayer: Player;
+
 export const createPlayer = (): any => {
-  const player: Player = {
+  player = {
     name: "player",
     health: health,
     maxHealth: health,
@@ -73,11 +81,11 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
-    bulletDamage: 2000,
+    bulletDamage: 20,
     bulletSpeed: 50,
 
     damageConflicted: 0,
-    absorbedDamage: 0,
+    damageAbsorbed: 0,
     bulletsShot: 0,
 
     unlockedAbilities: {
@@ -85,9 +93,13 @@ export const createPlayer = (): any => {
       bounceable: false,
       adrenaline: 0,
       autoDamage: 0,
+
       bounceDamageLoss: 0.3,
       bonusLife: false,
       bonusLifeCount: 0,
+
+      rampOut: true,
+      rampOutValue: 0,
     },
 
     airFriction: true,
@@ -96,9 +108,9 @@ export const createPlayer = (): any => {
   };
 
   entities.push(player);
-  return player;
+  // return player;
+
+  standardPlayer = structuredClone(player);
 };
 
-export const player = createPlayer();
-
-export const standardPlayer = structuredClone(player);
+createPlayer();

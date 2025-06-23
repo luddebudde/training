@@ -3,7 +3,7 @@ import { add, mult, multVar } from "./math";
 import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import { handleBulletBounce, createBullet } from "./createBullet";
-import { world } from "./basics";
+import { changeIsPaused, isPaused, world } from "./basics";
 import { player, standardPlayer } from "./createPlayer";
 import {
   blackholes,
@@ -30,6 +30,7 @@ import { Menu } from "./react/menu";
 import { generateRewards } from "./generateRewards";
 import ReactDOM from "react-dom";
 import { MenuProvider } from "./react/reactContext";
+import { startGame } from "./startGame";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -54,6 +55,7 @@ setTimeout(() => {
     // nextBoss(ctx);
     // loseScreen();
     // generateRewards(ctx);
+    // startGame(ctx);
   }
 }, 10);
 
@@ -85,16 +87,11 @@ const square = {
   rotation: 0 * Math.PI,
 };
 
-let isPaused: boolean = false;
-
-export const changeIsPaused = (changeTo: boolean) => {
-  isPaused = changeTo;
-};
-
 // squares.push(square);
 
 const update = () => {
   if (isPaused === true) {
+    requestAnimationFrame(update);
     return;
   }
 
@@ -304,6 +301,8 @@ const update = () => {
     dashCooldown = 100;
   }
 
+  let rampoutValue = player.unlockedAbilities.rampOutValue;
+
   if (isKeyDown("Space") && player.attackDelay < 0) {
     createBullet(
       bullets,
@@ -323,9 +322,20 @@ const update = () => {
         player.unlockedAbilities.adrenaline *
           0.33 *
           (1 - player.health / player.maxHealth));
+
+    // if (player.unlockedAbilities.rampOut === true) {
+    //   rampoutValue = Math.min(rampoutValue + 0.1, 0.8);
+    // }
+    // player.attackDelay *= 1 - rampoutValue;
   }
+
   dashCooldown--;
   player.attackDelay--;
+
+  // rampoutValue = Math.max(rampoutValue * 0.95, 0.01);
+
+  // console.log(rampoutValue);
+  // player.unlockedAbilities.rampOutValue = rampoutValue;
 
   checkArrayRemoval(ctx);
 
