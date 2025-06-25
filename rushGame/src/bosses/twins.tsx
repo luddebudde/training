@@ -39,11 +39,19 @@ const attackerCollideShooter = (attackerTwin, shooterTwin) => {
         y: Math.sin(angle) * 100 + shooterTwin.pos.y,
       };
 
-      createBullet(bullets, shooterTwin, target, 3, speed, {
-        bounceable: false,
-        airFriction: false,
-        bounceDamageLoss: 0.3,
-      });
+      createBullet(
+        bullets,
+        shooterTwin,
+        target,
+        3,
+        speed,
+        {
+          bounceable: false,
+          airFriction: false,
+          bounceDamageLoss: 0.3,
+        },
+        { team: "enemy" }
+      );
     }
   }
 };
@@ -64,7 +72,7 @@ type AttackerTwin = {
   radius: number;
   color: string;
   speed: number;
-  team: String;
+  team: "enemy";
   mass: number;
 
   damageConflicted: number;
@@ -93,7 +101,7 @@ type AttackerTwin = {
     radius: number;
     color: string;
     speed: number;
-    team: string;
+    team: "enemy";
     mass: number;
 
     damageConflicted: number;
@@ -127,7 +135,7 @@ type ShooterTwin = {
   radius: number;
   color: string;
   speed: number;
-  team: String;
+  team: "enemy";
   mass: number;
 
   damageConflicted: number;

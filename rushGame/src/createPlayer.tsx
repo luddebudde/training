@@ -50,7 +50,7 @@ export type Player = {
   blackholeEffected: boolean;
 };
 
-const health = 1;
+const health = 100;
 
 const playerSpeed = 1;
 

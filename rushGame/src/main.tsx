@@ -35,12 +35,12 @@ import { startGame } from "./startGame";
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-const root = createRoot(document.getElementById("root")!);
-root.render(
-  <MenuProvider>
-    <App />
-  </MenuProvider>
-);
+// const root = createRoot(document.getElementById("root")!);
+// root.render(
+//   <MenuProvider>
+//     <App />
+//   </MenuProvider>
+// );
 
 export const isKeyDown = keyDownTracker();
 
@@ -52,7 +52,7 @@ setTimeout(() => {
   for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
-    // nextBoss(ctx);
+    nextBoss(ctx);
     // loseScreen();
     // generateRewards(ctx);
     // startGame(ctx);
@@ -152,7 +152,9 @@ const update = () => {
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity) {
         if (doCirclesOverlap(entity, secondEntity)) {
-          dealDamage(entity, secondEntity, entity.contactDamage);
+          if (entity.team !== secondEntity.team) {
+            dealDamage(entity, secondEntity, entity.contactDamage);
+          }
 
           if (entity.collision === true && secondEntity.collision === true) {
             const newVel = handleCollision(entity, secondEntity);

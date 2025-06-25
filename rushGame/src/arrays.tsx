@@ -22,6 +22,7 @@ import practiceMenu, {
 import App from "./react/mainMenu";
 import { useMenu } from "./react/reactContext";
 import { foughtBosses, statistics } from "./loseScreen";
+import { createSplitterBoss } from "./bosses/splitter";
 
 export let entities = [];
 export let bullets = [];
@@ -40,8 +41,10 @@ const pacificArray = ["Pacific", "", createPacificBoss];
 const rainerArray = ["Rainer", "", createRainerBoss];
 const twinArray = ["The Twin Bros", "", createTwinBoss];
 const squareArray = ["Squa's gang", "", createSquareBosses];
+const splitterArray = ["Splitter", "", createSplitterBoss];
 
 const firstWave = [
+  splitterArray,
   // sprayerArray,
   // chargerArray,
   // pacificArray,

@@ -6,5 +6,9 @@ export const dealDamage = (attacker, target, damage: number) => {
     target.damageAbsorbed += damage;
   }
 
-  // console.log(attacker);
+  if (target.health <= 0 && target.onDeath !== undefined) {
+    target.onDeath();
+    console.log("dead");
+  }
+  // console.log(attacker, target);
 };

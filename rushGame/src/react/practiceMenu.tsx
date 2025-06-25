@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { waveOrder } from "../arrays";
+import { bullets, entities, liveBosses, squares, waveOrder } from "../arrays";
 import { world } from "../basics";
 import { Menu, useMenu } from "./reactContext";
-import { allFoughtBosses } from "../loseScreen";
+import { allFoughtBosses, foughtBosses } from "../loseScreen";
 import { player } from "../createPlayer";
+import { usedRewards } from "../generateRewards";
+import { startGame } from "../startGame";
 
 export let practiceBoss = false;
 
@@ -71,7 +73,12 @@ const PracticeMenu = ({ onBack }) => {
 
                       const canvas = document.getElementById("myCanvas");
                       const ctx = canvas.getContext("2d");
-                      bossArray[2](ctx);
+
+                      // setTimeout(() => {
+                      startGame(ctx, bossArray[2]);
+                      // }, 1500);
+
+                      // bossArray[2](ctx);
                     }}
                     style={{
                       padding: "40px 40px",
