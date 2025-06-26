@@ -33,6 +33,7 @@ type Bonker = {
   damageConflicted: number;
   damageAbsorbed: number;
   bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: false;
@@ -67,6 +68,7 @@ export const createBonkerBoss = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: false,

@@ -61,6 +61,7 @@ const createRectObjects = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     attackCounter: 50,
     maxHealth: heavyHealth,
@@ -170,6 +171,7 @@ const createRectObjects = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     attackCounter: 50,
     maxHealth: debufferHealth,
@@ -287,6 +289,7 @@ const createRectObjects = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     attackCounter: 50,
     maxHealth: healerHealth,
@@ -403,6 +406,7 @@ const createRectObjects = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     attackCounter: 50,
     maxHealth: supportHealth,

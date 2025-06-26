@@ -2,7 +2,11 @@ import { keyDownTracker } from "./keyDownTracker";
 import { add, mult, multVar } from "./math";
 import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
-import { handleBulletBounce, createBullet } from "./createBullet";
+import {
+  handleBulletBounce,
+  createBullet,
+  createWaveShoot,
+} from "./createBullet";
 import { changeIsPaused, isPaused, world } from "./basics";
 import { player, standardPlayer } from "./createPlayer";
 import {
@@ -114,6 +118,8 @@ const update = () => {
       player.unlockedAbilities.adrenaline *
         (1 - player.health / player.maxHealth));
 
+  // console.log(player.speed, player.unlockedAbilities.adrenaline);
+
   player.radius = standardPlayer.radius;
 
   entities.forEach((entity, index) => {
@@ -212,7 +218,7 @@ const update = () => {
 
     entities.forEach((entity) => {
       if (doCirclesOverlap(bullet, entity)) {
-        if (bullet.team !== entity.team) {
+        if (bullet.team !== entity.team && bullet.shooter !== entity) {
           dealDamage(bullet.shooter, entity, bullet.damage);
           // console.log(bullet.damage, bullet.shooter);
           bullets.splice(index, 1);
@@ -303,57 +309,63 @@ const update = () => {
     dashCooldown = 100;
   }
 
-  let rampoutValue = player.unlockedAbilities.rampOutValue;
-
   if (isKeyDown("Space") && player.attackDelay < 0) {
-    createBullet(
-      bullets,
-      player,
-      mousePos,
-      player.bulletDamage,
-      player.bulletSpeed,
-      {
-        bounceable: player.unlockedAbilities.bounceable,
-        bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
-        airFriction: false,
-      }
-    );
+    if (player.unlockedAbilities.spreadShotCount === 0) {
+      createBullet(
+        bullets,
+        player,
+        mousePos,
+        player.bulletDamage,
+        player.bulletSpeed,
+        {
+          bounceable: player.unlockedAbilities.bounceable,
+          bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+          airFriction: false,
+        }
+      );
+    } else {
+      const bulletCount = player.unlockedAbilities.spreadShotCount;
+      const totalDamage = player.bulletDamage * bulletCount;
+
+      createWaveShoot(
+        bullets,
+        player,
+        mousePos,
+        ((player.bulletDamage / bulletCount) * bulletCount) / 2,
+        player.bulletSpeed,
+        ((Math.PI * 2) / 180) * 25,
+        bulletCount,
+        {
+          bounceable: player.unlockedAbilities.bounceable,
+          bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
+        }
+      );
+    }
     player.attackDelay =
       standardPlayer.attackDelay *
       (1 -
         player.unlockedAbilities.adrenaline *
           0.33 *
           (1 - player.health / player.maxHealth));
-
-    // if (player.unlockedAbilities.rampOut === true) {
-    //   rampoutValue = Math.min(rampoutValue + 0.1, 0.8);
-    // }
-    // player.attackDelay *= 1 - rampoutValue;
   }
 
   dashCooldown--;
   player.attackDelay--;
-
-  // rampoutValue = Math.max(rampoutValue * 0.95, 0.01);
-
-  // console.log(rampoutValue);
-  // player.unlockedAbilities.rampOutValue = rampoutValue;
 
   checkArrayRemoval(ctx);
 
   if (player.health <= 0) {
     changeIsPaused(true);
     if (player.unlockedAbilities.bonusLifeCount > 0) {
-      console.log("You have trickeddeath !");
+      console.log("You have tricked death!");
 
       player.health = player.maxHealth / 2;
       entities.push(player);
 
       player.unlockedAbilities.bonusLifeCount--;
-
       setTimeout(() => {
         changeIsPaused(false);
-        requestAnimationFrame(update);
+        // requestAnimationFrame(update);
       }, 1000);
     } else {
       loseScreen();

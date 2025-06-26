@@ -91,6 +91,7 @@ type randomer = {
   damageConflicted: number;
   damageAbsorbed: number;
   bulletsShot: number;
+  timesDefeated: number;
 
   collision: boolean;
   airFriction: false;
@@ -131,6 +132,7 @@ export const createRandomerBoss = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: false,

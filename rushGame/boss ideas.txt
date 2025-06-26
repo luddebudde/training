@@ -77,3 +77,7 @@ for (let i = 0; i < 50; i++) {
           );
         }, 150 * i);
       }
+
+
+// Boss 3
+En boss som kan temporärt fånga in alla spelarens skott i dess omkrets. Sedan efter ett par sekunder går den till attack och försöker använda spelarens gamla skott för att döda en. Efter denna attack växlar den tillbaka till sin vanliga

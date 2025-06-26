@@ -23,6 +23,8 @@ import App from "./react/mainMenu";
 import { useMenu } from "./react/reactContext";
 import { foughtBosses, statistics } from "./loseScreen";
 import { createSplitterBoss } from "./bosses/splitter";
+import { createEncirclerBoss } from "./bosses/encircler";
+import { createCentralBaseBoss } from "./bosses/centralBase";
 
 export let entities = [];
 export let bullets = [];
@@ -42,9 +44,13 @@ const rainerArray = ["Rainer", "", createRainerBoss];
 const twinArray = ["The Twin Bros", "", createTwinBoss];
 const squareArray = ["Squa's gang", "", createSquareBosses];
 const splitterArray = ["Splitter", "", createSplitterBoss];
+const encirclerArray = ["Encircler", "", createEncirclerBoss];
+const createCentralBaseArray = ["Central Base", "", createCentralBaseBoss];
 
 const firstWave = [
-  splitterArray,
+  // splitterArray,
+  // encirclerArray,
+  createCentralBaseArray,
   // sprayerArray,
   // chargerArray,
   // pacificArray,
@@ -144,6 +150,7 @@ export const checkArrayRemoval = (ctx) => {
     // console.log(metBossIndex);
 
     if (boss.health <= 0) {
+      boss.timesDefeated += 1;
       boss?.deathAnimation?.(ctx, liveBosses, index);
 
       liveBosses.splice(index, 1);
@@ -160,6 +167,7 @@ export const checkArrayRemoval = (ctx) => {
 
         bullets = bullets.filter((bullet) => bullet.team === "player");
         entities = entities.filter((entity) => entity.team === "player");
+        blackholes.length = 0;
 
         // console.log("splcie");
 

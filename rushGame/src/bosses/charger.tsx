@@ -29,6 +29,7 @@ type Charger = {
   damageConflicted: number;
   damageAbsorbed: number;
   bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: boolean;
@@ -64,6 +65,7 @@ export const createChargerBoss = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: false,
@@ -83,9 +85,7 @@ export const createChargerBoss = () => {
         charger.phaseCounter = 10000;
       }
     },
-    // deathAnimation: (ctx, liveBosses, bossIndex) => {},
     onWallBounce: () => {
-      //   charger.vel = { x: 0, y: 0 };
       charger.airFriction = true;
 
       charger.phaseCounter = 100;

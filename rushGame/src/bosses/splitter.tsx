@@ -34,6 +34,7 @@ type Splitter = {
   damageConflicted: number;
   damageAbsorbed: number;
   bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: false;
@@ -45,9 +46,10 @@ type Splitter = {
   onWallBounce: () => void;
 };
 
-const splitters = [];
+let splitters = [];
 
 const createSplitter = ({
+  generation,
   health,
   radius,
   speed,
@@ -56,7 +58,7 @@ const createSplitter = ({
   pos,
   attackCounter,
 }) => {
-  if (health < player.bulletDamage / 2) {
+  if (generation > 7) {
     return;
   }
   const splitter = {
@@ -64,7 +66,7 @@ const createSplitter = ({
     maxHealth: health,
     health: health,
     damageMult: damageMult,
-    contactDamage: 80 * damageMult,
+    contactDamage: 40 * damageMult,
     pos: pos,
     vel: {
       x: 0,
@@ -75,10 +77,12 @@ const createSplitter = ({
     speed: speed,
     team: "enemy",
     mass: mass,
+    generation: generation,
 
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: 0.3,
@@ -88,10 +92,10 @@ const createSplitter = ({
     resetAttackCounter: attackCounter,
 
     update: () => {
-      splitterBoss.health = Math.max(
-        splitters.reduce((sum, s) => sum + s.health, 0),
-        10
-      );
+      // splitterBoss.health = Math.max(
+      //   splitters.reduce((sum, s) => sum + s.health, 0),
+      //   10
+      // );
 
       if (splitter.attackCounter <= 0) {
         const direction = makeDirection(splitter.pos, player.pos);
@@ -102,38 +106,12 @@ const createSplitter = ({
       }
       splitter.attackCounter--;
     },
-    // onWallBounce: () => {
-    //   splitter.bounceCounter++;
 
-    //   if (splitter.bounceCounter % bounceThreashold !== 0) {
-    //     if (splitter.maxHealth / 2 > splitter.health) {
-    //       createBullet(
-    //         bullets,
-    //         splitter,
-    //         player.pos,
-    //         15,
-    //         10,
-    //         {},
-    //         {
-    //           bulletRadius:
-    //             40 + 2.5 * (splitter.bounceCounter % bounceThreashold),
-    //         }
-    //       );
-    //     }
-    //   } else {
-    //     splitter.vel = origo;
-
-    //     setTimeout(() => {
-    //       const direction = makeDirection(splitter.pos, player.pos);
-
-    //       splitter.vel = multVar(direction, splitter.speed);
-    //     }, 1000);
-    //   }
-    // },
     onDeath: () => {
       for (let i = 0; i < 2; i++) {
         const value = i % 2 ? 1 : -1;
         createSplitter({
+          generation: splitter.generation + 1,
           health: health / 2,
           radius: radius / 1.42,
           speed: splitter.speed,
@@ -146,20 +124,24 @@ const createSplitter = ({
     },
   };
 
-  console.log("creating splitter");
-
   splitters.push(splitter);
   entities.push(splitter);
 };
 
 const splitterBoss = {
+  name: "Splitter",
   maxHealth: 1000,
   health: 1000,
+  damageConflicted: 0,
+  damageAbsorbed: 0,
+  bulletsShot: 0,
+  timesDefeated: 0,
 };
 
 export const createSplitterBoss = () => {
   createSplitter({
-    health: 1000,
+    generation: 1,
+    health: splitterBoss.maxHealth,
     radius: 160,
     speed: 20,
     mass: 0.3,
@@ -167,7 +149,23 @@ export const createSplitterBoss = () => {
     pos: { x: world.width / 2, y: world.height / 8 },
     attackCounter: 120,
   });
+
   const splitterHealthLoop = setInterval(() => {
+    splitterBoss.health = Math.max(
+      splitters.reduce((sum, s) => sum + s.health, 0),
+      10
+    );
+
+    splitters.forEach((splitter) => {
+      splitterBoss.damageConflicted += splitter.damageConflicted;
+      splitter.damageConflicted = 0;
+
+      splitterBoss.damageAbsorbed += splitter.damageAbsorbed;
+      splitter.damageAbsorbed = 0;
+    });
+
+    splitters = splitters.filter((splitter) => splitter.health > 0);
+
     if (splitters.length === 0) {
       splitterBoss.health = 0;
       clearInterval(splitterHealthLoop);

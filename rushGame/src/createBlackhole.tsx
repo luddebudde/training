@@ -12,4 +12,6 @@ export const createBlackhole = (pos: Vec2, vel: Vec2, radius, strength) => {
   };
 
   blackholes.push(blackhole);
+
+  return blackhole;
 };

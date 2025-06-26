@@ -1,5 +1,5 @@
 import { entities } from "./arrays";
-import { world } from "./basics";
+import { changeIsPaused, world } from "./basics";
 
 export type Player = {
   name: string;
@@ -40,9 +40,7 @@ export type Player = {
 
     adrenaline: number;
     autoDamage: number;
-
-    rampOut: boolean;
-    rampOutValue: number;
+    spreadShotCount: number;
   };
 
   airFriction: true;
@@ -65,9 +63,13 @@ export const createPlayer = (): any => {
     health: health,
     maxHealth: health,
     contactDamage: 0,
+    // pos: {
+    //   x: world.width / 2,
+    //   y: world.height / 2,
+    // },
     pos: {
       x: world.width / 2,
-      y: world.height / 2,
+      y: (world.height / 5) * 4,
     },
     vel: {
       x: 0,
@@ -91,15 +93,14 @@ export const createPlayer = (): any => {
     unlockedAbilities: {
       dash: false,
       bounceable: false,
-      adrenaline: 0,
-      autoDamage: 0,
-
       bounceDamageLoss: 0.3,
+
       bonusLife: false,
       bonusLifeCount: 0,
 
-      rampOut: true,
-      rampOutValue: 0,
+      adrenaline: 0,
+      autoDamage: 0,
+      spreadShotCount: 0,
     },
 
     airFriction: true,

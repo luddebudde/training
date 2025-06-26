@@ -77,6 +77,8 @@ type AttackerTwin = {
 
   damageConflicted: number;
   absorbedDamage: number;
+  bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: false;
@@ -107,6 +109,7 @@ type AttackerTwin = {
     damageConflicted: number;
     damageAbsorbed: number;
     bulletsShot: number;
+    timesDefeated: number;
 
     airFriction: false;
     collision: true;
@@ -141,6 +144,7 @@ type ShooterTwin = {
   damageConflicted: number;
   damageAbsorbed: number;
   bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: number | boolean;
@@ -195,6 +199,8 @@ export const createTwinBoss = () => {
 
     damageConflicted: 0,
     absorbedDamage: 0,
+    bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: false,
@@ -225,6 +231,7 @@ export const createTwinBoss = () => {
       damageConflicted: 0,
       damageAbsorbed: 0,
       bulletsShot: 0,
+      timesDefeated: 0,
 
       airFriction: false,
       collision: true,
@@ -331,6 +338,7 @@ export const createTwinBoss = () => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+    timesDefeated: 0,
 
     airFriction: 0.5,
     collision: true,

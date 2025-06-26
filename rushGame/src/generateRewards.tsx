@@ -2,6 +2,9 @@ import { nextBoss, spawnDelay } from "./arrays";
 import { Player, player } from "./createPlayer";
 import { randomArrayElementSplice } from "./randomArrayElement";
 
+// iDEA:
+// An upgrade which allows you to skip 1 random boss each stage
+
 type Upgrades = {
   title: string;
   description: string;
@@ -95,6 +98,18 @@ const tankie: Upgrades = {
   },
 };
 
+const shotGunner: Upgrades = {
+  title: "Shotgunner",
+  description: "Overall dmg buff, but spread out to 3 shots",
+  id: "shotgun",
+  change: (player) => {
+    player.unlockedAbilities.spreadShotCount += 3;
+  },
+  unlockRequirement: () => {
+    return [];
+  },
+};
+
 const totalRewardPool: Upgrades[] = [
   dash,
   bouncyBullets,
@@ -103,6 +118,7 @@ const totalRewardPool: Upgrades[] = [
   autoDamage,
   decreasedDmgBounce,
   tankie,
+  shotGunner,
 ];
 
 export const usedRewards: Upgrades[] = [];

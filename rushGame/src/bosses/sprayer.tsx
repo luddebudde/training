@@ -33,10 +33,11 @@ type Sprayer = {
 
   damageConflicted: number;
   damageAbsorbed: number;
+  bulletsShot: number;
+  timesDefeated: number;
 
   collision: true;
   airFriction: boolean;
-  bulletsShot: number;
 
   // Pahses
   phaseCounter: number;
@@ -83,10 +84,11 @@ export const createSprayerBoss = () => {
 
     damageConflicted: 0,
     damageAbsorbed: 0,
+    bulletsShot: 0,
+    timesDefeated: 0,
 
     collision: true,
     airFriction: true,
-    bulletsShot: 0,
 
     // Pahses
     phaseCounter: 10,

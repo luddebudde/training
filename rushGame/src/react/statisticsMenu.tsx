@@ -29,6 +29,12 @@ const StatisticsMenu = ({ onBack }) => {
 
   player.health = player.maxHealth;
 
+  // bossArray.forEach(element => {
+
+  // });
+
+  console.log(bossArray);
+
   return (
     <div>
       {currentMenu === "statistics" && (
@@ -62,7 +68,8 @@ const StatisticsMenu = ({ onBack }) => {
               <b style={{ fontSize: 50 }}>{boss.name}:</b>
               <div>Damage taken: {Math.floor(boss.damageAbsorbed)} </div>
               <div>Damage dealt: {Math.floor(boss.damageConflicted)} </div>
-              <div>Bullets shot: {boss.bulletsShot} </div>
+              {/* <div>Bullets shot: {boss.bulletsShot} </div> */}
+              <div>Times defeated: {boss.timesDefeated} </div>
               <i style={{ fontSize: 35 }}>
                 "
                 {
