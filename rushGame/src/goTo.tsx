@@ -11,7 +11,7 @@ import {
   Vec2,
 } from "./math";
 
-export const goTo = (entity, target: Vec2, time, whenDone = () => {}) => {
+export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
   const newEntityPos = entity.pos !== undefined ? entity.pos : entity;
 
   const diff = {
@@ -27,12 +27,22 @@ export const goTo = (entity, target: Vec2, time, whenDone = () => {}) => {
 
   entity.vel = multVar(direction, newSpeed);
 
+  const safetyMargin = 20;
+
   const interval = setInterval(() => {
+    // console.log(
+    //   Math.round(entity.pos.x / 10) === Math.round(target.x / 10),
+    //   Math.round(entity.pos.y / 10) === Math.round(target.y / 10)
+    // );
+
     if (
-      Math.round(newEntityPos.x / 10) === Math.round(target.x / 10) &&
-      Math.round(newEntityPos.y / 10) === Math.round(target.y / 10)
+      Math.round(entity.pos.x / safetyMargin) ===
+        Math.round(target.x / safetyMargin) &&
+      Math.round(entity.pos.y / safetyMargin) ===
+        Math.round(target.y / safetyMargin)
     ) {
       clearInterval(interval);
+      entity.pos = target;
       entity.vel = origo;
       console.log("Målet nått!");
       whenDone();

@@ -21,6 +21,8 @@ export type Bullet = {
   airFriction: boolean | number;
   bounceable: boolean;
   bounceDamageLoss: number;
+  indestructible: boolean;
+
   onHit: (entity, bullet: Bullet) => void;
   onWallBounce: (bullet: Bullet, calculatedVec: Vec2) => void;
 };
@@ -29,6 +31,7 @@ type Mods = {
   bounceable: boolean;
   airFriction: number | false;
   bounceDamageLoss: number;
+  indestructible: boolean;
 };
 
 type Advanced = {
@@ -74,6 +77,7 @@ export const createBullet = (
     bounceable: false,
     airFriction: 0,
     bounceDamageLoss: 0.3,
+    indestructible: false,
     ...mods,
   };
 
@@ -121,6 +125,7 @@ export const createBullet = (
     airFriction: finalMods.airFriction,
     bounceable: finalMods.bounceable,
     bounceDamageLoss: finalMods.bounceDamageLoss,
+    indestructible: finalMods.indestructible,
 
     onHit: (entity, bullet) => {
       finalAdvanced.onHit(entity, bullet);
@@ -129,6 +134,8 @@ export const createBullet = (
       finalAdvanced.onHit(bullet, newVec);
     },
   };
+
+  // console.log(bullet);
 
   bullets.push(bullet);
 
@@ -234,6 +241,10 @@ export const handleBulletBounce = (
   index: number
 ) => {
   bullet?.onWallBounce?.(bullet, newVel);
+
+  if (bullet.indestructible) {
+    return;
+  }
 
   if (bullet.bounceable) {
     bullet.vel = newVel;

@@ -10,7 +10,7 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { add, addVar, multVar, origo } from "../math";
 
-const health = 300;
+const health = 600;
 
 type Charger = {
   name: string;
@@ -135,6 +135,8 @@ const centralBasePos = {
   y: world.height / 2,
 };
 
+const blackholeStrength = 500;
+
 export const createCentralBaseBoss = () => {
   const centralBase = {
     name: "The Central Base",
@@ -162,7 +164,7 @@ export const createCentralBaseBoss = () => {
 
     // Pahses
     satellites: [],
-    blackhole: createBlackhole(centralBasePos, origo, 40, 300),
+    blackhole: createBlackhole(centralBasePos, origo, 40, blackholeStrength),
 
     superCounter: 0,
     superHitCounter: 0,
@@ -190,7 +192,7 @@ export const createCentralBaseBoss = () => {
         baseColor.b * healthRatio
       )})`;
 
-      centralBase.blackhole.strength = 300 * (1 - healthRatio);
+      centralBase.blackhole.strength = blackholeStrength * (1 - healthRatio);
 
       lines.length = 0;
       centralBase.satellites.forEach((satellite) => {
@@ -281,14 +283,13 @@ export const createCentralBaseBoss = () => {
             centralBase.superHitCounter = 0;
           }
 
-          setTimeout(() => {
-            if (
-              centralBase.superCounter <
-              centralBase.superHitCounterMax * 1.3
-            ) {
+          if (centralBase.superCounter < centralBase.superHitCounterMax * 1.1) {
+            setTimeout(() => {
+              // console.log("reset");
+
               centralBase.superCounter = 0;
-            }
-          }, 8000);
+            }, 8000);
+          }
         }
       });
     },

@@ -589,10 +589,10 @@ const gatherUp = (ctx) => {
   const loopDelay = 10;
   setTimeout(() => {
     for (let frameLoops = 0; frameLoops < loopCount; frameLoops++) {
-      if (liveBosses.length === 0) {
-        return;
-      }
       setTimeout(() => {
+        if (liveBosses.length === 0) {
+          return;
+        }
         // console.log(Math.floor(frameLoops / 100));
         // Idea: The closest rectangle applies an effect or attack, depending on which one it is.
         // Heavy attacker: Shoots violently
