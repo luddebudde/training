@@ -325,7 +325,10 @@ const createRectObjects = () => {
           }
         );
 
-        goTo(bullet, randomRectPos, 50, () => (randomRect.health += 20));
+        goTo(bullet, randomRectPos, 50, () => {
+          randomRect.health += 20;
+          bullet.pos.x = 10000;
+        });
 
         rect3.attackCounter = 50;
       }
@@ -521,10 +524,16 @@ const moveToCorners = (ctx) => {
   let rectsReady = 0;
 
   for (let i = 0; i < rectList.length; i++) {
+    const rect = rectList[i];
+
+    rect.rotationAxis = {
+      x: rect.x + rect.width / 2,
+      y: rect.y + rect.height / 2,
+    };
     if (liveBosses.length === 0) {
       return;
     }
-    const rect = rectList[i];
+
     goTo(rect, rect.cornerPos, 100, () => rectsReady++);
   }
 
@@ -699,6 +708,7 @@ const rotatePhase = (ctx) => {
     if (liveBosses.length === 0) {
       return;
     }
+
     moveToCorners(ctx);
   }, delayPerLoop * requiredLoops);
 };
@@ -723,7 +733,7 @@ export const createSquareBosses = (ctx) => {
       y: rect.y + rect.height / 2,
     };
 
-    console.log(rect.pos);
+    // console.log(rect.pos);
   });
   updateRectList();
   shootFromCorners(ctx);

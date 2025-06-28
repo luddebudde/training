@@ -109,11 +109,41 @@ export const createSprayerBoss = () => {
     reacheadHalfPoint: false,
 
     aiMovement: () => {},
-    update: (ctx, deltaTime): void => {
+    update: (ctx): void => {
       sprayer.aiMovement();
 
       //   sprayer.attackDelay--;
       sprayer.phaseCounter--;
+
+      if (
+        sprayer.health < sprayer.maxHealth / 2 &&
+        !sprayer.reacheadHalfPoint
+      ) {
+        const maxI = 40; // Antal kulor
+        const angleStep = (Math.PI * 2) / maxI; // Steg mellan vinklar för att täcka en cirkel
+        const speed = 25; // Hastighet för kulorna
+
+        // for (let x = 0; x < 500; x++) {
+        // setTimeout(() => {
+        for (let i = 0; i < maxI; i++) {
+          const angle = i * angleStep; // Vinkel för den aktuella kulan
+          const target = {
+            x: Math.cos(angle) * 100 + sprayer.pos.x, // Punkt utåt baserad på vinkel
+            y: Math.sin(angle) * 100 + sprayer.pos.y,
+          };
+
+          createBullet(
+            bullets,
+            sprayer, // Ingen specifik "shooter"
+            target, // Målet baserat på vinkeln
+            10, // Skadevärde
+            speed // Hastighetsa
+          );
+        }
+        // }, 1000);
+        sprayer.reacheadHalfPoint = true;
+        // }
+      }
 
       if (sprayer.phaseCounter < 0) {
         const movementNumber = Math.floor(Math.random() * 3);

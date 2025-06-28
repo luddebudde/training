@@ -2,14 +2,17 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
+import { debuffPlayer } from "../debuffPlayer";
+import { drawCircle } from "../draw/drawCircle";
 
 import { getDistance, makeDirection } from "../geometry/makeDirection";
-import { goTo } from "../goTo";
-import { multVar, origo, Vec2 } from "../math";
+import { add, multVar, origo, Vec2 } from "../math";
+import {
+  randomArrayElement,
+  randomArrayElementSplice,
+} from "../randomArrayElement";
 
-const health = 1500;
-const radius = 120;
+const health = 150;
 
 type Charger = {
   name: string;
@@ -46,139 +49,78 @@ type Charger = {
   onWallBounce: () => void;
 };
 
-const shotSprayAttack = (boss) => {
-  const bulletCount = 10;
-  const spreadRadians = (120 * Math.PI) / 180; // 120 degrees in radians
-  const startAngle = -spreadRadians / 2;
+const swingBlade = (ctx, boss) => {
+  const blade = {
+    damage: 40,
+    shooter: boss,
+    mass: 500,
+    pos: boss.pos,
+    vel: origo,
+    offset: origo,
+    color: "black",
+    radius: 20,
+    angle: 0,
+    team: "enemy",
+    collision: false,
+    airFriction: false,
+    indestructible: true,
+    onHit: () => {},
+  };
 
-  const angleToPlayer = Math.atan2(
-    player.pos.y - boss.pos.y,
-    player.pos.x - boss.pos.x
-  );
+  boss.blade = blade;
 
-  for (let i = 0; i < bulletCount; i++) {
+  bullets.push(blade);
+
+  for (let i = 0; i < boss.radius; i++) {
     setTimeout(() => {
-      // Sprid jämnt över 120°
+      // console.log("blade", boss.blade.pos);
 
-      const angleOffset = startAngle + (i / (bulletCount - 1)) * spreadRadians;
-      const finalAngle = angleToPlayer + angleOffset;
+      boss.blade.offset.y--;
 
-      const target: Vec2 = {
-        x: boss.pos.x + Math.cos(finalAngle) * 100,
-        y: boss.pos.y + Math.sin(finalAngle) * 100,
-      };
-
-      createBullet(bullets, boss, target, 5, 20, {});
-    }, 25 * i);
+      // drawCircle(ctx, bladePoint);
+    }, 7 * i);
   }
+
   setTimeout(() => {
-    // shotSprayAttack(boss);
-    boss.phaseCounter = 50;
-  }, 25 * bulletCount);
-};
-
-// const fieldAttack = (boss, bulletCount: number, delay: number): void => {
-//   // shotSprayAttack(boss);
-//   console.log(bulletCount);
-
-//   for (let i = 0; i < bulletCount; i++) {
-//     setTimeout(() => {
-//       const startPos = { x: (world.width / bulletCount) * i, y: 40 };
-//       const targetPos = { x: startPos.x, y: startPos.y + world.height };
-
-//       createBullet(bullets, boss, targetPos, 5, 20, {}, { startPos: startPos });
-//     }, delay * i);
-//   }
-
-//   setTimeout(() => {
-//     shotSprayAttack(boss);
-//   }, delay * bulletCount);
-// };
-
-const sidePosArray = [
-  { x: radius, y: radius },
-  { x: world.width - radius, y: radius },
-];
-let timesSideSwitched = 0;
-let bulletRainDirection = 1;
-
-const switchSide = (boss, whenDone) => {
-  goTo(boss, sidePosArray[timesSideSwitched % 2], 50, () => {
-    whenDone(boss);
-
-    const bulletCount = 5 - 2;
-    for (let i = -2; i < bulletCount; i++) {
-      createBullet(
-        bullets,
-        boss,
-        undefined,
-        10,
-        undefined,
-        {},
-        {
-          bulletRadius: radius / 5,
-          startPos: { x: boss.pos.x + ((radius * 2) / 5) * i, y: boss.pos.y },
-          vel: { x: 0, y: 15 },
-          color: "red",
-        }
-      );
+    for (let i = 0; i < 60; i++) {
+      setTimeout(() => {
+        boss.blade.radius++;
+        boss.blade.radius;
+      }, 15 * i);
     }
-  });
-
-  timesSideSwitched++;
-};
-
-const fieldAttack = (boss, bulletCount: number, delay: number): void => {
-  const spaces = [];
-  const spacing = (world.width - boss.radius * 2) / bulletCount;
-
-  // const startPos = { x: boss.pos.x < world.width ? 0 : world.width, y: radius };
-
-  bulletRainDirection = timesSideSwitched % 2 ? -1 : 1;
-  const startLoc = timesSideSwitched % 2 ? world.width : 0;
-
-  for (let i = 0; i < bulletCount; i++) {
-    spaces.push(spacing * i);
-    // console.log(spaces);
-
-    setTimeout(() => {
-      createBullet(
-        bullets,
-        boss,
-        undefined,
-        5,
-        20,
-        {},
-        {
-          startPos: { x: startLoc + spaces[i] * bulletRainDirection, y: 40 },
-          vel: { x: 0, y: 20 },
-        }
-      );
-    }, delay * i);
-  }
+  }, 7 * boss.radius * 1.2);
 
   setTimeout(() => {
-    shotSprayAttack(boss);
-  }, delay * bulletCount);
+    // blade.angle += 0.05;
+  }, 7 * boss.radius * 1.2 + 15 * 60);
 };
+
+const bulletRadius = 15;
+
+const turretSpots: Vec2[] = [
+  { x: bulletRadius, y: bulletRadius },
+  { x: world.width - bulletRadius, y: bulletRadius },
+  { x: bulletRadius, y: world.height - bulletRadius },
+  { x: world.width - bulletRadius, y: world.height - bulletRadius },
+];
 
 export const createNewBoss = () => {
   const boss = {
-    name: "Charger",
+    name: "Boss",
     maxHealth: health,
-    health: health * 0.51,
+    health: health * 0.45,
     contactDamage: 20,
     pos: {
-      x: world.width / 2,
-      y: world.height / 2,
+      x: Math.random() * world.width,
+      y: Math.random() * world.height,
     },
     vel: {
-      x: 0,
-      y: 0,
+      x: 10,
+      y: 5,
     },
-    radius: radius,
-    color: "purple",
-    speed: 20,
+    radius: 120,
+    color: "darkcyan",
+    speed: 50,
     team: "enemy",
     mass: 1000,
 
@@ -187,116 +129,103 @@ export const createNewBoss = () => {
     bulletsShot: 0,
     timesDefeated: 0,
 
-    collision: true,
+    collision: false,
     airFriction: false,
 
     // Pahses
-    phaseCounter: 100,
-    rageMode: false,
+    phaseCounter: 10,
+    reacheadHalfPoint: false,
 
-    cheatedBullets: [],
+    launchBlade: true,
+    blade: undefined,
 
-    update: (): void => {
-      boss.phaseCounter--;
-
-      const bossShield = {
-        pos: boss.pos,
-        radius: boss.radius * 2,
-      };
-
-      if (
-        (player.pos.x < boss.pos.x - boss.radius &&
-          bulletRainDirection === 1) ||
-        (player.pos.x > boss.pos.x + boss.radius && bulletRainDirection === -1)
-      ) {
-        boss.cheatedBullets = bullets
-          .filter((bullet) => bullet.team === "player")
-          .map((bullet) => {
-            // Infallsvinkel = skillnad mellan rörelse och normal
-            // const incidence = motionAngle - normalAngle;
-
-            // const distance = getDistance(bullet.pos, bossShield.pos);
-            // bullet.angle = normalAngle;
-            bullet.angle = Math.atan2(
-              bullet.pos.y - bossShield.pos.y,
-              bullet.pos.x - bossShield.pos.x
-            );
-
-            bullet.indestructible = true;
-
-            return bullet;
-          });
-      }
-
-      boss.cheatedBullets.forEach((bullet) => {
-        if (doCirclesOverlap(bullet, bossShield)) {
-          bullet.vel = boss.vel;
-          const distance = getDistance(bullet.pos, bossShield.pos);
-
-          if (bullet.angle === undefined) {
-            bullet.angle = 0;
-            bullet.indestructible = true;
-          }
-
-          bullet.angle += 0.05;
-          bullet.pos.x = Math.cos(bullet.angle) * distance + bossShield.pos.x;
-          bullet.pos.y = Math.sin(bullet.angle) * distance + bossShield.pos.y;
-
-          console.log(bullet.angle);
-
-          // createBullet(bullets, boss, undefined, bullet.damage, bullet.speed, {}, {vel: multVar(bullet.vel, -1)})
+    update: (ctx): void => {
+      bullets.forEach((bullet) => {
+        if (bullet.shooter === player) {
+          bullet.damage = 0;
         }
       });
 
-      if (boss.phaseCounter < 0) {
-        if (boss.health > boss.maxHealth / 2) {
-          const bulletCount = Math.floor(world.width / 200);
-          switchSide(boss, () =>
-            fieldAttack(boss, bulletCount, (world.width / bulletCount) * 0.5)
-          );
-        } else {
-          const bulletCount = Math.floor(world.width / 50);
-          switchSide(boss, () =>
-            fieldAttack(boss, bulletCount, (world.width / bulletCount) * 0.5)
-          );
-        }
+      if (boss.health < boss.maxHealth / 2 && !boss.reacheadHalfPoint) {
+        const maxI = 25; // Antal kulor
+        const angleStep = (Math.PI * 2) / maxI; // Steg mellan vinklar för att täcka en cirkel
+        const speed = 25; // Hastighet för kulorna
 
-        // if (!boss.rageMode) {
-        //   goTo(boss, { x: world.width / 2, y: radius }, 40, () => {
-        //     boss.vel = { x: 0, y: boss.speed };
-        //     boss.phaseCounter = 30;
-        //   });
-        //   boss.rageMode = true;
+        // for (let x = 0; x < 500; x++) {
+        setTimeout(() => {
+          for (let i = 0; i < maxI; i++) {
+            const angle = i * angleStep; // Vinkel för den aktuella kulan
+            const target = {
+              x: Math.cos(angle) * 100 + boss.pos.x, // Punkt utåt baserad på vinkel
+              y: Math.sin(angle) * 100 + boss.pos.y,
+            };
+
+            createBullet(
+              bullets,
+              boss, // Ingen specifik "shooter"
+              target, // Målet baserat på vinkeln
+              10, // Skadevärde
+              speed // Hastighet
+            );
+          }
+          boss.reacheadHalfPoint = false;
+        }, 2500);
+        boss.reacheadHalfPoint = true;
         // }
-        // for (let i = 0; i < 2; i++) {
-        //   createBullet(
-        //     bullets,
-        //     boss,
-        //     undefined,
-        //     10,
-        //     20,
-        //     {},
-        //     { vel: { x: 20 * (i % 2 ? 1 : -1), y: 0 } }
-        //   );
-        //   boss.phaseCounter = 30;
-        // }
-        // }
-        boss.phaseCounter = 30000;
       }
+
+      // console.log(boss.blade);
+
+      if (boss.blade !== undefined) {
+        const blade = boss.blade;
+        const distance = getDistance(boss.pos, blade.pos);
+
+        // console.log(blade.angle, distance, boss.pos);
+        // console.log(blade.pos, boss.pos, blade.pos.x - boss.pos.x);
+        console.log(distance);
+
+        // blade.pos.x = Math.cos(blade.angle) * distance + boss.pos.x;
+        blade.pos = boss.pos;
+        // + blade.offset.x;
+        blade.pos.y = Math.sin(blade.angle) * distance;
+        // + boss.pos.y + blade.offset.y;
+        // add(boss.pos, boss.blade.offset);
+      }
+      if (boss.phaseCounter < 0) {
+        // createBullet(
+        //   bullets,
+        //   boss,
+        //   player.pos,
+        //   5,
+        //   20,
+        //   {},
+        //   {
+        //     team: "none",
+        //     startPos: randomArrayElement(turretSpots),
+        //     bulletRadius: bulletRadius,
+        //     rememberShooter: false,
+        //   }
+        // );
+
+        if (
+          getDistance(boss.pos, player.pos) <
+            (boss.radius * 2 + player.radius * 2) * 2 &&
+          boss.launchBlade === true
+        ) {
+          swingBlade(ctx, boss);
+          console.log("laucning blade");
+
+          boss.launchBlade = false;
+        }
+        boss.phaseCounter = 10;
+      }
+
+      boss.phaseCounter--;
     },
-    // onWallBounce: () => {
-    // charger.airFriction = true;
-
-    // boss.vel = origo;
-
-    // console.log("bounce");
-
-    // charger.phaseCounter = 100;
-    // },
   };
 
   entities.push(boss);
   liveBosses.push(boss);
-
+  // entities.push(boss.blade);
   return boss;
 };

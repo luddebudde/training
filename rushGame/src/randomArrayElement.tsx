@@ -1,4 +1,4 @@
-export const randomArrayElement = (array: []): Element => {
+export const randomArrayElement = (array: any[]): Element => {
   return array[Math.floor(Math.random() * array.length)];
 };
 

@@ -41,6 +41,7 @@ type Advanced = {
   bulletRadius: number;
   color: string;
   vel: Vec2;
+  rememberShooter: boolean;
   onHit: (entity, bullet) => void;
 };
 
@@ -68,6 +69,7 @@ export const createBullet = (
       x: undefined,
       y: undefined,
     },
+    rememberShooter: true,
     onHit: () => {},
     onWallBounce: () => {},
     ...advanced,
@@ -90,6 +92,8 @@ export const createBullet = (
 
   const targetPos = target !== undefined ? target : finalAdvanced.targetVec;
 
+  // console.log(bulletTeam);
+
   const direction = makeDirection(startPos, targetPos);
   const newVel = multVar(direction, speed);
 
@@ -108,7 +112,7 @@ export const createBullet = (
   // console.log(bulletTeam);
 
   const bullet: Bullet = {
-    shooter: shooter,
+    shooter: finalAdvanced.rememberShooter ? shooter : undefined,
     damage: damage,
     pos: {
       x: startPos.x,

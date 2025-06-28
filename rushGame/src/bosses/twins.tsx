@@ -4,7 +4,7 @@ import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { makeDirection } from "../geometry/makeDirection";
-import { multVar } from "../math";
+import { minVec, multVar } from "../math";
 import { drawLine } from "../draw/drawLine";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
 import { createChaser } from "../enemies/chaser";
@@ -224,7 +224,7 @@ export const createTwinBoss = () => {
       },
       radius: 30,
       color: "purple",
-      speed: 40,
+      speed: 30,
       team: "enemy",
       mass: 150,
 

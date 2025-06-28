@@ -25,6 +25,7 @@ import { foughtBosses, statistics } from "./loseScreen";
 import { createSplitterBoss } from "./bosses/splitter";
 import { createEncirclerBoss } from "./bosses/encircler";
 import { createCentralBaseBoss } from "./bosses/centralBase";
+import { createNewRainer } from "./bosses/newRainer";
 import { createNewBoss } from "./bosses/newBoss";
 
 export let entities = [];
@@ -47,13 +48,18 @@ const squareArray = ["Squa's gang", "", createSquareBosses];
 const splitterArray = ["Splitter", "", createSplitterBoss];
 const encirclerArray = ["Encircler", "", createEncirclerBoss];
 const createCentralBaseArray = ["Central Base", "", createCentralBaseBoss];
-const createNewBossArray = ["Newboss", "", createNewBoss];
+const createNewRainerArray = ["NewRainer", "", createNewRainer];
+const createNewBossArray = ["NewBoss", "", createNewBoss];
 
 const firstWave = [
   // splitterArray,
   // encirclerArray,
   // createCentralBaseArray,
+  // createNewRainerArray,
   createNewBossArray,
+  // squareArray,
+  // sprayerArray,
+  // squareArray,
   // sprayerArray,
   // chargerArray,
   // pacificArray,

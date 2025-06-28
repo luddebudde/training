@@ -12,7 +12,7 @@ import {
 } from "./math";
 
 export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
-  const newEntityPos = entity.pos !== undefined ? entity.pos : entity;
+  let newEntityPos = entity.pos !== undefined ? entity.pos : entity;
 
   const diff = {
     x: newEntityPos.x - target.x,
@@ -27,22 +27,50 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
 
   entity.vel = multVar(direction, newSpeed);
 
-  const safetyMargin = 20;
+  // entity.vel.x = Math.round(entity.vel.x);
+  // entity.vel.y = Math.round(entity.vel.y);
+
+  const safetyMargin = 10;
 
   const interval = setInterval(() => {
     // console.log(
-    //   Math.round(entity.pos.x / 10) === Math.round(target.x / 10),
-    //   Math.round(entity.pos.y / 10) === Math.round(target.y / 10)
+    //   Math.round(newEntityPos.x / safetyMargin) ===
+    //     Math.round(target.x / safetyMargin),
+    //   Math.round(newEntityPos.y / safetyMargin) ===
+    //     Math.round(target.y / safetyMargin),
+    //   Math.round(newEntityPos.x / safetyMargin / 10) ===
+    //     Math.round(target.x / safetyMargin / 10),
+    //   Math.round(newEntityPos.y / safetyMargin / 10) ===
+    //     Math.round(target.y / safetyMargin / 10)
+    // );
+    newEntityPos = entity.pos !== undefined ? entity.pos : entity;
+    // console.log(
+    //   Math.round(newEntityPos.x / safetyMargin),
+    //   Math.round(target.x / safetyMargin),
+    //   Math.round(newEntityPos.y / safetyMargin),
+    //   Math.round(target.y / safetyMargin),
+    //   Math.round(newEntityPos.x / safetyMargin / 10),
+    //   Math.round(target.x / safetyMargin / 10),
+    //   Math.round(newEntityPos.y / safetyMargin / 10),
+    //   Math.round(target.y / safetyMargin / 10)
     // );
 
+    // console.log(entity.pos.x);
+
+    // console.log(newEntityPos);
     if (
-      Math.round(entity.pos.x / safetyMargin) ===
+      Math.round(newEntityPos.x / safetyMargin) ===
         Math.round(target.x / safetyMargin) &&
-      Math.round(entity.pos.y / safetyMargin) ===
+      Math.round(newEntityPos.y / safetyMargin) ===
         Math.round(target.y / safetyMargin)
     ) {
+      // console.log(newEntityPos, "1");
+
       clearInterval(interval);
-      entity.pos = target;
+      newEntityPos.x = target.x;
+      newEntityPos.y = target.y;
+      // console.log(newEntityPos, "2");
+
       entity.vel = origo;
       console.log("Målet nått!");
       whenDone();
