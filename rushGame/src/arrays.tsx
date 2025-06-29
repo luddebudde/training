@@ -25,8 +25,10 @@ import { foughtBosses, statistics } from "./loseScreen";
 import { createSplitterBoss } from "./bosses/splitter";
 import { createEncirclerBoss } from "./bosses/encircler";
 import { createCentralBaseBoss } from "./bosses/centralBase";
-import { createNewRainer } from "./bosses/newRainer";
-import { createNewBoss } from "./bosses/newBoss";
+import { createNewRainer } from "./bosses/sideSweeper";
+import { createWanderer } from "./bosses/wanderer";
+import { createLevelSeekerBoss } from "./bosses/levelSeeker";
+import { createGrenadier } from "./bosses/grenadier";
 
 export let entities = [];
 export let bullets = [];
@@ -45,18 +47,23 @@ const pacificArray = ["Pacific", "", createPacificBoss];
 const rainerArray = ["Rainer", "", createRainerBoss];
 const twinArray = ["The Twin Bros", "", createTwinBoss];
 const squareArray = ["Squa's gang", "", createSquareBosses];
+
 const splitterArray = ["Splitter", "", createSplitterBoss];
 const encirclerArray = ["Encircler", "", createEncirclerBoss];
 const createCentralBaseArray = ["Central Base", "", createCentralBaseBoss];
-const createNewRainerArray = ["NewRainer", "", createNewRainer];
-const createNewBossArray = ["NewBoss", "", createNewBoss];
+const sideSweeperArray = ["Side <= Sweeper", "", createNewRainer];
+const wandererArray = ["Wanderer", "", createWanderer];
+const levelSeekerArray = ["Level Seeker", "", createLevelSeekerBoss];
+const grenadierArray = ["Grenadier", "", createGrenadier];
 
 const firstWave = [
   // splitterArray,
   // encirclerArray,
   // createCentralBaseArray,
   // createNewRainerArray,
-  createNewBossArray,
+  // wandererArray,
+  // levelSeekerArray,
+  grenadierArray,
   // squareArray,
   // sprayerArray,
   // squareArray,

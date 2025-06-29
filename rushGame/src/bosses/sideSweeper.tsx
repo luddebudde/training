@@ -11,7 +11,7 @@ import { add, multVar, origo, Vec2 } from "../math";
 const health = 1500;
 const radius = 120;
 
-type Boss = {
+type sideSweeper = {
   name: string;
   maxHealth: number;
   health: number;
@@ -51,9 +51,9 @@ type Boss = {
   update: () => void;
 };
 
-const shotSprayAttack = (boss) => {
+const shotSprayAttack = (boss: sideSweeper) => {
   const bulletCount = 10;
-  const spreadRadians = (120 * Math.PI) / 180; // 120 degrees in radians
+  const spreadRadians = (120 * Math.PI) / 180;
   const startAngle = -spreadRadians / 2;
 
   const angleToPlayer = Math.atan2(
@@ -63,8 +63,6 @@ const shotSprayAttack = (boss) => {
 
   for (let i = 0; i < bulletCount; i++) {
     setTimeout(() => {
-      // Sprid jämnt över 120°
-
       const angleOffset = startAngle + (i / (bulletCount - 1)) * spreadRadians;
       const finalAngle = angleToPlayer + angleOffset;
 
@@ -77,28 +75,9 @@ const shotSprayAttack = (boss) => {
     }, 25 * i);
   }
   setTimeout(() => {
-    // shotSprayAttack(boss);
     boss.phaseCounter = 50;
   }, 25 * bulletCount);
 };
-
-// const fieldAttack = (boss, bulletCount: number, delay: number): void => {
-//   // shotSprayAttack(boss);
-//   console.log(bulletCount);
-
-//   for (let i = 0; i < bulletCount; i++) {
-//     setTimeout(() => {
-//       const startPos = { x: (world.width / bulletCount) * i, y: 40 };
-//       const targetPos = { x: startPos.x, y: startPos.y + world.height };
-
-//       createBullet(bullets, boss, targetPos, 5, 20, {}, { startPos: startPos });
-//     }, delay * i);
-//   }
-
-//   setTimeout(() => {
-//     shotSprayAttack(boss);
-//   }, delay * bulletCount);
-// };
 
 const sidePosArray = [
   { x: radius, y: radius },
@@ -133,30 +112,31 @@ const switchSide = (boss, whenDone) => {
   boss.timesSideSwitched++;
 };
 
-const fieldAttack = (boss, bulletCount: number, delay: number): void => {
+const fieldAttack = (
+  sweeper: sideSweeper,
+  bulletCount: number,
+  delay: number
+): void => {
   const spaces = [];
-  const spacing = (world.width - boss.radius * 2) / bulletCount;
+  const spacing = (world.width - sweeper.radius * 2) / bulletCount;
 
-  // const startPos = { x: boss.pos.x < world.width ? 0 : world.width, y: radius };
-
-  boss.bulletRainDirection = boss.timesSideSwitched % 2 ? -1 : 1;
-  const startLoc = boss.timesSideSwitched % 2 ? world.width : 0;
+  sweeper.bulletRainDirection = sweeper.timesSideSwitched % 2 ? -1 : 1;
+  const startLoc = sweeper.timesSideSwitched % 2 ? world.width : 0;
 
   for (let i = 0; i < bulletCount; i++) {
     spaces.push(spacing * i);
-    // console.log(spaces);
 
     setTimeout(() => {
       createBullet(
         bullets,
-        boss,
+        sweeper,
         undefined,
         8,
         20,
         {},
         {
           startPos: {
-            x: startLoc + spaces[i] * boss.bulletRainDirection,
+            x: startLoc + spaces[i] * sweeper.bulletRainDirection,
             y: 40,
           },
           vel: { x: 0, y: 20 },
@@ -166,7 +146,7 @@ const fieldAttack = (boss, bulletCount: number, delay: number): void => {
   }
 
   setTimeout(() => {
-    shotSprayAttack(boss);
+    shotSprayAttack(sweeper);
   }, delay * bulletCount);
 };
 
@@ -177,8 +157,8 @@ const chargeMode = (boss) => {
 };
 
 export const createNewRainer = () => {
-  const boss: Boss = {
-    name: "Boss",
+  const sideSweeper: sideSweeper = {
+    name: "Side <= Sweeper",
     maxHealth: health,
     health: health,
     contactDamage: 10,
@@ -215,23 +195,24 @@ export const createNewRainer = () => {
     cheatedBullets: [],
 
     update: (): void => {
-      boss.phaseCounter--;
+      sideSweeper.phaseCounter--;
 
       const bossShield = {
-        pos: boss.pos,
-        radius: boss.radius * 4,
+        pos: sideSweeper.pos,
+        radius: sideSweeper.radius * 4,
       };
 
       if (
-        ((player.pos.x < boss.pos.x - boss.radius &&
-          boss.bulletRainDirection === 1) ||
-          (player.pos.x > boss.pos.x + boss.radius &&
-            boss.bulletRainDirection === -1)) &&
-        boss.rageMode === false
+        ((player.pos.x < sideSweeper.pos.x - sideSweeper.radius &&
+          sideSweeper.bulletRainDirection === 1) ||
+          (player.pos.x > sideSweeper.pos.x + sideSweeper.radius &&
+            sideSweeper.bulletRainDirection === -1)) &&
+        sideSweeper.rageMode === false
       ) {
         const newCheated = bullets.filter(
           (bullet) =>
-            bullet.team === "player" && !boss.cheatedBullets.includes(bullet)
+            bullet.team === "player" &&
+            !sideSweeper.cheatedBullets.includes(bullet)
         );
 
         newCheated.forEach((bullet) => {
@@ -240,26 +221,22 @@ export const createNewRainer = () => {
               bullet.pos.y - bossShield.pos.y,
               bullet.pos.x - bossShield.pos.x
             );
-            bullet.distance = Math.random() * boss.radius * 2 + boss.radius * 2;
-            // getDistance(bullet.pos, bossShield.pos);
+            bullet.distance =
+              Math.random() * sideSweeper.radius * 2 + sideSweeper.radius * 2;
             bullet.team = "enemy";
-            bullet.shooter = boss;
+            bullet.shooter = sideSweeper;
             bullet.damage = bullet.damage * 0.3;
             bullet.indestructible = true;
 
             // console.log("bullet cheated");
-            boss.cheatedBullets.push(bullet);
+            sideSweeper.cheatedBullets.push(bullet);
           }
         });
-
-        // Slå ihop gamla + nya
-
-        //  = boss.cheatedBullets.concat(newCheated);
       }
 
-      boss.cheatedBullets.forEach((bullet) => {
+      sideSweeper.cheatedBullets.forEach((bullet) => {
         if (doCirclesOverlap(bullet, bossShield)) {
-          bullet.vel = boss.vel;
+          bullet.vel = sideSweeper.vel;
 
           const distance = bullet.distance;
 
@@ -271,71 +248,48 @@ export const createNewRainer = () => {
           bullet.angle += 0.05;
           bullet.pos.x = Math.cos(bullet.angle) * distance + bossShield.pos.x;
           bullet.pos.y = Math.sin(bullet.angle) * distance + bossShield.pos.y;
-
-          // console.log(bullet.angle);
-
-          // createBullet(bullets, boss, undefined, bullet.damage, bullet.speed, {}, {vel: multVar(bullet.vel, -1)})
         }
       });
 
-      if (boss.phaseCounter < 0) {
-        if (boss.rageMode === false && boss.health < boss.maxHealth / 10) {
-          boss.rageMode = true;
-          boss.health = 500;
-          boss.airFriction = 0.3;
-          boss.resetCounterValue = 0;
+      if (sideSweeper.phaseCounter < 0) {
+        if (
+          sideSweeper.rageMode === false &&
+          sideSweeper.health < sideSweeper.maxHealth / 10
+        ) {
+          sideSweeper.rageMode = true;
+          sideSweeper.health = 500;
+          sideSweeper.airFriction = 0.3;
+          sideSweeper.resetCounterValue = 0;
         }
 
-        if (boss.rageMode) {
-          chargeMode(boss);
-        } else if (boss.health > boss.maxHealth / 2) {
+        if (sideSweeper.rageMode) {
+          chargeMode(sideSweeper);
+        } else if (sideSweeper.health > sideSweeper.maxHealth / 2) {
           const bulletCount = Math.floor(world.width / 200);
-          switchSide(boss, () =>
-            fieldAttack(boss, bulletCount, (world.width / bulletCount) * 0.67)
+          switchSide(sideSweeper, () =>
+            fieldAttack(
+              sideSweeper,
+              bulletCount,
+              (world.width / bulletCount) * 0.67
+            )
           );
         } else {
           const bulletCount = Math.floor(world.width / 50);
-          switchSide(boss, () =>
-            fieldAttack(boss, bulletCount, (world.width / bulletCount) * 0.33)
+          switchSide(sideSweeper, () =>
+            fieldAttack(
+              sideSweeper,
+              bulletCount,
+              (world.width / bulletCount) * 0.33
+            )
           );
         }
-
-        // if (!boss.rageMode) {
-        //   goTo(boss, { x: world.width / 2, y: radius }, 40, () => {
-        //     boss.vel = { x: 0, y: boss.speed };
-        //     boss.phaseCounter = 30;
-        //   });
-        //   boss.rageMode = true;
-        // }
-        // for (let i = 0; i < 2; i++) {
-        //   createBullet(
-        //     bullets,
-        //     boss,
-        //     undefined,
-        //     10,
-        //     20,
-        //     {},
-        //     { vel: { x: 20 * (i % 2 ? 1 : -1), y: 0 } }
-        //   );
-        //   boss.phaseCounter = 30;
-        // }
-        // }
-        boss.phaseCounter = boss.resetCounterValue;
+        sideSweeper.phaseCounter = sideSweeper.resetCounterValue;
       }
     },
-    // onWallBounce: () => {
-    // charger.airFriction = true;
-
-    // boss.vel = origo;
-
-    // console.log("bounce");
-
-    // charger.phaseCounter = 100;
-    // },
   };
 
-  entities.push(boss);
-  liveBosses.push(boss);
+  entities.push(sideSweeper);
+  liveBosses.push(sideSweeper);
 
-  return boss;
+  return sideSweeper;
 };

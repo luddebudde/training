@@ -81,3 +81,9 @@ for (let i = 0; i < 50; i++) {
 
 // Boss 3
 En boss som kan temporärt fånga in alla spelarens skott i dess omkrets. Sedan efter ett par sekunder går den till attack och försöker använda spelarens gamla skott för att döda en. Efter denna attack växlar den tillbaka till sin vanliga
+
+// Boss 4
+En boss som då och då strömmar mitten med skott. Alltså tiotals per sekund, vilket gör att spelaren måste hålla sig åt ena eller andra sidan av kartan. Då och då öppnas den ett tag. Detta pågår hela tiden
+
+// Boss 5
+Lägger ut massor av minor överallt

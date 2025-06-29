@@ -325,13 +325,13 @@ const update = () => {
       );
     } else {
       const bulletCount = player.unlockedAbilities.spreadShotCount;
-      const totalDamage = player.bulletDamage * bulletCount;
+      const totalDamage = player.bulletDamage * bulletCount * 1.5;
 
       createWaveShoot(
         bullets,
         player,
         mousePos,
-        ((player.bulletDamage / bulletCount) * bulletCount) / 2,
+        totalDamage / 3,
         player.bulletSpeed,
         ((Math.PI * 2) / 180) * 25,
         bulletCount,

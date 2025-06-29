@@ -67,3 +67,7 @@ export const normalize = (vector) => {
   if (length === 0) return { x: 0, y: 0 }; // Undvik division med 0
   return { x: vector.x / length, y: vector.y / length };
 };
+
+export const randomValue = (minValue: number, maxValue: number) => {
+  return Math.random() * (maxValue - minValue) + minValue;
+};
