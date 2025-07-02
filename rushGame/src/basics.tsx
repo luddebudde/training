@@ -46,3 +46,13 @@ export const allCorners: ((additionalValue: number) => Vec2)[] = [
   bottomLeftCorner,
   bottomRightCorner,
 ];
+
+export const checkIfHalfHP = (boss) => {
+  // console.log(
+  //   boss.health,
+  //   boss.maxHealth / 2,
+  //   boss.health < boss.maxHealth / 2
+  // );
+
+  return boss.health < boss.maxHealth / 2;
+};

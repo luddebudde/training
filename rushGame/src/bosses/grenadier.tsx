@@ -7,11 +7,26 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { add, multVar, origo, randomValue } from "../math";
+import { add, multVar, origo, randomNumber, Vec2 } from "../math";
 
-const health = 1500;
+const health = 2500;
 
-type Charger = {
+type ShrapnelStats = {
+  count: number;
+  speed: number;
+};
+
+type Grenade = {
+  radius: number;
+  pos: Vec2;
+  vel: Vec2;
+  color: string;
+  timer: number;
+  timeLimit: number;
+  shrapnelStats: ShrapnelStats;
+};
+
+type Grenadier = {
   name: string;
   maxHealth: number;
   health: number;
@@ -35,25 +50,26 @@ type Charger = {
   bulletsShot: number;
   timesDefeated: number;
 
-  collision: true;
+  collision: false;
   airFriction: boolean;
+
+  activeGrenades: Grenade[];
 
   // Pahses
   phaseCounter: number;
+  activityMult: number;
 
-  update: () => void;
-  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
-  onWallBounce: () => void;
+  update: (ctx) => void;
 };
 
 const createGrenade = (
-  grenadier,
+  grenadier: Grenadier,
   stats = {
     pos: grenadier.pos,
     vel: origo,
     timeLimit: 100,
-    shrapnelCount: 15,
-  }
+  },
+  shrapnelStats = { count: 10, speed: 15 }
 ) => {
   const grenade = {
     radius: grenadier.radius / 2,
@@ -62,7 +78,7 @@ const createGrenade = (
     color: "orange",
     timer: 0,
     timeLimit: stats.timeLimit,
-    shrapnelCount: stats.shrapnelCount,
+    shrapnelStats: shrapnelStats,
   };
 
   // console.log(stats.vel);
@@ -70,20 +86,23 @@ const createGrenade = (
   grenadier.activeGrenades.push(grenade);
 };
 
-const placeGrenades = (grenadier, loopTimes) => {
-  const coefficient = 500;
+const placeGrenades = (grenadier: Grenadier, loopTimes) => {
+  const coefficient = 500 * grenadier.activityMult;
   let fakeCircle;
+
   for (let i = 0; i < loopTimes; i++) {
     setTimeout(() => {
       const margin = 120;
       let chosenPos;
       const maxTries = 20;
       let tries = 0;
+      const timeToTarget = Math.round(25 * grenadier.activityMult);
+      console.log(timeToTarget);
 
       do {
         chosenPos = {
-          x: randomValue(margin, world.width - margin),
-          y: randomValue(margin, world.height - margin),
+          x: randomNumber(margin, world.width - margin),
+          y: randomNumber(margin, world.height - margin),
         };
         fakeCircle = {
           pos: chosenPos,
@@ -97,44 +116,96 @@ const placeGrenades = (grenadier, loopTimes) => {
         return;
       }
 
-      goTo(grenadier, chosenPos, 25, () => {
-        createGrenade(grenadier);
+      goTo(grenadier, chosenPos, timeToTarget, () => {
+        createGrenade(grenadier, {
+          pos: grenadier.pos,
+          timeLimit: 100 * grenadier.activityMult,
+          vel: origo,
+        });
       });
     }, coefficient * i);
   }
   setTimeout(() => {
-    grenadier.phaseCounter = 50;
+    grenadier.phaseCounter = 50 * grenadier.activityMult;
   }, coefficient * loopTimes);
 };
 
 const throwGrenades = (grenadier) => {
   const grenadeCount = 4;
-  const timeLimit = 50;
+  const timeLimit = 50 * grenadier.activityMult;
   const shrapnelCount = 5;
-  const coefficient = 15;
+  const timeCoefficient = Math.min(15 * grenadier.activityMult, 15);
   for (let i = 0; i < grenadeCount; i++) {
     setTimeout(() => {
-      createGrenade(grenadier, {
-        pos: grenadier.pos,
-        vel: multVar(
-          makeDirection(grenadier.pos, player.pos),
-          getDistance(grenadier.pos, player.pos) / timeLimit
-        ),
-        timeLimit: timeLimit,
-        shrapnelCount: shrapnelCount,
-      });
-    }, timeLimit * coefficient * i);
-
-    setTimeout(() => {
-      grenadier.phaseCounter = 50;
-    }, timeLimit * coefficient * grenadeCount);
+      createGrenade(
+        grenadier,
+        {
+          pos: grenadier.pos,
+          vel: multVar(
+            makeDirection(grenadier.pos, player.pos),
+            getDistance(grenadier.pos, player.pos) / timeLimit
+          ),
+          timeLimit: timeLimit,
+        },
+        { count: shrapnelCount, speed: 20 }
+      );
+    }, timeLimit * timeCoefficient * i);
   }
+
+  setTimeout(() => {
+    grenadier.phaseCounter = 25 * grenadier.activityMult;
+  }, timeLimit * timeCoefficient * grenadeCount);
+};
+
+const spreadCluster = (grenadier) => {
+  const grenadeCount = 8;
+  const shrapnelCount = 5;
+  // const coefficient = 15;
+  const distancAway = grenadier.radius * 8;
+  let angleValue = Math.random() * Math.PI * 2;
+  const angleStep = (Math.PI * 2) / grenadeCount;
+
+  const delay = 100 * grenadier.activityMult;
+  setTimeout(() => {
+    for (let i = 0; i < grenadeCount; i++) {
+      const time = 40 * grenadier.activityMult;
+
+      const startPos = grenadier.pos;
+      const destination = {
+        x: Math.cos(angleValue) * distancAway + grenadier.pos.x,
+        y: Math.sin(angleValue) * distancAway + grenadier.pos.y,
+      };
+
+      const velocity = {
+        x: (destination.x - startPos.x) / time,
+        y: (destination.y - startPos.y) / time,
+      };
+
+      createGrenade(
+        grenadier,
+        {
+          pos: startPos,
+          vel: velocity,
+          timeLimit: time,
+        },
+        {
+          count: shrapnelCount,
+          speed: 20 * ((1 / grenadier.activityMult) * 0.67),
+        }
+      );
+
+      angleValue += angleStep;
+    }
+  }, delay);
+  setTimeout(() => {
+    grenadier.phaseCounter = 75 * grenadier.activityMult;
+  }, delay * grenadeCount);
 };
 
 export const createGrenadier = () => {
   const radius = 80;
 
-  const grenadier = {
+  const grenadier: Grenadier = {
     name: "Grenadier",
     maxHealth: health,
     health: health,
@@ -163,17 +234,24 @@ export const createGrenadier = () => {
 
     // Pahses
     phaseCounter: 10,
+    activityMult: 1,
 
     activeGrenades: [],
 
     update: (ctx): void => {
       grenadier.phaseCounter--;
-      // console.log(grenadier.phaseCounter);
+
+      grenadier.activityMult = Math.max(
+        grenadier.health / grenadier.maxHealth + 0.5,
+        0.8
+      );
 
       if (grenadier.phaseCounter < 0) {
         const randomValue = Math.random();
-        // const randomValue = 0.5;
-        const amountOfAttacks = 2;
+        // const randomValue = 1;
+        console.log(randomValue);
+
+        const amountOfAttacks = 3;
 
         // console.log(randomValue < (1 / amountOfAttacks) * 2);
 
@@ -181,6 +259,10 @@ export const createGrenadier = () => {
           placeGrenades(grenadier, 5);
         } else if (randomValue < (1 / amountOfAttacks) * 2) {
           throwGrenades(grenadier);
+        } else {
+          console.log("cluster");
+
+          spreadCluster(grenadier);
         }
 
         grenadier.phaseCounter = 10000;
@@ -196,7 +278,7 @@ export const createGrenadier = () => {
         if (grenade.timer >= grenade.timeLimit) {
           grenadier.activeGrenades.splice(index, 1);
 
-          const bulletCount = grenade.shrapnelCount;
+          const bulletCount = grenade.shrapnelStats.count;
           const angleStep = (Math.PI * 2) / bulletCount;
           const randomStartAngle = Math.random() * 2 * Math.PI;
           for (let i = 0; i < bulletCount; i++) {
@@ -210,8 +292,8 @@ export const createGrenadier = () => {
               bullets,
               grenadier,
               target,
-              10,
-              20,
+              7,
+              grenade.shrapnelStats.speed,
               {},
               { startPos: grenade.pos, bulletRadius: 15 }
             );
@@ -222,11 +304,6 @@ export const createGrenadier = () => {
         drawCircle(ctx, grenade);
       });
     },
-    // onWallBounce: () => {
-    //   grenadier.airFriction = true;
-
-    //   grenadier.phaseCounter = 100;
-    // },
   };
 
   entities.push(grenadier);

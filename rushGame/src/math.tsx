@@ -68,6 +68,10 @@ export const normalize = (vector) => {
   return { x: vector.x / length, y: vector.y / length };
 };
 
-export const randomValue = (minValue: number, maxValue: number) => {
+export const randomNumber = (minValue: number, maxValue: number) => {
   return Math.random() * (maxValue - minValue) + minValue;
+};
+
+export const randomNumberMargin = (standardValue: number, margin: number) => {
+  return standardValue + (Math.random() * 2 - 1) * margin;
 };

@@ -29,6 +29,7 @@ import { createNewRainer } from "./bosses/sideSweeper";
 import { createWanderer } from "./bosses/wanderer";
 import { createLevelSeekerBoss } from "./bosses/levelSeeker";
 import { createGrenadier } from "./bosses/grenadier";
+import { createCentralDividerBoss } from "./bosses/centralDivider";
 
 export let entities = [];
 export let bullets = [];
@@ -55,6 +56,7 @@ const sideSweeperArray = ["Side <= Sweeper", "", createNewRainer];
 const wandererArray = ["Wanderer", "", createWanderer];
 const levelSeekerArray = ["Level Seeker", "", createLevelSeekerBoss];
 const grenadierArray = ["Grenadier", "", createGrenadier];
+const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
 
 const firstWave = [
   // splitterArray,
@@ -63,7 +65,8 @@ const firstWave = [
   // createNewRainerArray,
   // wandererArray,
   // levelSeekerArray,
-  grenadierArray,
+  // grenadierArray,
+  centralDividerArray,
   // squareArray,
   // sprayerArray,
   // squareArray,
