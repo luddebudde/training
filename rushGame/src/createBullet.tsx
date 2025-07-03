@@ -23,7 +23,7 @@ export type Bullet = {
   bounceDamageLoss: number;
   indestructible: boolean;
 
-  onHit: (entity, bullet: Bullet) => void;
+  onHit: (entity: any, bullet: Bullet) => void;
   onWallBounce: (bullet: Bullet, calculatedVec: Vec2) => void;
 };
 
@@ -138,6 +138,8 @@ export const createBullet = (
       finalAdvanced.onHit(bullet, newVec);
     },
   };
+
+  // console.log(bullet);
 
   // console.log(bullet);
 

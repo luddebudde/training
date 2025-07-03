@@ -12,28 +12,28 @@ export const changeIsPaused = (changeTo: boolean) => {
   isPaused = changeTo;
 };
 
-export const topLeftCorner = (additionalValue: number): Vec2 => {
+export const topLeftCorner = (additionalValue: number = 0): Vec2 => {
   return {
     x: additionalValue,
     y: additionalValue,
   };
 };
 
-export const topRightCorner = (additionalValue: number): Vec2 => {
+export const topRightCorner = (additionalValue: number = 0): Vec2 => {
   return {
     x: world.width - additionalValue,
     y: additionalValue,
   };
 };
 
-export const bottomLeftCorner = (additionalValue: number): Vec2 => {
+export const bottomLeftCorner = (additionalValue: number = 0): Vec2 => {
   return {
     x: additionalValue,
     y: world.height - additionalValue,
   };
 };
 
-export const bottomRightCorner = (additionalValue: number): Vec2 => {
+export const bottomRightCorner = (additionalValue: number = 0): Vec2 => {
   return {
     x: world.width - additionalValue,
     y: world.width - additionalValue,

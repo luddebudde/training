@@ -75,3 +75,14 @@ export const randomNumber = (minValue: number, maxValue: number) => {
 export const randomNumberMargin = (standardValue: number, margin: number) => {
   return standardValue + (Math.random() * 2 - 1) * margin;
 };
+
+export const numberIsWithinMargin = (
+  standardNumber: number,
+  compareNumber: number,
+  margin: number
+) => {
+  return (
+    compareNumber - margin < standardNumber &&
+    compareNumber + margin > standardNumber
+  );
+};

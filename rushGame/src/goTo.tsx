@@ -5,6 +5,7 @@ import {
   divVar,
   mult,
   multVar,
+  numberIsWithinMargin,
   origo,
   sub,
   useMathFunction,
@@ -44,6 +45,18 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
     //     Math.round(target.y / safetyMargin / 10)
     // );
     newEntityPos = entity.pos !== undefined ? entity.pos : entity;
+
+    // console.log(
+    //   Math.round(newEntityPos.x / safetyMargin),
+    //   Math.round(target.x / safetyMargin),
+    //   Math.round(newEntityPos.x / safetyMargin) ===
+    //     Math.round(target.x / safetyMargin),
+    //   Math.round(newEntityPos.y / safetyMargin),
+    //   Math.round(target.y / safetyMargin),
+    //   Math.round(newEntityPos.y / safetyMargin) ===
+    //     Math.round(target.y / safetyMargin)
+    // );
+
     // console.log(
     //   Math.round(newEntityPos.x / safetyMargin),
     //   Math.round(target.x / safetyMargin),
@@ -59,10 +72,12 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
 
     // console.log(newEntityPos);
     if (
-      Math.round(newEntityPos.x / safetyMargin) ===
-        Math.round(target.x / safetyMargin) &&
-      Math.round(newEntityPos.y / safetyMargin) ===
-        Math.round(target.y / safetyMargin)
+      // Math.round(newEntityPos.x / safetyMargin) ===
+      //   Math.round(target.x / safetyMargin) &&
+      // Math.round(newEntityPos.y / safetyMargin) ===
+      //   Math.round(target.y / safetyMargin)
+      numberIsWithinMargin(target.x, newEntityPos.x, safetyMargin) &&
+      numberIsWithinMargin(target.y, newEntityPos.y, safetyMargin)
     ) {
       // console.log(newEntityPos, "1");
 
