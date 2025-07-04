@@ -156,15 +156,15 @@ export const checkArrayRemoval = (ctx) => {
   );
 
   liveBosses.forEach((boss, index) => {
-    drawHealthBar(
-      ctx,
-      0,
-      0 + 40 * index,
-      world.width,
-      30,
-      boss.health,
-      boss.maxHealth
-    );
+    // drawHealthBar(
+    //   ctx,
+    //   0,
+    //   0 + 40 * index,
+    //   world.width,
+    //   30,
+    //   boss.health,
+    //   boss.maxHealth
+    // );
 
     // console.log(metBossIndex);
 

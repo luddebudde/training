@@ -9,7 +9,15 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { fps } from "../main";
-import { add, addVar, multVar, origo, randomNumberMargin, sub } from "../math";
+import {
+  add,
+  addVar,
+  multVar,
+  numberIsWithinMargin,
+  origo,
+  randomNumberMargin,
+  sub,
+} from "../math";
 import { createCentralBaseBoss } from "./centralBase";
 
 const health = 15000;
@@ -73,10 +81,8 @@ const createRepetableBullet = (centralDivider) => {
       startPos: spawnPos,
 
       onHit: (entity, bullet) => {
-        if (centralDivider.ai === makeMiniWalls) {
-          createBullet(bullets, player, centralDivider.pos, 500, 40);
-          createRepetableBullet(centralDivider);
-        }
+        createBullet(bullets, player, centralDivider.pos, 500, 40);
+        createRepetableBullet(centralDivider);
       },
     }
   );
@@ -125,6 +131,7 @@ const makeMiniWalls = (centralDivider) => {
       }
     );
   }
+
   centralDivider.miniWallCounter = 50;
 };
 
@@ -132,6 +139,8 @@ const wallMargin = 200;
 
 const holdWall = (ctx, centralDivider) => {
   console.log("building...");
+
+  centralDivider.airFriction = 0.6;
 
   const time = 15000;
   // const time = 150;
@@ -142,7 +151,7 @@ const holdWall = (ctx, centralDivider) => {
 
   for (let i = 0; i <= maxI; i++) {
     setTimeout(() => {
-      if (centralDivider.wallActive === false) {
+      if (centralDivider.wallActive === false || centralDivider.health < 0) {
         return;
       }
 
@@ -173,6 +182,8 @@ const holdWall = (ctx, centralDivider) => {
     }, delay * i);
   }
 
+  const aiDelay = 3000;
+
   setTimeout(() => {
     if (player.pos.x < world.width / 2) {
       centralDivider.ai = redAi;
@@ -182,6 +193,7 @@ const holdWall = (ctx, centralDivider) => {
 
     setTimeout(() => {
       // bullets.length = 0;
+
       bullets.map((bullet) => {
         if (bullet.color === "red") {
           bullet.vel.y += 15;
@@ -191,16 +203,19 @@ const holdWall = (ctx, centralDivider) => {
       lines.length = 0;
       centralDivider.ai = () => {};
 
-      centralDivider.vel.x = randomNumberMargin(0, 10);
-      centralDivider.vel.y = randomNumberMargin(0, 10);
+      centralDivider.vel = origo;
+
       setTimeout(() => {
         centralDivider.wallActive = false;
 
+        centralDivider.airFriction = 0;
+        centralDivider.vel.x = randomNumberMargin(0, 10);
+        centralDivider.vel.y = randomNumberMargin(0, 10);
+
         centralDivider.ai = makeMiniWalls;
-        createRepetableBullet(centralDivider);
       }, 1500);
-    }, delay * maxI);
-  }, 3000);
+    }, delay * maxI - aiDelay);
+  }, aiDelay);
 };
 
 const redAi = (centralDivider) => {
@@ -274,7 +289,7 @@ const redAi = (centralDivider) => {
                         bullets,
                         undefined,
                         centralDivider.pos,
-                        2000,
+                        1000,
                         15,
                         {},
                         {
@@ -369,30 +384,90 @@ const blueAi = (centralDivider) => {
   centralDivider.attackCounter--;
   player.vel.x -= player.speed * 0.35;
 
-  const direction = makeDirection(centralDivider.pos, player.pos);
+  // if (getDistance(centralDivider.pos, player.pos) > centralDivider.minDist) {
+  //   // Loneliness
+  //   centralDivider.health -= centralDivider.aloneDamage;
+  // } else {
+  //   // Companionship
+  //   player.health -= centralDivider.companionDamage;
+  // }
 
-  if (getDistance(centralDivider.pos, player.pos) > centralDivider.minDist) {
-    // Loneliness
+  if (centralDivider.attackCounter < 0) {
+    const target = {
+      x: Math.min(
+        player.pos.x + 500,
+        world.width - centralDivider.radius * 1.5
+      ),
+      y: player.pos.y,
+    };
+
+    const direction = makeDirection(centralDivider.pos, target);
     centralDivider.vel = add(
       centralDivider.vel,
       multVar(direction, centralDivider.attractionSpeed / 2)
     );
 
-    centralDivider.health -= centralDivider.aloneDamage;
-  } else {
-    // Companionship
-    centralDivider.vel = add(
-      centralDivider.vel,
-      multVar(direction, -centralDivider.attractionSpeed)
-    );
+    if (
+      numberIsWithinMargin(target.x, centralDivider.pos.x, 100) &&
+      numberIsWithinMargin(target.y, centralDivider.pos.y, 100)
+    ) {
+      centralDivider.targetLocked = false;
+      console.log("is at target");
 
-    player.health -= centralDivider.companionDamage;
+      centralDivider.pos = target;
+
+      setTimeout(() => {
+        if (centralDivider.targetLocked === true || centralDivider.health < 0) {
+          return;
+        }
+        centralDivider.targetLocked = true;
+        centralDivider.attackCounter = 50;
+
+        const speed = -40;
+        centralDivider.vel = { x: speed, y: 0 };
+
+        for (let i = 0; i < 2; i++) {
+          const bulletRadius = 30;
+          console.log("bullet");
+
+          createBullet(
+            bullets,
+            centralDivider,
+            undefined,
+            -10,
+            undefined,
+            {},
+            {
+              bulletRadius: bulletRadius,
+              color: "lime",
+              vel: { x: speed, y: 0 },
+              startPos: {
+                x: centralDivider.pos.x,
+                y:
+                  i % 2
+                    ? centralDivider.pos.y -
+                      centralDivider.radius -
+                      bulletRadius
+                    : centralDivider.pos.y +
+                      centralDivider.radius +
+                      bulletRadius,
+              },
+              onHit: (entity, bullet) => {
+                if (entity === player) {
+                  centralDivider.health -= 1000;
+                }
+              },
+            }
+          );
+        }
+      }, 500);
+    }
   }
 
-  if (centralDivider.attackCounter < 0) {
-    const delayToNextAttack = 200;
-    centralDivider.attackCounter = delayToNextAttack;
-  }
+  // if (centralDivider.attackCounter < 0) {
+  //   const delayToNextAttack = 200;
+  //   centralDivider.attackCounter = delayToNextAttack;
+  // }
 };
 
 export const createCentralDividerBoss = () => {
@@ -401,7 +476,7 @@ export const createCentralDividerBoss = () => {
     name: "Central Divider",
     maxHealth: health,
     health: health,
-    contactDamage: 20,
+    contactDamage: 5,
     pos: {
       x: world.width / 2,
       y: radius * 1.2,
@@ -422,9 +497,10 @@ export const createCentralDividerBoss = () => {
     timesDefeated: 0,
 
     collision: true,
-    airFriction: 0,
+    airFriction: 0.6,
 
     // Pahses
+    hasCreatedRepetaableBullet: false,
     wallCounter: 100,
     wallActive: false,
 
@@ -437,7 +513,10 @@ export const createCentralDividerBoss = () => {
     minDist: 300,
     attractionSpeed: 1,
     aloneDamage: 5,
-    companionDamage: 0.05,
+    companionDamage: 0.1,
+
+    target: undefined,
+    targetLocked: false,
 
     // Mini Walls
     miniWallCounter: 0,
@@ -446,20 +525,26 @@ export const createCentralDividerBoss = () => {
 
     update: (ctx): void => {
       centralDivider.ai(centralDivider);
-      if (centralDivider.wallActive) {
-        return;
-      }
-
-      centralDivider.wallCounter--;
-
       if (player.pos.x < world.width / 2) {
         centralDivider.color = "darkred";
       } else {
         centralDivider.color = "darkblue";
       }
 
+      if (centralDivider.wallActive) {
+        return;
+      }
+
+      if (!centralDivider.hasCreatedRepetaableBullet) {
+        createRepetableBullet(centralDivider);
+        centralDivider.hasCreatedRepetaableBullet = true;
+      }
+
+      centralDivider.wallCounter--;
+
       if (centralDivider.wallCounter < 0) {
         centralDivider.wallActive = true;
+        centralDivider.ai = () => {};
 
         console.log("BUILD THE WALL");
 
