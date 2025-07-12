@@ -1,0 +1,89 @@
+// Boss 1
+const health = 15;
+export const createLargeSquareBoss = () => {
+  for (let i = 0; i < 4; i++) {
+    const smallCube = {
+      maxHealth: health,
+      health: health,
+      contactDamage: 20,
+      pos: {
+        x: Math.random() * world.width,
+        y: Math.random() * world.height,
+      },
+      vel: {
+        x: 0,
+        y: 0,
+      },
+      radius: 120,
+      color: "purple",
+      speed: 50,
+      team: "enemy",
+      mass: 1000,
+
+      damageConflicted: 0,
+      absorbedDamage: 0,
+
+      collision: true,
+      airFriction: false,
+
+      // Pahses
+      phaseCounter: 100,
+
+      update: (): void => {
+        smallCube.phaseCounter--;
+
+        if (smallCube.phaseCounter < 0) {
+          smallCube.airFriction = false;
+          const direction = makeDirection(smallCube.pos, player.pos);
+
+          smallCube.vel = multVar(direction, smallCube.speed);
+
+          smallCube.phaseCounter = 10000;
+        }
+      },
+      // deathAnimation: (ctx, liveBosses, bossIndex) => {},
+      onWallBounce: () => {
+        smallCube.airFriction = true;
+
+        smallCube.phaseCounter = 100;
+      },
+    };
+
+    entities.push(smallCube);
+    liveBosses.push(smallCube);
+  }
+};
+
+
+// Boss 2
+for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+          const angle = (i / 50) * Math.PI * 2;
+          const target: Vec2 = {
+            x: rect4.x + Math.cos(angle) * 100,
+            y: rect4.y + Math.sin(angle) * 100,
+          };
+
+          // console.log(target);
+
+          createBullet(
+            bullets,
+            rect4,
+            target,
+            1,
+            20,
+            {},
+            { startPos: rectPos }
+          );
+        }, 150 * i);
+      }
+
+
+// Boss 3
+En boss som kan temporärt fånga in alla spelarens skott i dess omkrets. Sedan efter ett par sekunder går den till attack och försöker använda spelarens gamla skott för att döda en. Efter denna attack växlar den tillbaka till sin vanliga
+
+// Boss 4
+En boss som då och då strömmar mitten med skott. Alltså tiotals per sekund, vilket gör att spelaren måste hålla sig åt ena eller andra sidan av kartan. Då och då öppnas den ett tag. Detta pågår hela tiden
+
+// Boss 5
+Lägger ut massor av minor överallt

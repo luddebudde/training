@@ -39,7 +39,8 @@ export const bossType = [
   // createShooterBoss,
 ];
 
-export let enemyAmountMultiplier = 1;
+// export let enemyAmountMultiplier = 1;
+export let enemyAmountMultiplier = 0.3;
 
 export const wave1 = () => {
   for (let i = 0; i < 1 * stats.curse; i++) {
@@ -61,7 +62,7 @@ export const wave1 = () => {
   // const spawnPos = getRandomSpawnPos(player);
 
   // createShooter(spawnPos.x, spawnPos.y);
-  enemyAmountMultiplier = 10;
+  enemyAmountMultiplier = 1;
 };
 
 export const wave2 = () => {

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New game</title>
+    <style>
+      #upgradeSelection {
+        visibility: hidden;
+        background-color: blue;
+        display: flex;
+        flex-direction: row;
+        height: 100%;
+        width: 100%;
+      }
+
+      #option1,
+      #option2,
+      #option3 {
+        text-align: center;
+        font-size: 30px;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        width: 33.33%;
+        display: flex;
+        padding: 0px;
+        margin: 0px;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      #title {
+        background-color: blue;
+        height: 10%;
+        text-align: center;
+      }
+
+      #image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #image img {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      #description {
+        background-color: green;
+        color: white;
+        display: flex;
+        height: 30%;
+        align-items: center;
+        justify-content: center;
+        padding: 0px;
+        font-size: 1em;
+      }
+
+      #loseScreen {
+        background-color: darkgray;
+        color: red;
+        border-style: solid;
+        border-color: black;
+        display: flex;
+        height: 80vh;
+        width: 50vw;
+        align-items: center;
+        justify-content: center;
+        padding: 0px;
+        font-size: 1em;
+        visibility: hidden;
+
+        display: flex;
+        position: absolute;
+        top: 150px;
+        left: 50vw;
+        text-align: center;
+        flex-direction: column;
+        transform: translate(-50%, 0%);
+      }
+
+      #statistic {
+        background-color: green;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        top: 10%;
+        height: 80%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        padding: 0px;
+        font-size: 1em;
+      }
+
+      #bosses-killed,
+      #damage-taken,
+      #damage-dealt,
+      #bullets-shot,
+      #mistakes-made {
+        color: black;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 75px;
+        padding: 10px;
+      }
+
+      #stat {
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-size: 75px;
+        padding: 10px;
+      }
+    </style>
+    <div id="root"></div>
+    <script type="module" src="src/main.tsx"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="world"
+      style="
+        display: flex;
+        position: absolute;
+        /* background-color: green; */
+        top: 0px;
+        left: 0vw;
+        text-align: center;
+        height: 100vh;
+        width: 100vw;
+        pointer-events: none;
+        flex-direction: column;
+      "
+    >
+      <div id="loseScreen">
+        <div
+          id="loseTitle"
+          style="
+            background-color: blue;
+            height: 20%;
+            width: 100%;
+            position: absolute;
+            top: 10%;
+            text-align: center;
+            font-size: 200px;
+            transform: translate(0%, -50%);
+          "
+        >
+          YOU DIED
+        </div>
+        <div id="statistic" style="font-size: 140px">
+          <div id="time" style="color: red; font-size: 100px">
+            Time Survived:
+          </div>
+
+          <div id="bosses-killed">Bosses killed:</div>
+          <div id="damage-taken">Damage taken:</div>
+          <div id="damage-dealt">Damage dealt:</div>
+          <div id="bullets-shot">Bullets shot:</div>
+          <div id="mistakes-made">Mistakes made:</div>
+          <div id="stat" style="padding: 40px; font-size: 100px">
+            How to improve? Don't Die
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="upgradeSelection"
+        style="
+          position: absolute;
+          top: 30%;
+          left: 50%;
+          visibility: hidden;
+          width: 50%;
+          height: 40%;
+          pointer-events: all;
+          transform: translate(-50%, -50%);
+        "
+      >
+        <div id="option1" onclick="(alert('hej'))">
+          <div id="title" style="background-color: red">Titel 1</div>
+          <div id="image" style="background-color: lime">
+            <img
+              src="https://www.maskinisten.net/userpix/12210_20110401300_1.jpg"
+              alt="Varför ser du detta? Är du schizo eller????"
+            />
+          </div>
+          <div id="description">Beskrivning 1</div>
+        </div>
+
+        <div id="option2">
+          <div id="title" style="background-color: blue">Titel 2</div>
+          <div id="image">
+            <img
+              src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAwwDW5.img?h=630&w=1200&m=6&q=60&o=t&l=f&f=jpg&x=1715&y=1336"
+              alt="Här ser du en ytterst sannerligen bild"
+            />
+          </div>
+          <div id="description">Beskrivning 2</div>
+        </div>
+
+        <button id="option3">
+          <div id="title" style="background-color: green">Titel 3</div>
+          <div id="image">
+            <img
+              src="https://preview.redd.it/crazy-day-of-the-beatles-v0-507huj35x3aa1.jpg?width=640&crop=smart&auto=webp&s=da65a4a940f3a333dc974b0a23ca4e7ef7fc6d76"
+              alt="CRAHHHH"
+            />
+          </div>
+          <div id="description">Beskrivning 3</div>
+        </button>
+      </div>
+    </div>
+
+    <div>
+      <canvas
+        id="myCanvas"
+        width="2600"
+        height="1460"
+        style="
+          border-style: solid;
+          background-color: white;
+          /* width: 100%;
+          height: 100%; */
+        "
+      >
+      </canvas>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const resizeCanvas = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      };
+
+      window.addEventListener("resize", resizeCanvas);
+      resizeCanvas(); // initial resize
+    </script>
+  </body>
+</html>

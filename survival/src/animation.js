@@ -1,9 +1,4 @@
-export const playAnimation = (
-  picture: string,
-  parts: number,
-  frameRate: number,
-  containerId: string
-) => {
+export const animation = (picture, parts, frameRate, containerId) => {
   const container = document.getElementById(containerId);
   if (!container) {
     console.error(`Element with id ${containerId} not found.`);

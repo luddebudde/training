@@ -39,11 +39,11 @@ const multiply = (k, v) => ({
 });
 const norm = (v) => {
   const len = Math.sqrt(dot(v, v));
-  if(len === 0){
+  if (len === 0) {
     return {
       x: 0,
       y: 0,
-    }
+    };
   }
   return {
     x: v.x / len,
@@ -233,10 +233,10 @@ const createWorld = () => {
     dim: worldDim,
   };
 
-  const spawnCount = Math.floor (Math.random() * 3 + 1)
+  const spawnCount = Math.floor(Math.random() * 3 + 1);
   new Array(spawnCount).fill(0).forEach(() => {
     handleSpawn(world);
-  })
+  });
   return world;
 };
 
@@ -330,7 +330,7 @@ const updateAcceleration = (circle) => {
   // Accelrate the velocity
   circle.vel.x += circle.acc.x * dt;
   circle.vel.y += circle.acc.y * dt;
-}
+};
 
 const updateMovement = (circle) => {
   // Update pos
@@ -389,8 +389,8 @@ const update = (world) => {
       new Array(0).fill(0).forEach(() => {
         updateMovement(c1);
         updateMovement(c2);
-        console.log('AA');
-      })
+        console.log("AA");
+      });
     });
 
   world.circles.forEach((circle) => {
@@ -466,8 +466,8 @@ document.addEventListener("keyup", (event) => {
 
 document.addEventListener("keydown", (event) => {
   const player1 = world.teams.team1.player;
-  if (event.code === "KeyP"){
-    handleSpawn(world)
+  if (event.code === "KeyP") {
+    handleSpawn(world);
   }
   if (event.code === "KeyR") {
     restart();
@@ -478,7 +478,7 @@ document.addEventListener("keydown", (event) => {
   if (event.code === "KeyQ") {
     player1.boost();
   }
-  if (event.code === "KeyW") { 
+  if (event.code === "KeyW") {
     player1.acc.y = -player1.speed;
     // player1.vel.y += -player1.speed;
     // player1.vel.x = 0;
@@ -534,7 +534,7 @@ function getRandomColor() {
   return color;
 }
 
-  const restartbutton = document.getElementById("restart");
-  restartbutton.addEventListener("click", () => {
-    restart();
-  });
+const restartbutton = document.getElementById("restart");
+restartbutton.addEventListener("click", () => {
+  restart();
+});

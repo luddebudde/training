@@ -470,14 +470,14 @@ export const startGame = () => {
   weapons = [
     // currentCharacter.startingWeapon,
     aimBullet,
-    holyArea,
-    minigun,
+    // holyArea,
+    // minigun,
     // wiper,
     // randomAimBullet,
     // axe,
     // airstrike,
     // selfImpaler,
-    cherry,
+    // cherry,
     // droper,
     // flamethrower,
     // stunner,
@@ -485,7 +485,7 @@ export const startGame = () => {
     // bouncer,
     // pusher,
     // screecher,
-    lightningStriker,
+    // lightningStriker,
   ];
 
   // createCollector(100, 100);
@@ -521,10 +521,10 @@ export const startGame = () => {
 
 const startMode = () => {
   changeVolume(0);
-  // mainMenu();
+  mainMenu();
   // showStatistics();
   // deathMenu();
-  startGame();
+  // startGame();
   // chestMenu();
   // mapSelection();
   // showGameStatistics();
