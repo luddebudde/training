@@ -19,7 +19,7 @@ import fragment from "./custom.frag?raw";
 import vertex from "./custom.vert?raw";
 import { ColorOverlayFilter, DropShadowFilter } from "pixi-filters";
 
-const thresholdFilter = (threshold: number) =>
+const thresholdFilter = (options: { threshold: number; smoothness: number }) =>
   new Filter({
     glProgram: new GlProgram({
       fragment,
@@ -27,7 +27,14 @@ const thresholdFilter = (threshold: number) =>
     }),
     resources: {
       timeUniforms: {
-        uThreshold: { value: threshold, type: "f32" },
+        uThreshold: {
+          value: options.threshold,
+          type: "f32",
+        },
+        uSmoothness: {
+          value: options.smoothness,
+          type: "f32",
+        },
       },
     },
   });
@@ -45,7 +52,7 @@ type GameObject = {
   container: Container;
 };
 
-const bodyLength = 100;
+const bodyLength = 300;
 
 const createWalls = (
   world: RAPIER.World,
@@ -111,13 +118,7 @@ const createPlayer = (
     y: position.y,
   };
   const rigidBodies = new Array(bodyLength).fill(0).map((_, i) => {
-    // angle += Math.sqrt(i * 10);
-    const offset = {
-      x: 2 * radius * Math.cos(angle),
-      y: 2 * radius * Math.sin(angle),
-    };
-    pos.x += offset.x;
-    pos.y += offset.y;
+    angle = Math.sqrt(bodyLength - i) * 3;
     const rigidBody = world.createRigidBody(
       RigidBodyDesc.dynamic()
         .setLinearDamping(5)
@@ -125,26 +126,42 @@ const createPlayer = (
         .setRotation(angle + Math.PI)
         .setTranslation(pos.x, pos.y),
     );
+    const offset = {
+      x: 2 * radius * Math.cos(angle),
+      y: 2 * radius * Math.sin(angle),
+    };
+    pos.x += offset.x;
+    pos.y += offset.y;
 
     world.createCollider(
       ColliderDesc.ball(radius)
         .setMass(1)
-        .setRestitution(0)
+        .setRestitution(1)
         .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS),
       rigidBody,
     );
-    return { rigidBody, offset };
+    return { rigidBody, offset, pos };
   });
 
-  const headRigidBody = rigidBodies[0].rigidBody;
+  const headBody = rigidBodies[0];
   const bodyRigidBodies = rigidBodies.slice(1);
 
   const bs = bodyRigidBodies.map((thisBody, i) => {
-    const jointParams = JointData.revolute(thisBody.offset, { x: 0, y: 0 });
+    const previousBody = bodyRigidBodies[i - 1] ?? headBody;
+    const jointParams = JointData.revolute(
+      {
+        x: -2 * radius,
+        y: 0,
+      },
+      {
+        x: 0,
+        y: 0,
+      },
+    );
 
     const joint = world.createImpulseJoint(
       jointParams,
-      bodyRigidBodies[i - 1]?.rigidBody ?? headRigidBody,
+      previousBody.rigidBody,
       thisBody.rigidBody,
       true,
     );
@@ -170,15 +187,20 @@ const createPlayer = (
   arrow.scale.y = -1;
 
   const head = {
-    rigidBody: headRigidBody,
+    rigidBody: headBody.rigidBody,
     graphics: headGraphics,
   };
 
-  const body = bs.map((b) => ({
-    rigidBody: b.rigidBody,
-    joint: b.joint,
-    graphics: new Graphics().circle(0, 0, radius).fill(0xffffff),
-  }));
+  const body = bs.map((b) => {
+    const container = new Container();
+    container.addChild(new Graphics().circle(0, 0, radius).fill(0xffffff));
+    container.addChild(new Graphics().circle(0, radius, radius).fill(0xffffff));
+    return {
+      rigidBody: b.rigidBody,
+      joint: b.joint,
+      graphics: container,
+    };
+  });
 
   const container = new Container();
 
@@ -193,16 +215,21 @@ const createPlayer = (
   });
   container.filters = [
     new BlurFilter({
-      strength: 8,
+      strength: (5 * radius) / 10,
     }),
-    thresholdFilter(0.8),
-    new BlurFilter({
-      strength: 0.5,
+    thresholdFilter({
+      threshold: 1,
+      smoothness: 0.5,
     }),
     colorOverlayFilter,
     new DropShadowFilter({
-      blur: 3,
-      alpha: 0.2,
+      color: color,
+      blur: 2,
+      alpha: 0.3,
+      offset: {
+        x: 0,
+        y: 0,
+      },
     }),
   ];
   camera.addChild(container);
@@ -219,7 +246,6 @@ function handlePlayerCollision(
   handle1: number,
   handle2: number,
   world: RAPIER.World,
-  camera: Container,
 ) {
   if (
     player.head.rigidBody.handle === handle1 ||
@@ -263,7 +289,10 @@ function handlePlayerCollision(
   const app = new Application();
 
   // Initialize the application
-  await app.init({ background: "#1099bb", resizeTo: window });
+  await app.init({
+    background: 0x111827,
+    resizeTo: window,
+  });
 
   // Append the application canvas to the document body
   document.body.appendChild(app.canvas);
@@ -286,14 +315,14 @@ function handlePlayerCollision(
   const player1 = createPlayer(
     world,
     camera,
-    new RAPIER.Vector2(worldWidth * 0.67, worldHeight / 2 + 100),
-    0xff0000,
+    new RAPIER.Vector2(worldWidth / 3, worldHeight / 2),
+    0xf43f5e,
   );
   const player2 = createPlayer(
     world,
     camera,
-    new RAPIER.Vector2(worldWidth * 0.67, worldHeight / 2 - 100),
-    0x0000ff,
+    new RAPIER.Vector2((worldWidth * 2) / 3, worldHeight / 2),
+    0x3b82f6,
   );
 
   const gameObjects: GameObject[] = [player1, player2];
@@ -327,17 +356,15 @@ function handlePlayerCollision(
       player2Head.applyTorqueImpulse(-angularForce * dt, true);
     }
 
-    let eventQueue = new RAPIER.EventQueue(true);
+    const eventQueue = new RAPIER.EventQueue(true);
+    // Step the simulation forward.
+    world.timestep = dt;
     world.step(eventQueue);
 
     eventQueue.drainCollisionEvents((handle1, handle2) => {
-      handlePlayerCollision(player1, handle1, handle2, world, camera);
-      handlePlayerCollision(player2, handle1, handle2, world, camera);
+      handlePlayerCollision(player1, handle1, handle2, world);
+      handlePlayerCollision(player2, handle1, handle2, world);
     });
-
-    // Step the simulation forward.
-    world.timestep = dt;
-    world.step();
 
     gameObjects.forEach((gameObject) => {
       gameObject.body.forEach((body) => {
