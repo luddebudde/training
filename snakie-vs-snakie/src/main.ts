@@ -14,9 +14,8 @@ import RAPIER, {
   RigidBodyDesc,
 } from "@dimforge/rapier2d";
 import { Key, keyDownTracker } from "./keyDownTracker.ts";
-
-import fragment from "./custom.frag?raw";
 import vertex from "./custom.vert?raw";
+import fragment from "./custom.frag?raw";
 import { ColorOverlayFilter, DropShadowFilter } from "pixi-filters";
 
 const thresholdFilter = (options: { threshold: number; smoothness: number }) =>
@@ -39,7 +38,8 @@ const thresholdFilter = (options: { threshold: number; smoothness: number }) =>
     },
   });
 
-type GameObject = {
+type PlayerGameObject = {
+  tag: "player";
   head: {
     graphics: Container;
     rigidBody: RAPIER.RigidBody;
@@ -49,10 +49,25 @@ type GameObject = {
     rigidBody: RAPIER.RigidBody;
     joint: RAPIER.ImpulseJoint;
   }[];
+  controls: {
+    left: Key;
+    right: Key;
+  };
   container: Container;
 };
 
-const bodyLength = 300;
+type FoodGameObject = {
+  tag: "food";
+  graphics: Container;
+  rigidBody: RAPIER.RigidBody;
+};
+
+type GameObject = PlayerGameObject | FoodGameObject;
+
+const playerCount = 2;
+const bodyLength = 20;
+const playerRadius = 10;
+const initialFoodCount = 300;
 
 const createWalls = (
   world: RAPIER.World,
@@ -109,8 +124,9 @@ const createPlayer = (
   camera: Container,
   position: RAPIER.Vector2,
   color: number,
-): GameObject => {
-  const radius = 10;
+  controls: { left: Key; right: Key },
+): PlayerGameObject => {
+  const radius = playerRadius;
 
   let angle = Math.PI;
   let pos = {
@@ -168,16 +184,15 @@ const createPlayer = (
     return {
       rigidBody: thisBody.rigidBody,
       joint: joint,
+      controls,
     };
   });
 
   // Create a graphics object to represent the player
   const headGraphics = new Container();
-  const tailGraphics = new Container();
 
   // head
   headGraphics.addChild(new Graphics().circle(0, 0, radius).fill(0xffffff));
-  tailGraphics.addChild(new Graphics().circle(0, 0, radius).fill(0xffffff));
   const arrow = new Graphics()
     .moveTo(0, -40) // Tip
     .lineTo(-10, -20) // Left base
@@ -194,7 +209,6 @@ const createPlayer = (
   const body = bs.map((b) => {
     const container = new Container();
     container.addChild(new Graphics().circle(0, 0, radius).fill(0xffffff));
-    container.addChild(new Graphics().circle(0, radius, radius).fill(0xffffff));
     return {
       rigidBody: b.rigidBody,
       joint: b.joint,
@@ -204,15 +218,6 @@ const createPlayer = (
 
   const container = new Container();
 
-  container.addChild(head.graphics);
-  body.forEach((body) => {
-    container.addChild(body.graphics);
-  });
-
-  const colorOverlayFilter = new ColorOverlayFilter({
-    color: color,
-    alpha: 1,
-  });
   container.filters = [
     new BlurFilter({
       strength: (5 * radius) / 10,
@@ -221,7 +226,10 @@ const createPlayer = (
       threshold: 1,
       smoothness: 0.5,
     }),
-    colorOverlayFilter,
+    new ColorOverlayFilter({
+      color: color,
+      alpha: 1,
+    }),
     new DropShadowFilter({
       color: color,
       blur: 2,
@@ -232,20 +240,68 @@ const createPlayer = (
       },
     }),
   ];
+
+  container.addChild(head.graphics);
+  body.forEach((body) => {
+    container.addChild(body.graphics);
+  });
+
   camera.addChild(container);
 
   return {
+    tag: "player",
     head: head,
     body: body,
+    controls: controls,
     container,
   };
 };
 
+const createFood = (
+  world: RAPIER.World,
+  camera: Container,
+  position: RAPIER.Vector2,
+): FoodGameObject => {
+  const radius = playerRadius;
+
+  let pos = {
+    x: position.x,
+    y: position.y,
+  };
+  const rigidBody = world.createRigidBody(
+    RigidBodyDesc.dynamic()
+      .setLinearDamping(5)
+      .setAngularDamping(1)
+      .setTranslation(pos.x, pos.y),
+  );
+
+  world.createCollider(
+    ColliderDesc.ball(radius)
+      .setMass(1)
+      .setRestitution(1)
+      .setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS),
+    rigidBody,
+  );
+
+  const graphics = new Container();
+
+  graphics.addChild(new Graphics().circle(0, 0, radius).fill(0xffffff));
+
+  camera.addChild(graphics);
+
+  return {
+    tag: "food",
+    rigidBody: rigidBody,
+    graphics: graphics,
+  };
+};
+
 function handlePlayerCollision(
-  player: GameObject,
+  player: PlayerGameObject,
   handle1: number,
   handle2: number,
   world: RAPIER.World,
+  foods: FoodGameObject[],
 ) {
   if (
     player.head.rigidBody.handle === handle1 ||
@@ -258,6 +314,48 @@ function handlePlayerCollision(
       neck.rigidBody.handle === handle2
     ) {
       return;
+    }
+
+    const collidedFood = foods.find(
+      (food) =>
+        food.rigidBody.handle === handle1 || food.rigidBody.handle === handle2,
+    );
+
+    if (collidedFood) {
+      const oldHead = player.head;
+      const jointParams = JointData.revolute(
+        {
+          x: -2 * playerRadius,
+          y: 0,
+        },
+        {
+          x: 0,
+          y: 0,
+        },
+      );
+
+      // Set the new head position and rotation to match the old head
+      collidedFood.rigidBody.setRotation(oldHead.rigidBody.rotation(), true);
+
+      const joint = world.createImpulseJoint(
+        jointParams,
+        collidedFood.rigidBody,
+        oldHead.rigidBody,
+        true,
+      );
+      player.head = {
+        rigidBody: collidedFood.rigidBody,
+        graphics: collidedFood.graphics,
+      };
+      player.body.unshift({
+        rigidBody: oldHead.rigidBody,
+        graphics: oldHead.graphics,
+        joint: joint,
+      });
+
+      player.container.addChild(collidedFood.graphics);
+
+      return collidedFood;
     }
 
     // Remove head. neck is now the head.
@@ -311,50 +409,112 @@ function handlePlayerCollision(
   const worldWidth = app.renderer.width / scale;
   const worldHeight = app.renderer.height / scale;
 
-  createWalls(world, camera, worldWidth, worldHeight);
-  const player1 = createPlayer(
-    world,
-    camera,
-    new RAPIER.Vector2(worldWidth / 3, worldHeight / 2),
-    0xf43f5e,
-  );
-  const player2 = createPlayer(
-    world,
-    camera,
-    new RAPIER.Vector2((worldWidth * 2) / 3, worldHeight / 2),
-    0x3b82f6,
-  );
+  const red = 0xf43f5e;
+  const blue = 0x3b82f6;
+  const emerald = 0x10b981;
+  const amber = 0xf59e0b;
+  const violet = 0x8b5cf6;
+  const slate = 0x64748b;
 
-  const gameObjects: GameObject[] = [player1, player2];
+  createWalls(world, camera, worldWidth, worldHeight);
+
+  const playerAttributes = [
+    {
+      color: red,
+      controls: {
+        left: Key.ArrowDown,
+        right: Key.ArrowRight,
+      },
+    },
+    {
+      color: blue,
+      controls: {
+        left: Key.KeyQ,
+        right: Key.KeyA,
+      },
+    },
+    {
+      color: emerald,
+      controls: {
+        left: Key.KeyL,
+        right: Key.KeyP,
+      },
+    },
+    {
+      color: amber,
+      controls: {
+        left: Key.KeyL,
+        right: Key.KeyP,
+      },
+    },
+    {
+      color: violet,
+      controls: {
+        left: Key.KeyN,
+        right: Key.KeyM,
+      },
+    },
+    {
+      color: slate,
+      controls: {
+        left: Key.Comma,
+        right: Key.Period,
+      },
+    },
+  ].slice(0, playerCount);
+
+  const players = playerAttributes.map((attr, index) => {
+    const columnCount = Math.ceil(playerCount / 2);
+    const rowCount = 2;
+    const col = index % columnCount;
+    const row = Math.floor(index / columnCount);
+    const position = new RAPIER.Vector2(
+      worldWidth * ((col + 1) / (columnCount + 1)),
+      worldHeight * ((row + 1) / (rowCount + 1)),
+    );
+
+    return createPlayer(world, camera, position, attr.color, attr.controls);
+  });
+
+  const initialFoods = new Array(initialFoodCount)
+    .fill(0)
+    .map(() =>
+      createFood(
+        world,
+        camera,
+        new RAPIER.Vector2(
+          Math.random() * worldWidth,
+          Math.random() * worldHeight,
+        ),
+      ),
+    );
+
+  let gameObjects: GameObject[] = [...players, ...initialFoods];
+
   // Listen for animate update
   app.ticker.add((time) => {
+    const gameObjectsToRemove: GameObject[] = [];
+    const foods = gameObjects.filter((it) => it.tag === "food");
     const dt = time.deltaMS / 1000;
 
     const walkForce = 2000;
     const walkImpulse = walkForce * dt;
     const angularForce = 40_000;
 
-    const player1Head = player1.head.rigidBody;
-    const player2Head = player2.head.rigidBody;
+    players.forEach((player) => {
+      const playerHead = player.head.rigidBody;
 
-    applyWalkImpulse(player1, walkImpulse);
-    applyWalkImpulse(player2, walkImpulse);
+      applyWalkImpulse(player, walkImpulse);
 
-    applyImpulseInDirection(player1Head, walkImpulse * 6);
-    applyImpulseInDirection(player2Head, walkImpulse * 6);
+      applyImpulseInDirection(playerHead, walkImpulse * 6);
 
-    if (keydownTracker.isKeyDown(Key.ArrowLeft)) {
-      player1Head.applyTorqueImpulse(angularForce * dt, true);
-    }
-    if (keydownTracker.isKeyDown(Key.ArrowRight)) {
-      player1Head.applyTorqueImpulse(-angularForce * dt, true);
-    }
-    if (keydownTracker.isKeyDown(Key.KeyA)) {
-      player2Head.applyTorqueImpulse(angularForce * dt, true);
-    }
-    if (keydownTracker.isKeyDown(Key.KeyD)) {
-      player2Head.applyTorqueImpulse(-angularForce * dt, true);
-    }
+      if (keydownTracker.isKeyDown(player.controls.left)) {
+        playerHead.applyTorqueImpulse(angularForce * dt, true);
+      }
+      if (keydownTracker.isKeyDown(player.controls.right)) {
+        playerHead.applyTorqueImpulse(-angularForce * dt, true);
+      }
+    });
 
     const eventQueue = new RAPIER.EventQueue(true);
     // Step the simulation forward.
@@ -362,22 +522,43 @@ function handlePlayerCollision(
     world.step(eventQueue);
 
     eventQueue.drainCollisionEvents((handle1, handle2) => {
-      handlePlayerCollision(player1, handle1, handle2, world);
-      handlePlayerCollision(player2, handle1, handle2, world);
+      players.forEach((player) => {
+        const eatenFood = handlePlayerCollision(
+          player,
+          handle1,
+          handle2,
+          world,
+          foods,
+        );
+        if (eatenFood) {
+          gameObjectsToRemove.push(eatenFood);
+        }
+      });
     });
 
     gameObjects.forEach((gameObject) => {
-      gameObject.body.forEach((body) => {
-        let position = body.rigidBody.translation();
-        body.graphics.x = position.x;
-        body.graphics.y = position.y;
-        body.graphics.rotation = body.rigidBody.rotation() - Math.PI / 2;
-      });
+      if (gameObject.tag === "player") {
+        [...gameObject.body, gameObject.head].forEach((body) => {
+          let position = body.rigidBody.translation();
+          body.graphics.x = position.x;
+          body.graphics.y = position.y;
+          body.graphics.rotation = body.rigidBody.rotation() - Math.PI / 2;
+        });
+      } else if (gameObject.tag === "food") {
+        const position = gameObject.rigidBody.translation();
+        gameObject.graphics.x = position.x;
+        gameObject.graphics.y = position.y;
+      }
     });
+
+    // Remove game objects that are marked for removal
+    gameObjects = gameObjects.filter(
+      (obj) => !gameObjectsToRemove.includes(obj),
+    );
   });
 })();
 
-const applyWalkImpulse = (player: GameObject, impulse: number) => {
+const applyWalkImpulse = (player: PlayerGameObject, impulse: number) => {
   player.body.forEach((body) => {
     applyImpulseInDirection(body.rigidBody, impulse);
   });
