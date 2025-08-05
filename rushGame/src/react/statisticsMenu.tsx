@@ -96,7 +96,7 @@ const StatisticsMenu = ({ onBack }) => {
             <b style={{ fontSize: 140 }}>Player stats</b>
             <div>Damage taken: {Math.floor(source.damageAbsorbed)}</div>
             <div>Damage dealt: {Math.floor(source.damageConflicted)}</div>
-            <div>Damage Bullets shot:{source.bulletsShot}</div>
+            <div>Bullets shot:{source.bulletsShot}</div>
           </div>
 
           <button

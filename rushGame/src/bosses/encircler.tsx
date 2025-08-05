@@ -54,7 +54,7 @@ export const createEncirclerBoss = () => {
   const encircler: Encircler = {
     name: "Encircler",
     maxHealth: health,
-    health: health * 0.6,
+    health: health,
     contactDamage: 20,
     pos: {
       x: Math.random() * world.width,

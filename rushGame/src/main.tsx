@@ -325,13 +325,13 @@ const update = () => {
       );
     } else {
       const bulletCount = player.unlockedAbilities.spreadShotCount;
-      const totalDamage = player.bulletDamage * bulletCount * 1.5;
+      const totalDamage = player.bulletDamage * bulletCount * 1.25;
 
       createWaveShoot(
         bullets,
         player,
         mousePos,
-        totalDamage / 3,
+        totalDamage / bulletCount,
         player.bulletSpeed,
         ((Math.PI * 2) / 180) * 25,
         bulletCount,
@@ -372,7 +372,9 @@ const update = () => {
     }
   }
 
+  // setTimeout(() => {
   requestAnimationFrame(update);
+  // }, 50);
 };
 
 export const mousePos = {

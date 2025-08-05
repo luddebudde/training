@@ -31,7 +31,7 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
   // entity.vel.x = Math.round(entity.vel.x);
   // entity.vel.y = Math.round(entity.vel.y);
 
-  const safetyMargin = 50;
+  const safetyMargin = 10;
 
   const interval = setInterval(() => {
     // console.log(

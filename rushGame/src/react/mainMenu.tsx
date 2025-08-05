@@ -29,7 +29,7 @@ function App() {
             id="mainMenu"
             style={{
               // marginTop: 20,
-              opacity: "10%",
+              opacity: "100%",
               position: "absolute",
               // backgroundColor: "green",sd
               backgroundImage: "url(public/img.webp)",

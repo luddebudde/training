@@ -166,7 +166,8 @@ const holdWall = (ctx, centralDivider) => {
         bullets,
         centralDivider,
         undefined,
-        10,
+        // 10,
+        1,
         speed,
         {},
         {

@@ -5,6 +5,7 @@ import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
+import { getRandomColor } from "../randomColor";
 
 const health = Math.random() * 2000 + 1000;
 
@@ -20,7 +21,9 @@ const shootShotgun = (randomer) => {
         Math.random() * 8 + 3, // Damage
         Math.random() * 20, // Speed
         Math.random() * Math.PI + 0.1, // Width
-        Math.random() * 7 + 1 // Amount of Bullets
+        Math.random() * 7 + 1, // Amount of Bullets
+        {},
+        { color: getRandomColor() }
       );
     }, (Math.random() * 5 + 2) * i * 50);
   }
@@ -39,9 +42,9 @@ const shootMachinegun = (randomer) => {
         Math.random() * 20 + 1, // Speed
         {
           bounceable: Math.random() > 0.95 ? true : false,
-          bounceDamageLoss: 0.4,
+          bounceDamageLoss: Math.random() * 0.6 + 0.2,
         },
-        { bulletRadius: Math.random() * 18 + 12 }
+        { bulletRadius: Math.random() * 18 + 12, color: getRandomColor }
       );
     }, (Math.random() * 5 + 2) * i * 50) * multValue;
   }
@@ -63,7 +66,9 @@ const shootRandomDirection = (randomer) => {
         randomer,
         target,
         Math.random() * 15,
-        Math.random() * 25 + 5
+        Math.random() * 25 + 5,
+        {},
+        { color: getRandomColor() }
       );
     }, (Math.random() * 5 + 2) * i * 50 * multValue);
   }
@@ -114,7 +119,7 @@ export const createRandomerBoss = () => {
     name: "Randomer",
     maxHealth: health,
     health: health,
-    contactDamage: Math.random(),
+    contactDamage: Math.random() * 5,
     pos: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,
@@ -123,7 +128,7 @@ export const createRandomerBoss = () => {
       x: 0,
       y: 0,
     },
-    radius: 80,
+    radius: Math.random() * 40 + 60,
     color: "red",
     speed: 40,
     team: "enemy",
@@ -141,7 +146,7 @@ export const createRandomerBoss = () => {
     movementCounter: 100,
 
     // Attack
-    attackCounter: 150,
+    attackCounter: Math.random() * 150,
     attackList: [shootShotgun, shootMachinegun, shootRandomDirection],
     // attackList: [shootRandomDirection],
 

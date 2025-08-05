@@ -30,6 +30,7 @@ import { createWanderer } from "./bosses/wanderer";
 import { createLevelSeekerBoss } from "./bosses/levelSeeker";
 import { createGrenadier } from "./bosses/grenadier";
 import { createCentralDividerBoss } from "./bosses/centralDivider";
+import { createDeiat } from "./bosses/deiat";
 
 export let entities = [];
 export let bullets = [];
@@ -57,18 +58,22 @@ const wandererArray = ["Wanderer", "", createWanderer];
 const levelSeekerArray = ["Level Seeker", "", createLevelSeekerBoss];
 const grenadierArray = ["Grenadier", "", createGrenadier];
 const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
+const deiatArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [
+  deiatArray,
   // splitterArray,
   // encirclerArray,
   // createCentralBaseArray,
+  // levelSeekerArray,
   // createNewRainerArray,
   // wandererArray,
   // levelSeekerArray,
   // grenadierArray,
-  centralDividerArray,
+  // centralDividerArray,
   // squareArray,
   // sprayerArray,
+  // wandererArray,
   // squareArray,
   // sprayerArray,
   // chargerArray,
@@ -76,7 +81,9 @@ const firstWave = [
   // twinArray,
   // lineBreakerArray,
   // randomerArray,
+  // pacificArray,
   // rainerArray,
+  // squareArray,
   // createChargerBoss,
   // createLineBreakerBoss,
   // createRandomerBoss,
@@ -156,15 +163,15 @@ export const checkArrayRemoval = (ctx) => {
   );
 
   liveBosses.forEach((boss, index) => {
-    // drawHealthBar(
-    //   ctx,
-    //   0,
-    //   0 + 40 * index,
-    //   world.width,
-    //   30,
-    //   boss.health,
-    //   boss.maxHealth
-    // );
+    drawHealthBar(
+      ctx,
+      0,
+      0 + 40 * index,
+      world.width,
+      30,
+      boss.health,
+      boss.maxHealth
+    );
 
     // console.log(metBossIndex);
 

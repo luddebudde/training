@@ -10,7 +10,7 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { add, addVar, multVar, origo } from "../math";
 
-const health = 600;
+const health = 3200;
 
 type Charger = {
   name: string;
@@ -129,7 +129,7 @@ const createSatellite = (centralBase, i: number) => {
 };
 
 let oldPlayerPos = origo;
-const baseColor = { r: 165, g: 42, b: 42 };
+const baseColor = { r: 105, g: 42, b: 42 };
 const centralBasePos = {
   x: world.width / 2,
   y: world.height / 2,
@@ -211,13 +211,13 @@ export const createCentralBaseBoss = () => {
             bullets,
             satellite,
             centralBase.pos,
-            -20,
+            -10,
             5,
             {},
             {
               onHit(entity, bullet) {
                 if (entity === centralBase) {
-                  centralBase.superCounter += 10;
+                  centralBase.superCounter += 12.5;
                   // console.log(centralBase.superCounter);
                 }
               },
@@ -278,7 +278,7 @@ export const createCentralBaseBoss = () => {
               34,
               80,
               {},
-              { bulletRadius: 40 }
+              { bulletRadius: 40, color: "orange" }
             );
             centralBase.superHitCounter = 0;
           }
