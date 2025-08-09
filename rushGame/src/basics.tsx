@@ -6,6 +6,11 @@ export const world = {
   width: canvas.width,
   height: canvas.height,
 };
+
+export const center = {
+  x: world.width / 2,
+  y: world.height / 2,
+};
 export let isPaused: boolean = false;
 
 export const changeIsPaused = (changeTo: boolean) => {

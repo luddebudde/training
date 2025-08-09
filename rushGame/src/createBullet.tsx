@@ -42,7 +42,8 @@ type Advanced = {
   color: string;
   vel: Vec2;
   rememberShooter: boolean;
-  onHit: (entity, bullet) => void;
+  onHit: (entity: any, bullet: Bullet) => void;
+  onWallBounce: (bullet: Bullet, newVel: Vec2) => void;
 };
 
 export let bulletsShot = 0;
@@ -134,8 +135,8 @@ export const createBullet = (
     onHit: (entity, bullet) => {
       finalAdvanced.onHit(entity, bullet);
     },
-    onWallBounce: (bullet, newVec) => {
-      finalAdvanced.onHit(bullet, newVec);
+    onWallBounce: (bullet: Bullet, newVec: Vec2) => {
+      finalAdvanced.onWallBounce(bullet, newVec);
     },
   };
 
