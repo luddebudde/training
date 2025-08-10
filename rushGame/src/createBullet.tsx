@@ -111,7 +111,7 @@ export const createBullet = (
     shooter.bulletsShot++;
   }
   // console.log(bulletTeam);
-
+  // console.log(direction);
   const bullet: Bullet = {
     shooter: finalAdvanced.rememberShooter ? shooter : undefined,
     damage: damage,
@@ -178,6 +178,7 @@ export const createWaveShoot = (
     bounceable: false,
     airFriction: 0,
     bounceDamageLoss: 0.3,
+    indestructible: false,
     ...mods,
   };
 
@@ -227,6 +228,7 @@ export const createWaveShoot = (
       airFriction: finalMods.airFriction,
       bounceable: finalMods.bounceable,
       bounceDamageLoss: finalMods.bounceDamageLoss,
+      indestructible: finalMods.indestructible,
 
       onHit: (entity, bullet) => {
         finalAdvanced.onHit(entity, bullet);

@@ -160,6 +160,7 @@ const update = () => {
         if (doCirclesOverlap(entity, secondEntity)) {
           if (entity.team !== secondEntity.team) {
             dealDamage(entity, secondEntity, entity.contactDamage);
+            dealDamage(secondEntity, entity, secondEntity.contactDamage);
           }
 
           if (entity.collision === true && secondEntity.collision === true) {

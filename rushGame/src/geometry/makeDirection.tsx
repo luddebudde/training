@@ -4,7 +4,7 @@ export const getDistance = (
   mainObject: Vec2,
   secondObject: Vec2
   // vector = false
-) => {
+): number => {
   const diff = {
     x: mainObject.x - secondObject.x,
     y: mainObject.y - secondObject.y,
@@ -20,7 +20,7 @@ export const getDistance = (
   return dist;
 };
 
-export const makeDirection = (mainObject: Vec2, secondObject: Vec2) => {
+export const makeDirection = (mainObject: Vec2, secondObject: Vec2): Vec2 => {
   // console.log(mainObject, secondObject);
 
   const diff = {

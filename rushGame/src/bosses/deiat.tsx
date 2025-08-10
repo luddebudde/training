@@ -3,9 +3,9 @@ import { center, world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 
-import { makeDirection } from "../geometry/makeDirection";
+import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { add, multVar, numberIsWithinMargin, origo } from "../math";
+import { add, multVar, numberIsWithinMargin, origo, Vec2 } from "../math";
 import { createSprayerBoss } from "./sprayer";
 
 const health = 15000;
@@ -14,7 +14,7 @@ let phaseCounter = 0;
 let transitionCounter = 0;
 
 const firstPhase = (deiat) => {
-  deiat.attackCounter = 10000;
+  deiat.attackDelay = 10000;
 
   deiat.airFriction = false;
   const direction = makeDirection(deiat.pos, player.pos);
@@ -87,14 +87,20 @@ const firstPhase = (deiat) => {
 };
 
 const secondPhase = (deiat) => {
-  deiat.attackCounter = 10000;
+  deiat.attackDelay = 10000;
   const number = Math.random();
-  const numberOfAttacks = 1;
+  const numberOfAttacks = 3;
 
   console.log("running second attack");
 
-  // if (number > (1 / numberOfAttacks) * 1) {
-  if (false) {
+  if (number > (1 / numberOfAttacks) * 1) {
+    // if (false) {
+    if (deiat.pickedAttack === 1) {
+      secondPhase(deiat);
+      return;
+    }
+    deiat.pickedAttack = 1;
+
     const rounds = 5;
     const bulletCount = 50; // hur många "bursts"
     const delay = 100; // ms mellan varje burst
@@ -137,9 +143,20 @@ const secondPhase = (deiat) => {
         }
       }, i * delay);
     }
-    // } else if (number > (1 / numberOfAttacks) * 2) {
-  } else if (true) {
+
+    setTimeout(() => {
+      deiat.attackDelay = 50;
+    }, bulletCount * rounds * delay);
+  } else if (number > (1 / numberOfAttacks) * 2) {
+    // } else if (false) {
     // Second option
+    // if (deiat.pickedAttack === 2) {
+    //   // alert("STOp");
+    //   secondPhase(deiat);
+
+    //   return;
+    // }
+    deiat.pickedAttack = 2;
     const blade = {
       damage: 40,
       shooter: deiat,
@@ -149,7 +166,7 @@ const secondPhase = (deiat) => {
       offset: origo,
       color: "black",
       radius: 20,
-      angle: 0,
+      angle: Math.random() * Math.PI * 2,
       team: "enemy",
       collision: false,
       airFriction: false,
@@ -160,9 +177,9 @@ const secondPhase = (deiat) => {
     let removeBlade = false;
 
     const angleStep = 0.01;
-    const distanceStep = 8;
-    const sizeStep = 4;
-    const swingSpeed = 5;
+    const distanceStep = 6;
+    const sizeStep = 2;
+    const swingSpeed = 2;
     const bladeSize = 320;
     const distanceAway = deiat.radius * 3.5;
     console.log(distanceAway);
@@ -176,9 +193,47 @@ const secondPhase = (deiat) => {
       if (blade !== undefined) {
         blade.pos.x = Math.cos(blade.angle) * blade.distance + deiat.pos.x;
         blade.pos.y = Math.sin(blade.angle) * blade.distance + deiat.pos.y;
-        // console.log(blade);
       }
 
+      const randomSide: number = Math.random();
+      const randomPos: number =
+        Math.random() *
+        (center.x - distanceAway - bladeSize + player.radius * 2);
+      let finalXPos: Vec2;
+      const bulletRadius = 15;
+
+      if (randomSide > 0.5) {
+        finalXPos = {
+          x: randomPos,
+          y: bulletRadius,
+        };
+      } else {
+        finalXPos = {
+          x: world.width - randomPos,
+          y: bulletRadius,
+        };
+      }
+
+      createBullet(
+        bullets,
+        deiat,
+        undefined,
+        15,
+        30,
+        {},
+        {
+          color: "red",
+          startPos: finalXPos,
+          vel: { x: 0, y: 30 },
+        }
+      );
+
+      // if (
+      //   player.pos.x < deiat.pos.x - distanceAway - bladeSize - player.radius ||
+      //   player.pos.x > deiat.pos.x + distanceAway + bladeSize + player.radius
+      // ) {
+      //   console.log("too far");
+      // }
       if (!removeBlade) {
         requestAnimationFrame(updateBlade);
       }
@@ -192,14 +247,15 @@ const secondPhase = (deiat) => {
       }, 7 * i);
     }
 
-    const expandDelay = 2 * deiat.radius;
+    const expandDelay = 2 * deiat.radius + (distanceAway / distanceStep) * 6;
     for (let i = 0; i < bladeSize / sizeStep; i++) {
       setTimeout(() => {
         blade.radius += sizeStep;
       }, expandDelay + swingSpeed * i);
     }
 
-    const rotateDelay = expandDelay + swingSpeed * 60;
+    const rotateDelay =
+      expandDelay + swingSpeed * 60 + (bladeSize / sizeStep) * 4;
     for (let i = 0; i < (Math.PI * 2) / angleStep; i++) {
       setTimeout(() => {
         blade.angle += angleStep;
@@ -224,20 +280,153 @@ const secondPhase = (deiat) => {
     setTimeout(() => {
       bullets.splice(bullets.indexOf(blade), 1);
       removeBlade = true;
+
+      deiat.attackDelay = 30;
     }, destroyDelay);
   } else {
     // Third option
+    // if (deiat.pickedAttack === 3) {
+    //   secondPhase(deiat);
+    //   return;
+    // }
+
+    const delay = 75;
+    const totalTime = 20000;
+
+    const bulletCount = totalTime / delay;
+    // const bulletSpacing = world.width / bulletCount;
+    const bulletSize = 15;
+
+    const spacing = world.height / bulletCount; // avstånd mellan kulor
+    // const moveStep = 30;
+
+    const speed = 30;
+    const damage = 1.2;
+
+    for (let i = 0; i < bulletCount / 2; i++) {
+      setTimeout(() => {
+        for (let k = 0; k < center.y / spacing; k++) {
+          setTimeout(() => {
+            const shootPos = {
+              x: i % 2 ? bulletSize : world.width - bulletSize,
+              y: k % 2 ? center.y + spacing * k : center.y - spacing * k,
+            };
+            for (let dirIn = 0; dirIn < 2; dirIn++) {
+              const targetPos =
+                dirIn % 2
+                  ? { x: center.x, y: -(world.height - shootPos.y) - 250 }
+                  : { x: center.x, y: world.height + shootPos.y + 250 };
+
+              // console.log(targetPos);
+
+              createBullet(
+                bullets,
+                deiat,
+                targetPos,
+                damage,
+                speed,
+                {},
+                {
+                  bulletRadius: bulletSize,
+                  startPos: shootPos,
+                  color: "red",
+                }
+              );
+            }
+          }, k * delay);
+        }
+      }, i * delay);
+    }
+
+    let bulletCounter = 10;
+    for (let i = 0; i < bulletCount; i++) {
+      setTimeout(() => {
+        const distance = getDistance(player.pos, deiat.pos);
+        const direction = makeDirection(player.pos, deiat.pos);
+
+        player.vel = add(
+          player.vel,
+          multVar(direction, -(1 / distance) * 1500)
+        );
+        bulletCounter--;
+
+        if (bulletCounter < 0) {
+          const randomAngle = Math.random() * Math.PI * 2;
+
+          console.log(Math.cos(randomAngle), randomAngle);
+
+          createBullet(
+            bullets,
+            deiat,
+            {
+              x: Math.cos(randomAngle) + deiat.pos.x,
+              y: Math.sin(randomAngle) + deiat.pos.y,
+            },
+            15,
+            10,
+            {},
+            { color: "purple" }
+          );
+
+          bulletCounter = 2;
+        }
+      }, i * delay);
+    }
+
+    // for (let side = 0; side < 2; side++) {
+    //   // 0 = vänster, 1 = höger
+    //   for (let i = 0; i < bulletCount; i++) {
+    //     const startY = bulletSpacing / 2 + i * bulletSpacing; // jämn fördelning
+    //     const startX = side === 0 ? bulletSize : world.width - bulletSize;
+
+    //     const startPos = { x: startX, y: startY };
+
+    //     // Sätt riktning snett mot mitten
+    //     const targetX = center.x;
+    //     const targetY =
+    //       i % 0
+    //         ? 0 // från vänster, sikta lite uppåt
+    //         : world.height; // från höger, sikta lite nedåt
+
+    //     const direction = makeDirection(startPos, { x: targetX, y: targetY });
+    //     // const velocity = multVar(direction, speed);
+
+    //     createBullet(
+    //       bullets,
+    //       deiat,
+    //       { x: targetX, y: targetY },
+    //       damage,
+    //       speed,
+    //       {},
+    //       {
+    //         bulletRadius: bulletSize,
+    //         startPos,
+    //         // vel: velocity,
+    //         color: "red",
+    //       }
+    //     );
+    //   }
+    // }
+
+    setTimeout(() => {
+      deiat.attackDelay = 250;
+    }, bulletCount * delay);
+
+    deiat.pickedAttack = 3;
+
     console.log("3");
   }
 
-  // deiat.attackCounter = 100;
+  // deiat.attackDelay = 100;
 };
 
+// const saveTime = 1
+const saveTime = 0.1;
 const transitionToSecondPhase = (deiat) => {
-  goTo(deiat, center, 80, () => {
-    for (let i = 0; i < 80; i++) {
+  goTo(deiat, center, 80 * saveTime, () => {
+    for (let i = 0; i < 80 * saveTime; i++) {
       setTimeout(() => {
-        deiat.radius++;
+        deiat.radius += 1 / saveTime;
       }, 20 * i);
     }
     setTimeout(() => {
@@ -245,7 +434,7 @@ const transitionToSecondPhase = (deiat) => {
 
       // console.log(phaseCounter, phaseList[phaseCounter]);
 
-      deiat.attackCounter = 0;
+      deiat.attackDelay = 0;
     }, 80 * 20);
   });
 };
@@ -318,10 +507,14 @@ export const createDeiat = () => {
     airFriction: false,
 
     // Pahses
-    attackCounter: 100,
+    attackDelay: 20,
+
+    secondPhase: {
+      pickedAttack: undefined,
+    },
 
     update: (): void => {
-      deiat.attackCounter--;
+      deiat.attackDelay--;
       // console.log(phaseCounter);
       if (
         deiat.health <
@@ -329,13 +522,13 @@ export const createDeiat = () => {
       ) {
         transitionList[transitionCounter](deiat);
 
-        deiat.attackCounter = 1000;
+        deiat.attackDelay = 1000;
         transitionCounter++;
       }
 
-      // console.log(deiat.attackCounter);
+      // console.log(deiat.attackDelay);
 
-      if (deiat.attackCounter <= 0) {
+      if (deiat.attackDelay <= 0) {
         // firstPhase(deiat);
 
         // console.log("attack", phaseList[phaseCounter]);
@@ -345,7 +538,7 @@ export const createDeiat = () => {
     },
     onWallBounce: () => {
       deiat.vel = origo;
-      deiat.attackCounter = 60;
+      deiat.attackDelay = 60;
     },
   };
 

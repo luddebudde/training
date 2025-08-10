@@ -91,7 +91,7 @@ export const createPlayer = (): any => {
     bulletsShot: 0,
 
     unlockedAbilities: {
-      dash: false,
+      dash: true,
       bounceable: false,
       bounceDamageLoss: 0.3,
 
