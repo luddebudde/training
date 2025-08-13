@@ -132,28 +132,26 @@ const update = () => {
       );
     }
 
-    if (entity.pos.x > world.width - entity.radius) {
+    if (entity.pos.x > world.width - entity.radius && entity.collision) {
       entity?.onWallBounce?.();
       entity.vel.x = -entity.vel.x;
       entity.pos.x = world.width - entity.radius;
     }
-    if (entity.pos.x < entity.radius) {
+    if (entity.pos.x < entity.radius && entity.collision) {
       entity?.onWallBounce?.();
       entity.vel.x = -entity.vel.x;
       entity.pos.x = entity.radius;
     }
-    if (entity.pos.y > world.height - entity.radius) {
+    if (entity.pos.y > world.height - entity.radius && entity.collision) {
       entity?.onWallBounce?.();
       entity.vel.y = -entity.vel.y;
       entity.pos.y = world.height - entity.radius;
     }
-    if (entity.pos.y < entity.radius) {
+    if (entity.pos.y < entity.radius && entity.collision) {
       entity?.onWallBounce?.();
       entity.vel.y = -entity.vel.y;
       entity.pos.y = entity.radius;
     }
-
-    entity?.update?.(ctx);
 
     entities.forEach((secondEntity) => {
       if (entity !== secondEntity) {
@@ -207,6 +205,7 @@ const update = () => {
       }
     });
 
+    entity?.update?.(ctx);
     drawCircle(ctx, entity);
   });
 

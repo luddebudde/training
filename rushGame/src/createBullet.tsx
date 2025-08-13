@@ -112,6 +112,9 @@ export const createBullet = (
   }
   // console.log(bulletTeam);
   // console.log(direction);
+
+  // console.log(newVel);
+
   const bullet: Bullet = {
     shooter: finalAdvanced.rememberShooter ? shooter : undefined,
     damage: damage,

@@ -30,7 +30,7 @@ import { createWanderer } from "./bosses/wanderer";
 import { createLevelSeekerBoss } from "./bosses/levelSeeker";
 import { createGrenadier } from "./bosses/grenadier";
 import { createCentralDividerBoss } from "./bosses/centralDivider";
-import { createDeiat } from "./bosses/deiat";
+import { createDeiat } from "./bosses/deiat/deiatBoss";
 
 export let entities = [];
 export let bullets = [];
