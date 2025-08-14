@@ -25,7 +25,7 @@ import { foughtBosses, statistics } from "./loseScreen";
 import { createSplitterBoss } from "./bosses/splitter";
 import { createEncirclerBoss } from "./bosses/encircler";
 import { createCentralBaseBoss } from "./bosses/centralBase";
-import { createNewRainer } from "./bosses/sideSweeper";
+import { createSideSweeper } from "./bosses/sideSweeper";
 import { createWanderer } from "./bosses/wanderer";
 import { createLevelSeekerBoss } from "./bosses/levelSeeker";
 import { createGrenadier } from "./bosses/grenadier";
@@ -53,7 +53,7 @@ const squareArray = ["Squa's gang", "", createSquareBosses];
 const splitterArray = ["Splitter", "", createSplitterBoss];
 const encirclerArray = ["Encircler", "", createEncirclerBoss];
 const createCentralBaseArray = ["Central Base", "", createCentralBaseBoss];
-const sideSweeperArray = ["Side <= Sweeper", "", createNewRainer];
+const sideSweeperArray = ["Side <= Sweeper", "", createSideSweeper];
 const wandererArray = ["Wanderer", "", createWanderer];
 const levelSeekerArray = ["Level Seeker", "", createLevelSeekerBoss];
 const grenadierArray = ["Grenadier", "", createGrenadier];
@@ -62,6 +62,7 @@ const deiatArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [
   deiatArray,
+  // sideSweeperArray,
   // splitterArray,
   // encirclerArray,
   // createCentralBaseArray,

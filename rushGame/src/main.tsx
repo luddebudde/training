@@ -209,8 +209,9 @@ const update = () => {
     drawCircle(ctx, entity);
   });
 
-  lines.forEach((line) => {
+  lines.forEach((line, index) => {
     drawLine(ctx, line.startPos, line.endPos, line.color);
+    lines.splice(index);
   });
 
   bullets.forEach((bullet, index) => {
@@ -321,7 +322,8 @@ const update = () => {
           bounceable: player.unlockedAbilities.bounceable,
           bounceDamageLoss: player.unlockedAbilities.bounceDamageLoss,
           airFriction: false,
-        }
+        },
+        { bulletRadius: player.bulletSize }
       );
     } else {
       const bulletCount = player.unlockedAbilities.spreadShotCount;

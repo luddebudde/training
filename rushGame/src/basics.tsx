@@ -45,7 +45,7 @@ export const bottomRightCorner = (additionalValue: number = 0): Vec2 => {
   };
 };
 
-export const allCorners: ((additionalValue: number) => Vec2)[] = [
+export const corners: ((additionalValue: number) => Vec2)[] = [
   topLeftCorner,
   topRightCorner,
   bottomLeftCorner,

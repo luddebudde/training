@@ -15,6 +15,7 @@ export type Player = {
     y: number;
   };
   radius: number;
+  radiusMult: number;
   color: string;
   mass: number;
   speed: number;
@@ -23,6 +24,7 @@ export type Player = {
   // standardAttackDelay: number;
   bulletDamage: number;
   bulletSpeed: number;
+  bulletSize: number;
 
   team: string;
 
@@ -51,7 +53,6 @@ export type Player = {
 const health = 100;
 
 const playerSpeed = 1;
-
 const playerAttackDelay = 10;
 
 export let player: Player;
@@ -76,6 +77,7 @@ export const createPlayer = (): any => {
       y: 0,
     },
     radius: 50,
+    radiusMult: 1,
     color: "blue",
     mass: 0.1,
     speed: playerSpeed,
@@ -83,8 +85,10 @@ export const createPlayer = (): any => {
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
-    bulletDamage: 20,
+    // bulletDamage: 20,
+    bulletDamage: 120,
     bulletSpeed: 50,
+    bulletSize: 20,
 
     damageConflicted: 0,
     damageAbsorbed: 0,

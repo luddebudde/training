@@ -1,5 +1,5 @@
 import { bullets, entities, liveBosses } from "../arrays";
-import { allCorners } from "../basics";
+import { corners } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { Vec2 } from "../math";
@@ -79,7 +79,7 @@ export const createLevelSeekerBoss = () => {
     collision: true,
     airFriction: false,
 
-    cornerArray: allCorners,
+    cornerArray: corners,
 
     // Pahses
     phaseCounter: 0,

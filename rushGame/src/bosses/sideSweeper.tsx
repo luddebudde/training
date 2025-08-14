@@ -11,7 +11,7 @@ import { add, multVar, origo, Vec2 } from "../math";
 const health = 1500;
 const radius = 120;
 
-type sideSweeper = {
+type SideSweeper = {
   name: string;
   maxHealth: number;
   health: number;
@@ -51,7 +51,7 @@ type sideSweeper = {
   update: () => void;
 };
 
-const shotSprayAttack = (boss: sideSweeper) => {
+const shotSprayAttack = (boss: SideSweeper) => {
   const bulletCount = 10;
   const spreadRadians = (120 * Math.PI) / 180;
   const startAngle = -spreadRadians / 2;
@@ -113,7 +113,7 @@ const switchSide = (boss, whenDone) => {
 };
 
 const fieldAttack = (
-  sweeper: sideSweeper,
+  sweeper: SideSweeper,
   bulletCount: number,
   delay: number
 ): void => {
@@ -156,8 +156,8 @@ const chargeMode = (boss) => {
   boss.vel = add(boss.vel, multVar(direction, boss.speed));
 };
 
-export const createNewRainer = () => {
-  const sideSweeper: sideSweeper = {
+export const createSideSweeper = () => {
+  const sideSweeper: SideSweeper = {
     name: "Side <= Sweeper",
     maxHealth: health,
     health: health,

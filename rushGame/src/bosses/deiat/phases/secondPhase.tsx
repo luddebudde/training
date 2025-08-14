@@ -32,11 +32,11 @@ export const secondPhase = (deiat: Deiat) => {
   // console.log(chosenAttack);
   if (chosenAttack === 0) {
     // if (false) {
-    if (deiat.secondPhase.pickedAttack === 0) {
+    if (deiat.pickedAttack === 0) {
       secondPhase(deiat);
       return;
     }
-    deiat.secondPhase.pickedAttack = 0;
+    deiat.pickedAttack = 0;
 
     const rounds = 5;
     const bulletCount = 50; // hur många "bursts"
@@ -87,12 +87,12 @@ export const secondPhase = (deiat: Deiat) => {
   } else if (chosenAttack === 1) {
     // } else if (false) {
     // Second option
-    // if (deiat.secondPhase.pickedAttack === 1) {
+    // if (deiat.pickedAttack === 1) {
     //   // alert("STOp");
     //   secondPhase(deiat);
     //   return;
     // }
-    deiat.secondPhase.pickedAttack = 1;
+    deiat.pickedAttack = 1;
     const blade = {
       damage: 40,
       shooter: deiat,
@@ -215,12 +215,12 @@ export const secondPhase = (deiat: Deiat) => {
     }, destroyDelay);
   } else if (chosenAttack === 2) {
     // Third option
-    if (deiat.secondPhase.pickedAttack === 2) {
+    if (deiat.pickedAttack === 2) {
       secondPhase(deiat);
       return;
     }
 
-    deiat.secondPhase.pickedAttack = 2;
+    deiat.pickedAttack = 2;
 
     const delay = 75;
     const totalTime = 20000;

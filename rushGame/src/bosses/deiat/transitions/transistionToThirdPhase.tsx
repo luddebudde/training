@@ -1,3 +1,4 @@
+import { liveBosses } from "../../../arrays";
 import { randomArrayElement } from "../../../randomArrayElement";
 import { createChargerBoss } from "../../charger";
 import { createSprayerBoss } from "../../sprayer";
@@ -18,6 +19,7 @@ export const transistionToThirdPhase = (deiat: Deiat, saveTime: number) => {
     deiat.collision = false;
     deiat.transitionShield = false;
     deiat.attackDelay = 20;
+    deiat.pickedAttack = 0;
 
     setTimeout(() => {
       const obtainableBosses: (() => void)[] = [

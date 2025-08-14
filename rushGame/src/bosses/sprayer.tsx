@@ -149,7 +149,7 @@ export const createSprayerBoss = () => {
         const movementNumber = Math.floor(Math.random() * 3);
 
         if (movementNumber === 0) {
-          console.log("shooter");
+          // console.log("shooter");
           sprayer.airFriction = true;
 
           sprayer.aiMovement = () => {
@@ -199,7 +199,7 @@ export const createSprayerBoss = () => {
 
           sprayer.phaseCounter = 400;
         } else if (movementNumber === 1) {
-          console.log("corner");
+          // console.log("corner");
           sprayer.airFriction = false;
 
           const upLeft = { x: sprayer.radius, y: sprayer.radius };
@@ -257,7 +257,7 @@ export const createSprayerBoss = () => {
 
           sprayer.phaseCounter = cornerDelay * 5;
         } else if (movementNumber === 2) {
-          console.log("middle");
+          // console.log("middle");
           sprayer.airFriction = false;
 
           sprayer.aiMovement = () => {
@@ -317,7 +317,7 @@ export const createSprayerBoss = () => {
       }
     },
     deathAnimation: () => {
-      console.log("death aniamtion: ACTIVATE");
+      // console.log("death aniamtion: ACTIVATE");
       const maxI = 200;
       const angleStep = (Math.PI * 2) / maxI;
       const speed = 50;

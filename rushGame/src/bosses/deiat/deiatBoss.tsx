@@ -7,23 +7,35 @@ import { secondPhase } from "./phases/secondPhase";
 import { transitionToSecondPhase } from "./transitions/transitionToSecondPhase";
 import { transistionToThirdPhase } from "./transitions/transistionToThirdPhase";
 import { thirdPhase } from "./phases/thirdPhase";
+import { transistionToFourthPhase } from "./transitions/transistionToFourthPhase";
+import { fourthPhase } from "./phases/fourthPhase";
 
 const radius = 120;
 const health = 15000;
 
 export type Deiat = any;
 
-// const saveTime: number = 1;
-const saveTime: number = 0.1;
+const saveTime: number = 1;
+// const saveTime: number = 0.1;
 
-// const phaseList: ((deiat: Deiat) => void)[] = [firstPhase, secondPhase];
-// const transitionList = [enterArena, transitionToSecondPhase];
+const phaseList: ((deiat: Deiat) => void)[] = [
+  firstPhase,
+  secondPhase,
+  thirdPhase,
+  fourthPhase,
+];
+const transitionList = [
+  enterArena,
+  transitionToSecondPhase,
+  transistionToThirdPhase,
+  transistionToFourthPhase,
+];
 
-// const healthCheckpoints = [1.1, 0.8, 0.0];
-const healthCheckpoints = [1.1, 0.00999, 0.0];
+const healthCheckpoints = [1.1, 0.8, 0.5, 0.33];
+// const healthCheckpoints = [1.1, 0.00999, 0.0];
 
-const transitionList = [transistionToThirdPhase];
-const phaseList: ((deiat: Deiat) => void)[] = [thirdPhase];
+// const transitionList = [transistionToFourthPhase];
+// const phaseList: ((deiat: Deiat) => void)[] = [fourthPhase];
 export const createDeiat = () => {
   const deiat: Deiat = {
     name: "The Deiat",
@@ -43,7 +55,7 @@ export const createDeiat = () => {
     color: "yellow",
     speed: 50,
     team: "enemy",
-    mass: 1000,
+    mass: 9999999,
 
     damageConflicted: 0,
     damageAbsorbed: 0,
@@ -60,12 +72,16 @@ export const createDeiat = () => {
     transitionCounter: 0,
     transitionShield: false,
 
-    secondPhase: {
-      pickedAttack: 10000,
-    },
+    pickedAttack: 10000,
+    blackhole: undefined,
+
+    solarCharge: false,
+    interval: () => {},
 
     update: (): void => {
       deiat.attackDelay--;
+
+      // console.log(deiat.pos, deiat.vel);
 
       if (deiat.transitionShield) {
         bullets.forEach((bullet) => {
