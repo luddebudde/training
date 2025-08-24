@@ -94,3 +94,6 @@ En boss som är odödlig så länge 4 stycken stationära pelare finns på banan
 // Boss 7
 En boss som börjar med ca 4 "bollar" på planen. Dessa bollar gör kontaktskada, medan bossen inte gör det. Däremot kommer bossen att skicka projektiler mot dessa bollar för att få dem i rörelse och (förhoppningsvis)
 döda spelaren. Spelaren kan blockera dessa projektiler för att stoppa rörelsen innan den har skett
+
+// Boss 8
+En boss med 4 bollar, och som endast tar skada utav dem

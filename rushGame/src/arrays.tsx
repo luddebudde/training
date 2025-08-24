@@ -62,6 +62,7 @@ const deiatArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [
   deiatArray,
+  // squareArray,
   // sideSweeperArray,
   // splitterArray,
   // encirclerArray,

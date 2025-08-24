@@ -36,7 +36,7 @@ export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
 
         standardPlayer.radius -=
           //   Math.max(
-          playerDistToSize / deiatDistToSize;
+          playerDistToSize / deiatDistToSize / saveTime;
         //   );
 
         // standardPlayer.speed -=
@@ -53,7 +53,7 @@ export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
           baseBulletDamage * (player.radius / playerBaseRadius);
 
         // console.log(player.speed);
-      }, 20 * i);
+      }, 20 * i * saveTime);
     }
     setTimeout(() => {
       deiat.phaseCounter++;
@@ -63,6 +63,6 @@ export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
       deiat.pickedAttack = 0;
 
       setTimeout(() => {}, 1500);
-    }, 20 * deiatDistToSize);
+    }, 20 * deiatDistToSize * saveTime);
   });
 };

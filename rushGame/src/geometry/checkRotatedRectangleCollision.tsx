@@ -6,7 +6,6 @@ import { isPointInsideArea } from "./isInsideRectangle";
 import { getDistance } from "./makeDirection";
 
 export function collideCircleWithRotatedRectangle(
-  ctx,
   circle,
   rect,
   shouldBounce = true
@@ -20,14 +19,16 @@ export function collideCircleWithRotatedRectangle(
   var rectReferenceX = rectX;
   var rectReferenceY = rectY;
 
+  const rotation = rect.rotation !== undefined ? rect.rotation : 0;
+
   // Rotate circle's center point back
   var unrotatedCircleX =
-    Math.cos(rect.rotation) * (circle.pos.x - rectCenterX) -
-    Math.sin(rect.rotation) * (circle.pos.y - rectCenterY) +
+    Math.cos(rotation) * (circle.pos.x - rectCenterX) -
+    Math.sin(rotation) * (circle.pos.y - rectCenterY) +
     rectCenterX;
   var unrotatedCircleY =
-    Math.sin(rect.rotation) * (circle.pos.x - rectCenterX) +
-    Math.cos(rect.rotation) * (circle.pos.y - rectCenterY) +
+    Math.sin(rotation) * (circle.pos.x - rectCenterX) +
+    Math.cos(rotation) * (circle.pos.y - rectCenterY) +
     rectCenterY;
 
   // Closest point in the rectangle to the center of circle rotated backwards(unrotated)
@@ -68,23 +69,6 @@ export function collideCircleWithRotatedRectangle(
 
   const points = [pointA, pointB, pointC, pointD];
 
-  // ctx.save();
-  // ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
-  // ctx.rotate(-rect.rotation); // Rotation i radianer, utan att multiplicera med Math.PI / 180
-
-  // ctx.beginPath();
-  // ctx.arc(
-  //   closestX - rect.x - rect.width / 2,
-  //   closestY - rect.y - rect.height / 2,
-  //   10,
-  //   0,
-  //   2 * Math.PI
-  // );
-  // ctx.fillStyle = "black";
-  // ctx.fill();
-
-  // ctx.restore();
-
   if (distance < circle.radius) {
     collision = true;
 
@@ -102,33 +86,27 @@ export function collideCircleWithRotatedRectangle(
       points.forEach((point) => {
         if (point.x === closestX && point.y === closestY) {
           circle.vel = multVar(circle.vel, -1);
-          // if (Math.abs(circle.vel.y) < Math.abs(circle.vel.x)) {
-          //   alpha = Math.PI * 1.5;
-          // } else {
-          //   alpha = Math.PI * 0;
-          // }
-          // alpha =
         }
       });
 
       const tmp: Vec2 = {
         x:
-          Math.cos(rect.rotation + alpha) * circle.vel.x -
-          Math.sin(rect.rotation + alpha) * circle.vel.y,
+          Math.cos(rotation + alpha) * circle.vel.x -
+          Math.sin(rotation + alpha) * circle.vel.y,
         y:
-          Math.sin(rect.rotation + alpha) * circle.vel.x +
-          Math.cos(rect.rotation + alpha) * circle.vel.y,
+          Math.sin(rotation + alpha) * circle.vel.x +
+          Math.cos(rotation + alpha) * circle.vel.y,
       };
 
       tmp.y = -tmp.y;
 
       circle.vel.x =
-        Math.cos(-rect.rotation - alpha) * tmp.x -
-        Math.sin(-rect.rotation - alpha) * tmp.y;
+        Math.cos(-rotation - alpha) * tmp.x -
+        Math.sin(-rotation - alpha) * tmp.y;
 
       circle.vel.y =
-        Math.sin(-rect.rotation - alpha) * tmp.x +
-        Math.cos(-rect.rotation - alpha) * tmp.y;
+        Math.sin(-rotation - alpha) * tmp.x +
+        Math.cos(-rotation - alpha) * tmp.y;
 
       circle.pos = add(circle.pos, circle.vel);
     }

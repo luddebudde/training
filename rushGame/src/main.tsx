@@ -125,6 +125,8 @@ const update = () => {
   entities.forEach((entity, index) => {
     entity.pos = add(entity.pos, entity.vel);
 
+    // console.log(entity.vel);
+
     if (entity.airFriction !== false) {
       entity.vel = multVar(
         entity.vel,
@@ -177,7 +179,8 @@ const update = () => {
       };
       drawSquare(ctx, rect, rotationAxis);
 
-      if (collideCircleWithRotatedRectangle(ctx, entity, rect, true)) {
+      if (collideCircleWithRotatedRectangle(entity, rect, true)) {
+        entity.onSquareHit?.(entity, rect);
       }
     });
 
@@ -232,7 +235,7 @@ const update = () => {
     });
 
     squares.forEach((square) => {
-      if (collideCircleWithRotatedRectangle(ctx, bullet, square, false)) {
+      if (collideCircleWithRotatedRectangle(bullet, square, false)) {
         if (square.health !== undefined) {
           // console.log(bullet.shooter);
 

@@ -1,14 +1,18 @@
-import { bullets, entities, liveBosses } from "../../arrays";
+import { bullets, entities, liveBosses, squares } from "../../arrays";
 import { center } from "../../basics";
 import { origo } from "../../math";
 import { enterArena } from "./transitions/enterArena";
 import { firstPhase } from "./phases/firstPhase";
 import { secondPhase } from "./phases/secondPhase";
 import { transitionToSecondPhase } from "./transitions/transitionToSecondPhase";
-import { transistionToThirdPhase } from "./transitions/transistionToThirdPhase";
+import { transistionToThirdPhase } from "./transitions/transitionToThirdPhase";
 import { thirdPhase } from "./phases/thirdPhase";
-import { transistionToFourthPhase } from "./transitions/transistionToFourthPhase";
+import { transistionToFourthPhase } from "./transitions/transitionToFourthPhase";
 import { fourthPhase } from "./phases/fourthPhase";
+import { transitionToFifthPhase } from "./transitions/transitionToFifthPhase";
+import { fifthPhase } from "./phases/fifthPhase";
+import { collideCircleWithRotatedRectangle } from "../../geometry/checkRotatedRectangleCollision";
+import { deathScene } from "./transitions/deathScene";
 
 const radius = 120;
 const health = 15000;
@@ -18,24 +22,24 @@ export type Deiat = any;
 const saveTime: number = 1;
 // const saveTime: number = 0.1;
 
-const phaseList: ((deiat: Deiat) => void)[] = [
-  firstPhase,
-  secondPhase,
-  thirdPhase,
-  fourthPhase,
-];
-const transitionList = [
-  enterArena,
-  transitionToSecondPhase,
-  transistionToThirdPhase,
-  transistionToFourthPhase,
-];
+// const phaseList: ((deiat: Deiat) => void)[] = [
+//   firstPhase,
+//   secondPhase,
+//   thirdPhase,
+//   fourthPhase,
+// ];
+// const transitionList = [
+//   enterArena,
+//   transitionToSecondPhase,
+//   transistionToThirdPhase,
+//   transistionToFourthPhase,
+// ];
 
-const healthCheckpoints = [1.1, 0.8, 0.5, 0.33];
-// const healthCheckpoints = [1.1, 0.00999, 0.0];
+// const healthCheckpoints = [1.1, 0.85, 0.5, 0.20];
+const healthCheckpoints = [1.1, 1.00999, 0.0];
 
-// const transitionList = [transistionToFourthPhase];
-// const phaseList: ((deiat: Deiat) => void)[] = [fourthPhase];
+const transitionList = [deathScene];
+const phaseList: ((deiat: Deiat) => void)[] = [() => {}];
 export const createDeiat = () => {
   const deiat: Deiat = {
     name: "The Deiat",
@@ -76,6 +80,14 @@ export const createDeiat = () => {
     blackhole: undefined,
 
     solarCharge: false,
+
+    onSquareHit: () => {
+      console.log("colliding");
+
+      deiat.airFriction = 0.8;
+
+      deiat.attackDelay = 30;
+    },
     interval: () => {},
 
     update: (): void => {

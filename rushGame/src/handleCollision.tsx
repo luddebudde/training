@@ -1,4 +1,4 @@
-import { add, dot, multVar, sub } from "./math";
+import { add, dot, multVar, origo, sub } from "./math";
 
 export const handleCollision = (firstEntity, secondEntity) => {
   const resolveOverlap = (c1, c2) => {
@@ -25,11 +25,19 @@ export const handleCollision = (firstEntity, secondEntity) => {
     return sub(c1.vel, multVar(diffPos, k1 * k2));
   };
 
-  const v1 = newVel(firstEntity, secondEntity);
-  const v2 = newVel(secondEntity, firstEntity);
+  let v1 = newVel(firstEntity, secondEntity);
+  let v2 = newVel(secondEntity, firstEntity);
 
   //   firstEntity.vel = v1;
   //   secondEntity.vel = v2;
 
+  console.log(firstEntity.vel, secondEntity.vel, v1, v2);
+
+  // if (isNaN(v1.x) || isNaN(v1.y)) {
+  //   v1 = origo;
+  // }
+  // if (isNaN(v2.x) || isNaN(v2.y)) {
+  //   v2 = origo;
+  // }
   return { v1: v1, v2: v2 };
 };
