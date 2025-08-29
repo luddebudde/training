@@ -126,10 +126,10 @@ export const transitionToFifthPhase = (deiat: Deiat, saveTime: number) => {
         deiat.phaseCounter++;
         deiat.collision = false;
         deiat.transitionShield = false;
-        deiat.attackDelay = 200;
+        deiat.attackDelay = 50;
         deiat.speed = 45;
         deiat.pickedAttack = 0;
-        deiat.contactDamage = 10;
+        deiat.contactDamage = 0;
       }, (endValue / step) * 15);
     }, deiatDistToSize);
   });

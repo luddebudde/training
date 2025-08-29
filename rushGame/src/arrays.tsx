@@ -31,6 +31,7 @@ import { createLevelSeekerBoss } from "./bosses/levelSeeker";
 import { createGrenadier } from "./bosses/grenadier";
 import { createCentralDividerBoss } from "./bosses/centralDivider";
 import { createDeiat } from "./bosses/deiat/deiatBoss";
+import { winAnimation } from "./winAnimation";
 
 export let entities = [];
 export let bullets = [];
@@ -61,7 +62,7 @@ const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
 const deiatArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [
-  deiatArray,
+  // deiatArray,
   // squareArray,
   // sideSweeperArray,
   // splitterArray,
@@ -106,9 +107,11 @@ const secondWave = [
   // createRainerBoss,
   // createBonkerBoss,
 ];
-const thirdWave = [twinArray, squareArray];
-// const fourthWave = [];
-export const waveOrder = [firstWave, secondWave, thirdWave];
+const thirdWave = [
+  // twinArray, squareArray
+];
+const fourthWave = [deiatArray];
+export const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
 
 let waveIndex = 0;
 export let bossPool = [...waveOrder[waveIndex]];
@@ -147,10 +150,12 @@ const nextFloorBoss = (ctx) => {
   waveIndex++;
 
   if (waveOrder.length < waveIndex + 1) {
-    console.log("YOU WON");
-
-    player.radius = 154;
-    player.speed = -player.speed;
+    setTimeout(() => {
+      alert("You won... thank you for freeing us. Thank you");
+      setTimeout(() => {
+        winAnimation(player);
+      }, 4500);
+    }, 6000);
   } else {
     bossPool = [...waveOrder[waveIndex]];
 

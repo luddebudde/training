@@ -45,7 +45,7 @@ export type Player = {
     spreadShotCount: number;
   };
 
-  airFriction: true;
+  airFriction: boolean;
   collision: true;
   blackholeEffected: boolean;
 };

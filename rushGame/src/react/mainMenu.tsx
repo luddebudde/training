@@ -7,6 +7,7 @@ import { Menu, MenuProvider, useMenu } from "./reactContext";
 import StatisticsMenu from "./statisticsMenu";
 import { createRoot } from "react-dom/client";
 import { startGame } from "../startGame";
+import WinMenu from "./winMenu";
 
 function App() {
   const [gameName, setGameName] = useState("GAME NAME");
@@ -20,6 +21,8 @@ function App() {
     // Flytta anropet HIT:
     window.changeMenu("main");
   }, [setMenu]);
+
+  setMenu("win");
 
   return (
     <>

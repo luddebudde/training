@@ -35,16 +35,16 @@ const saveTime: number = 1;
 //   transistionToFourthPhase,
 // ];
 
-// const healthCheckpoints = [1.1, 0.85, 0.5, 0.20];
-const healthCheckpoints = [1.1, 1.00999, 0.0];
+// const healthCheckpoints = [1.1, 0.85, 0.5, 0.20, 0.01];
+const healthCheckpoints = [1.1, 0.199, 0.1];
 
-const transitionList = [deathScene];
-const phaseList: ((deiat: Deiat) => void)[] = [() => {}];
+const transitionList = [transitionToFifthPhase, deathScene];
+const phaseList: ((deiat: Deiat) => void)[] = [fifthPhase, fifthPhase];
 export const createDeiat = () => {
   const deiat: Deiat = {
     name: "The Deiat",
     maxHealth: health,
-    health: health,
+    health: health * 0.2,
     contactDamage: 20,
     // contactDamage: 0,
     pos: {
@@ -72,7 +72,7 @@ export const createDeiat = () => {
     // Pahses
     attackDelay: 0,
 
-    phaseCounter: -1,
+    phaseCounter: 0,
     transitionCounter: 0,
     transitionShield: false,
 

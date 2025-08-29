@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useState } from "react";
 
-export type Menu = "main" | "practice" | "statistics" | "gameOver" | "none";
+export type Menu =
+  | "main"
+  | "practice"
+  | "statistics"
+  | "gameOver"
+  | "win"
+  | "none";
 
 type MenuContextType = {
   currentMenu: string;

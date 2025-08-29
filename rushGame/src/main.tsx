@@ -35,6 +35,8 @@ import { generateRewards } from "./generateRewards";
 import ReactDOM from "react-dom";
 import { MenuProvider } from "./react/reactContext";
 import { startGame } from "./startGame";
+import WinMenu from "./react/winMenu";
+import { winAnimation } from "./winAnimation";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
@@ -60,6 +62,7 @@ setTimeout(() => {
     // loseScreen();
     // generateRewards(ctx);
     // startGame(ctx);
+    // winAnimation(player);
   }
 }, 10);
 
