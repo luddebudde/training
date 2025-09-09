@@ -1,5 +1,5 @@
 import { keyDownTracker } from "./keyDownTracker";
-import { add, mult, multVar } from "./math";
+import { add, div, mult, multVar } from "./math";
 import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
 import { handleCollision } from "./handleCollision";
 import {
@@ -7,7 +7,7 @@ import {
   createBullet,
   createWaveShoot,
 } from "./createBullet";
-import { changeIsPaused, isPaused, world } from "./basics";
+import { changeIsPaused, isPaused, visualWorld, world } from "./basics";
 import { player, standardPlayer } from "./createPlayer";
 import {
   blackholes,
@@ -19,7 +19,7 @@ import {
   nextBoss,
   squares,
 } from "./arrays";
-import { drawHealthBar } from "./drawHealthbar";
+import { drawHealthBar } from "./draw/drawHealthbar";
 import { loseScreen } from "./loseScreen";
 import { dealDamage } from "./dealDamage";
 import { drawCircle } from "./draw/drawCircle";
@@ -321,7 +321,7 @@ const update = () => {
       createBullet(
         bullets,
         player,
-        mousePos,
+        mult(mousePos, visualWorld),
         player.bulletDamage,
         player.bulletSpeed,
         {

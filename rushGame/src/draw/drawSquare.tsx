@@ -3,6 +3,8 @@
 //   ctx.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
 //   ctx.rotate(-rect.rotation); // Rotation i radianer, utan att multiplicera med Math.PI / 180
 
+import { visualWorld } from "../basics";
+
 //   ctx.beginPath();
 //   ctx.rect(-rect.width / 2, -rect.height / 2, rect.width, rect.height);
 //   ctx.fillStyle = rect.color;
@@ -22,7 +24,7 @@ export const drawSquare = (ctx, rect, rotationCenter) => {
   // ctx.translate(offsetX, offsetY);
 
   ctx.beginPath();
-  ctx.rect(-rect.width / 2, -rect.height / 2, rect.width, rect.height);
+  ctx.rect(-rect.width / 2* visualWorld.x, -rect.height / 2* visualWorld.y, rect.width* visualWorld.x, rect.height* visualWorld.y);
   ctx.fillStyle = rect.color;
   ctx.fill();
 

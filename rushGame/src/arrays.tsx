@@ -3,7 +3,7 @@ import { createChargerBoss } from "./bosses/charger";
 import { createSprayerBoss } from "./bosses/sprayer";
 import { createTwinBoss } from "./bosses/twins";
 import { player } from "./createPlayer";
-import { drawHealthBar } from "./drawHealthbar";
+import { drawHealthBar } from "./draw/drawHealthbar";
 import { createChaser } from "./enemies/chaser";
 import { createChargerEnemy } from "./enemies/chargerEnemy";
 import { createSniper } from "./enemies/sniper";
@@ -62,6 +62,7 @@ const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
 const deiatArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [
+//  wandererArray
   // deiatArray,
   // squareArray,
   // sideSweeperArray,
@@ -106,9 +107,12 @@ const secondWave = [
   // createBonkerBoss,
   // createRainerBoss,
   // createBonkerBoss,
+  //wandererArray
+  lineBreakerArray
 ];
 const thirdWave = [
-  // twinArray, squareArray
+  // twinArray, squareArray,
+  
 ];
 const fourthWave = [deiatArray];
 export const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];

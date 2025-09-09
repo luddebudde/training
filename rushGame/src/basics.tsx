@@ -3,9 +3,18 @@ import { Vec2 } from "./math";
 const canvas = document.getElementById("myCanvas");
 
 export const world = {
-  width: canvas.width,
-  height: canvas.height,
+//  width: canvas.width,
+  //height: canvas.height,
+  width: 2200,
+  height: 1500
 };
+
+export const visualWorld = {
+  x: world.width / canvas.width,
+  y: world.height / canvas.height,
+}
+
+export const visualWorldScale = Math.sqrt(visualWorld.x * visualWorld.y);
 
 export const center = {
   x: world.width / 2,

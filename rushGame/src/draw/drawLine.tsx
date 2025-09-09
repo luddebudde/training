@@ -1,3 +1,4 @@
+import { visualWorld } from "../basics";
 import { Vec2 } from "../math";
 
 export const drawLine = (
@@ -7,8 +8,8 @@ export const drawLine = (
   color = "black"
 ) => {
   ctx.beginPath();
-  ctx.moveTo(startPos.x, startPos.y);
-  ctx.lineTo(endPos.x, endPos.y);
+  ctx.moveTo(startPos.x/ visualWorld.x, startPos.y/ visualWorld.y);
+  ctx.lineTo(endPos.x/ visualWorld.x, endPos.y/ visualWorld.y);
   ctx.strokeStyle = color;
   ctx.stroke();
 };

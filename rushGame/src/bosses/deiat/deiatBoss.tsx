@@ -15,7 +15,8 @@ import { collideCircleWithRotatedRectangle } from "../../geometry/checkRotatedRe
 import { deathScene } from "./transitions/deathScene";
 
 const radius = 120;
-const health = 15000;
+//const health = 15000;
+const health = 3000;
 
 export type Deiat = any;
 
@@ -44,7 +45,7 @@ export const createDeiat = () => {
   const deiat: Deiat = {
     name: "The Deiat",
     maxHealth: health,
-    health: health * 0.2,
+    health: health,
     contactDamage: 20,
     // contactDamage: 0,
     pos: {
