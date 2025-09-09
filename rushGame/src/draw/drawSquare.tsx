@@ -24,7 +24,7 @@ export const drawSquare = (ctx, rect, rotationCenter) => {
   // ctx.translate(offsetX, offsetY);
 
   ctx.beginPath();
-  ctx.rect(-rect.width / 2* visualWorld.x, -rect.height / 2* visualWorld.y, rect.width* visualWorld.x, rect.height* visualWorld.y);
+  ctx.rect(-rect.width / 2/ visualWorld.x, -rect.height / 2/ visualWorld.y, rect.width/ visualWorld.x, rect.height/ visualWorld.y);
   ctx.fillStyle = rect.color;
   ctx.fill();
 
