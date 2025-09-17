@@ -32,6 +32,8 @@ export type Player = {
   damageAbsorbed: number;
   bulletsShot: number;
 
+  lifeSteal: number;
+
   unlockedAbilities: {
     dash: boolean;
     bounceable: boolean;
@@ -80,12 +82,14 @@ export const createPlayer = (): any => {
     radiusMult: 1,
     color: "blue",
     mass: 0.1,
+
     speed: playerSpeed,
     // standardSpeed: playerSpeed,
     team: "player",
     attackDelay: playerAttackDelay,
     // standardAttackDelay: playerAttackDelay,
     bulletDamage: 20,
+
     // bulletDamage: 120,
     bulletSpeed: 50,
     bulletSize: 20,
@@ -93,6 +97,8 @@ export const createPlayer = (): any => {
     damageConflicted: 0,
     damageAbsorbed: 0,
     bulletsShot: 0,
+
+    lifeSteal: 0,
 
     unlockedAbilities: {
       dash: true,

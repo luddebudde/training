@@ -37,16 +37,17 @@ import { MenuProvider } from "./react/reactContext";
 import { startGame } from "./startGame";
 import WinMenu from "./react/winMenu";
 import { winAnimation } from "./winAnimation";
+import PracticeMenu from "./react/practiceMenu";
 
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-// const root = createRoot(document.getElementById("root")!);
-// root.render(
-//   <MenuProvider>
-//     <App />
-//   </MenuProvider>
-// );
+const root = createRoot(document.getElementById("root")!);
+root.render(
+  <MenuProvider>
+    <App />
+  </MenuProvider>
+);
 
 export const isKeyDown = keyDownTracker();
 
@@ -58,10 +59,11 @@ setTimeout(() => {
   for (let i = 0; i < 1; i++) {
     // createChaser();
     // createSniper();
-    nextBoss(ctx);
+    // nextBoss(ctx);
     // loseScreen();
     // generateRewards(ctx);
     // startGame(ctx);
+    // PracticeMenu;
     // winAnimation(player);
   }
 }, 10);

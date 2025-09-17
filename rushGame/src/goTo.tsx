@@ -37,7 +37,7 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
 
   console.log(entity.vel, "2");
 
-  const safetyMargin = 25;
+  const safetyMargin = Math.max(Math.abs(entity.vel.x), Math.abs(entity.vel.y));
 
   const interval = setInterval(() => {
     newEntityPos = entity.pos !== undefined ? entity.pos : entity;

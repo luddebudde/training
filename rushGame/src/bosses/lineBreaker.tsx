@@ -6,6 +6,7 @@ import { drawLine as drawLine } from "../draw/drawLine";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
 
 import { add, Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 
 const health = 1500;

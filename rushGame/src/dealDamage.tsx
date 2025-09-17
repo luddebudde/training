@@ -12,6 +12,11 @@ export const dealDamage = (attacker: any, target: any, damage: number) => {
       attacker.damageConflicted += damage;
       target.damageAbsorbed += damage;
     }
+
+    if (attacker.lifeSteal !== undefined) {
+      attacker.health += damage * attacker.lifeSteal;
+    }
   }
+
   // console.log(attacker, target);
 };

@@ -4,7 +4,7 @@ import { world } from "../basics";
 import { Menu, useMenu } from "./reactContext";
 import { allFoughtBosses, foughtBosses } from "../loseScreen";
 import { player } from "../createPlayer";
-import { usedRewards } from "../generateRewards";
+import { generateRewards, usedRewards } from "../generateRewards";
 import { startGame } from "../startGame";
 
 export let practiceBoss = false;
@@ -33,6 +33,7 @@ const PracticeMenu = ({ onBack }) => {
     return allFoughtBosses.some((foughtBoss) =>
       realNames.includes(foughtBoss.name)
     );
+    // return allFoughtBosses;
   };
 
   return (
@@ -74,8 +75,40 @@ const PracticeMenu = ({ onBack }) => {
                       const canvas = document.getElementById("myCanvas");
                       const ctx = canvas.getContext("2d");
 
-                      // setTimeout(() => {
-                      startGame(ctx, bossArray[2]);
+                      const parentIndex = waveOrder.findIndex((sub) =>
+                        sub.includes(bossArray)
+                      );
+                      // arrOfArrs = [[...], [...], ...]
+                      // function findParentOneLevel(arrOfArrs, predicate) {
+                      //   const parentIndex = arrOfArrs.findIndex((sub) =>
+                      //     sub.some(predicate)
+                      //   );
+                      //   if (parentIndex === -1) return null;
+                      //   const innerIndex =
+                      //     arrOfArrs[parentIndex].findIndex(predicate);
+                      //   return {
+                      //     parentIndex,
+                      //     innerIndex,
+                      //     parentArray: arrOfArrs[parentIndex],
+                      //     element: arrOfArrs[parentIndex][innerIndex],
+                      //   };
+                      // }
+
+                      // // exempel:
+                      // const arrOfArrs = [[1, 2], [3, 4, 5], [6]];
+                      // console.log(
+                      //   findParentOneLevel(arrOfArrs, (x) => x === 4)
+                      // );
+                      // => { parentIndex: 1, innerIndex: 1, parentArray: [3,4,5], element: 4 }
+
+                      for (let i = 0; i < parentIndex; i++) {
+                        setTimeout(() => {
+                          generateRewards(ctx);
+                        }, 10 * i);
+                        console.log(i);
+                      }
+
+                      // startGame(ctx, bossArray[2]);
                       // }, 1500);
 
                       // bossArray[2](ctx);

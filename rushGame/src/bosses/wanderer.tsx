@@ -4,6 +4,7 @@ import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { getDistance } from "../geometry/makeDirection";
 import { multVar, origo, Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 
 const health = 150;
@@ -268,6 +269,12 @@ export const createWanderer = () => {
       wanderer.phaseCounter--;
     },
   };
+
+  wanderer.pos = randomAcceptedPos(
+    wanderer.pos,
+    player.pos,
+    wanderer.radius * 2
+  );
 
   entities.push(wanderer);
   liveBosses.push(wanderer);

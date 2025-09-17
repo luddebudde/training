@@ -7,6 +7,7 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { add, multVar, origo, Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 1500;
 const radius = 120;

@@ -144,6 +144,8 @@ export const createPacificBoss = () => {
     // },
   };
 
+  pacific.pos = randomAcceptedPos(pacific.pos, player.pos, pacific.radius * 2);
+
   entities.push(pacific);
   liveBosses.push(pacific);
 

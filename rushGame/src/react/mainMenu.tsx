@@ -7,10 +7,10 @@ import { Menu, MenuProvider, useMenu } from "./reactContext";
 import StatisticsMenu from "./statisticsMenu";
 import { createRoot } from "react-dom/client";
 import { startGame } from "../startGame";
-import WinMenu from "./winMenu";
 
 function App() {
-  const [gameName, setGameName] = useState("GAME NAME");
+  const storedName = localStorage.getItem("gameName");
+  const [gameName, setGameName] = useState(storedName);
   const { currentMenu, setMenu } = useMenu();
 
   useEffect(() => {
@@ -21,8 +21,6 @@ function App() {
     // Flytta anropet HIT:
     window.changeMenu("main");
   }, [setMenu]);
-
-  setMenu("win");
 
   return (
     <>
@@ -52,13 +50,17 @@ function App() {
             <input
               style={{
                 fontSize: 130,
-                backgroundColor: "white",
+                backgroundColor: "black",
                 marginBottom: 60,
-                width: "50%",
+                width: "75%",
+                color: "darkred",
                 textAlign: "center",
               }}
               value={gameName}
-              onChange={(e) => setGameName(e.target.value)}
+              onChange={(e) => {
+                setGameName(e.target.value);
+                localStorage.setItem("gameName", e.target.value);
+              }}
             />
             {createButton("Play", "red", () => {
               setMenu("none");
@@ -72,6 +74,7 @@ function App() {
 
             {createButton("Practice", "green", () => {
               setMenu("practice");
+
               console.log(currentMenu);
             })}
 
@@ -80,7 +83,10 @@ function App() {
               console.log(currentMenu);
             })}
             {createButton("4 Dummies", "blue", () => {
-              setMenu("statistics");
+              setMenu("IDIOT");
+              alert(
+                "IDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDO(**r**n)TIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOTIDOT"
+              );
             })}
           </div>
         )}

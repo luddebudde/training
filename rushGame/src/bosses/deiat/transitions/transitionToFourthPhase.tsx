@@ -14,6 +14,11 @@ export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
       liveBosses.splice(index);
     }
   });
+  entities.forEach((entity, index) => {
+    if (entity !== deiat && entity !== player) {
+      entities.splice(index);
+    }
+  });
 
   const deiatBaseRadius = deiat.radius;
   const deiatEndRadius = 240;

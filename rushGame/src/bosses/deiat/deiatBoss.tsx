@@ -16,12 +16,12 @@ import { deathScene } from "./transitions/deathScene";
 
 const radius = 120;
 //const health = 15000;
-const health = 3000;
+const health = 300;
 
 export type Deiat = any;
 
-const saveTime: number = 1;
-// const saveTime: number = 0.1;
+// const saveTime: number = 1;
+const saveTime: number = 0.1;
 
 // const phaseList: ((deiat: Deiat) => void)[] = [
 //   firstPhase,
@@ -36,11 +36,24 @@ const saveTime: number = 1;
 //   transistionToFourthPhase,
 // ];
 
-// const healthCheckpoints = [1.1, 0.85, 0.5, 0.20, 0.01];
-const healthCheckpoints = [1.1, 0.199, 0.1];
+const healthCheckpoints = [1.1, 0.85, 0.5, 0.2, 0.01];
+// const healthCheckpoints = [1.1, 0.199, 0.1];
 
-const transitionList = [transitionToFifthPhase, deathScene];
-const phaseList: ((deiat: Deiat) => void)[] = [fifthPhase, fifthPhase];
+const transitionList = [
+  enterArena,
+  transitionToSecondPhase,
+  transistionToThirdPhase,
+  transistionToFourthPhase,
+  transitionToFifthPhase,
+  deathScene,
+];
+const phaseList: ((deiat: Deiat) => void)[] = [
+  firstPhase,
+  secondPhase,
+  thirdPhase,
+  fourthPhase,
+  fifthPhase,
+];
 export const createDeiat = () => {
   const deiat: Deiat = {
     name: "The Deiat",
@@ -73,7 +86,7 @@ export const createDeiat = () => {
     // Pahses
     attackDelay: 0,
 
-    phaseCounter: 0,
+    phaseCounter: -1,
     transitionCounter: 0,
     transitionShield: false,
 

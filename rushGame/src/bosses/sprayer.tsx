@@ -5,6 +5,7 @@ import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { add, multVar, sub, Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const cornerDelay = 50;
 const health = 2500;
@@ -351,6 +352,8 @@ export const createSprayerBoss = () => {
       }
     },
   };
+
+  sprayer.pos = randomAcceptedPos(sprayer.pos, player.pos, sprayer.radius * 2);
 
   entities.push(sprayer);
   liveBosses.push(sprayer);

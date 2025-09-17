@@ -8,8 +8,9 @@ import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { add, multVar, origo, randomNumber, Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
-const health = 2500;
+const health = 4000;
 
 type ShrapnelStats = {
   count: number;
@@ -305,6 +306,12 @@ export const createGrenadier = () => {
       });
     },
   };
+
+  grenadier.pos = randomAcceptedPos(
+    grenadier.pos,
+    player.pos,
+    grenadier.radius * 2
+  );
 
   entities.push(grenadier);
   liveBosses.push(grenadier);

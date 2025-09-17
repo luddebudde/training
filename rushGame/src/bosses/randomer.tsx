@@ -4,6 +4,7 @@ import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 import { getRandomColor } from "../randomColor";
 
@@ -178,6 +179,12 @@ export const createRandomerBoss = () => {
       }
     },
   };
+
+  randomer.pos = randomAcceptedPos(
+    randomer.pos,
+    player.pos,
+    randomer.radius * 2
+  );
 
   entities.push(randomer);
   liveBosses.push(randomer);

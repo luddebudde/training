@@ -4,6 +4,7 @@ import { player } from "../createPlayer";
 
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 1500;
 
@@ -91,6 +92,8 @@ export const createChargerBoss = () => {
       charger.phaseCounter = 100;
     },
   };
+
+  charger.pos = randomAcceptedPos(charger.pos, player.pos, charger.radius * 2);
 
   entities.push(charger);
   liveBosses.push(charger);

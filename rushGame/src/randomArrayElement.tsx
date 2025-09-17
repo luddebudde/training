@@ -1,8 +1,8 @@
-export const randomArrayElement = (array: any[]): Element => {
+export const randomArrayElement = (array): Element => {
   return array[Math.floor(Math.random() * array.length)];
 };
 
-export const randomArrayElementSplice = (array: any[]) => {
+export const randomArrayElementSplice = (array) => {
   const index = Math.floor(Math.random() * array.length);
   const chosenElement = array[index];
 

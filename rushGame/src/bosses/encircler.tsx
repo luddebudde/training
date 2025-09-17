@@ -5,6 +5,7 @@ import { player } from "../createPlayer";
 
 import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 1500;
 
@@ -124,6 +125,12 @@ export const createEncirclerBoss = () => {
       distaneAwayStepDirection = -distaneAwayStepDirection;
     },
   };
+
+  encircler.pos = randomAcceptedPos(
+    encircler.pos,
+    player.pos,
+    encircler.radius * 2
+  );
 
   entities.push(encircler);
   liveBosses.push(encircler);

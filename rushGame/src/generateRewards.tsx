@@ -1,6 +1,7 @@
 import { nextBoss, spawnDelay } from "./arrays";
-import { Player, player } from "./createPlayer";
+import { Player, player, standardPlayer } from "./createPlayer";
 import { randomArrayElementSplice } from "./randomArrayElement";
+import { practiceBoss } from "./react/practiceMenu";
 
 // iDEA:
 // An upgrade which allows you to skip 1 random boss each stage
@@ -21,19 +22,7 @@ const decreasedDmgBounce: Upgrades = {
     player.unlockedAbilities.bounceDamageLoss += 0.3;
   },
   unlockRequirement: () => {
-    return [bouncyBullets, dash];
-  },
-};
-
-const dash: Upgrades = {
-  title: "Dash",
-  description: "Adds dash ability",
-  id: "dash",
-  change: (player) => {
-    player.unlockedAbilities.dash = true;
-  },
-  unlockRequirement: () => {
-    return [];
+    return [bouncyBullets];
   },
 };
 
@@ -69,7 +58,7 @@ const adrenaline: Upgrades = {
     player.unlockedAbilities.adrenaline += 0.5;
   },
   unlockRequirement: () => {
-    return [];
+    return [swifter];
   },
 };
 
@@ -92,6 +81,7 @@ const tankie: Upgrades = {
   change: (player) => {
     player.maxHealth *= 2;
     player.bulletDamage *= 0.65;
+    player.health = player.maxHealth;
   },
   unlockRequirement: () => {
     return [];
@@ -110,8 +100,32 @@ const shotGunner: Upgrades = {
   },
 };
 
+const swifter: Upgrades = {
+  title: "Be Like Swift!",
+  description: "Improved movement and slight attackspeed",
+  id: "swift",
+  change: (player) => {
+    standardPlayer.speed *= 1.25;
+    standardPlayer.attackDelay * 0.98;
+  },
+  unlockRequirement: () => {
+    return [];
+  },
+};
+
+const lifeSteal: Upgrades = {
+  title: "Vampiric Bloodlust!",
+  description: "Eat the blood and drink the flesh",
+  id: "lifeSteal",
+  change: (player) => {
+    player.lifeSteal = 0.05;
+  },
+  unlockRequirement: () => {
+    return [];
+  },
+};
+
 const totalRewardPool: Upgrades[] = [
-  dash,
   bouncyBullets,
   extraLife,
   adrenaline,
@@ -119,6 +133,8 @@ const totalRewardPool: Upgrades[] = [
   decreasedDmgBounce,
   tankie,
   shotGunner,
+  swifter,
+  lifeSteal,
 ];
 
 export const usedRewards: Upgrades[] = [];
@@ -165,9 +181,11 @@ export const generateRewards = (ctx) => {
         child.style.visibility = "hidden";
       });
 
-      setTimeout(() => {
-        nextBoss(ctx);
-      }, spawnDelay * 2);
+      if (!practiceBoss) {
+        setTimeout(() => {
+          nextBoss(ctx);
+        }, spawnDelay * 2);
+      }
     };
   }
 };

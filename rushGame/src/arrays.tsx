@@ -61,61 +61,25 @@ const grenadierArray = ["Grenadier", "", createGrenadier];
 const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
 const deiatArray = ["The Deiat", "", createDeiat];
 
-const firstWave = [
-//  wandererArray
-  // deiatArray,
-  // squareArray,
-  // sideSweeperArray,
-  // splitterArray,
-  // encirclerArray,
-  // createCentralBaseArray,
-  // levelSeekerArray,
-  // createNewRainerArray,
-  // wandererArray,
-  // levelSeekerArray,
-  // grenadierArray,
-  // centralDividerArray,
-  // squareArray,
-  // sprayerArray,
-  // wandererArray,
-  // squareArray,
-  // sprayerArray,
-  // chargerArray,
-  // pacificArray,
-  // twinArray,
-  // lineBreakerArray,
-  // randomerArray,
-  // pacificArray,
-  // rainerArray,
-  // squareArray,
-  // createChargerBoss,
-  // createLineBreakerBoss,
-  // createRandomerBoss,
-  // createPacificBoss,
-  // createRainerBoss,
-  // createRainerBoss,
-  // createBonkerBoss,
-  // createTwinBoss,
-  // createBonkerBoss,
-  // createCreateSquareBosses,
-];
+const firstWave = [chargerArray, sprayerArray, wandererArray, rainerArray];
 const secondWave = [
-  // sprayerArray,
-  // chargerArray,
-  // pacificArray,
-  // createTwinBoss,
-  // createBonkerBoss,
-  // createRainerBoss,
-  // createBonkerBoss,
-  //wandererArray
-  lineBreakerArray
+  lineBreakerArray,
+  levelSeekerArray,
+  createCentralBaseArray,
+  splitterArray,
 ];
-const thirdWave = [
-  // twinArray, squareArray,
-  
+const thirdWave = [twinArray, encirclerArray, pacificArray];
+const fourthWave = [centralDividerArray, sideSweeperArray];
+const fifthWave = [squareArray, grenadierArray, randomerArray];
+const sixthWave = [deiatArray];
+export const waveOrder = [
+  firstWave,
+  secondWave,
+  thirdWave,
+  fourthWave,
+  fifthWave,
+  sixthWave,
 ];
-const fourthWave = [deiatArray];
-export const waveOrder = [firstWave, secondWave, thirdWave, fourthWave];
 
 let waveIndex = 0;
 export let bossPool = [...waveOrder[waveIndex]];

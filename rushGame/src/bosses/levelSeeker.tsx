@@ -3,6 +3,7 @@ import { corners } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { Vec2 } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 2400;
 
