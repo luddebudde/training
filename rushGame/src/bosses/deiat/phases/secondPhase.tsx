@@ -38,9 +38,9 @@ export const secondPhase = (deiat: Deiat) => {
     }
     deiat.pickedAttack = 0;
 
-    const rounds = 5;
+    const rounds = 4;
     const bulletCount = 50; // hur många "bursts"
-    const delay = 100; // ms mellan varje burst
+    const delay = 75; // ms mellan varje burst
     const bulletsPerBurst = 8; // 4 skott per gång
 
     // let rotationSpeed = Math.PI / 36; // hur mycket hela mönstret vrids per burst (~5 grader)
@@ -222,11 +222,11 @@ export const secondPhase = (deiat: Deiat) => {
 
     deiat.pickedAttack = 2;
 
-    const delay = 75;
-    const totalTime = 20000;
+    const delay = 35;
+    const totalTime = 12500;
 
     const bulletCount = totalTime / delay;
-    const bulletSize = 15;
+    const bulletSize = 13;
     const spacing = world.height / bulletCount;
 
     const speed = 30;

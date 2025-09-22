@@ -4,23 +4,17 @@ import { createSprayerBoss } from "./bosses/sprayer";
 import { createTwinBoss } from "./bosses/twins";
 import { player } from "./createPlayer";
 import { drawHealthBar } from "./draw/drawHealthbar";
-import { createChaser } from "./enemies/chaser";
-import { createChargerEnemy } from "./enemies/chargerEnemy";
-import { createSniper } from "./enemies/sniper";
 import { generateRewards } from "./generateRewards";
 import { randomArrayElementSplice } from "./randomArrayElement";
-import { createBonkerBoss } from "./bosses/bonker";
 import { createRainerBoss } from "./bosses/rainer";
 import { createLineBreakerBoss } from "./bosses/lineBreaker";
 import { createSquareBosses } from "./bosses/squareBoss";
 import { createRandomerBoss } from "./bosses/randomer";
 import { createPacificBoss } from "./bosses/pacific";
-import practiceMenu, {
+import {
   // changeMenuState,
   practiceBoss,
 } from "./react/practiceMenu";
-import App from "./react/mainMenu";
-import { useMenu } from "./react/reactContext";
 import { foughtBosses, statistics } from "./loseScreen";
 import { createSplitterBoss } from "./bosses/splitter";
 import { createEncirclerBoss } from "./bosses/encircler";
@@ -85,8 +79,8 @@ let waveIndex = 0;
 export let bossPool = [...waveOrder[waveIndex]];
 export let liveBosses = [];
 
-// export const spawnDelay = 1500;
-export const spawnDelay = 15;
+export const spawnDelay = 1500;
+// export const spawnDelay = 15;
 
 export const nextBoss = (ctx) => {
   const abilities = player.unlockedAbilities;

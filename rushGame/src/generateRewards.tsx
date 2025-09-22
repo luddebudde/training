@@ -1,7 +1,9 @@
 import { nextBoss, spawnDelay } from "./arrays";
+import { changeIsPaused } from "./basics";
 import { Player, player, standardPlayer } from "./createPlayer";
 import { randomArrayElementSplice } from "./randomArrayElement";
 import { practiceBoss } from "./react/practiceMenu";
+import { startGame } from "./startGame";
 
 // iDEA:
 // An upgrade which allows you to skip 1 random boss each stage
@@ -14,17 +16,35 @@ type Upgrades = {
   unlockRequirement: () => Upgrades[];
 };
 
-const decreasedDmgBounce: Upgrades = {
-  title: "More damage",
-  description: "Bouncy bullets lose less damage!",
-  id: "bounceDamageLoss",
+const strongerDash: Upgrades = {
+  title: "Dash like the FLASH!",
+  description: "Increased base and max dash strength!",
+  id: "strongerDash",
   change: (player) => {
-    player.unlockedAbilities.bounceDamageLoss += 0.3;
+    player.unlockedAbilities.dashStrength += 20;
+    player.unlockedAbilities.dashMinStrengthMult += 0.5;
   },
   unlockRequirement: () => {
-    return [bouncyBullets];
+    return [];
   },
 };
+
+const quickerDashs: Upgrades = {
+  title: "Zip zip (ouch!)",
+  description: "Lower cooldown and stronger max for dash!",
+  id: "quickDash",
+  change: (player) => {
+    player.unlockedAbilities.dashCooldown -= 75;
+    player.unlockedAbilities.dashMinStrengthMult += 0.3;
+  },
+  unlockRequirement: () => {
+    return [strongerDash];
+  },
+};
+
+//  dashStrength: number;
+//     dashCooldown: number;
+//     dashMaxStrength: number;
 
 const bouncyBullets: Upgrades = {
   title: "Bouncy",
@@ -35,6 +55,18 @@ const bouncyBullets: Upgrades = {
   },
   unlockRequirement: () => {
     return [];
+  },
+};
+
+const decreasedDmgBounce: Upgrades = {
+  title: "More damage",
+  description: "Bouncy bullets lose less damage!",
+  id: "bounceDamageLoss",
+  change: (player) => {
+    player.unlockedAbilities.bounceDamageLoss += 0.3;
+  },
+  unlockRequirement: () => {
+    return [bouncyBullets];
   },
 };
 
@@ -67,7 +99,7 @@ const autoDamage: Upgrades = {
   description: "Deal damage without shooting!",
   id: "autoDamage",
   change: (player) => {
-    player.unlockedAbilities.autoDamage += 0.4;
+    player.unlockedAbilities.autoDamage += 0.5;
   },
   unlockRequirement: () => {
     return [];
@@ -121,11 +153,13 @@ const lifeSteal: Upgrades = {
     player.lifeSteal = 0.05;
   },
   unlockRequirement: () => {
-    return [];
+    return [tankie];
   },
 };
 
 const totalRewardPool: Upgrades[] = [
+  strongerDash,
+  quickerDashs,
   bouncyBullets,
   extraLife,
   adrenaline,
@@ -139,7 +173,7 @@ const totalRewardPool: Upgrades[] = [
 
 export const usedRewards: Upgrades[] = [];
 
-export const generateRewards = (ctx) => {
+export const generateRewards = (ctx, timesMore = 1, chosenBoss = undefined) => {
   const selectionDiv = document.getElementById("upgradeSelection");
   selectionDiv.style.visibility = "visible";
 
@@ -185,6 +219,17 @@ export const generateRewards = (ctx) => {
         setTimeout(() => {
           nextBoss(ctx);
         }, spawnDelay * 2);
+      } else {
+        if (timesMore > 0) {
+          generateRewards(ctx, timesMore - 1, chosenBoss);
+        } else {
+          console.log("bosss");
+
+          console.log(chosenBoss);
+
+          // startGame(ctx, chosenBoss);
+          changeIsPaused(false);
+        }
       }
     };
   }

@@ -2,7 +2,6 @@ import { bullets, lines } from "../../../arrays";
 import { corners, center, world } from "../../../basics";
 import { createBullet } from "../../../createBullet";
 import { player } from "../../../createPlayer";
-import { dealDamage } from "../../../dealDamage";
 import { goTo } from "../../../goTo";
 import { add, numberIsWithinMargin, sub } from "../../../math";
 import { Deiat } from "../deiatBoss";
@@ -79,7 +78,7 @@ const showSolarCharge = (deiat: Deiat) => {
   deiat.color = `rgb(${r}, ${g}, ${b})`;
 };
 
-const handleLine = (deiat: Deiat) => {
+const handleLine = () => {
   const line = {
     startPos: {
       x: world.width * 0.8,
@@ -128,7 +127,7 @@ export const fourthPhase = (deiat: Deiat) => {
     shootSolarFlare(deiat);
 
     showSolarCharge(deiat);
-    handleLine(deiat);
+    handleLine();
   }, intervalTime);
 
   if (deiat.solarCharge === true) {

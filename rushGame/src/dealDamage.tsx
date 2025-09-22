@@ -1,5 +1,21 @@
-export const dealDamage = (attacker: any, target: any, damage: number) => {
-  // const attackerTeam = attacker === undefined ? "" : attacker.team;
+export const dealDamage = (
+  attacker: any,
+  target: any,
+  damage: number,
+  type = "normal"
+) => {
+  if (type === "contact" && target.iFrame !== undefined) {
+    if (target.iFrame > 0) {
+      console.log("block", target.iFrame);
+
+      return;
+    } else {
+      if (target.iFrame !== undefined) {
+        target.iFrame = 15;
+      }
+    }
+  }
+
   target.health -= damage;
 
   if (target.health <= 0 && target.onDeath !== undefined) {

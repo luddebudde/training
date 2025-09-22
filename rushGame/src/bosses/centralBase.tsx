@@ -3,12 +3,9 @@ import { world } from "../basics";
 import { createBlackhole } from "../createBlackhole";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { drawCircle } from "../draw/drawCircle";
-import { drawLine } from "../draw/drawLine";
 import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 
-import { getDistance, makeDirection } from "../geometry/makeDirection";
-import { add, addVar, multVar, origo } from "../math";
+import { add, origo } from "../math";
 
 const health = 3200;
 

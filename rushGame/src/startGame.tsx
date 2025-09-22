@@ -29,6 +29,7 @@ export const startGame = (ctx, callBoss = nextBoss) => {
   changeWaveIndex(0);
   // setTimeout(() => {
   // nextBoss(ctx);
+
   callBoss(ctx);
   //     // console.log(player, "player");
   // }, 5000);

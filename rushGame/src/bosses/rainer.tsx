@@ -3,7 +3,6 @@ import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { origo, Vec2 } from "../math";
-import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 
 const health: number = 3200;

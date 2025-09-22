@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { bullets, entities, liveBosses, squares, waveOrder } from "../arrays";
-import { world } from "../basics";
+import { changeIsPaused, isPaused, world } from "../basics";
 import { Menu, useMenu } from "./reactContext";
 import { allFoughtBosses, foughtBosses } from "../loseScreen";
 import { player } from "../createPlayer";
@@ -101,14 +101,21 @@ const PracticeMenu = ({ onBack }) => {
                       // );
                       // => { parentIndex: 1, innerIndex: 1, parentArray: [3,4,5], element: 4 }
 
-                      for (let i = 0; i < parentIndex; i++) {
-                        setTimeout(() => {
-                          generateRewards(ctx);
-                        }, 10 * i);
-                        console.log(i);
-                      }
+                      // for (let i = 0; i < parentIndex; i++) {
+                      // setTimeout(() => {
+                      console.log(bossArray[2]);
+                      startGame(ctx, bossArray[2]);
+                      changeIsPaused(true);
 
-                      // startGame(ctx, bossArray[2]);
+                      if (parentIndex > 0) {
+                        generateRewards(ctx, parentIndex - 1, bossArray[2]);
+                      } else {
+                        changeIsPaused(false);
+                      }
+                      // }, 10 * i);
+                      // console.log(i);
+                      // }
+
                       // }, 1500);
 
                       // bossArray[2](ctx);

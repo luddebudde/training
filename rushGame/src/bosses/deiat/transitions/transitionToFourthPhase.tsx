@@ -1,11 +1,7 @@
-import { entities, liveBosses } from "../../../arrays";
+import { blackholes, entities, liveBosses } from "../../../arrays";
 import { center, world } from "../../../basics";
 import { player, standardPlayer } from "../../../createPlayer";
 import { goTo } from "../../../goTo";
-import { randomArrayElement } from "../../../randomArrayElement";
-import { createChargerBoss } from "../../charger";
-import { createSprayerBoss } from "../../sprayer";
-import { createTwinBoss } from "../../twins";
 import { Deiat } from "../deiatBoss";
 
 export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
@@ -19,6 +15,8 @@ export const transistionToFourthPhase = (deiat: Deiat, saveTime: number) => {
       entities.splice(index);
     }
   });
+
+  blackholes.length = 0;
 
   const deiatBaseRadius = deiat.radius;
   const deiatEndRadius = 240;

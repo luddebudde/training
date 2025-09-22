@@ -1,11 +1,9 @@
-import { bullets, entities, squares } from "../../../arrays";
-import { center, world } from "../../../basics";
+import { bullets, squares } from "../../../arrays";
+import { center } from "../../../basics";
 import { createBullet } from "../../../createBullet";
-import { player, standardPlayer } from "../../../createPlayer";
+import { player } from "../../../createPlayer";
 import { dealDamage } from "../../../dealDamage";
-import { makeDirection } from "../../../geometry/makeDirection";
 import { goTo } from "../../../goTo";
-import { add, multVar, origo, Vec2 } from "../../../math";
 import { Deiat } from "../deiatBoss";
 
 export const deathScene = (deiat: Deiat, saveTime: number) => {

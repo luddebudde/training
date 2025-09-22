@@ -2,9 +2,6 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-
-import { makeDirection } from "../geometry/makeDirection";
-import { multVar } from "../math";
 import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 1500;

@@ -1,27 +1,26 @@
-import { bullets, entities, liveBosses, squares } from "../../arrays";
+import { bullets, entities, liveBosses } from "../../arrays";
 import { center } from "../../basics";
 import { origo } from "../../math";
-import { enterArena } from "./transitions/enterArena";
+import { fifthPhase } from "./phases/fifthPhase";
 import { firstPhase } from "./phases/firstPhase";
+import { fourthPhase } from "./phases/fourthPhase";
 import { secondPhase } from "./phases/secondPhase";
+import { thirdPhase } from "./phases/thirdPhase";
+import { deathScene } from "./transitions/deathScene";
+import { enterArena } from "./transitions/enterArena";
+import { transitionToFifthPhase } from "./transitions/transitionToFifthPhase";
+import { transistionToFourthPhase } from "./transitions/transitionToFourthPhase";
 import { transitionToSecondPhase } from "./transitions/transitionToSecondPhase";
 import { transistionToThirdPhase } from "./transitions/transitionToThirdPhase";
-import { thirdPhase } from "./phases/thirdPhase";
-import { transistionToFourthPhase } from "./transitions/transitionToFourthPhase";
-import { fourthPhase } from "./phases/fourthPhase";
-import { transitionToFifthPhase } from "./transitions/transitionToFifthPhase";
-import { fifthPhase } from "./phases/fifthPhase";
-import { collideCircleWithRotatedRectangle } from "../../geometry/checkRotatedRectangleCollision";
-import { deathScene } from "./transitions/deathScene";
 
 const radius = 120;
-//const health = 15000;
-const health = 300;
+const health = 18000;
+// const health = 900;
 
 export type Deiat = any;
 
-// const saveTime: number = 1;
-const saveTime: number = 0.1;
+const saveTime: number = 1;
+// const saveTime: number = 0.1;
 
 // const phaseList: ((deiat: Deiat) => void)[] = [
 //   firstPhase,

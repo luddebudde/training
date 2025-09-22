@@ -31,7 +31,7 @@ export const handleCollision = (firstEntity, secondEntity) => {
   //   firstEntity.vel = v1;
   //   secondEntity.vel = v2;
 
-  console.log(firstEntity.vel, secondEntity.vel, v1, v2);
+  // console.log(firstEntity.vel, secondEntity.vel, v1, v2);
 
   // if (isNaN(v1.x) || isNaN(v1.y)) {
   //   v1 = origo;

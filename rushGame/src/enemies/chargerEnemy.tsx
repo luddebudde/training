@@ -1,7 +1,7 @@
-import { makeDirection } from "../makeDirection";
 import { multVar, Vec2 } from "../math";
 import { player } from "../createPlayer";
 import { entities } from "../arrays";
+import { makeDirection } from "../geometry/makeDirection";
 
 const health = 100;
 

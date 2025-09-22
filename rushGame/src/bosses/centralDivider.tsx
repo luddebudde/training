@@ -1,24 +1,16 @@
 import { bullets, entities, lines, liveBosses } from "../arrays";
-import { topLeftCorner, topRightCorner, world } from "../basics";
+import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { drawCircle } from "../draw/drawCircle";
-import { drawLine } from "../draw/drawLine";
-import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
-
-import { getDistance, makeDirection } from "../geometry/makeDirection";
+import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { fps } from "../main";
 import {
   add,
-  addVar,
   multVar,
   numberIsWithinMargin,
   origo,
   randomNumberMargin,
-  sub,
 } from "../math";
-import { createCentralBaseBoss } from "./centralBase";
 
 const health = 15000;
 

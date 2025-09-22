@@ -14,7 +14,9 @@ export const randomAcceptedPos = (
   const distance = getDistance(randomPos, forbiddenPos);
 
   if (distance < margin) {
-    requestAnimationFrame(randomAcceptedPos(mainPos, forbiddenPos, margin));
+    requestAnimationFrame(() =>
+      randomAcceptedPos(mainPos, forbiddenPos, margin)
+    );
   } else {
     return randomPos;
   }

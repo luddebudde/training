@@ -129,6 +129,9 @@ const update = () => {
 
   entities.forEach((entity, index) => {
     entity.pos = add(entity.pos, entity.vel);
+    if (entity.iFrame !== undefined) {
+      entity.iFrame--;
+    }
 
     // console.log(entity.vel);
 
@@ -164,8 +167,13 @@ const update = () => {
       if (entity !== secondEntity) {
         if (doCirclesOverlap(entity, secondEntity)) {
           if (entity.team !== secondEntity.team) {
-            dealDamage(entity, secondEntity, entity.contactDamage);
-            dealDamage(secondEntity, entity, secondEntity.contactDamage);
+            dealDamage(entity, secondEntity, entity.contactDamage, "contact");
+            dealDamage(
+              secondEntity,
+              entity,
+              secondEntity.contactDamage,
+              "contact"
+            );
           }
 
           if (entity.collision === true && secondEntity.collision === true) {
@@ -308,14 +316,16 @@ const update = () => {
   if (isKeyDown("KeyD")) {
     player.vel.x += player.speed;
   }
-  if (isKeyDown("KeyQ") && player.unlockedAbilities.dash && dashCooldown < 0) {
-    player.vel.x += Math.min(player.vel.x, 15);
-    player.vel.y += Math.min(player.vel.y, 15);
+  if (isKeyDown("KeyQ") && dashCooldown < 0) {
+    const dashStrength = player.unlockedAbilities.dashStrength;
+    const minStrength = player.unlockedAbilities.dashMinStrengthMult;
+    player.vel.x += Math.min(player.vel.x * minStrength, dashStrength);
+    player.vel.y += Math.min(player.vel.y * minStrength, dashStrength);
     // player.vel = addVar(player.vel, 35);
 
     console.log("dashj");
 
-    dashCooldown = 100;
+    dashCooldown = player.unlockedAbilities.dashCooldown;
   }
 
   if (isKeyDown("Space") && player.attackDelay < 0) {

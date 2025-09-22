@@ -1,9 +1,9 @@
 import { world } from "../basics";
-import { makeDirection } from "../makeDirection";
 import { add, multVar, Vec2 } from "../math";
 import { player } from "../createPlayer";
 import { bullets, entities, liveBosses } from "../arrays";
 import { createBullet } from "../createBullet";
+import { makeDirection } from "../geometry/makeDirection";
 
 const health = 100;
 

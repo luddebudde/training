@@ -4,7 +4,6 @@ import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { drawCircle } from "../draw/drawCircle";
 import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
-
 import { getDistance, makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { add, multVar, origo, randomNumber, Vec2 } from "../math";

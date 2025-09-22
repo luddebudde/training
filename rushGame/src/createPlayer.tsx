@@ -33,9 +33,14 @@ export type Player = {
   bulletsShot: number;
 
   lifeSteal: number;
+  iFrame: number;
 
   unlockedAbilities: {
     dash: boolean;
+    dashStrength: number;
+    dashCooldown: number;
+    dashMinStrengthMult: number;
+
     bounceable: boolean;
     bounceDamageLoss: number;
 
@@ -99,9 +104,14 @@ export const createPlayer = (): any => {
     bulletsShot: 0,
 
     lifeSteal: 0,
+    iFrame: 0,
 
     unlockedAbilities: {
       dash: true,
+      dashStrength: 300,
+      dashCooldown: 100,
+      dashMinStrengthMult: 1,
+
       bounceable: false,
       bounceDamageLoss: 0.3,
 

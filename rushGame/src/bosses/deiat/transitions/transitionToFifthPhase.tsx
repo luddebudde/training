@@ -1,9 +1,7 @@
-import { entities, squares } from "../../../arrays";
+import { squares } from "../../../arrays";
 import { center, world } from "../../../basics";
 import { player, standardPlayer } from "../../../createPlayer";
-import { makeDirection } from "../../../geometry/makeDirection";
 import { goTo } from "../../../goTo";
-import { multVar, origo, Vec2 } from "../../../math";
 import { Deiat } from "../deiatBoss";
 
 export const transitionToFifthPhase = (deiat: Deiat, saveTime: number) => {

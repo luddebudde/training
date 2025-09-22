@@ -1,22 +1,15 @@
-import { bullets, entities, liveBosses } from "../arrays";
+import { entities, liveBosses } from "../arrays";
 import { world } from "../basics";
-import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { makeDirection } from "../geometry/makeDirection";
-import { goTo } from "../goTo";
-import { addVar, mult, multVar, origo } from "../math";
-
-const health = 1800;
-const speed = 50;
-const radius = 120;
-const bounceThreashold = 10;
+import { addVar, multVar } from "../math";
 
 type Splitter = {
   name: string;
-
   maxHealth: number;
   health: number;
   contactDamage: number;
+  damageMult: number;
   pos: {
     x: number;
     y: number;
@@ -30,6 +23,7 @@ type Splitter = {
   speed: number;
   team: string;
   mass: number;
+  generation: number;
 
   damageConflicted: number;
   damageAbsorbed: number;
@@ -37,13 +31,14 @@ type Splitter = {
   timesDefeated: number;
 
   collision: true;
-  airFriction: false;
+  airFriction: number;
 
-  // Pahses
-  phaseCounter: number;
-  bounceCounter: number;
+  // Pahsess
+  attackCounter: number;
+  resetAttackCounter: number;
 
-  onWallBounce: () => void;
+  update: () => void;
+  onDeath: () => void;
 };
 
 let splitters = [];
@@ -61,7 +56,7 @@ const createSplitter = ({
   if (generation > 7) {
     return;
   }
-  const splitter = {
+  const splitter: Splitter = {
     name: "Splitter",
     maxHealth: health,
     health: health,

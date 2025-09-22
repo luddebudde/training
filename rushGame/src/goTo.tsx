@@ -35,7 +35,7 @@ export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
   // console.log(entity.vel, "1");
   entity.vel = multVar(direction, newSpeed);
 
-  console.log(entity.vel, "2");
+  // console.log(entity.vel, "2");
 
   const safetyMargin = Math.max(Math.abs(entity.vel.x), Math.abs(entity.vel.y));
 

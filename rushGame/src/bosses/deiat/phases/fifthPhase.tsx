@@ -1,9 +1,4 @@
-import { squares } from "../../../arrays";
-import { center } from "../../../basics";
 import { player } from "../../../createPlayer";
-import { dealDamage } from "../../../dealDamage";
-import { collideCircleWithRotatedRectangle } from "../../../geometry/checkRotatedRectangleCollision";
-import { doCirclesOverlap } from "../../../geometry/doCirlceOverlap";
 import { makeDirection } from "../../../geometry/makeDirection";
 import { multVar } from "../../../math";
 import { Deiat } from "../deiatBoss";

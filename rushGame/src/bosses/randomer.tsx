@@ -2,8 +2,6 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { makeDirection } from "../geometry/makeDirection";
-import { multVar } from "../math";
 import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 import { getRandomColor } from "../randomColor";
@@ -112,7 +110,7 @@ type randomer = {
   reachedHalfway: boolean;
   update: () => void;
   // deathAnimation: (ctx, liveBosses, bossIndex) => void;
-  onWallBounce: () => void;
+  // onWallBounce: () => void;
 };
 
 export const createRandomerBoss = () => {

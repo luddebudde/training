@@ -2,11 +2,9 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { drawLine as drawLine } from "../draw/drawLine";
+import { drawLine } from "../draw/drawLine";
 import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
-
 import { add, Vec2 } from "../math";
-import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 
 const health = 1500;
@@ -80,7 +78,7 @@ type LineBreaker = {
   lines: Line[];
   shootVecs: Vec2[];
   shootingPhaseActive: boolean;
-  phaseList: [linePhase, patternPhase];
+  phaseList: any[];
   rageMode: boolean;
   rageModeBulletCounter: number;
 

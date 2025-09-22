@@ -1,11 +1,8 @@
-import { blackholes, bullets, liveBosses } from "../../../arrays";
+import { blackholes, bullets } from "../../../arrays";
 import { center } from "../../../basics";
-import { createBlackhole } from "../../../createBlackhole";
 import { createBullet } from "../../../createBullet";
-import { player } from "../../../createPlayer";
-import { getDistance, makeDirection } from "../../../geometry/makeDirection";
 import { goTo } from "../../../goTo";
-import { multVar, origo, Vec2 } from "../../../math";
+import { origo } from "../../../math";
 import { Deiat } from "../deiatBoss";
 
 export const thirdPhase = (deiat: Deiat) => {

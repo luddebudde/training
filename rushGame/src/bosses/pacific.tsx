@@ -2,8 +2,8 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { Bullet, createBullet } from "../createBullet";
 import { player } from "../createPlayer";
-import { makeDirection } from "../geometry/makeDirection";
-import { multVar, origo, Vec2 } from "../math";
+import { multVar } from "../math";
+import { randomAcceptedPos } from "../randomAcceptedPos";
 
 const health = 1500;
 
@@ -39,7 +39,6 @@ type pacific = {
   reachedHalfway: boolean;
 
   update: () => void;
-  onWallBounce: () => void;
 };
 
 export const createPacificBoss = () => {
@@ -115,7 +114,7 @@ export const createPacificBoss = () => {
             undefined,
             damageNumber * 0.8,
             bullet.speed,
-            { bounceDamageLoss: 0.3, bounceable: true },
+            { bounceDamageLoss: 0.2, bounceable: true },
             {
               startPos: {
                 x: bullet.pos.x + newVel.x,

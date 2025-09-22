@@ -1,9 +1,7 @@
-import { liveBosses } from "../../../arrays";
 import { randomArrayElement } from "../../../randomArrayElement";
 import { createChargerBoss } from "../../charger";
 import { createSplitterBoss } from "../../splitter";
 import { createSprayerBoss } from "../../sprayer";
-import { createTwinBoss } from "../../twins";
 import { Deiat } from "../deiatBoss";
 
 export const transistionToThirdPhase = (deiat: Deiat, saveTime: number) => {
