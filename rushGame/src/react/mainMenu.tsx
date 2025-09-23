@@ -6,7 +6,9 @@ import { Menu, useMenu } from "./reactContext";
 import StatisticsMenu from "./statisticsMenu";
 
 function App() {
-  const storedName = localStorage.getItem("gameName");
+  const localName = localStorage.getItem("gameName");
+  const storedName = localName === "" ? "Deiat's Challenge" : localName;
+
   const [gameName, setGameName] = useState(storedName);
   const { currentMenu, setMenu } = useMenu();
 
