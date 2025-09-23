@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { bullets, entities, liveBosses, squares, waveOrder } from "../arrays";
-import { changeIsPaused, isPaused, world } from "../basics";
-import { Menu, useMenu } from "./reactContext";
-import { allFoughtBosses, foughtBosses } from "../loseScreen";
-import { player } from "../createPlayer";
-import { generateRewards, usedRewards } from "../generateRewards";
+import React from "react";
+import { BossArray, waveOrder } from "../arrays";
+import { changeIsPaused, world } from "../basics";
+import { generateRewards } from "../generateRewards";
 import { startGame } from "../startGame";
+import { useMenu } from "./reactContext";
 
 export let practiceBoss = false;
 
@@ -64,45 +62,23 @@ const PracticeMenu = ({ onBack }) => {
               }}
             >
               {wave
-                .filter((bossArray) => isBossFought(bossArray[0]))
-                .map((bossArray, colIndex) => (
+                .filter((bossArray: BossArray) => isBossFought(bossArray[0]))
+                .map((bossArray: BossArray, colIndex) => (
                   <button
                     key={colIndex}
                     onClick={() => {
                       practiceBoss = true;
                       setMenu("none");
 
-                      const canvas = document.getElementById("myCanvas");
+                      const canvas = document.getElementById(
+                        "myCanvas"
+                      ) as HTMLCanvasElement;
                       const ctx = canvas.getContext("2d");
 
                       const parentIndex = waveOrder.findIndex((sub) =>
                         sub.includes(bossArray)
                       );
-                      // arrOfArrs = [[...], [...], ...]
-                      // function findParentOneLevel(arrOfArrs, predicate) {
-                      //   const parentIndex = arrOfArrs.findIndex((sub) =>
-                      //     sub.some(predicate)
-                      //   );
-                      //   if (parentIndex === -1) return null;
-                      //   const innerIndex =
-                      //     arrOfArrs[parentIndex].findIndex(predicate);
-                      //   return {
-                      //     parentIndex,
-                      //     innerIndex,
-                      //     parentArray: arrOfArrs[parentIndex],
-                      //     element: arrOfArrs[parentIndex][innerIndex],
-                      //   };
-                      // }
 
-                      // // exempel:
-                      // const arrOfArrs = [[1, 2], [3, 4, 5], [6]];
-                      // console.log(
-                      //   findParentOneLevel(arrOfArrs, (x) => x === 4)
-                      // );
-                      // => { parentIndex: 1, innerIndex: 1, parentArray: [3,4,5], element: 4 }
-
-                      // for (let i = 0; i < parentIndex; i++) {
-                      // setTimeout(() => {
                       console.log(bossArray[2]);
                       startGame(ctx, bossArray[2]);
                       changeIsPaused(true);

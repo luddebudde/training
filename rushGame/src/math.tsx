@@ -58,7 +58,7 @@ export const minVec = (firstObj: Vec2, secondObj: Vec2) => {
   };
 };
 
-export const useMathFunction = (vec: Vec2, round: () => void) => {
+export const useMathFunction = (vec: Vec2) => {
   return { x: Math.round(vec.x), y: Math.round(vec.y) };
 };
 

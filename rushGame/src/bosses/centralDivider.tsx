@@ -14,40 +14,40 @@ import {
 
 const health = 15000;
 
-type Charger = {
-  name: string;
-  maxHealth: number;
-  health: number;
-  contactDamage: number;
-  pos: {
-    x: number;
-    y: number;
-  };
-  vel: {
-    x: number;
-    y: number;
-  };
-  radius: number;
-  color: string;
-  speed: number;
-  team: string;
-  mass: number;
+// type Charger = {
+//   name: string;
+//   maxHealth: number;
+//   health: number;
+//   contactDamage: number;
+//   pos: {
+//     x: number;
+//     y: number;
+//   };
+//   vel: {
+//     x: number;
+//     y: number;
+//   };
+//   radius: number;
+//   color: string;
+//   speed: number;
+//   team: string;
+//   mass: number;
 
-  damageConflicted: number;
-  damageAbsorbed: number;
-  bulletsShot: number;
-  timesDefeated: number;
+//   damageConflicted: number;
+//   damageAbsorbed: number;
+//   bulletsShot: number;
+//   timesDefeated: number;
 
-  collision: true;
-  airFriction: boolean;
+//   collision: true;
+//   airFriction: boolean;
 
-  // Pahses
-  phaseCounter: number;
+//   // Pahses
+//   phaseCounter: number;
 
-  update: () => void;
-  // deathAnimation: (ctx, liveBosses, bossIndex) => void;
-  onWallBounce: () => void;
-};
+//   update: () => void;
+//   // deathAnimation: (ctx, liveBosses, bossIndex) => void;
+//   onWallBounce: () => void;
+// };
 
 const createRepetableBullet = (centralDivider) => {
   console.log("hit!, Greataing new bulelt");
@@ -252,8 +252,6 @@ const redAi = (centralDivider) => {
     ];
 
     goTo(centralDivider, sides[centralDivider.sideIndex % 2], 15, () => {
-      const firstBulletRadius = 15;
-
       setTimeout(() => {
         const precisionCount = 8;
         let totalTime = delayToNextAttack * 5;
@@ -353,7 +351,7 @@ const redAi = (centralDivider) => {
             {},
             {
               bulletRadius: 40,
-              onHit: (entity, bullet) => {
+              onHit: (entity) => {
                 if (entity === player) {
                   const direction = makeDirection(
                     player.pos,
@@ -445,7 +443,7 @@ const blueAi = (centralDivider) => {
                       centralDivider.radius +
                       bulletRadius,
               },
-              onHit: (entity, bullet) => {
+              onHit: (entity) => {
                 if (entity === player) {
                   centralDivider.health -= 1000;
                 }

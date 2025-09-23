@@ -1,6 +1,6 @@
 import { Vec2 } from "./math";
 
-const canvas = document.getElementById("myCanvas");
+const canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
 
 export const world = {
   // width: canvas.width,

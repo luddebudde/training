@@ -19,6 +19,7 @@ export const thirdPhase = (deiat: Deiat) => {
 
   let cumulative = 0;
   let chosenAttack = 0;
+  chosenAttack = chosenAttack;
 
   for (let i = 0; i < weights.length; i++) {
     cumulative += weights[i];

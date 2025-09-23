@@ -9,7 +9,7 @@ import { add, origo } from "../math";
 
 const health = 3200;
 
-type Charger = {
+type CentralBase = {
   name: string;
   maxHealth: number;
   health: number;
@@ -38,7 +38,12 @@ type Charger = {
 
   // Pahses
   satellites: any[];
-  phaseCounter: number;
+  blackhole: any;
+  hasCreatedSatellites: boolean;
+
+  superCounter: number;
+  superHitCounter: number;
+  superHitCounterMax: number;
 
   update: () => void;
   // deathAnimation: (ctx, liveBosses, bossIndex) => void;
@@ -135,7 +140,7 @@ const centralBasePos = {
 const blackholeStrength = 500;
 
 export const createCentralBaseBoss = () => {
-  const centralBase = {
+  const centralBase: CentralBase = {
     name: "The Central Base",
     maxHealth: health,
     health: health,
@@ -169,7 +174,7 @@ export const createCentralBaseBoss = () => {
 
     hasCreatedSatellites: false,
 
-    update: (ctx): void => {
+    update: (): void => {
       if (!centralBase.hasCreatedSatellites) {
         for (let i = 0; i < 4; i++) {
           createSatellite(centralBase, i);
@@ -212,7 +217,7 @@ export const createCentralBaseBoss = () => {
             5,
             {},
             {
-              onHit(entity, bullet) {
+              onHit(entity) {
                 if (entity === centralBase) {
                   centralBase.superCounter += 12.5;
                   // console.log(centralBase.superCounter);

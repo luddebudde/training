@@ -4,10 +4,9 @@ import { Bullet, createBullet } from "../createBullet";
 import { player } from "../createPlayer";
 import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
 
-import { getDistance, makeDirection } from "../geometry/makeDirection";
+import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
-import { add, multVar, origo, Vec2 } from "../math";
-import { randomAcceptedPos } from "../randomAcceptedPos";
+import { add, multVar, Vec2 } from "../math";
 
 const health = 1500;
 const radius = 120;

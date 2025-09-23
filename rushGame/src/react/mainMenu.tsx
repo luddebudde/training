@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 // import { Menu } from "./menu";
-import { nextBoss } from "../arrays";
-import practiceMenu from "./practiceMenu";
-import PracticeMenu from "./practiceMenu";
-import { Menu, MenuProvider, useMenu } from "./reactContext";
-import StatisticsMenu from "./statisticsMenu";
-import { createRoot } from "react-dom/client";
 import { startGame } from "../startGame";
+import PracticeMenu from "./practiceMenu";
+import { Menu, useMenu } from "./reactContext";
+import StatisticsMenu from "./statisticsMenu";
 
 function App() {
   const storedName = localStorage.getItem("gameName");
@@ -64,8 +61,11 @@ function App() {
             />
             {createButton("Play", "red", () => {
               setMenu("none");
-              const canvas = document.getElementById("myCanvas");
+              const canvas = document.getElementById(
+                "myCanvas"
+              ) as HTMLCanvasElement;
               const ctx = canvas.getContext("2d");
+              if (!ctx) throw new Error("Could not get 2D context!");
 
               // setTimeout(() => {
               startGame(ctx);

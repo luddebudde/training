@@ -110,7 +110,7 @@ export const createSprayerBoss = () => {
     reacheadHalfPoint: false,
 
     aiMovement: () => {},
-    update: (ctx): void => {
+    update: (): void => {
       sprayer.aiMovement();
 
       //   sprayer.attackDelay--;

@@ -7,10 +7,10 @@ import {
   nextBoss,
   squares,
 } from "./arrays";
-import { createPlayer, player, standardPlayer } from "./createPlayer";
 import { changeIsPaused } from "./basics";
+import { createPlayer } from "./createPlayer";
+import { usedRewards } from "./generateRewards";
 import { foughtBosses } from "./loseScreen";
-import { generateRewards, usedRewards } from "./generateRewards";
 
 export const startGame = (ctx, callBoss = nextBoss) => {
   console.log("creatingGame");

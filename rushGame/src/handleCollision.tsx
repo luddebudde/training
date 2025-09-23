@@ -1,4 +1,4 @@
-import { add, dot, multVar, origo, sub } from "./math";
+import { add, dot, multVar, sub } from "./math";
 
 export const handleCollision = (firstEntity, secondEntity) => {
   const resolveOverlap = (c1, c2) => {

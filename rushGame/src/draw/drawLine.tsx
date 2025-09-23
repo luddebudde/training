@@ -8,8 +8,8 @@ export const drawLine = (
   color = "black"
 ) => {
   ctx.beginPath();
-  ctx.moveTo(startPos.x/ visualWorld.x, startPos.y/ visualWorld.y);
-  ctx.lineTo(endPos.x/ visualWorld.x, endPos.y/ visualWorld.y);
+  ctx.moveTo(startPos.x / visualWorld.x, startPos.y / visualWorld.y);
+  ctx.lineTo(endPos.x / visualWorld.x, endPos.y / visualWorld.y);
   ctx.strokeStyle = color;
   ctx.stroke();
 };

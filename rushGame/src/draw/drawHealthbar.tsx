@@ -13,7 +13,12 @@ export const drawHealthBar = (
   const timesHealthbar = Math.ceil(health / maxHealth);
 
   ctx.beginPath();
-  ctx.rect(x / visualWorld.x, y/ visualWorld.y, width/ visualWorld.x, height/ visualWorld.y);
+  ctx.rect(
+    x / visualWorld.x,
+    y / visualWorld.y,
+    width / visualWorld.x,
+    height / visualWorld.y
+  );
   ctx.fillStyle = "#fd151b";
 
   ctx.fill();
@@ -22,7 +27,12 @@ export const drawHealthBar = (
     const ecvation = health - maxHealth * i;
 
     ctx.beginPath();
-    ctx.rect(x/ visualWorld.x, y/ visualWorld.y, Math.min((ecvation * width) / maxHealth, width)/ visualWorld.x, height/ visualWorld.y);
+    ctx.rect(
+      x / visualWorld.x,
+      y / visualWorld.y,
+      Math.min((ecvation * width) / maxHealth, width) / visualWorld.x,
+      height / visualWorld.y
+    );
     ctx.fillStyle = colorArray[i];
 
     ctx.fill();

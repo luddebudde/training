@@ -3,7 +3,7 @@ import { getDistance } from "./geometry/makeDirection";
 import { Vec2 } from "./math";
 
 export const randomAcceptedPos = (
-  mainPos,
+  mainPos: Vec2,
   forbiddenPos: Vec2,
   margin: number
 ) => {

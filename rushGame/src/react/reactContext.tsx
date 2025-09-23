@@ -6,6 +6,7 @@ export type Menu =
   | "statistics"
   | "gameOver"
   | "win"
+  | "IDIOT"
   | "none";
 
 type MenuContextType = {

@@ -1,5 +1,5 @@
 import { entities } from "./arrays";
-import { changeIsPaused, world } from "./basics";
+import { world } from "./basics";
 
 export type Player = {
   name: string;
@@ -49,7 +49,9 @@ export type Player = {
 
     adrenaline: number;
     autoDamage: number;
+
     spreadShotCount: number;
+    spreadShotSpread: number;
   };
 
   airFriction: boolean;
@@ -71,10 +73,6 @@ export const createPlayer = (): any => {
     health: health,
     maxHealth: health,
     contactDamage: 0,
-    // pos: {
-    //   x: world.width / 2,
-    //   y: world.height / 2,
-    // },
     pos: {
       x: world.width / 2,
       y: (world.height / 5) * 4,
@@ -121,6 +119,7 @@ export const createPlayer = (): any => {
       adrenaline: 0,
       autoDamage: 0,
       spreadShotCount: 0,
+      spreadShotSpread: 25,
     },
 
     airFriction: true,
@@ -128,7 +127,10 @@ export const createPlayer = (): any => {
     blackholeEffected: true,
   };
 
-  entities.push(player);
+  // entities.push(player);
+  setTimeout(() => {
+    entities.push(player);
+  }, 0);
   // return player;
 
   standardPlayer = structuredClone(player);

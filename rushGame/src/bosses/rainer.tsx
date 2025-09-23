@@ -131,7 +131,8 @@ export const createRainerBoss = () => {
           );
           i++
         ) {
-          rainer.unlockedDirections.push(possibleDirections[i]());
+          (rainer.unlockedDirections as any).push(possibleDirections[i]());
+          // rainer.unlockedDirections.push(possibleDirections[i]());
 
           rainer.spawnInterval *= 0.9;
         }

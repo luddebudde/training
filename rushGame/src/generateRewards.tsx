@@ -3,7 +3,6 @@ import { changeIsPaused } from "./basics";
 import { Player, player, standardPlayer } from "./createPlayer";
 import { randomArrayElementSplice } from "./randomArrayElement";
 import { practiceBoss } from "./react/practiceMenu";
-import { startGame } from "./startGame";
 
 // iDEA:
 // An upgrade which allows you to skip 1 random boss each stage
@@ -41,10 +40,6 @@ const quickerDashs: Upgrades = {
     return [strongerDash];
   },
 };
-
-//  dashStrength: number;
-//     dashCooldown: number;
-//     dashMaxStrength: number;
 
 const bouncyBullets: Upgrades = {
   title: "Bouncy",
@@ -132,11 +127,36 @@ const shotGunner: Upgrades = {
   },
 };
 
+const unSawedShotgun: Upgrades = {
+  title: "Un-sawedshotgun",
+  description:
+    "What happens when you break common sense? An accurate shotgun of course!",
+  id: "shotgun",
+  change: (player) => {
+    player.unlockedAbilities.spreadShotSpread -= 10;
+  },
+  unlockRequirement: () => {
+    return [shotGunner];
+  },
+};
+
+const morePellets: Upgrades = {
+  title: "Bonus rounds",
+  description: "More pellets = More damage!",
+  id: "shotgun",
+  change: (player) => {
+    player.unlockedAbilities.spreadShotCount += 2;
+  },
+  unlockRequirement: () => {
+    return [unSawedShotgun, autoDamage];
+  },
+};
+
 const swifter: Upgrades = {
   title: "Be Like Swift!",
   description: "Improved movement and slight attackspeed",
   id: "swift",
-  change: (player) => {
+  change: () => {
     standardPlayer.speed *= 1.25;
     standardPlayer.attackDelay * 0.98;
   },
@@ -167,6 +187,8 @@ const totalRewardPool: Upgrades[] = [
   decreasedDmgBounce,
   tankie,
   shotGunner,
+  unSawedShotgun,
+  morePellets,
   swifter,
   lifeSteal,
 ];
@@ -195,13 +217,13 @@ export const generateRewards = (ctx, timesMore = 1, chosenBoss = undefined) => {
     currentElement.style.visibility = "visible";
 
     const titleElement = subElements[0]; // Select Title
-    const imageElement = subElements[1]; // Select Image
+    // const imageElement = subElements[1]; // Select Image
     const descriptionElement = subElements[2]; // Select Description
 
     titleElement.textContent = reward.title;
     descriptionElement.textContent = reward.description;
     const children = selectionDiv.querySelectorAll("*");
-    children.forEach((child) => {
+    children.forEach((child: HTMLCanvasElement) => {
       child.style.visibility = "visible";
     });
 
@@ -211,7 +233,7 @@ export const generateRewards = (ctx, timesMore = 1, chosenBoss = undefined) => {
 
       selectionDiv.style.visibility = "hidden";
       const children = selectionDiv.querySelectorAll("*");
-      children.forEach((child) => {
+      children.forEach((child: HTMLCanvasElement) => {
         child.style.visibility = "hidden";
       });
 

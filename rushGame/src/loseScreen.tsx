@@ -1,9 +1,4 @@
-import { waveOrder } from "./arrays";
-import { bulletsShot } from "./createBullet";
 import { player } from "./createPlayer";
-import { changeIsPaused } from "./basics";
-import { GameOverMenu } from "./react/gameOverMenu";
-import { useMenu } from "./react/reactContext";
 // import { bulletsShot } from "./main";
 
 export const statistics = {
@@ -15,17 +10,7 @@ export const statistics = {
 };
 
 export const overallStatistics = structuredClone(statistics);
-
-const fakeBoss = {
-  name: "fakeBossNAmesj",
-  damageConflicted: 593,
-  damageAbsorbed: 325,
-  bulletsShot: 405,
-};
-
 export const foughtBosses = [];
-// export const allFoughtBosses = [];
-
 export let stats = [];
 
 export const loseScreen = () => {

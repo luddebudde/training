@@ -3,8 +3,6 @@ import { center, world } from "./basics";
 import { createBullet } from "./createBullet";
 import { Player, standardPlayer } from "./createPlayer";
 import { goTo } from "./goTo";
-import { loseScreen, statistics } from "./loseScreen";
-import { randomArrayElement } from "./randomArrayElement";
 import { getRandomColor } from "./randomColor";
 
 export const winAnimation = (player: Player) => {
@@ -25,8 +23,6 @@ export const winAnimation = (player: Player) => {
   goTo(player, center, 50, () => {
     for (let i = 0; i < loopCount; i++) {
       setTimeout(() => {
-        const currentPos = center;
-
         const chosenColor = getRandomColor();
 
         bulletCooldown--;

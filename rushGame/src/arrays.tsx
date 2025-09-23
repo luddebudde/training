@@ -33,29 +33,40 @@ export let squares = [];
 export const lines = [];
 export const blackholes = [];
 
+export type BossArray = [string, string, (ctx) => void];
+
 // 1st is name
 // 2nd is image
 // 3rd is function
-const sprayerArray = ["Sprayer", "", createSprayerBoss];
-const chargerArray = ["Charger", "", createChargerBoss];
-const lineBreakerArray = ["Line-breaker", "", createLineBreakerBoss];
-const randomerArray = ["Randomer", "", createRandomerBoss];
-const pacificArray = ["Pacific", "", createPacificBoss];
-const rainerArray = ["Rainer", "", createRainerBoss];
-const twinArray = ["The Twin Bros", "", createTwinBoss];
-const squareArray = ["Squa's gang", "", createSquareBosses];
+const sprayerArray: BossArray = ["Sprayer", "", createSprayerBoss];
+const chargerArray: BossArray = ["Charger", "", createChargerBoss];
+const lineBreakerArray: BossArray = ["Line-breaker", "", createLineBreakerBoss];
+const randomerArray: BossArray = ["Randomer", "", createRandomerBoss];
+const pacificArray: BossArray = ["Pacific", "", createPacificBoss];
+const rainerArray: BossArray = ["Rainer", "", createRainerBoss];
+const twinArray: BossArray = ["The Twin Bros", "", createTwinBoss];
+const squareArray: BossArray = ["Squa's gang", "", createSquareBosses];
 
-const splitterArray = ["Splitter", "", createSplitterBoss];
-const encirclerArray = ["Encircler", "", createEncirclerBoss];
-const createCentralBaseArray = ["Central Base", "", createCentralBaseBoss];
-const sideSweeperArray = ["Side <= Sweeper", "", createSideSweeper];
-const wandererArray = ["Wanderer", "", createWanderer];
-const levelSeekerArray = ["Level Seeker", "", createLevelSeekerBoss];
-const grenadierArray = ["Grenadier", "", createGrenadier];
-const centralDividerArray = ["Central Divider", "", createCentralDividerBoss];
-const deiatArray = ["The Deiat", "", createDeiat];
+const splitterArray: BossArray = ["Splitter", "", createSplitterBoss];
+const encirclerArray: BossArray = ["Encircler", "", createEncirclerBoss];
+const createCentralBaseArray: BossArray = [
+  "Central Base",
+  "",
+  createCentralBaseBoss,
+];
+const sideSweeperArray: BossArray = ["Side <= Sweeper", "", createSideSweeper];
+const wandererArray: BossArray = ["Wanderer", "", createWanderer];
+const levelSeekerArray: BossArray = ["Level Seeker", "", createLevelSeekerBoss];
+const grenadierArray: BossArray = ["Grenadier", "", createGrenadier];
+const centralDividerArray: BossArray = [
+  "Central Divider",
+  "",
+  createCentralDividerBoss,
+];
+const deiatArray: BossArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [chargerArray, sprayerArray, wandererArray, rainerArray];
+// const firstWave = [centralDividerArray];
 const secondWave = [
   lineBreakerArray,
   levelSeekerArray,

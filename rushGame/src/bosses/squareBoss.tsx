@@ -2,7 +2,7 @@ import { bullets, liveBosses, squares } from "../arrays";
 import { world } from "../basics";
 import { createBlackhole } from "../createBlackhole";
 import { createBullet, createWaveShoot } from "../createBullet";
-import { player, standardPlayer } from "../createPlayer";
+import { player } from "../createPlayer";
 import { debuffPlayer } from "../debuffPlayer";
 import { drawLine } from "../draw/drawLine";
 import { getClosestOfArray } from "../geometry/getClosestOfArray";
@@ -10,8 +10,6 @@ import { makeDirection } from "../geometry/makeDirection";
 import { goTo } from "../goTo";
 import { multVar, Vec2 } from "../math";
 import { randomArrayElement } from "../randomArrayElement";
-
-const health = 150;
 
 const width = 200;
 const height = width;
@@ -117,6 +115,8 @@ const createRectObjects = () => {
       }
     },
     rotationPhase: (ctx, rectList, rectPos: Vec2) => {
+      ctx;
+      rectList;
       rect1.attackCounter--;
 
       if (rect1.attackCounter <= 0) {
@@ -198,7 +198,7 @@ const createRectObjects = () => {
             {
               bulletRadius: 5,
               startPos: rectPos,
-              onHit: (entity, bullet) => {
+              onHit: () => {
                 debuffPlayer("speed", "*", 0.7, 1000);
               },
               color: "purple",
@@ -231,6 +231,8 @@ const createRectObjects = () => {
       }
     },
     rotationPhase: (ctx, rectList, rectPos: Vec2) => {
+      ctx;
+      rectList;
       rect2.attackCounter--;
 
       if (rect2.attackCounter <= 0) {
@@ -255,8 +257,8 @@ const createRectObjects = () => {
     },
   };
 
-  const healerHealth = 800;
   // Passive Support
+  const healerHealth = 800;
   rect3 = {
     name: "[RECT] Healer",
     cornerPos: {
@@ -271,8 +273,6 @@ const createRectObjects = () => {
       x: 0,
       y: 0,
     },
-    // x: startPos.x - width / 2,
-    // y: startPos.y + height / 2,
     x: 0,
     y: world.height - height,
     width: width,
@@ -296,10 +296,10 @@ const createRectObjects = () => {
     health: healerHealth,
 
     // Phases
-    shootFromCorners: (ctx, rectList) => {
+    shootFromCorners: (_ctx, rectList) => {
       rect3.attackCounter--;
       if (rect3.attackCounter < 0) {
-        const randomRect = randomArrayElement(rectList);
+        const randomRect: any = randomArrayElement(rectList);
 
         const rectPos = {
           x: rect3.x + rect3.width / 2,
@@ -333,7 +333,7 @@ const createRectObjects = () => {
         rect3.attackCounter = 50;
       }
     },
-    gatherUp: (ctx, rectList) => {
+    gatherUp: (_ctx, rectList) => {
       rect3.attackCounter--;
 
       if (rect3.attackCounter < 0) {
@@ -347,6 +347,8 @@ const createRectObjects = () => {
     },
     rotatePhaseHealCounter: 0,
     rotationPhase: (ctx, rectList, rectPos: Vec2) => {
+      ctx;
+      rectList;
       rect3.attackCounter--;
 
       if (rect3.attackCounter <= 0) {
@@ -473,6 +475,8 @@ const createRectObjects = () => {
       }
     },
     rotationPhase: (ctx, rectList, rectPos: Vec2) => {
+      ctx;
+      rectList;
       rect4.attackCounter--;
 
       if (rect4.attackCounter <= 0) {

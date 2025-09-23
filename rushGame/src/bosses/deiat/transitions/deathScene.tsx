@@ -7,9 +7,9 @@ import { goTo } from "../../../goTo";
 import { Deiat } from "../deiatBoss";
 
 export const deathScene = (deiat: Deiat, saveTime: number) => {
-  const deiatBaseRadius = deiat.radius;
-  const deiatEndRadius = 60;
-  const deiatDistToSize = Math.abs(deiatBaseRadius - deiatEndRadius);
+  // const deiatBaseRadius = deiat.radius;
+  // const deiatEndRadius = 60;
+  // const deiatDistToSize = Math.abs(deiatBaseRadius - deiatEndRadius);
 
   deiat.phaseCounter++;
   deiat.collision = false;
@@ -20,19 +20,19 @@ export const deathScene = (deiat: Deiat, saveTime: number) => {
   deiat.contactDamage = 10;
   deiat.collision = true;
 
-  const playerBaseRadius = player.radius;
-  const playerEndRadius = 50;
+  // const playerBaseRadius = player.radius;
+  // const playerEndRadius = 50;
 
-  const baseSpeed = player.speed;
-  const baseBulletSize = player.bulletSize;
-  const baseBulletSpeed = player.bulletSpeed;
-  const baseBulletDamage = player.bulletDamage;
+  // const baseSpeed = player.speed;
+  // const baseBulletSize = player.bulletSize;
+  // const baseBulletSpeed = player.bulletSpeed;
+  // const baseBulletDamage = player.bulletDamage;
 
-  const playerDistToSize = Math.abs(playerEndRadius - playerBaseRadius);
+  // const playerDistToSize = Math.abs(playerEndRadius - playerBaseRadius);
 
   squares.length = 0;
 
-  let delay = 25;
+  // let delay = 25;
 
   goTo(deiat, { x: center.x, y: center.y }, 10, () => {
     for (let i = 0; i < 100; i++) {

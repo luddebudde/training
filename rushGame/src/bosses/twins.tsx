@@ -2,12 +2,12 @@ import { bullets, entities, liveBosses } from "../arrays";
 import { world } from "../basics";
 import { createBullet, createWaveShoot } from "../createBullet";
 import { player } from "../createPlayer";
-import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
-import { makeDirection } from "../geometry/makeDirection";
-import { minVec, multVar } from "../math";
 import { drawLine } from "../draw/drawLine";
-import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
 import { createChaser } from "../enemies/chaser";
+import { doCirclesOverlap } from "../geometry/doCirlceOverlap";
+import { isPlayerBetweenEnemies } from "../geometry/isPlayerBetweenEnemies";
+import { makeDirection } from "../geometry/makeDirection";
+import { multVar } from "../math";
 
 const attackerHealth: number = 1200;
 const shooterHealth: number = 800;

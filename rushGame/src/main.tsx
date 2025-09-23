@@ -1,14 +1,5 @@
-import { keyDownTracker } from "./keyDownTracker";
-import { add, div, mult, multVar } from "./math";
-import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
-import { handleCollision } from "./handleCollision";
-import {
-  handleBulletBounce,
-  createBullet,
-  createWaveShoot,
-} from "./createBullet";
-import { changeIsPaused, isPaused, visualWorld, world } from "./basics";
-import { player, standardPlayer } from "./createPlayer";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import {
   blackholes,
   bullets,
@@ -16,30 +7,30 @@ import {
   entities,
   lines,
   liveBosses,
-  nextBoss,
   squares,
 } from "./arrays";
-import { drawHealthBar } from "./draw/drawHealthbar";
-import { loseScreen } from "./loseScreen";
+import { changeIsPaused, isPaused, visualWorld, world } from "./basics";
+import {
+  createBullet,
+  createWaveShoot,
+  handleBulletBounce,
+} from "./createBullet";
+import { player, standardPlayer } from "./createPlayer";
 import { dealDamage } from "./dealDamage";
 import { drawCircle } from "./draw/drawCircle";
+import { drawHealthBar } from "./draw/drawHealthbar";
+import { drawLine } from "./draw/drawLine";
 import { drawSquare } from "./draw/drawSquare";
 import { collideCircleWithRotatedRectangle } from "./geometry/checkRotatedRectangleCollision";
-import { drawLine } from "./draw/drawLine";
+import { doCirclesOverlap } from "./geometry/doCirlceOverlap";
+import { handleCollision } from "./handleCollision";
+import { keyDownTracker } from "./keyDownTracker";
+import { loseScreen } from "./loseScreen";
+import { add, mult, multVar } from "./math";
 import App from "./react/mainMenu";
-import { StrictMode } from "react";
-import React, { useState } from "react";
-import { createRoot } from "react-dom/client";
-import { Menu } from "./react/menu";
-import { generateRewards } from "./generateRewards";
-import ReactDOM from "react-dom";
 import { MenuProvider } from "./react/reactContext";
-import { startGame } from "./startGame";
-import WinMenu from "./react/winMenu";
-import { winAnimation } from "./winAnimation";
-import PracticeMenu from "./react/practiceMenu";
 
-const canvas = document.getElementById("myCanvas");
+const canvas = document.getElementById("myCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 
 const root = createRoot(document.getElementById("root")!);
@@ -57,6 +48,7 @@ let dashCooldown = 10;
 
 setTimeout(() => {
   for (let i = 0; i < 1; i++) {
+    // createPlayer();
     // createChaser();
     // createSniper();
     // nextBoss(ctx);
@@ -69,7 +61,7 @@ setTimeout(() => {
 }, 10);
 
 let currentTime = Date.now(); // Starttid vid första kallelsen
-let startTime = 0; // Om du har en starttidsstämpel
+// let startTime = 0; // Om du har en starttidsstämpel
 
 export const calculateFPS = () => {
   const now = Date.now();
@@ -86,15 +78,6 @@ export const calculateFPS = () => {
 
 export let fps;
 export let deltaTime;
-
-const square = {
-  x: 800,
-  y: 800,
-  width: 200,
-  height: 200,
-  color: "white",
-  rotation: 0 * Math.PI,
-};
 
 // squares.push(square);
 
@@ -127,7 +110,7 @@ const update = () => {
 
   player.radius = standardPlayer.radius;
 
-  entities.forEach((entity, index) => {
+  entities.forEach((entity) => {
     entity.pos = add(entity.pos, entity.vel);
     if (entity.iFrame !== undefined) {
       entity.iFrame--;
@@ -345,6 +328,7 @@ const update = () => {
       );
     } else {
       const bulletCount = player.unlockedAbilities.spreadShotCount;
+      const spread = player.unlockedAbilities.spreadShotSpread;
       const totalDamage = player.bulletDamage * bulletCount * 1.25;
 
       createWaveShoot(
@@ -353,7 +337,7 @@ const update = () => {
         mousePos,
         totalDamage / bulletCount,
         player.bulletSpeed,
-        ((Math.PI * 2) / 180) * 25,
+        ((Math.PI * 2) / 180) * spread,
         bulletCount,
         {
           bounceable: player.unlockedAbilities.bounceable,

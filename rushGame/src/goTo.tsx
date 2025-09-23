@@ -1,16 +1,4 @@
-import { makeDirection } from "./geometry/makeDirection";
-import { calculateFPS } from "./main";
-import {
-  div,
-  divVar,
-  mult,
-  multVar,
-  numberIsWithinMargin,
-  origo,
-  sub,
-  useMathFunction,
-  Vec2,
-} from "./math";
+import { multVar, numberIsWithinMargin, origo, Vec2 } from "./math";
 
 export const goTo = (entity: any, target: Vec2, time, whenDone = () => {}) => {
   let newEntityPos = entity.pos !== undefined ? entity.pos : entity;

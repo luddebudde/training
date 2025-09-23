@@ -1,8 +1,4 @@
-import { squares } from "../arrays";
-import { drawCircle } from "../draw/drawCircle";
-import { drawSquare } from "../draw/drawSquare";
 import { add, multVar, Vec2 } from "../math";
-import { isPointInsideArea } from "./isInsideRectangle";
 import { getDistance } from "./makeDirection";
 
 export function collideCircleWithRotatedRectangle(
@@ -79,7 +75,7 @@ export function collideCircleWithRotatedRectangle(
         // Horizontal === 1 (Horizontal)
         alpha = Math.PI * 1.5;
       } else {
-        // Horizontal === 0 (Vertical)
+        // Horizontal === 0 (Vertical)s
         alpha = Math.PI * 0;
       }
 

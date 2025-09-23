@@ -31,9 +31,13 @@ export const debuffPlayer = (
 
   if (!operations[op]) return console.error("Ogiltig operation.");
 
-  standardPlayer[key] = operations[op](standardPlayer[key], value);
+  (standardPlayer as any)[key] = operations[op](
+    (standardPlayer as any)[key],
+    value
+  );
 
   setTimeout(() => {
-    standardPlayer[key] = standardPlayerCopy[key];
+    if (!standardPlayerCopy) return; // undvik crash om kopian inte hunnit skapas
+    (standardPlayer as any)[key] = (standardPlayerCopy as any)[key];
   }, timePassedOut);
 };

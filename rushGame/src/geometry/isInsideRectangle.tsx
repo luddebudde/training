@@ -1,4 +1,4 @@
-import { add, multVar, sub, Vec2 } from "../math";
+import { multVar, sub } from "../math";
 
 export type Square = {
   x: number;
@@ -8,14 +8,7 @@ export type Square = {
   rotation: number;
 };
 
-export const isPointInsideArea = (
-  ctx,
-  entity,
-  square: Square,
-  margin = 0,
-  rectCenterX = 0,
-  rectCenterY = 0
-) => {
+export const isPointInsideArea = (ctx, entity, square: Square, margin = 0) => {
   let object = {
     collision: false,
     x: 1,

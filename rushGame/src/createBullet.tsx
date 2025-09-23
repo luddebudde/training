@@ -22,6 +22,9 @@ export type Bullet = {
   bounceable: boolean;
   bounceDamageLoss: number;
   indestructible: boolean;
+  angle: undefined | number;
+
+  distance: undefined | number;
 
   onHit: (entity: any, bullet: Bullet) => void;
   onWallBounce: (bullet: Bullet, calculatedVec: Vec2) => void;
@@ -135,6 +138,9 @@ export const createBullet = (
     bounceDamageLoss: finalMods.bounceDamageLoss,
     indestructible: finalMods.indestructible,
 
+    angle: undefined,
+    distance: undefined,
+
     onHit: (entity, bullet) => {
       finalAdvanced.onHit(entity, bullet);
     },
@@ -233,10 +239,13 @@ export const createWaveShoot = (
       bounceDamageLoss: finalMods.bounceDamageLoss,
       indestructible: finalMods.indestructible,
 
+      angle: undefined,
+      distance: undefined,
+
       onHit: (entity, bullet) => {
         finalAdvanced.onHit(entity, bullet);
       },
-      onWallBounce: (bullet, newVec) => {},
+      onWallBounce: () => {},
     };
 
     bullets.push(bullet);

@@ -33,6 +33,4 @@ export const dealDamage = (
       attacker.health += damage * attacker.lifeSteal;
     }
   }
-
-  // console.log(attacker, target);
 };
