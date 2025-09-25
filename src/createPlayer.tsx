@@ -1,0 +1,139 @@
+import { entities } from "./arrays";
+import { world } from "./basics";
+
+export type Player = {
+  name: string;
+  health: number;
+  maxHealth: number;
+  contactDamage: number;
+  pos: {
+    x: number;
+    y: number;
+  };
+  vel: {
+    x: number;
+    y: number;
+  };
+  radius: number;
+  radiusMult: number;
+  color: string;
+  mass: number;
+  speed: number;
+  // standardSpeed: number;
+  attackDelay: number;
+  // standardAttackDelay: number;
+  bulletDamage: number;
+  bulletSpeed: number;
+  bulletSize: number;
+
+  team: string;
+
+  damageConflicted: number;
+  damageAbsorbed: number;
+  bulletsShot: number;
+
+  lifeSteal: number;
+  iFrame: number;
+
+  unlockedAbilities: {
+    dash: boolean;
+    dashStrength: number;
+    dashCooldown: number;
+    dashMinStrengthMult: number;
+
+    bounceable: boolean;
+    bounceDamageLoss: number;
+
+    bonusLife: boolean;
+    bonusLifeCount: number;
+
+    adrenaline: number;
+    autoDamage: number;
+
+    spreadShotCount: number;
+    spreadShotSpread: number;
+  };
+
+  airFriction: boolean;
+  collision: true;
+  blackholeEffected: boolean;
+};
+
+const health = 100;
+
+const playerSpeed = 1;
+const playerAttackDelay = 10;
+
+export let player: Player;
+export let standardPlayer: Player;
+
+export const createPlayer = (): any => {
+  player = {
+    name: "player",
+    health: health,
+    maxHealth: health,
+    contactDamage: 0,
+    pos: {
+      x: world.width / 2,
+      y: (world.height / 5) * 4,
+    },
+    vel: {
+      x: 0,
+      y: 0,
+    },
+    radius: 50,
+    radiusMult: 1,
+    color: "blue",
+    mass: 0.1,
+
+    speed: playerSpeed,
+    // standardSpeed: playerSpeed,
+    team: "player",
+    attackDelay: playerAttackDelay,
+    // standardAttackDelay: playerAttackDelay,
+    bulletDamage: 20,
+
+    // bulletDamage: 120,
+    bulletSpeed: 50,
+    bulletSize: 20,
+
+    damageConflicted: 0,
+    damageAbsorbed: 0,
+    bulletsShot: 0,
+
+    lifeSteal: 0,
+    iFrame: 0,
+
+    unlockedAbilities: {
+      dash: true,
+      dashStrength: 300,
+      dashCooldown: 100,
+      dashMinStrengthMult: 1,
+
+      bounceable: false,
+      bounceDamageLoss: 0.3,
+
+      bonusLife: false,
+      bonusLifeCount: 0,
+
+      adrenaline: 0,
+      autoDamage: 0,
+      spreadShotCount: 0,
+      spreadShotSpread: 25,
+    },
+
+    airFriction: true,
+    collision: true,
+    blackholeEffected: true,
+  };
+
+  // entities.push(player);
+  setTimeout(() => {
+    entities.push(player);
+  }, 0);
+  // return player;
+
+  standardPlayer = structuredClone(player);
+};
+
+createPlayer();
