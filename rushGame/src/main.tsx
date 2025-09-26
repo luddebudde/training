@@ -83,6 +83,9 @@ export let deltaTime;
 
 const update = () => {
   if (isPaused === true) {
+    if (isKeyDown("KeyR")) {
+      changeIsPaused(!isPaused);
+    }
     requestAnimationFrame(update);
     return;
   }
@@ -299,6 +302,11 @@ const update = () => {
   if (isKeyDown("KeyD")) {
     player.vel.x += player.speed;
   }
+
+  if (isKeyDown("KeyE")) {
+    changeIsPaused(!isPaused);
+  }
+
   if (isKeyDown("KeyQ") && dashCooldown < 0) {
     const dashStrength = player.unlockedAbilities.dashStrength;
     const minStrength = player.unlockedAbilities.dashMinStrengthMult;

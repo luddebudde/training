@@ -7,7 +7,7 @@ import { multVar, origo, Vec2 } from "../math";
 import { randomAcceptedPos } from "../randomAcceptedPos";
 import { randomArrayElement } from "../randomArrayElement";
 
-const health = 150;
+const health = 120;
 
 type Blade = {
   damage: number;
@@ -214,7 +214,7 @@ export const createWanderer = () => {
               y: Math.sin(angle) * 100 + wanderer.pos.y,
             };
 
-            createBullet(bullets, wanderer, target, 10, speed);
+            createBullet(bullets, wanderer, target, 7, speed);
           }
           wanderer.reacheadHalfPoint = false;
         }, 2500);

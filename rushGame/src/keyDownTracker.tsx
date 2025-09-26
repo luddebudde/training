@@ -26,7 +26,6 @@ export const oneTimeKeyPress = () => {
   const keyDownHandler = (event) => {
     if (!keysPressed.has(event.code)) {
       keysPressed.add(event.code);
-      // Lägg till din logik här för när knappen trycks ned första gången
       console.log(`${event.code} pressed for the first time.`);
     }
   };
@@ -40,6 +39,20 @@ export const oneTimeKeyPress = () => {
 
   return () => {
     document.removeEventListener("keydown", keyDownHandler);
+    document.removeEventListener("keyup", keyUpHandler);
+  };
+};
+
+type KeyHandler = (code: string) => void;
+
+export const onKeyRelease = (handler: KeyHandler) => {
+  const keyUpHandler = (event: KeyboardEvent) => {
+    handler(event.code);
+  };
+
+  document.addEventListener("keyup", keyUpHandler);
+
+  return () => {
     document.removeEventListener("keyup", keyUpHandler);
   };
 };

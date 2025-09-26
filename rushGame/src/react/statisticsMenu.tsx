@@ -1,19 +1,23 @@
 import React, { useEffect, useMemo } from "react";
 import { player } from "../createPlayer";
-import { foughtBosses, overallStatistics, statistics } from "../loseScreen";
+import { foughtBosses, statistics } from "../loseScreen";
 import { randomArrayElement } from "../randomArrayElement";
 import { bossCritiques } from "./bossCritique";
 import { useMenu } from "./reactContext";
+import { world } from "../basics";
 
-const squareWidth = 450;
-const squareHeight = 250;
-const margin = 25;
+const squareWidth = world.width / 5;
+const squareHeight = world.height / 5;
+const margin = (world.height / 100) * 2;
 
 const StatisticsMenu = ({ onBack }) => {
   const { currentMenu, setMenu } = useMenu();
 
   const allFoughtBosses = JSON.parse(
     localStorage.getItem("allFoughtBosses") || "[]"
+  );
+  const overallStatistics = JSON.parse(
+    localStorage.getItem("overallStatistics") || "statistics"
   );
 
   // Källa för player-statistik (behåll din logik eller ändra senare)
@@ -79,9 +83,9 @@ const StatisticsMenu = ({ onBack }) => {
                     height: squareHeight,
                     backgroundColor: "red",
                     color: "black",
-                    padding: 16,
+                    padding: "1vh",
                     boxSizing: "border-box",
-                    borderRadius: 8,
+                    borderRadius: "0.5vh",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "flex-start",
@@ -89,19 +93,30 @@ const StatisticsMenu = ({ onBack }) => {
                   }}
                 >
                   <div
-                    style={{ fontSize: 26, fontWeight: 700, marginBottom: 6 }}
+                    style={{
+                      fontSize: "2vh",
+                      fontWeight: 700,
+                      marginBottom: "0.5vh",
+                    }}
                   >
                     {boss.name}
                   </div>
                   <div>
-                    Damage taken: {Math.floor(boss.damageAbsorbed ?? 0)}
+                    Damage dealt to them: {Math.floor(boss.damageAbsorbed ?? 0)}
                   </div>
                   <div>
-                    Damage dealt: {Math.floor(boss.damageConflicted ?? 0)}
+                    Damage dealt to you:{" "}
+                    {Math.floor(boss.damageConflicted ?? 0)}
                   </div>
                   <div>Bullets shot: {boss.bulletsShot ?? 0}</div>
                   <div>Times defeated: {boss.timesDefeated ?? 0}</div>
-                  <i style={{ fontSize: 16, display: "block", marginTop: 10 }}>
+                  <i
+                    style={{
+                      fontSize: "1vw",
+                      display: "block",
+                      marginTop: "1.5vh",
+                    }}
+                  >
                     "{critiques[index]}"
                   </i>
                 </div>
@@ -116,18 +131,23 @@ const StatisticsMenu = ({ onBack }) => {
               height: "20%",
               display: "flex",
               flexDirection: "column",
-              fontSize: 20,
+              fontSize: "3vh",
               textAlign: "center",
               color: "grey",
               alignItems: "center",
               justifyContent: "center",
-              marginTop: 18,
+              marginTop: "1vh",
             }}
           >
-            <b style={{ fontSize: 28 }}>Player stats</b>
-            <div>Damage taken: {Math.floor(source.damageAbsorbed ?? 0)}</div>
-            <div>Damage dealt: {Math.floor(source.damageConflicted ?? 0)}</div>
+            <b style={{ fontSize: "3vh" }}>Player stats</b>
+            <div>
+              Damage dealt to you: {Math.floor(source.damageAbsorbed ?? 0)}
+            </div>
+            <div>
+              Damage dealt to them: {Math.floor(source.damageConflicted ?? 0)}
+            </div>
             <div>Bullets shot: {source.bulletsShot ?? 0}</div>
+            <div>Mistakes made: {source.mistakesMade ?? 0}</div>
           </div>
 
           <button
@@ -135,12 +155,12 @@ const StatisticsMenu = ({ onBack }) => {
               setMenu("main");
             }}
             style={{
-              marginTop: "24px",
-              padding: "14px 28px",
-              fontSize: "18px",
+              marginTop: "5vh",
+              padding: "2vh 2vw",
+              fontSize: "2vh",
               backgroundColor: "gray",
               color: "white",
-              borderRadius: "10px",
+              borderRadius: "1vh",
               border: "none",
               cursor: "pointer",
             }}

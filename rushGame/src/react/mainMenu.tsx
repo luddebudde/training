@@ -48,9 +48,9 @@ function App() {
           >
             <input
               style={{
-                fontSize: 130,
+                fontSize: "10vh",
                 backgroundColor: "black",
-                marginBottom: 60,
+                marginBottom: "3%",
                 width: "75%",
                 color: "darkred",
                 textAlign: "center",
@@ -109,10 +109,10 @@ const createButton = (text, backgroundColor, onClick) => (
   <button
     style={{
       backgroundColor,
-      fontSize: 80,
+      fontSize: "3.5vw",
       width: "20%",
       height: "10%",
-      margin: 40,
+      margin: "3vh",
     }}
     onClick={onClick}
   >

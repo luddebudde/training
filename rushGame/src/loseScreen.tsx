@@ -9,24 +9,31 @@ export const statistics = {
   mistakesMade: 0,
 };
 
-export const overallStatistics = structuredClone(statistics);
+// export const overallStatistics = structuredClone(statistics);
 export const foughtBosses = [];
-export let stats = [];
+// export let stats = [];
 
 export const loseScreen = () => {
-  // const selectionDiv = document.getElementById("loseScreen");
-
-  // selectionDiv.style.visibility = "visible";
+  const allFoughtBosses = JSON.parse(
+    localStorage.getItem("allFoughtBosses") || "[]"
+  );
+  // localStorage.setItem("overallStatistics", JSON.stringify(statistics));
+  // localStorage.removeItem("overallStatistics");
+  const overallStatistics =
+    JSON.parse(localStorage.getItem("overallStatistics")) || statistics;
 
   console.log("died");
+
+  console.log(
+    player.damageConflicted,
+    player.damageAbsorbed,
+    player.bulletsShot
+  );
 
   statistics.damageConflicted = Math.round(player.damageConflicted);
   statistics.damageAbsorbed = Math.round(player.damageAbsorbed);
   statistics.mistakesMade = Math.round(Math.random() * 15 + 3);
-
-  const allFoughtBosses = JSON.parse(
-    localStorage.getItem("allFoughtBosses") || "[]"
-  );
+  statistics.bulletsShot = Math.round(player.bulletsShot);
 
   foughtBosses.forEach((boss) => {
     const existing = allFoughtBosses.find((b) => b.name === boss.name);
@@ -36,17 +43,18 @@ export const loseScreen = () => {
       existing.damageConflicted += boss.damageConflicted || 0;
       existing.damageAbsorbed += boss.damageAbsorbed || 0;
       existing.bulletsShot += boss.bulletsShot || 0;
+      existing.timesDefeated++;
     }
   });
 
-  stats = [
-    // Göra per spel, och inte permament
-    { id: "bosses-killed", value: statistics.bossesKilled },
-    { id: "damage-dealt", value: statistics.damageConflicted },
-    { id: "damage-taken", value: statistics.damageAbsorbed },
-    { id: "bullets-shot", value: statistics.bulletsShot },
-    { id: "mistakes-made", value: statistics.mistakesMade },
-  ];
+  // stats = [
+  //   // Göra per spel, och inte permament
+  //   { id: "bosses-killed", value: statistics.bossesKilled },
+  //   { id: "damage-dealt", value: statistics.damageConflicted },
+  //   { id: "damage-taken", value: statistics.damageAbsorbed },
+  //   { id: "bullets-shot", value: statistics.bulletsShot },
+  //   { id: "mistakes-made", value: statistics.mistakesMade },
+  // ];
 
   for (const key in statistics) {
     if (
@@ -55,16 +63,17 @@ export const loseScreen = () => {
     ) {
       overallStatistics[key] += statistics[key];
 
-      statistics[key] = 0;
+      // statistics[key] = 0;
     } else {
       overallStatistics[key] = statistics[key];
 
-      statistics[key] = 0;
+      // statistics[key] = 0;
     }
   }
 
   console.log(statistics, overallStatistics);
 
+  localStorage.setItem("overallStatistics", JSON.stringify(overallStatistics));
   localStorage.setItem("allFoughtBosses", JSON.stringify(allFoughtBosses));
 
   setTimeout(() => {

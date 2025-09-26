@@ -49,7 +49,7 @@ const PracticeMenu = ({ onBack }) => {
             justifyContent: "center",
           }}
         >
-          <h1 style={{ fontSize: "60px", marginBottom: "40px" }}>
+          <h1 style={{ fontSize: "4vw", marginBottom: "2vh" }}>
             Practice Mode
           </h1>
 
@@ -97,15 +97,15 @@ const PracticeMenu = ({ onBack }) => {
                       // bossArray[2](ctx);
                     }}
                     style={{
-                      padding: "40px 40px",
-                      fontSize: "30px",
+                      padding: "2vw 2vh",
+                      fontSize: "1.2vw",
                       backgroundColor: "darkgreen",
                       width: world.width / wave.length - wave.length * 20,
                       height:
                         world.height / waveOrder.length - waveOrder.length * 20,
-                      margin: 20,
+                      margin: "1.5vh",
                       color: "white",
-                      borderRadius: "10px",
+                      borderRadius: "0.5vw",
                     }}
                   >
                     {bossArray[0]}
@@ -119,12 +119,12 @@ const PracticeMenu = ({ onBack }) => {
               setMenu("main");
             }}
             style={{
-              marginTop: "60px",
-              padding: "20px 40px",
-              fontSize: "30px",
+              marginTop: "3vh",
+              padding: "1vw 2vh",
+              fontSize: "2vh",
               backgroundColor: "gray",
               color: "white",
-              borderRadius: "10px",
+              borderRadius: "1vh",
             }}
           >
             Tillbaka

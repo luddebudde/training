@@ -6,7 +6,7 @@ import { makeDirection } from "../geometry/makeDirection";
 import { multVar } from "../math";
 import { randomAcceptedPos } from "../randomAcceptedPos";
 
-const health = 1500;
+const health = 2000;
 
 type Charger = {
   name: string;

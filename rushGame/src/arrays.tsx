@@ -26,6 +26,8 @@ import { createGrenadier } from "./bosses/grenadier";
 import { createCentralDividerBoss } from "./bosses/centralDivider";
 import { createDeiat } from "./bosses/deiat/deiatBoss";
 import { winAnimation } from "./winAnimation";
+import { createBonkerBoss } from "./bosses/bonker";
+import { drawBossName } from "./draw/drawBossName";
 
 export let entities = [];
 export let bullets = [];
@@ -40,6 +42,7 @@ export type BossArray = [string, string, (ctx) => void];
 // 3rd is function
 const sprayerArray: BossArray = ["Sprayer", "", createSprayerBoss];
 const chargerArray: BossArray = ["Charger", "", createChargerBoss];
+const bonkerArray: BossArray = ["Bonker", "", createBonkerBoss];
 const lineBreakerArray: BossArray = ["Line-breaker", "", createLineBreakerBoss];
 const randomerArray: BossArray = ["Randomer", "", createRandomerBoss];
 const pacificArray: BossArray = ["Pacific", "", createPacificBoss];
@@ -54,7 +57,7 @@ const createCentralBaseArray: BossArray = [
   "",
   createCentralBaseBoss,
 ];
-const sideSweeperArray: BossArray = ["Side <= Sweeper", "", createSideSweeper];
+const sideSweeperArray: BossArray = ["Side Sweeper", "", createSideSweeper];
 const wandererArray: BossArray = ["Wanderer", "", createWanderer];
 const levelSeekerArray: BossArray = ["Level Seeker", "", createLevelSeekerBoss];
 const grenadierArray: BossArray = ["Grenadier", "", createGrenadier];
@@ -66,14 +69,14 @@ const centralDividerArray: BossArray = [
 const deiatArray: BossArray = ["The Deiat", "", createDeiat];
 
 const firstWave = [chargerArray, sprayerArray, wandererArray, rainerArray];
-// const firstWave = [centralDividerArray];
+// const firstWave = [sprayerArray];
 const secondWave = [
   lineBreakerArray,
   levelSeekerArray,
   createCentralBaseArray,
   splitterArray,
 ];
-const thirdWave = [twinArray, encirclerArray, pacificArray];
+const thirdWave = [twinArray, encirclerArray, pacificArray, bonkerArray];
 const fourthWave = [centralDividerArray, sideSweeperArray];
 const fifthWave = [squareArray, grenadierArray, randomerArray];
 const sixthWave = [deiatArray];
@@ -152,6 +155,8 @@ export const checkArrayRemoval = (ctx) => {
       boss.health,
       boss.maxHealth
     );
+
+    drawBossName(ctx, boss, index);
 
     // console.log(metBossIndex);
 

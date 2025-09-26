@@ -94,7 +94,7 @@ const autoDamage: Upgrades = {
   description: "Deal damage without shooting!",
   id: "autoDamage",
   change: (player) => {
-    player.unlockedAbilities.autoDamage += 0.5;
+    player.unlockedAbilities.autoDamage += 0.35;
   },
   unlockRequirement: () => {
     return [];

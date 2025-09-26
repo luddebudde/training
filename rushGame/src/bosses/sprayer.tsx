@@ -68,7 +68,7 @@ export const createSprayerBoss = () => {
     name: "Sprayer",
     maxHealth: health,
     health: health,
-    contactDamage: 0,
+    contactDamage: 10,
     pos: {
       x: Math.random() * world.width,
       y: Math.random() * world.height,
@@ -137,7 +137,7 @@ export const createSprayerBoss = () => {
             bullets,
             sprayer, // Ingen specifik "shooter"
             target, // Målet baserat på vinkeln
-            10, // Skadevärde
+            5, // Skadevärde
             speed // Hastighetsa
           );
         }
@@ -185,11 +185,11 @@ export const createSprayerBoss = () => {
                   10,
                   15,
                   Math.PI / 4,
-                  15,
+                  7,
                   { bounceable: false, airFriction: false }
                 );
               } else {
-                createBullet(bullets, sprayer, player.pos, 30, 10);
+                createBullet(bullets, sprayer, player.pos, 10, 10);
               }
               sprayer.shooterPhase.attackDelay = 50;
               sprayer.shooterPhase.spreadShotCounter++;
@@ -240,7 +240,7 @@ export const createSprayerBoss = () => {
                   bullets,
                   sprayer,
                   player.pos,
-                  10,
+                  5,
                   5,
                   Math.PI / 2,
                   5,
@@ -271,44 +271,75 @@ export const createSprayerBoss = () => {
 
               const place: Vec2 = { x: world.width / 2, y: world.height / 2 };
 
-              goTo(sprayer, place, moveTime);
+              goTo(sprayer, place, moveTime, () => {
+                for (let i = 0; i < 50; i++) {
+                  setTimeout(() => {
+                    const angle = (i / 50) * Math.PI * 2;
+                    const target: Vec2 = {
+                      x: sprayer.pos.x + Math.cos(angle) * 100,
+                      y: sprayer.pos.y + Math.sin(angle) * 100,
+                    };
+                    if (i !== 49) {
+                      createBullet(bullets, sprayer, target, 7, 20);
+                    } else {
+                      const numShots = 5;
+                      const angleStep = (Math.PI * 2) / numShots;
+                      for (let i = 0; i < numShots; i++) {
+                        const angle = i * angleStep;
+                        const target: Vec2 = {
+                          x: sprayer.pos.x + Math.cos(angle) * 100,
+                          y: sprayer.pos.y + Math.sin(angle) * 100,
+                        };
+                        createBullet(bullets, sprayer, target, 7, 10, {
+                          bounceable: true,
+                          bounceDamageLoss: 0.0,
+                          airFriction: false,
+                        });
+                      }
+                    }
+                  }, 40 * i);
+                  setTimeout(() => {
+                    sprayer.phaseCounter = 0;
+                  }, 3000);
+                }
+              });
             }
 
             if (
               sprayer.spreadOutPhase.shootCounter >
               sprayer.spreadOutPhase.shootDelay
             ) {
-              for (let i = 0; i < 50; i++) {
-                setTimeout(() => {
-                  const angle = (i / 50) * Math.PI * 2;
-                  const target: Vec2 = {
-                    x: sprayer.pos.x + Math.cos(angle) * 100,
-                    y: sprayer.pos.y + Math.sin(angle) * 100,
-                  };
-                  if (i !== 49) {
-                    createBullet(bullets, sprayer, target, 10, 20);
-                  } else {
-                    const numShots = 5;
-                    const angleStep = (Math.PI * 2) / numShots;
-                    for (let i = 0; i < numShots; i++) {
-                      const angle = i * angleStep;
-                      const target: Vec2 = {
-                        x: sprayer.pos.x + Math.cos(angle) * 100,
-                        y: sprayer.pos.y + Math.sin(angle) * 100,
-                      };
-                      createBullet(bullets, sprayer, target, 20, 10, {
-                        bounceable: true,
-                        bounceDamageLoss: 0.0,
-                        airFriction: false,
-                      });
-                    }
-                  }
-                }, 40 * i);
-              }
+              // for (let i = 0; i < 50; i++) {
+              //   // setTimeout(() => {
+              //     const angle = (i / 50) * Math.PI * 2;
+              //     const target: Vec2 = {
+              //       x: sprayer.pos.x + Math.cos(angle) * 100,
+              //       y: sprayer.pos.y + Math.sin(angle) * 100,
+              //     };
+              //     if (i !== 49) {
+              //       createBullet(bullets, sprayer, target, 10, 20);
+              //     } else {
+              //       const numShots = 5;
+              //       const angleStep = (Math.PI * 2) / numShots;
+              //       for (let i = 0; i < numShots; i++) {
+              //         const angle = i * angleStep;
+              //         const target: Vec2 = {
+              //           x: sprayer.pos.x + Math.cos(angle) * 100,
+              //           y: sprayer.pos.y + Math.sin(angle) * 100,
+              //         };
+              //         createBullet(bullets, sprayer, target, 20, 10, {
+              //           bounceable: true,
+              //           bounceDamageLoss: 0.0,
+              //           airFriction: false,
+              //         });
+              //       }
+              //     }
+              //   // }, 40 * i);
+              // }
 
-              setTimeout(() => {
-                sprayer.phaseCounter = 0;
-              }, 3000);
+              // setTimeout(() => {
+              //   sprayer.phaseCounter = 0;
+              // }, 3000);
 
               sprayer.vel = { x: 0, y: 0 };
               sprayer.spreadOutPhase.shootCounter = -10000;
@@ -334,7 +365,7 @@ export const createSprayerBoss = () => {
           bullets,
           undefined,
           target,
-          3,
+          0,
           speed,
           {
             bounceable: false,
