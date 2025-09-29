@@ -1,0 +1,71 @@
+Idé: Som finisher gör bossen en omöjllig attack att överleva... men man klarar det ändå! Sker endast i "kampanjen":
+const timesRounded = 3;
+    const timeTaken = 5000;
+    const delay = 50 ELLER 250;
+    const baseDirection = makeDirection(deiat.pos, player.pos);
+    const baseAngle = Math.atan2(baseDirection.y, baseDirection.x);
+
+    let totalAngleStep = 0;
+    const angleStep = (Math.PI * 2 * timesRounded) / timeTaken;
+
+    const bulletCount = timeTaken;
+    console.log(bulletCount);
+
+    for (let i = 0; i < bulletCount; i++) {
+      setTimeout(() => {
+        totalAngleStep += angleStep;
+        const waveOffset = i * angleStep;
+        const shootAngle = baseAngle + waveOffset;
+        const direction = {
+          x: Math.cos(shootAngle),
+          y: Math.sin(shootAngle),
+        };
+        const newVel = multVar(direction, 15);
+
+        createBullet(
+          bullets,
+          deiat,
+          undefined,
+          5,
+          0,
+          {},
+          {
+            vel: newVel,
+            startPos: { x: deiat.pos.x, y: deiat.pos.y },
+            color: "red",
+          }
+        );
+      }, delay * ((i % 3) + 1));
+Typ  såhäe
+
+for (let i = 0; i < bulletCount * rounds; i++) {
+  delay = Math.max(delay - 50, 5);
+  setTimeout(() => {
+    rotationOffset += rotationSpeed; // vrid hela mönstret lite
+
+    for (let j = 0; j < bulletsPerBurst; j++) {
+      const shootAngle =
+        rotationOffset + j * ((Math.PI * 2) / bulletsPerBurst);
+      const direction = {
+        x: Math.cos(shootAngle),
+        y: Math.sin(shootAngle),
+      };
+      const newVel = multVar(direction, 15);
+
+      createBullet(
+        bullets,
+        deiat,
+        undefined,
+        10, // damage
+        0,
+        {},
+        {
+          vel: newVel,
+          startPos: { x: deiat.pos.x, y: deiat.pos.y },
+          color: "red",
+        }
+      );
+    }
+  }, i * delay);
+}
+Eller så här

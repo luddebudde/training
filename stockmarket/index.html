@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New game</title>
+    <script type="module" src="src/main.tsx" defer>
+           <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="worldDiv" style="background-color: white">
+      <canvas
+        id="canvas"
+        width="1200"
+        height="1000"
+        ;
+        style="border-style: solid"
+      >
+      </canvas>
+
+      <ul
+        id="bank"
+        style="position: absolute; right: 880px; top: -20px; font-size: 40px"
+      >
+        <li id="bankValue" value="5">MONEY</li>
+      </ul>
+
+      <ul id="stockValue" style="position: absolute; right: 900px; top: 100px">
+        <li id="ironmark" value="5"></li>
+        <li id="cryptalon" value="5"></li>
+      </ul>
+
+      <button
+        id="pause"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        0x
+      </button>
+      <button
+        id="setSpeedOne"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        1x
+      </button>
+      <button
+        id="setSpeedTwo"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        2x
+      </button>
+      <button
+        id="setSpeedThree"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        3x
+      </button>
+      <button
+        id="resetPoint"
+        style="
+          background-color: red;
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        RE
+      </button>
+
+      <button
+        id="buyMax"
+        style="
+          background-color: rgb(82, 228, 15);
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        BUY
+      </button>
+      <button
+        id="sellMax"
+        style="
+          background-color: rgb(214, 236, 15);
+          width: 100px;
+          height: 40px;
+          margin-left: 5px;
+        "
+      >
+        SELL
+      </button>
+
+      <div
+        id="buyStock"
+        style="
+          background-color: green;
+          width: 500px;
+          height: 500px;
+          position: absolute;
+          right: 0px;
+          top: 0px;
+          padding: 25px;
+        "
+      ></div>
+
+      <div
+        id="upgrades"
+        style="
+          background-color: red;
+          width: 500px;
+          height: 1500px;
+          position: absolute;
+          right: 0px;
+          top: 750px;
+          padding: 25px;
+        "
+      >
+        <div
+          id="purchaseMenu"
+          style="
+            background-color: grey;
+            height: 90%;
+            position: relative;
+            padding: 5px;
+          "
+        ></div>
+      </div>
+    </div>
+  </body>
+</html>

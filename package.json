@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "three-d",
   "private": true,
   "version": "0.0.0",
@@ -18,5 +19,9 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+=======
+  "devDependencies": {
+    "vite": "^5.4.0"
+>>>>>>> 57d0811c62ee93542a02a2b709fab5f2eead8232
   }
 }
